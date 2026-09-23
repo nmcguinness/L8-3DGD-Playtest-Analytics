@@ -36,6 +36,7 @@ website:
           - notes/describing-what-you-have.qmd
       - section: "Labs"
         contents:
+          - labs/setting-up.qmd
           - labs/reading-data.qmd
       - section: "Reference"
         contents:
