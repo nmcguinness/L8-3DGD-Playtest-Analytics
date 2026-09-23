@@ -1,0 +1,277 @@
+---
+title: "Lab 00 — Setting Up"
+subtitle: "R, Quarto and VS Code, and proving they actually work"
+---
+
+# Overview
+
+Before any of the analysis labs will run, you need three things on your machine
+and — the part that catches nearly everyone — your terminal needs to be able to
+find them.
+
+This lab is not analysis. It is plumbing. Work through it in order and do not skip
+the checkpoints: each one tells you whether the previous step actually worked,
+which is much cheaper than discovering it in the middle of Lab 01.
+
+Budget about forty minutes, most of which is waiting for downloads.
+
+| Tool | What it does | Do you need it? |
+| :- | :- | :- |
+| **R** | The language that does the analysis | Yes |
+| **Quarto** | Turns a document containing R code into a web page | Yes |
+| **VS Code** | The editor you write in | Yes |
+| **RStudio** | An alternative editor, built specifically for R | Optional |
+
+::: {.callout-note}
+## If you would rather use RStudio
+
+RStudio bundles Quarto and needs less setup than VS Code. If you already have it
+and are happy in it, install R (Step 1), skip Steps 3 and 4, and go straight to
+the checkpoints. Everything in the analysis labs works identically. This sheet
+uses VS Code because that is what the module demonstrates.
+:::
+
+---
+
+# Step 1 — Install R
+
+**Windows.** Download from [cran.r-project.org](https://cran.r-project.org) →
+*Download R for Windows* → *base* → *Download R x.x.x for Windows*. Run the
+installer and accept the defaults.
+
+**macOS.** Same site → *Download R for macOS* → the `.pkg` matching your chip
+(Apple silicon or Intel).
+
+::: {.callout-warning}
+## The Windows R installer does not add R to your PATH
+
+This is deliberate on their part and inconvenient for everyone. Step 4 fixes it.
+Do not skip Step 4 just because the installer said it finished successfully.
+:::
+
+# Step 2 — Install Quarto
+
+Download the installer for your platform from
+[quarto.org/docs/get-started](https://quarto.org/docs/get-started) and run it.
+
+On Windows you can also use:
+
+```powershell
+winget install --id Posit.Quarto
+```
+
+::: {.callout-important}
+## Do not rely on the copy inside RStudio
+
+RStudio ships its own private copy of Quarto at a path like
+`C:\Program Files\RStudio\resources\app\bin\quarto\bin`. It works, but it is tied
+to your RStudio version and moves when RStudio updates. Install Quarto properly.
+:::
+
+# Step 3 — Install VS Code and two extensions
+
+Download VS Code from [code.visualstudio.com](https://code.visualstudio.com).
+
+Then open the Extensions panel (`Ctrl+Shift+X`, or `Cmd+Shift+X` on macOS) and
+install:
+
+| Extension | Publisher | What it gives you |
+| :- | :- | :- |
+| **Quarto** | Posit | Syntax highlighting for `.qmd`, a Render button, live preview |
+| **R** | REditorSupport | R syntax highlighting and a console inside the editor |
+
+# Step 4 — Make your terminal find them
+
+This is the step that causes almost every problem people report. Two separate
+things go wrong.
+
+## Your PATH may not include R
+
+Open a terminal in VS Code with `` Ctrl+` `` and run:
+
+```powershell
+Rscript --version
+```
+
+If that reports a version, skip to the next heading. If it says *not recognized*,
+find your R installation and add it:
+
+```powershell
+Get-ChildItem "C:\Program Files\R"
+```
+
+Take the folder name it reports — something like `R-4.4.1` — and substitute it
+below:
+
+```powershell
+[Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\R\R-4.4.1\bin", "User")
+```
+
+## Your terminal is holding a stale copy of PATH
+
+A terminal keeps the environment it started with, and **VS Code hands every new
+terminal a cached copy**. So after installing anything, a brand new terminal panel
+will still not see it.
+
+To refresh the terminal you are in right now:
+
+```powershell
+$env:Path = [Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [Environment]::GetEnvironmentVariable("Path","User")
+```
+
+To fix it permanently, **close VS Code completely** — every window, not *Reload
+Window* — and reopen it.
+
+::: {.callout-note}
+## macOS and Linux
+
+Both installers put R and Quarto on your PATH without help. If a command is not
+found, close the terminal and open a new one, and if that fails, restart VS Code.
+:::
+
+---
+
+# Checkpoint 1 — Are the tools visible?
+
+Run all three in a VS Code terminal:
+
+```powershell
+quarto --version
+Rscript --version
+code --version
+```
+
+::: {.callout-tip collapse="true" title="What you should see"}
+Three version numbers. Quarto should be **1.4 or later** and R **4.3 or later**.
+
+If any command is *not recognized*, go back to Step 4. Do not continue — nothing
+below will work.
+:::
+
+::: {.callout-warning collapse="true" title="PowerShell: why `R --version` fails even when R works"}
+`R` is a built-in PowerShell alias for `Invoke-History`, so `R --version` never
+reaches your R installation. You will see a confusing error mentioning
+*"Cannot locate the history for command line"*.
+
+Use `Rscript --version` instead, or `R.exe --version` to bypass the alias.
+`Rscript` is the one that matters anyway — it is what Quarto calls.
+:::
+
+# Step 5 — Install the R packages
+
+```powershell
+Rscript -e "install.packages(c('readr','knitr'), repos='https://cloud.r-project.org')"
+```
+
+Those two are all the labs need. Accept any prompt about a personal library.
+
+::: {.callout-warning collapse="true" title="PowerShell mangles quotes — use the right ones"}
+Note the quoting above: **double quotes outside, single quotes inside**. PowerShell
+strips double quotes when passing arguments to a program, so the reverse
+arrangement arrives at R as `install.packages(c(readr,knitr), repos=https:/)` and
+fails with `unexpected '/'`.
+:::
+
+# Step 6 — Get the project and the data
+
+```powershell
+git clone https://github.com/nmcguinness/L8-3DGD-Playtest-Analytics.git
+cd L8-3DGD-Playtest-Analytics
+code .
+```
+
+No Git? Use the green **Code** button on the repository page →
+*Download ZIP*, then unzip it and open the folder in VS Code with *File → Open
+Folder*.
+
+The `data/` folder contains the five CSVs every lab uses.
+
+---
+
+# Checkpoint 2 — Render something
+
+Create a new file called `test.qmd` in the project folder with exactly this
+content:
+
+```` markdown
+---
+title: "Setup test"
+---
+
+## Does R work?
+
+```{{r}}
+library(readr)
+sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+nrow(sessions)
+```
+
+## Does plotting work?
+
+```{{r}}
+hist(sessions$score, breaks = 20, main = "Score", xlab = "Score")
+```
+````
+
+Then render it:
+
+```powershell
+quarto render test.qmd
+```
+
+::: {.callout-tip collapse="true" title="What success looks like"}
+The terminal reports `Output created: test.html`. Open that file in a browser and
+you should see the number **120** and a histogram.
+
+If you see both, everything works and you are ready for Lab 01. Delete `test.qmd`
+and `test.html`.
+:::
+
+::: {.callout-important collapse="true" title="If the render fails"}
+Work through these in order.
+
+**`could not find function "read_csv"`** — Step 5 did not complete. Re-run it and
+watch for errors.
+
+**`cannot open file 'data/tidebreak_sessions.csv'`** — you are not in the project
+folder, or `test.qmd` is not beside the `data/` folder. Run `Get-Location` to see
+where you are and `Get-ChildItem data` to confirm the CSVs are there.
+
+**`Unable to locate an installed version of R`** — Quarto cannot find R. This is
+Step 4. Confirm `Rscript --version` works *in the same terminal* you are rendering
+from.
+
+**No error, but nothing happens** — you are probably in a terminal that Claude or
+another process is using. Open a second terminal with the `+` button in the
+terminal panel.
+:::
+
+---
+
+# Troubleshooting reference
+
+Keep this. Every one of these has bitten someone on this module.
+
+| Symptom | Cause | Fix |
+| :- | :- | :- |
+| `'quarto' is not recognized` | PATH not refreshed since install | Refresh line in Step 4, then restart VS Code fully |
+| `'Rscript' is not recognized` | Windows R installer does not set PATH | Step 4, first half |
+| `R : Cannot locate the history for command line` | `R` is a PowerShell alias for `Invoke-History` | Use `Rscript` or `R.exe` |
+| `unexpected '/' in "install.packages..."` | PowerShell stripped your double quotes | Double outside, single inside |
+| Command works in one terminal, not a new one | VS Code caches the environment per terminal | Close VS Code entirely and reopen |
+| `Unable to locate an installed version of R` | Quarto cannot see R on PATH | Step 4, then check in the *same* terminal |
+| Render works, but a plot is missing | The chunk is `{r}` with a typo, or the code errored above it | Read the terminal output from the top; the first error is the real one |
+| `Error in library(x) : there is no package called 'x'` | Package not installed for *this* R version | Re-run Step 5; check `Rscript --version` matches the R you installed |
+
+---
+
+# What to do if you are still stuck
+
+Post in the module forum with **all three** of the following, or nobody can help
+you:
+
+1. The exact command you ran
+2. The complete error message, copied as text rather than a screenshot
+3. The output of `quarto --version` and `Rscript --version`
+
+The third one resolves about half of these on its own.

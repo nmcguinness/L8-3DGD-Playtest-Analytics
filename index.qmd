@@ -16,6 +16,8 @@ execute:
   message: false
 ---
 
+First time here? Work through [Lab 00](labs/setting-up.qmd) before anything else.
+
 ## Ten questions you will be able to answer
 
 These are the questions that come up in the week after a playtest. None of them is
@@ -45,7 +47,9 @@ are not expected to understand the code yet. Its only job is to show you what si
 hours of R can do to a pile of raw playtest numbers.
 
 Every figure below was produced from four CSV files, in between eleven and fifty-five
-lines of code. By the end of these notes you will be able to produce all of them.
+lines of code. By the end of these notes you will be able to answer all ten
+questions above using base R and dplyr, producing plainer plots than the ones shown
+here. The polish on this page is the destination, not the syllabus.
 
 ::: {.callout-note}
 ## The data
