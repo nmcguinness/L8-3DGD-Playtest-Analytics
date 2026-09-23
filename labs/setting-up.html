@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>setting-up – Playtest Analytics</title>
+<title>Lab 00 — Setting Up – Playtest Analytics</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -25,6 +25,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -88,7 +123,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/setting-up.html">Labs</a></li><li class="breadcrumb-item"><a href="../labs/setting-up.html">setting-up.html</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/setting-up.html">Labs</a></li><li class="breadcrumb-item"><a href="../labs/setting-up.html">Lab 00 — Setting Up</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -160,7 +195,7 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../labs/setting-up.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">setting-up.html</span></a>
+ <span class="menu-text">Lab 00 — Setting Up</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -193,17 +228,415 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#step-1-install-r" id="toc-step-1-install-r" class="nav-link" data-scroll-target="#step-1-install-r">Step 1 — Install R</a></li>
+  <li><a href="#step-2-install-quarto" id="toc-step-2-install-quarto" class="nav-link" data-scroll-target="#step-2-install-quarto">Step 2 — Install Quarto</a></li>
+  <li><a href="#step-3-install-vs-code-and-two-extensions" id="toc-step-3-install-vs-code-and-two-extensions" class="nav-link" data-scroll-target="#step-3-install-vs-code-and-two-extensions">Step 3 — Install VS Code and two extensions</a></li>
+  <li><a href="#step-4-make-your-terminal-find-them" id="toc-step-4-make-your-terminal-find-them" class="nav-link" data-scroll-target="#step-4-make-your-terminal-find-them">Step 4 — Make your terminal find them</a>
+  <ul class="collapse">
+  <li><a href="#your-path-may-not-include-r" id="toc-your-path-may-not-include-r" class="nav-link" data-scroll-target="#your-path-may-not-include-r">Your PATH may not include R</a></li>
+  <li><a href="#your-terminal-is-holding-a-stale-copy-of-path" id="toc-your-terminal-is-holding-a-stale-copy-of-path" class="nav-link" data-scroll-target="#your-terminal-is-holding-a-stale-copy-of-path">Your terminal is holding a stale copy of PATH</a></li>
+  </ul></li>
+  <li><a href="#checkpoint-1-are-the-tools-visible" id="toc-checkpoint-1-are-the-tools-visible" class="nav-link" data-scroll-target="#checkpoint-1-are-the-tools-visible">Checkpoint 1 — Are the tools visible?</a></li>
+  <li><a href="#step-5-install-the-r-packages" id="toc-step-5-install-the-r-packages" class="nav-link" data-scroll-target="#step-5-install-the-r-packages">Step 5 — Install the R packages</a></li>
+  <li><a href="#step-6-get-the-project-and-the-data" id="toc-step-6-get-the-project-and-the-data" class="nav-link" data-scroll-target="#step-6-get-the-project-and-the-data">Step 6 — Get the project and the data</a></li>
+  <li><a href="#checkpoint-2-render-something" id="toc-checkpoint-2-render-something" class="nav-link" data-scroll-target="#checkpoint-2-render-something">Checkpoint 2 — Render something</a></li>
+  <li><a href="#troubleshooting-reference" id="toc-troubleshooting-reference" class="nav-link" data-scroll-target="#troubleshooting-reference">Troubleshooting reference</a></li>
+  <li><a href="#what-to-do-if-you-are-still-stuck" id="toc-what-to-do-if-you-are-still-stuck" class="nav-link" data-scroll-target="#what-to-do-if-you-are-still-stuck">What to do if you are still stuck</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/setting-up.html">Labs</a></li><li class="breadcrumb-item"><a href="../labs/setting-up.html">setting-up.html</a></li></ol></nav></header>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/setting-up.html">Labs</a></li><li class="breadcrumb-item"><a href="../labs/setting-up.html">Lab 00 — Setting Up</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Lab 00 — Setting Up</h1>
+<p class="subtitle lead">R, Quarto and VS Code, and proving they actually work</p>
+</div>
 
 
 
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
 
 
+</header>
 
+
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>Before any of the analysis labs will run, you need three things on your machine and — the part that catches nearly everyone — your terminal needs to be able to find them.</p>
+<p>This lab is not analysis. It is plumbing. Work through it in order and do not skip the checkpoints: each one tells you whether the previous step actually worked, which is much cheaper than discovering it in the middle of Lab 01.</p>
+<p>Budget about forty minutes, most of which is waiting for downloads.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Tool</th>
+<th style="text-align: left;">What it does</th>
+<th style="text-align: left;">Do you need it?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>R</strong></td>
+<td style="text-align: left;">The language that does the analysis</td>
+<td style="text-align: left;">Yes</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Quarto</strong></td>
+<td style="text-align: left;">Turns a document containing R code into a web page</td>
+<td style="text-align: left;">Yes</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>VS Code</strong></td>
+<td style="text-align: left;">The editor you write in</td>
+<td style="text-align: left;">Yes</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>RStudio</strong></td>
+<td style="text-align: left;">An alternative editor, built specifically for R</td>
+<td style="text-align: left;">Optional</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>If you would rather use RStudio
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>RStudio bundles Quarto and needs less setup than VS Code. If you already have it and are happy in it, install R (Step 1), skip Steps 3 and 4, and go straight to the checkpoints. Everything in the analysis labs works identically. This sheet uses VS Code because that is what the module demonstrates.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="step-1-install-r" class="level1">
+<h1>Step 1 — Install R</h1>
+<p><strong>Windows.</strong> Download from <a href="https://cran.r-project.org">cran.r-project.org</a> → <em>Download R for Windows</em> → <em>base</em> → <em>Download R x.x.x for Windows</em>. Run the installer and accept the defaults.</p>
+<p><strong>macOS.</strong> Same site → <em>Download R for macOS</em> → the <code>.pkg</code> matching your chip (Apple silicon or Intel).</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>The Windows R installer does not add R to your PATH
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This is deliberate on their part and inconvenient for everyone. Step 4 fixes it. Do not skip Step 4 just because the installer said it finished successfully.</p>
+</div>
+</div>
+</section>
+<section id="step-2-install-quarto" class="level1">
+<h1>Step 2 — Install Quarto</h1>
+<p>Download the installer for your platform from <a href="https://quarto.org/docs/get-started">quarto.org/docs/get-started</a> and run it.</p>
+<p>On Windows you can also use:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>winget install <span class="op">--</span>id Posit<span class="op">.</span><span class="fu">Quarto</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Do not rely on the copy inside RStudio
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>RStudio ships its own private copy of Quarto at a path like <code>C:\Program Files\RStudio\resources\app\bin\quarto\bin</code>. It works, but it is tied to your RStudio version and moves when RStudio updates. Install Quarto properly.</p>
+</div>
+</div>
+</section>
+<section id="step-3-install-vs-code-and-two-extensions" class="level1">
+<h1>Step 3 — Install VS Code and two extensions</h1>
+<p>Download VS Code from <a href="https://code.visualstudio.com">code.visualstudio.com</a>.</p>
+<p>Then open the Extensions panel (<code>Ctrl+Shift+X</code>, or <code>Cmd+Shift+X</code> on macOS) and install:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Extension</th>
+<th style="text-align: left;">Publisher</th>
+<th style="text-align: left;">What it gives you</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Quarto</strong></td>
+<td style="text-align: left;">Posit</td>
+<td style="text-align: left;">Syntax highlighting for <code>.qmd</code>, a Render button, live preview</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>R</strong></td>
+<td style="text-align: left;">REditorSupport</td>
+<td style="text-align: left;">R syntax highlighting and a console inside the editor</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="step-4-make-your-terminal-find-them" class="level1">
+<h1>Step 4 — Make your terminal find them</h1>
+<p>This is the step that causes almost every problem people report. Two separate things go wrong.</p>
+<section id="your-path-may-not-include-r" class="level2">
+<h2 class="anchored" data-anchor-id="your-path-may-not-include-r">Your PATH may not include R</h2>
+<p>Open a terminal in VS Code with <code>Ctrl+`</code> and run:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>Rscript <span class="op">--</span>version</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>If that reports a version, skip to the next heading. If it says <em>not recognized</em>, find your R installation and add it:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-ChildItem</span> <span class="st">"C:\Program Files\R"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Take the folder name it reports — something like <code>R-4.4.1</code> — and substitute it below:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="op">[</span>Environment<span class="op">]::</span>SetEnvironmentVariable<span class="op">(</span><span class="st">"Path"</span><span class="op">,</span> <span class="va">$env</span><span class="op">:</span><span class="va">Path</span> <span class="op">+</span> <span class="st">";C:\Program Files\R\R-4.4.1\bin"</span><span class="op">,</span> <span class="st">"User"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="your-terminal-is-holding-a-stale-copy-of-path" class="level2">
+<h2 class="anchored" data-anchor-id="your-terminal-is-holding-a-stale-copy-of-path">Your terminal is holding a stale copy of PATH</h2>
+<p>A terminal keeps the environment it started with, and <strong>VS Code hands every new terminal a cached copy</strong>. So after installing anything, a brand new terminal panel will still not see it.</p>
+<p>To refresh the terminal you are in right now:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="va">$env</span><span class="op">:</span><span class="va">Path</span> <span class="op">=</span> <span class="op">[</span>Environment<span class="op">]::</span>GetEnvironmentVariable<span class="op">(</span><span class="st">"Path"</span><span class="op">,</span><span class="st">"Machine"</span><span class="op">)</span> <span class="op">+</span> <span class="st">";"</span> <span class="op">+</span> <span class="op">[</span>Environment<span class="op">]::</span>GetEnvironmentVariable<span class="op">(</span><span class="st">"Path"</span><span class="op">,</span><span class="st">"User"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>To fix it permanently, <strong>close VS Code completely</strong> — every window, not <em>Reload Window</em> — and reopen it.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>macOS and Linux
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Both installers put R and Quarto on your PATH without help. If a command is not found, close the terminal and open a new one, and if that fails, restart VS Code.</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="checkpoint-1-are-the-tools-visible" class="level1">
+<h1>Checkpoint 1 — Are the tools visible?</h1>
+<p>Run all three in a VS Code terminal:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>quarto <span class="op">--</span>version</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>Rscript <span class="op">--</span>version</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>code <span class="op">--</span>version</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-tip callout-titled" title="What you should see">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>What you should see
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Three version numbers. Quarto should be <strong>1.4 or later</strong> and R <strong>4.3 or later</strong>.</p>
+<p>If any command is <em>not recognized</em>, go back to Step 4. Do not continue — nothing below will work.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled" title="PowerShell: why `R --version` fails even when R works">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>PowerShell: why <code>R --version</code> fails even when R works
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><code>R</code> is a built-in PowerShell alias for <code>Invoke-History</code>, so <code>R --version</code> never reaches your R installation. You will see a confusing error mentioning <em>“Cannot locate the history for command line”</em>.</p>
+<p>Use <code>Rscript --version</code> instead, or <code>R.exe --version</code> to bypass the alias. <code>Rscript</code> is the one that matters anyway — it is what Quarto calls.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="step-5-install-the-r-packages" class="level1">
+<h1>Step 5 — Install the R packages</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Rscript <span class="op">-</span>e <span class="st">"install.packages(c('readr','knitr'), repos='https://cloud.r-project.org')"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Those two are all the labs need. Accept any prompt about a personal library.</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="PowerShell mangles quotes — use the right ones">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>PowerShell mangles quotes — use the right ones
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Note the quoting above: <strong>double quotes outside, single quotes inside</strong>. PowerShell strips double quotes when passing arguments to a program, so the reverse arrangement arrives at R as <code>install.packages(c(readr,knitr), repos=https:/)</code> and fails with <code>unexpected '/'</code>.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="step-6-get-the-project-and-the-data" class="level1">
+<h1>Step 6 — Get the project and the data</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>git clone https<span class="op">://</span>github<span class="op">.</span><span class="fu">com</span><span class="op">/</span>nmcguinness<span class="op">/</span>L8-3DGD-Playtest-Analytics<span class="op">.</span><span class="fu">git</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cd</span> L8-3DGD-Playtest-Analytics</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>code <span class="op">.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>No Git? Use the green <strong>Code</strong> button on the repository page → <em>Download ZIP</em>, then unzip it and open the folder in VS Code with <em>File → Open Folder</em>.</p>
+<p>The <code>data/</code> folder contains the five CSVs every lab uses.</p>
+<hr>
+</section>
+<section id="checkpoint-2-render-something" class="level1">
+<h1>Checkpoint 2 — Render something</h1>
+<p>Create a new file called <code>test.qmd</code> in the project folder with exactly this content:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Setup test"</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Does R work?</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>sessions <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_sessions.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(sessions)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## Does plotting work?</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(sessions<span class="sc">$</span>score, <span class="at">breaks =</span> <span class="dv">20</span>, <span class="at">main =</span> <span class="st">"Score"</span>, <span class="at">xlab =</span> <span class="st">"Score"</span>)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Then render it:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>quarto render test<span class="op">.</span><span class="fu">qmd</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-tip callout-titled" title="What success looks like">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>What success looks like
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The terminal reports <code>Output created: test.html</code>. Open that file in a browser and you should see the number <strong>120</strong> and a histogram.</p>
+<p>If you see both, everything works and you are ready for Lab 01. Delete <code>test.qmd</code> and <code>test.html</code>.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled" title="If the render fails">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>If the render fails
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Work through these in order.</p>
+<p><strong><code>could not find function "read_csv"</code></strong> — Step 5 did not complete. Re-run it and watch for errors.</p>
+<p><strong><code>cannot open file 'data/tidebreak_sessions.csv'</code></strong> — you are not in the project folder, or <code>test.qmd</code> is not beside the <code>data/</code> folder. Run <code>Get-Location</code> to see where you are and <code>Get-ChildItem data</code> to confirm the CSVs are there.</p>
+<p><strong><code>Unable to locate an installed version of R</code></strong> — Quarto cannot find R. This is Step 4. Confirm <code>Rscript --version</code> works <em>in the same terminal</em> you are rendering from.</p>
+<p><strong>No error, but nothing happens</strong> — you are probably in a terminal that Claude or another process is using. Open a second terminal with the <code>+</code> button in the terminal panel.</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="troubleshooting-reference" class="level1">
+<h1>Troubleshooting reference</h1>
+<p>Keep this. Every one of these has bitten someone on this module.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Symptom</th>
+<th style="text-align: left;">Cause</th>
+<th style="text-align: left;">Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>'quarto' is not recognized</code></td>
+<td style="text-align: left;">PATH not refreshed since install</td>
+<td style="text-align: left;">Refresh line in Step 4, then restart VS Code fully</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>'Rscript' is not recognized</code></td>
+<td style="text-align: left;">Windows R installer does not set PATH</td>
+<td style="text-align: left;">Step 4, first half</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>R : Cannot locate the history for command line</code></td>
+<td style="text-align: left;"><code>R</code> is a PowerShell alias for <code>Invoke-History</code></td>
+<td style="text-align: left;">Use <code>Rscript</code> or <code>R.exe</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>unexpected '/' in "install.packages..."</code></td>
+<td style="text-align: left;">PowerShell stripped your double quotes</td>
+<td style="text-align: left;">Double outside, single inside</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Command works in one terminal, not a new one</td>
+<td style="text-align: left;">VS Code caches the environment per terminal</td>
+<td style="text-align: left;">Close VS Code entirely and reopen</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>Unable to locate an installed version of R</code></td>
+<td style="text-align: left;">Quarto cannot see R on PATH</td>
+<td style="text-align: left;">Step 4, then check in the <em>same</em> terminal</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Render works, but a plot is missing</td>
+<td style="text-align: left;">The chunk is <code>{r}</code> with a typo, or the code errored above it</td>
+<td style="text-align: left;">Read the terminal output from the top; the first error is the real one</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>Error in library(x) : there is no package called 'x'</code></td>
+<td style="text-align: left;">Package not installed for <em>this</em> R version</td>
+<td style="text-align: left;">Re-run Step 5; check <code>Rscript --version</code> matches the R you installed</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="what-to-do-if-you-are-still-stuck" class="level1">
+<h1>What to do if you are still stuck</h1>
+<p>Post in the module forum with <strong>all three</strong> of the following, or nobody can help you:</p>
+<ol type="1">
+<li>The exact command you ran</li>
+<li>The complete error message, copied as text rather than a screenshot</li>
+<li>The output of <code>quarto --version</code> and <code>Rscript --version</code></li>
+</ol>
+<p>The third one resolves about half of these on its own.</p>
+
+
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

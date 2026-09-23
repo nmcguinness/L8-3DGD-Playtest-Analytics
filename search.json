@@ -99,6 +99,39 @@
     ]
   },
   {
+    "objectID": "labs/setting-up.html",
+    "href": "labs/setting-up.html",
+    "title": "Lab 00 — Setting Up",
+    "section": "",
+    "text": "Before any of the analysis labs will run, you need three things on your machine and — the part that catches nearly everyone — your terminal needs to be able to find them.\nThis lab is not analysis. It is plumbing. Work through it in order and do not skip the checkpoints: each one tells you whether the previous step actually worked, which is much cheaper than discovering it in the middle of Lab 01.\nBudget about forty minutes, most of which is waiting for downloads.\n\n\n\n\n\n\n\n\nTool\nWhat it does\nDo you need it?\n\n\n\n\nR\nThe language that does the analysis\nYes\n\n\nQuarto\nTurns a document containing R code into a web page\nYes\n\n\nVS Code\nThe editor you write in\nYes\n\n\nRStudio\nAn alternative editor, built specifically for R\nOptional\n\n\n\n\n\n\n\n\n\nNoteIf you would rather use RStudio\n\n\n\nRStudio bundles Quarto and needs less setup than VS Code. If you already have it and are happy in it, install R (Step 1), skip Steps 3 and 4, and go straight to the checkpoints. Everything in the analysis labs works identically. This sheet uses VS Code because that is what the module demonstrates.",
+    "crumbs": [
+      "Labs",
+      "Lab 00 — Setting Up"
+    ]
+  },
+  {
+    "objectID": "labs/setting-up.html#your-path-may-not-include-r",
+    "href": "labs/setting-up.html#your-path-may-not-include-r",
+    "title": "Lab 00 — Setting Up",
+    "section": "Your PATH may not include R",
+    "text": "Your PATH may not include R\nOpen a terminal in VS Code with Ctrl+` and run:\nRscript --version\nIf that reports a version, skip to the next heading. If it says not recognized, find your R installation and add it:\nGet-ChildItem \"C:\\Program Files\\R\"\nTake the folder name it reports — something like R-4.4.1 — and substitute it below:\n[Environment]::SetEnvironmentVariable(\"Path\", $env:Path + \";C:\\Program Files\\R\\R-4.4.1\\bin\", \"User\")",
+    "crumbs": [
+      "Labs",
+      "Lab 00 — Setting Up"
+    ]
+  },
+  {
+    "objectID": "labs/setting-up.html#your-terminal-is-holding-a-stale-copy-of-path",
+    "href": "labs/setting-up.html#your-terminal-is-holding-a-stale-copy-of-path",
+    "title": "Lab 00 — Setting Up",
+    "section": "Your terminal is holding a stale copy of PATH",
+    "text": "Your terminal is holding a stale copy of PATH\nA terminal keeps the environment it started with, and VS Code hands every new terminal a cached copy. So after installing anything, a brand new terminal panel will still not see it.\nTo refresh the terminal you are in right now:\n$env:Path = [Environment]::GetEnvironmentVariable(\"Path\",\"Machine\") + \";\" + [Environment]::GetEnvironmentVariable(\"Path\",\"User\")\nTo fix it permanently, close VS Code completely — every window, not Reload Window — and reopen it.\n\n\n\n\n\n\nNotemacOS and Linux\n\n\n\nBoth installers put R and Quarto on your PATH without help. If a command is not found, close the terminal and open a new one, and if that fails, restart VS Code.",
+    "crumbs": [
+      "Labs",
+      "Lab 00 — Setting Up"
+    ]
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Eight Views of a Playtest",
