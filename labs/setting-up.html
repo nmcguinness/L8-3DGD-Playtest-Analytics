@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>R and Quarto Reference – Playtest Analytics</title>
+<title>setting-up – Playtest Analytics</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -36,7 +36,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../labs/reading-data.html" rel="prev">
+<link href="../labs/reading-data.html" rel="next">
+<link href="../notes/describing-what-you-have.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -87,7 +88,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/r-quarto-reference.html">Reference</a></li><li class="breadcrumb-item"><a href="../reference/r-quarto-reference.html">R and Quarto Reference</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/setting-up.html">Labs</a></li><li class="breadcrumb-item"><a href="../labs/setting-up.html">setting-up.html</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -158,7 +159,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../labs/setting-up.html" class="sidebar-item-text sidebar-link">
+  <a href="../labs/setting-up.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">setting-up.html</span></a>
   </div>
 </li>
@@ -181,7 +182,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../reference/r-quarto-reference.html" class="sidebar-item-text sidebar-link active">
+  <a href="../reference/r-quarto-reference.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">R and Quarto Reference</span></a>
   </div>
 </li>
@@ -192,310 +193,17 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul class="collapse">
-  <li><a href="#getting-data-in" id="toc-getting-data-in" class="nav-link active" data-scroll-target="#getting-data-in">Getting data in</a></li>
-  <li><a href="#getting-at-parts-of-a-data-frame" id="toc-getting-at-parts-of-a-data-frame" class="nav-link" data-scroll-target="#getting-at-parts-of-a-data-frame">Getting at parts of a data frame</a></li>
-  <li><a href="#describing-one-variable" id="toc-describing-one-variable" class="nav-link" data-scroll-target="#describing-one-variable">Describing one variable</a></li>
-  <li><a href="#describing-by-group" id="toc-describing-by-group" class="nav-link" data-scroll-target="#describing-by-group">Describing by group</a></li>
-  <li><a href="#plots" id="toc-plots" class="nav-link" data-scroll-target="#plots">Plots</a></li>
-  <li><a href="#quarto" id="toc-quarto" class="nav-link" data-scroll-target="#quarto">Quarto</a></li>
-  <li><a href="#errors-you-will-meet" id="toc-errors-you-will-meet" class="nav-link" data-scroll-target="#errors-you-will-meet">Errors you will meet</a></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/r-quarto-reference.html">Reference</a></li><li class="breadcrumb-item"><a href="../reference/r-quarto-reference.html">R and Quarto Reference</a></li></ol></nav>
-<div class="quarto-title">
-<h1 class="title">R and Quarto Reference</h1>
-<p class="subtitle lead">One page to keep open while you work</p>
-</div>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/setting-up.html">Labs</a></li><li class="breadcrumb-item"><a href="../labs/setting-up.html">setting-up.html</a></li></ol></nav></header>
 
 
 
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
 
 
-</header>
 
-
-<blockquote class="blockquote">
-<p>A lookup sheet, not a tutorial. Everything here appears in the labs; this page exists so you are not scrolling back through three weeks of notes to remember an argument name.</p>
-</blockquote>
-<hr>
-<section id="getting-data-in" class="level2">
-<h2 class="anchored" data-anchor-id="getting-data-in">Getting data in</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Task</th>
-<th style="text-align: left;">Code</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Load a package</td>
-<td style="text-align: left;"><code>library(readr)</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Read a CSV</td>
-<td style="text-align: left;"><code>d &lt;- read_csv("data/file.csv", show_col_types = FALSE)</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Check it loaded</td>
-<td style="text-align: left;"><code>nrow(d)</code>, <code>dim(d)</code>, <code>names(d)</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Look at structure and types</td>
-<td style="text-align: left;"><code>str(d)</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">First / last rows</td>
-<td style="text-align: left;"><code>head(d, 5)</code>, <code>tail(d, 5)</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="getting-at-parts-of-a-data-frame" class="level2">
-<h2 class="anchored" data-anchor-id="getting-at-parts-of-a-data-frame">Getting at parts of a data frame</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Task</th>
-<th style="text-align: left;">Code</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">One column as a vector</td>
-<td style="text-align: left;"><code>d$score</code> or <code>d[["score"]]</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Several columns</td>
-<td style="text-align: left;"><code>d[, c("score", "deaths")]</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Rows meeting a condition</td>
-<td style="text-align: left;"><code>d[d$score &gt; 1500, ]</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Rows and columns at once</td>
-<td style="text-align: left;"><code>d[d$build == "A", c("score", "deaths")]</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="describing-one-variable" class="level2">
-<h2 class="anchored" data-anchor-id="describing-one-variable">Describing one variable</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Task</th>
-<th style="text-align: left;">Code</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Everything at once</td>
-<td style="text-align: left;"><code>summary(x)</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Centre</td>
-<td style="text-align: left;"><code>mean(x)</code>, <code>median(x)</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Spread</td>
-<td style="text-align: left;"><code>sd(x)</code>, <code>range(x)</code>, <code>IQR(x)</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Quartiles</td>
-<td style="text-align: left;"><code>quantile(x)</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">A specific percentile</td>
-<td style="text-align: left;"><code>quantile(x, 0.99)</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Count a category</td>
-<td style="text-align: left;"><code>table(d$cohort)</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Cross-tabulate two</td>
-<td style="text-align: left;"><code>table(d$build, d$quit_reason)</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Ignore missing values</td>
-<td style="text-align: left;">add <code>na.rm = TRUE</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="describing-by-group" class="level2">
-<h2 class="anchored" data-anchor-id="describing-by-group">Describing by group</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Task</th>
-<th style="text-align: left;">Code</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">One summary per group</td>
-<td style="text-align: left;"><code>tapply(d$score, d$cohort, median)</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Several columns at once</td>
-<td style="text-align: left;"><code>aggregate(score ~ cohort, data = d, FUN = median)</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="plots" class="level2">
-<h2 class="anchored" data-anchor-id="plots">Plots</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Task</th>
-<th style="text-align: left;">Code</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Distribution of one variable</td>
-<td style="text-align: left;"><code>hist(x, breaks = 20)</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Compare groups</td>
-<td style="text-align: left;"><code>boxplot(score ~ cohort, data = d)</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Two variables against each other</td>
-<td style="text-align: left;"><code>plot(d$mobility, d$distance_m)</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">A series over time</td>
-<td style="text-align: left;"><code>plot(x, y, type = "l")</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">A reference line</td>
-<td style="text-align: left;"><code>abline(h = 16.7, lty = 2)</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Counts as bars</td>
-<td style="text-align: left;"><code>barplot(table(d$quit_reason))</code></td>
-</tr>
-</tbody>
-</table>
-<p>Useful arguments for all of them: <code>main =</code> (title), <code>xlab =</code> / <code>ylab =</code> (axis labels), <code>col =</code> (fill colour).</p>
-</section>
-<section id="quarto" class="level2">
-<h2 class="anchored" data-anchor-id="quarto">Quarto</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Task</th>
-<th style="text-align: left;">Code</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Start a code chunk</td>
-<td style="text-align: left;"><code>```{r}</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Hide the code, keep the output</td>
-<td style="text-align: left;"><code>#| echo: false</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Show the code, skip running it</td>
-<td style="text-align: left;"><code>#| eval: false</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Name a chunk</td>
-<td style="text-align: left;"><code>#| label: my-chunk</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Set figure size</td>
-<td style="text-align: left;"><code>#| fig-width: 7</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">A number inside a sentence</td>
-<td style="text-align: left;"><code>`r round(mean(d$score))`</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Render</td>
-<td style="text-align: left;"><code>quarto render report.qmd</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="errors-you-will-meet" class="level2">
-<h2 class="anchored" data-anchor-id="errors-you-will-meet">Errors you will meet</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Message</th>
-<th style="text-align: left;">What it means</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><code>could not find function "..."</code></td>
-<td style="text-align: left;">Missing <code>library()</code> call, or a typo in the name</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><code>object '...' not found</code></td>
-<td style="text-align: left;">The variable does not exist yet, or R was restarted</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><code>$ operator is invalid for atomic vectors</code></td>
-<td style="text-align: left;">You used <code>$</code> on a vector, not a data frame</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><code>undefined columns selected</code></td>
-<td style="text-align: left;">A column name is misspelled or wrongly capitalised</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><code>argument "x" is missing, with no default</code></td>
-<td style="text-align: left;">A function was called with no argument</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Console shows <code>+</code> not <code>&gt;</code></td>
-<td style="text-align: left;">R is waiting for you to close a bracket or quote. Press <strong>Esc</strong></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><code>NA</code> where you expected a number</td>
-<td style="text-align: left;">Missing values. Decide what to do about them, then use <code>na.rm = TRUE</code></td>
-</tr>
-</tbody>
-</table>
-
-
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -900,11 +608,14 @@ ul.task-list li input[type="checkbox"] {
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../labs/reading-data.html" class="pagination-link" aria-label="Lab 01 — Reading Data">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Lab 01 — Reading Data</span>
+      <a href="../notes/describing-what-you-have.html" class="pagination-link" aria-label="Describing What You Have">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Describing What You Have</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="../labs/reading-data.html" class="pagination-link" aria-label="Lab 01 — Reading Data">
+        <span class="nav-page-text">Lab 01 — Reading Data</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->
