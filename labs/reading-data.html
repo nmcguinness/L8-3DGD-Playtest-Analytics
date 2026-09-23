@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Lab 01 — Reading Data – Playtest Analytics</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../reference/r-quarto-reference.html" rel="next">
+<link href="../notes/describing-what-you-have.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-640402775883e0dc5b71a44650c95e06.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/reading-data.html">Labs</a></li><li class="breadcrumb-item"><a href="../labs/reading-data.html">Lab 01 — Reading Data</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Playtest Analytics</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Start here</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Notes</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/ten-rules.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ten Rules for Reading Playtest Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/why-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Why Developers Measure Anything</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/describing-what-you-have.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Describing What You Have</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Labs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/reading-data.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Lab 01 — Reading Data</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Reference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/r-quarto-reference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R and Quarto Reference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#learning-outcomes" id="toc-learning-outcomes" class="nav-link" data-scroll-target="#learning-outcomes">Learning outcomes</a></li>
+  <li><a href="#ground-rules" id="toc-ground-rules" class="nav-link" data-scroll-target="#ground-rules">Ground rules</a></li>
+  <li><a href="#setup-run-this-first" id="toc-setup-run-this-first" class="nav-link" data-scroll-target="#setup-run-this-first">Setup (run this first)</a></li>
+  <li><a href="#part-a-values-vectors-and-missing-data" id="toc-part-a-values-vectors-and-missing-data" class="nav-link" data-scroll-target="#part-a-values-vectors-and-missing-data">Part A — Values, vectors and missing data</a>
+  <ul class="collapse">
+  <li><a href="#exercise-01-build-a-vector-and-look-at-it-do" id="toc-exercise-01-build-a-vector-and-look-at-it-do" class="nav-link" data-scroll-target="#exercise-01-build-a-vector-and-look-at-it-do">Exercise 01 — Build a vector and look at it <code>[Do]</code></a></li>
+  <li><a href="#exercise-02-pull-values-out-by-position-do" id="toc-exercise-02-pull-values-out-by-position-do" class="nav-link" data-scroll-target="#exercise-02-pull-values-out-by-position-do">Exercise 02 — Pull values out by position <code>[Do]</code></a></li>
+  <li><a href="#exercise-03-a-missing-value-poisons-the-arithmetic-do" id="toc-exercise-03-a-missing-value-poisons-the-arithmetic-do" class="nav-link" data-scroll-target="#exercise-03-a-missing-value-poisons-the-arithmetic-do">Exercise 03 — A missing value poisons the arithmetic <code>[Do]</code></a></li>
+  <li><a href="#exercise-04-filter-a-vector-with-a-condition-apply" id="toc-exercise-04-filter-a-vector-with-a-condition-apply" class="nav-link" data-scroll-target="#exercise-04-filter-a-vector-with-a-condition-apply">Exercise 04 — Filter a vector with a condition <code>[Apply]</code></a></li>
+  <li><a href="#exercise-05-build-a-small-table-of-related-vectors-apply" id="toc-exercise-05-build-a-small-table-of-related-vectors-apply" class="nav-link" data-scroll-target="#exercise-05-build-a-small-table-of-related-vectors-apply">Exercise 05 — Build a small table of related vectors <code>[Apply]</code></a></li>
+  </ul></li>
+  <li><a href="#part-b-loading-and-describing-real-data" id="toc-part-b-loading-and-describing-real-data" class="nav-link" data-scroll-target="#part-b-loading-and-describing-real-data">Part B — Loading and describing real data</a>
+  <ul class="collapse">
+  <li><a href="#exercise-06-look-at-a-data-frame-without-drowning-in-it-do" id="toc-exercise-06-look-at-a-data-frame-without-drowning-in-it-do" class="nav-link" data-scroll-target="#exercise-06-look-at-a-data-frame-without-drowning-in-it-do">Exercise 06 — Look at a data frame without drowning in it <code>[Do]</code></a></li>
+  <li><a href="#exercise-07-get-at-a-single-column-do" id="toc-exercise-07-get-at-a-single-column-do" class="nav-link" data-scroll-target="#exercise-07-get-at-a-single-column-do">Exercise 07 — Get at a single column <code>[Do]</code></a></li>
+  <li><a href="#exercise-08-classify-every-column-apply" id="toc-exercise-08-classify-every-column-apply" class="nav-link" data-scroll-target="#exercise-08-classify-every-column-apply">Exercise 08 — Classify every column <code>[Apply]</code></a></li>
+  <li><a href="#exercise-09-count-the-categorical-columns-do" id="toc-exercise-09-count-the-categorical-columns-do" class="nav-link" data-scroll-target="#exercise-09-count-the-categorical-columns-do">Exercise 09 — Count the categorical columns <code>[Do]</code></a></li>
+  <li><a href="#exercise-10-describe-a-numeric-variable-properly-apply" id="toc-exercise-10-describe-a-numeric-variable-properly-apply" class="nav-link" data-scroll-target="#exercise-10-describe-a-numeric-variable-properly-apply">Exercise 10 — Describe a numeric variable properly <code>[Apply]</code></a></li>
+  <li><a href="#exercise-11-see-the-shape-apply" id="toc-exercise-11-see-the-shape-apply" class="nav-link" data-scroll-target="#exercise-11-see-the-shape-apply">Exercise 11 — See the shape <code>[Apply]</code></a></li>
+  <li><a href="#exercise-12-split-a-numeric-variable-by-a-group-apply" id="toc-exercise-12-split-a-numeric-variable-by-a-group-apply" class="nav-link" data-scroll-target="#exercise-12-split-a-numeric-variable-by-a-group-apply">Exercise 12 — Split a numeric variable by a group <code>[Apply]</code></a></li>
+  </ul></li>
+  <li><a href="#challenge-which-cohort-is-the-game-actually-built-for-decide" id="toc-challenge-which-cohort-is-the-game-actually-built-for-decide" class="nav-link" data-scroll-target="#challenge-which-cohort-is-the-game-actually-built-for-decide">Challenge — Which cohort is the game actually built for? <code>[Decide]</code></a></li>
+  <li><a href="#appendix-mini-dataset-for-part-a" id="toc-appendix-mini-dataset-for-part-a" class="nav-link" data-scroll-target="#appendix-mini-dataset-for-part-a">Appendix — Mini dataset for Part A</a></li>
+  <li><a href="#appendix-common-first-week-errors" id="toc-appendix-common-first-week-errors" class="nav-link" data-scroll-target="#appendix-common-first-week-errors">Appendix — Common first-week errors</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/reading-data.html">Labs</a></li><li class="breadcrumb-item"><a href="../labs/reading-data.html">Lab 01 — Reading Data</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Lab 01 — Reading Data</h1>
+<p class="subtitle lead">Vectors, types, missing values, data frames, and describing one variable</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>This lab is your first contact with R. You are not expected to have written a line of it before today.</p>
+<p>The work is deliberately unglamorous. Before you can find anything interesting in a playtest you have to be able to <strong>load the data, look at it, and describe it</strong> without making a fool of yourself. That is what this sheet trains.</p>
+<p>Everything here uses <strong>base R</strong> — the functions that ship with the language. You will meet the tidyverse in Lab 02. Learning base R first means you will understand what the tidyverse is doing for you rather than treating it as magic.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Function</th>
+<th style="text-align: left;">What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>c()</code></td>
+<td style="text-align: left;">Builds a vector from individual values</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>length()</code>, <code>class()</code></td>
+<td style="text-align: left;">How many, and what type</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>read_csv()</code></td>
+<td style="text-align: left;">Reads a CSV file into a data frame</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>str()</code>, <code>head()</code>, <code>nrow()</code>, <code>names()</code></td>
+<td style="text-align: left;">Look at a data frame without printing all of it</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>$</code>, <code>[ , ]</code></td>
+<td style="text-align: left;">Pull out a column, or a slice of rows and columns</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>mean()</code>, <code>median()</code>, <code>sd()</code>, <code>range()</code></td>
+<td style="text-align: left;">Describe a numeric variable</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>quantile()</code>, <code>IQR()</code></td>
+<td style="text-align: left;">Describe the spread and the tails</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>table()</code></td>
+<td style="text-align: left;">Count a categorical variable</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>hist()</code>, <code>boxplot()</code></td>
+<td style="text-align: left;">See the shape of a variable</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="learning-outcomes" class="level1">
+<h1>Learning outcomes</h1>
+<p>By the end of this lab you can:</p>
+<ul>
+<li>create and index vectors, and explain what <code>NA</code> does to a calculation</li>
+<li>load a CSV into a data frame and inspect it without printing 120 rows</li>
+<li>classify any column as <strong>nominal</strong>, <strong>ordinal</strong>, <strong>discrete</strong> or <strong>continuous</strong></li>
+<li>describe a numeric variable with an appropriate measure of centre and spread</li>
+<li>state, in one sentence, when the mean is the wrong summary and why</li>
+</ul>
+</section>
+<section id="ground-rules" class="level1">
+<h1>Ground rules</h1>
+<ul>
+<li>Keep the CSV files in the <code>data/</code> folder of the project.</li>
+<li>Type the code. Do not copy and paste from the solutions until you have tried.</li>
+<li>Open the solution <strong>after</strong> your attempt, even when your attempt worked. The solution sometimes does it a better way.</li>
+<li>Every exercise ends with a short written answer. Write it. The writing is the part that gets assessed later, not the code.</li>
+<li>If a line of code fails, read the error before doing anything else. Most R errors name the exact problem.</li>
+</ul>
+</section>
+<section id="setup-run-this-first" class="level1">
+<h1>Setup (run this first)</h1>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># readr gives us read_csv(), which is better behaved than base R's read.csv()</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>csv_file <span class="ot">&lt;-</span> <span class="st">"data/tidebreak_sessions.csv"</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(csv_file))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(<span class="st">"CSV not found: "</span>, csv_file,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>       <span class="st">"</span><span class="sc">\n</span><span class="st">Check that the file sits in the data/ folder of the project."</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>sessions <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(csv_file, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(sessions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 120</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="part-a-values-vectors-and-missing-data" class="level1">
+<h1>Part A — Values, vectors and missing data</h1>
+<section id="exercise-01-build-a-vector-and-look-at-it-do" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-01-build-a-vector-and-look-at-it-do">Exercise 01 — Build a vector and look at it <code>[Do]</code></h2>
+<p>Create a vector called <code>deaths</code> holding the death counts from six playtest sessions: 4, 2, 7, 3, 0, 5.</p>
+<p>Report how many values it holds and what type R thinks it is.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>deaths <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">7</span>, <span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">5</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>deaths</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4 2 7 3 0 5</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(deaths)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(deaths)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "numeric"</code></pre>
+</div>
+</div>
+<p>R stores plain numbers as doubles unless you force an integer with <code>4L</code>.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 1 sentence:</strong> why does a vector have to hold values of a single type?</p>
+</section>
+<section id="exercise-02-pull-values-out-by-position-do" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-02-pull-values-out-by-position-do">Exercise 02 — Pull values out by position <code>[Do]</code></h2>
+<p>Using <code>deaths</code> from Exercise 01, extract the first value, the third and fifth values, and everything except the first value.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>deaths[<span class="dv">1</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>deaths[<span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">5</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 7 0</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>deaths[<span class="sc">-</span><span class="dv">1</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2 7 3 0 5</code></pre>
+</div>
+</div>
+<p>Square brackets take a position, a vector of positions, or a negative position meaning “all except this”.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 1 sentence:</strong> R counts from 1, not 0. If you have written C# or C++, what is the one mistake this will cause you?</p>
+</section>
+<section id="exercise-03-a-missing-value-poisons-the-arithmetic-do" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-03-a-missing-value-poisons-the-arithmetic-do">Exercise 03 — A missing value poisons the arithmetic <code>[Do]</code></h2>
+<p>A seventh tester’s death count was not recorded. Add <code>NA</code> to the end of <code>deaths</code> and take the mean. Then take it again so that the result is a number.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>deaths <span class="ot">&lt;-</span> <span class="fu">c</span>(deaths, <span class="cn">NA</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(deaths)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(deaths, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.5</code></pre>
+</div>
+</div>
+<p><code>NA</code> is not zero and it is not “empty”. It means <em>unknown</em>, and the mean of a set containing an unknown value is itself unknown. R tells you that rather than quietly guessing.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> <code>na.rm = TRUE</code> makes the error message go away. Explain why that is not the same thing as fixing the problem.</p>
+</section>
+<section id="exercise-04-filter-a-vector-with-a-condition-apply" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-04-filter-a-vector-with-a-condition-apply">Exercise 04 — Filter a vector with a condition <code>[Apply]</code></h2>
+<p>Using the seven-value <code>deaths</code> vector, produce a TRUE/FALSE vector showing which sessions had more than 3 deaths, use it to extract those death counts, then count how many sessions that is.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>deaths <span class="sc">&gt;</span> <span class="dv">3</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  TRUE FALSE  TRUE FALSE FALSE  TRUE    NA</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>deaths[deaths <span class="sc">&gt;</span> <span class="dv">3</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  4  7  5 NA</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(deaths <span class="sc">&gt;</span> <span class="dv">3</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3</code></pre>
+</div>
+</div>
+<p>Two things worth noticing. <code>deaths[deaths &gt; 3]</code> keeps the <code>NA</code>, because R does not know whether the unknown value is above 3 or not. And <code>sum()</code> on a TRUE/FALSE vector counts the TRUEs, because TRUE is 1 and FALSE is 0.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 1–2 sentences:</strong> why is <code>sum(x &gt; 3)</code> a count rather than a total?</p>
+</section>
+<section id="exercise-05-build-a-small-table-of-related-vectors-apply" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-05-build-a-small-table-of-related-vectors-apply">Exercise 05 — Build a small table of related vectors <code>[Apply]</code></h2>
+<p>Create two more vectors the same length as <code>deaths</code> — <code>player</code> (P01 to P07) and <code>build</code> (alternating <code>"A"</code> and <code>"B"</code>, starting with A). Combine all three into a data frame called <code>mini</code>, then show its structure and first three rows.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>player <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"P01"</span>, <span class="st">"P02"</span>, <span class="st">"P03"</span>, <span class="st">"P04"</span>, <span class="st">"P05"</span>, <span class="st">"P06"</span>, <span class="st">"P07"</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>build  <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>), <span class="at">length.out =</span> <span class="dv">7</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>mini <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(player, build, deaths)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(mini)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   7 obs. of  3 variables:
+ $ player: chr  "P01" "P02" "P03" "P04" ...
+ $ build : chr  "A" "B" "A" "B" ...
+ $ deaths: num  4 2 7 3 0 5 NA</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mini, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  player build deaths
+1    P01     A      4
+2    P02     B      2
+3    P03     A      7</code></pre>
+</div>
+</div>
+<p><code>rep()</code> with <code>length.out</code> repeats a pattern until it reaches the length you asked for — useful for generating alternating conditions.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 1 sentence:</strong> what does a data frame give you that three separate vectors do not?</p>
+<hr>
+</section>
+</section>
+<section id="part-b-loading-and-describing-real-data" class="level1">
+<h1>Part B — Loading and describing real data</h1>
+<p>From here on you are working with <code>sessions</code>, loaded in the Setup block: 120 real playtest sessions from the <em>Tidebreak</em> arena.</p>
+<section id="exercise-06-look-at-a-data-frame-without-drowning-in-it-do" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-06-look-at-a-data-frame-without-drowning-in-it-do">Exercise 06 — Look at a data frame without drowning in it <code>[Do]</code></h2>
+<p>Answer these without printing the whole table: how many rows and columns, what the column names are, and what the first four rows look like.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(sessions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 120  20</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(sessions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "session_id"        "player_id"         "cohort"           
+ [4] "archetype"         "build"             "accuracy"         
+ [7] "mobility"          "survivability"     "objective_control"
+[10] "support"           "awareness"         "score"            
+[13] "kills"             "deaths"            "objectives"       
+[16] "shots_fired"       "time_alive_s"      "distance_m"       
+[19] "session_minutes"   "quit_reason"      </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sessions, <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 x 20
+  session_id player_id cohort  archetype build accuracy mobility survivability
+  &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;    &lt;dbl&gt;    &lt;dbl&gt;         &lt;dbl&gt;
+1 S001       P01       Regular Scout     A           55       84            48
+2 S002       P02       Veteran Scout     B           54       91            52
+3 S003       P03       Regular Scout     A           48       89            42
+4 S004       P04       Novice  Scout     B           35       80            35
+# i 12 more variables: objective_control &lt;dbl&gt;, support &lt;dbl&gt;, awareness &lt;dbl&gt;,
+#   score &lt;dbl&gt;, kills &lt;dbl&gt;, deaths &lt;dbl&gt;, objectives &lt;dbl&gt;,
+#   shots_fired &lt;dbl&gt;, time_alive_s &lt;dbl&gt;, distance_m &lt;dbl&gt;,
+#   session_minutes &lt;dbl&gt;, quit_reason &lt;chr&gt;</code></pre>
+</div>
+</div>
+<p><code>str(sessions)</code> gives you dimensions, names and types all at once, and is usually the first thing to run on unfamiliar data.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 1 sentence:</strong> why is printing a whole data frame a bad habit, even when it is small?</p>
+</section>
+<section id="exercise-07-get-at-a-single-column-do" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-07-get-at-a-single-column-do">Exercise 07 — Get at a single column <code>[Do]</code></h2>
+<p>Extract the <code>score</code> column three different ways: with <code>$</code>, with <code>[[ ]]</code>, and with <code>[ , ]</code>. Confirm all three give the same thing.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>by_dollar  <span class="ot">&lt;-</span> sessions<span class="sc">$</span>score</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>by_bracket <span class="ot">&lt;-</span> sessions[[<span class="st">"score"</span>]]</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>by_comma   <span class="ot">&lt;-</span> sessions[, <span class="st">"score"</span>, drop <span class="ot">=</span> <span class="cn">TRUE</span>]</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(by_dollar, by_bracket)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(by_dollar, by_comma)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
+<p><code>drop = TRUE</code> matters: without it, <code>[ , ]</code> on a tibble hands you back a one-column table rather than a plain vector, and the identical check fails.</p>
+<p>Note the variable names. Never call a variable <code>c</code> — you would be shadowing <code>c()</code>, the function you used to build every vector in Part A.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 1 sentence:</strong> which of the three would you use in a script another person has to read, and why?</p>
+</section>
+<section id="exercise-08-classify-every-column-apply" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-08-classify-every-column-apply">Exercise 08 — Classify every column <code>[Apply]</code></h2>
+<p>For each of these columns, state whether it is <strong>nominal</strong>, <strong>ordinal</strong>, <strong>discrete</strong> or <strong>continuous</strong>: <code>cohort</code>, <code>archetype</code>, <code>build</code>, <code>score</code>, <code>kills</code>, <code>deaths</code>, <code>session_minutes</code>, <code>quit_reason</code>.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Column</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Why</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>cohort</code></td>
+<td style="text-align: left;">Ordinal</td>
+<td style="text-align: left;">Novice → Regular → Veteran has a real order</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>archetype</code></td>
+<td style="text-align: left;">Nominal</td>
+<td style="text-align: left;">Scout is not more or less than Sentinel</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>build</code></td>
+<td style="text-align: left;">Nominal</td>
+<td style="text-align: left;">Two labels, no order</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>score</code></td>
+<td style="text-align: left;">Discrete</td>
+<td style="text-align: left;">Whole points, though large enough to treat as continuous</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>kills</code></td>
+<td style="text-align: left;">Discrete</td>
+<td style="text-align: left;">A count</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>deaths</code></td>
+<td style="text-align: left;">Discrete</td>
+<td style="text-align: left;">A count</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>session_minutes</code></td>
+<td style="text-align: left;">Continuous</td>
+<td style="text-align: left;">Measured time, one decimal place</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>quit_reason</code></td>
+<td style="text-align: left;">Nominal</td>
+<td style="text-align: left;">Four labels, no order</td>
+</tr>
+</tbody>
+</table>
+<p>The interesting one is <code>cohort</code>. R has loaded it as <code>chr</code> — plain text — and will sort it alphabetically as Novice, Regular, Veteran, which happens to be the right order by accident. Never rely on that.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> pick one column above and explain what would go wrong if you treated it as the wrong type.</p>
+</section>
+<section id="exercise-09-count-the-categorical-columns-do" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-09-count-the-categorical-columns-do">Exercise 09 — Count the categorical columns <code>[Do]</code></h2>
+<p>Produce counts for <code>cohort</code>, <code>archetype</code> and <code>quit_reason</code>. Then produce a cross-tabulation of <code>build</code> against <code>quit_reason</code>.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sessions<span class="sc">$</span>cohort)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ Novice Regular Veteran 
+     33      53      34 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sessions<span class="sc">$</span>archetype)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ Duelist Engineer    Scout Sentinel 
+      30       30       30       30 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sessions<span class="sc">$</span>quit_reason)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ Completed test      Frustrated   Lost interest Technical fault 
+             69              25              21               5 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sessions<span class="sc">$</span>build, sessions<span class="sc">$</span>quit_reason)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   
+    Completed test Frustrated Lost interest Technical fault
+  A             31         20             7               2
+  B             38          5            14               3</code></pre>
+</div>
+</div>
+<p>The cross-tabulation is the one that earns its keep.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> look at the cross-tabulation. What is the single most noticeable difference between the two builds, and what would you want to check next?</p>
+</section>
+<section id="exercise-10-describe-a-numeric-variable-properly-apply" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-10-describe-a-numeric-variable-properly-apply">Exercise 10 — Describe a numeric variable properly <code>[Apply]</code></h2>
+<p>For <code>score</code> and for <code>session_minutes</code>, compute the mean, median, standard deviation, range, quartiles and IQR.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sessions<span class="sc">$</span>score)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1428.767</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(sessions<span class="sc">$</span>score)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1470</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(sessions<span class="sc">$</span>score)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 319.2236</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(sessions<span class="sc">$</span>score)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  541 2019</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(sessions<span class="sc">$</span>score)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     0%     25%     50%     75%    100% 
+ 541.00 1270.00 1470.00 1628.75 2019.00 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">IQR</span>(sessions<span class="sc">$</span>score)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 358.75</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(sessions<span class="sc">$</span>session_minutes)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   7.70   15.50   26.15   22.77   29.32   32.00 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">IQR</span>(sessions<span class="sc">$</span>session_minutes)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 13.825</code></pre>
+</div>
+</div>
+<p><code>summary()</code> gives minimum, quartiles, median, mean and maximum in one call, which is usually where to start. <code>quantile()</code> is there for when you need a specific percentile rather than the standard five.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> express the gap between mean and median as a percentage of the median, for both variables. Which one is more skewed, and does its tail run left or right?</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Check your answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Check your answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Score sits 2.8% below its median. Session minutes sits 12.9% below. Both are <strong>left-skewed</strong> — the mean falls below the median because a group of short sessions drags it down — but session minutes is far more so.</p>
+<p>Comparing the raw gaps (-41 points against -3.4 minutes) would have told you the opposite, which is why the scale of the variable always has to come into it.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-11-see-the-shape-apply" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-11-see-the-shape-apply">Exercise 11 — See the shape <code>[Apply]</code></h2>
+<p>Draw a histogram of <code>score</code> and a boxplot of <code>session_minutes</code>. Give both a title and a sensible axis label.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(sessions<span class="sc">$</span>score,</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">breaks =</span> <span class="dv">20</span>,</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">main   =</span> <span class="st">"Distribution of session score"</span>,</span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab   =</span> <span class="st">"Score"</span>,</span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">col    =</span> <span class="st">"grey85"</span>,</span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">border =</span> <span class="st">"white"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="reading-data_files/figure-html/ex11-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(sessions<span class="sc">$</span>session_minutes,</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">main       =</span> <span class="st">"How long testers played"</span>,</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab       =</span> <span class="st">"Minutes"</span>,</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">horizontal =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">col        =</span> <span class="st">"grey85"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="reading-data_files/figure-html/ex11b-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> set <code>breaks = 5</code> and then <code>breaks = 40</code>, and describe what happens to the story the histogram tells. See <a href="../notes/ten-rules.html">rule 4</a>.</p>
+</section>
+<section id="exercise-12-split-a-numeric-variable-by-a-group-apply" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-12-split-a-numeric-variable-by-a-group-apply">Exercise 12 — Split a numeric variable by a group <code>[Apply]</code></h2>
+<p>Draw boxplots of <code>score</code> split by <code>archetype</code>, in one plot.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(score <span class="sc">~</span> archetype,</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> sessions,</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Score by archetype"</span>,</span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Score"</span>,</span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">col  =</span> <span class="st">"grey85"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="reading-data_files/figure-html/ex12-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The <code>y ~ x</code> notation reads as “score <strong>as explained by</strong> archetype”. You will meet it again in every modelling function R has.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> one archetype has a much larger spread than the others. Which one, and why is “larger spread” a more useful observation here than “lower average”?</p>
+<hr>
+</section>
+</section>
+<section id="challenge-which-cohort-is-the-game-actually-built-for-decide" class="level1">
+<h1>Challenge — Which cohort is the game actually built for? <code>[Decide]</code></h1>
+<p>You have been asked a real question by the design lead: <strong>is Tidebreak too hard for novice players?</strong></p>
+<p>Using only what is on this sheet, produce the evidence you would take into that conversation. There is no single correct answer. There is a defensible one and an indefensible one.</p>
+<div class="callout callout-style-default callout-important callout-titled" title="One defensible answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>One defensible answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. How many people are we talking about?</span></span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sessions<span class="sc">$</span>cohort)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ Novice Regular Veteran 
+     33      53      34 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Centre and spread of score, per cohort</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tapply</span>(sessions<span class="sc">$</span>score, sessions<span class="sc">$</span>cohort, summary)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$Novice
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    773    1099    1281    1253    1393    1627 
+
+$Regular
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    541    1291    1467    1414    1592    1917 
+
+$Veteran
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    579    1592    1664    1622    1829    2019 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Deaths, which is closer to "difficulty" than score is</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tapply</span>(sessions<span class="sc">$</span>deaths, sessions<span class="sc">$</span>cohort, mean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Novice  Regular  Veteran 
+3.242424 3.094340 2.647059 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. And did they leave early?</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sessions<span class="sc">$</span>cohort, sessions<span class="sc">$</span>quit_reason)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         
+          Completed test Frustrated Lost interest Technical fault
+  Novice              23          6             3               1
+  Regular             27         14             8               4
+  Veteran             19          5            10               0</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Show the shape, not just the numbers</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(score <span class="sc">~</span> cohort,</span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> sessions,</span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Score by player cohort"</span>,</span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Score"</span>,</span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">col  =</span> <span class="st">"grey85"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="reading-data_files/figure-html/challenge-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>What the evidence actually shows.</strong></p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Measure</th>
+<th style="text-align: right;">Novice</th>
+<th style="text-align: right;">Regular</th>
+<th style="text-align: right;">Veteran</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mean score</td>
+<td style="text-align: right;">1253</td>
+<td style="text-align: right;">1414</td>
+<td style="text-align: right;">1622</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mean deaths</td>
+<td style="text-align: right;">3.24</td>
+<td style="text-align: right;">3.09</td>
+<td style="text-align: right;">2.65</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Median session length (min)</td>
+<td style="text-align: right;">27.1</td>
+<td style="text-align: right;">24.2</td>
+<td style="text-align: right;">24.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Quit in frustration</td>
+<td style="text-align: right;">18%</td>
+<td style="text-align: right;">26%</td>
+<td style="text-align: right;">15%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Novices do score lower, and that is the finding everyone expects. On its own it looks like a difficulty problem.</p>
+<p>Every other measure contradicts it. Novices die at almost exactly the same rate as everyone else, they play for <em>longer</em> than either other cohort, and they are less likely to quit in frustration than regular players. A game that was too hard for novices would show them dying more and leaving sooner. This one does not.</p>
+<p><strong>So the defensible answer is: no.</strong> The score gap looks like inexperience rather than difficulty — novices are playing the game safely and slowly and scoring less for it. The genuinely odd number on that table is the frustration rate among <em>regular</em> players, which nobody asked about and which is the thing worth chasing next.</p>
+<p><strong>What would make it indefensible.</strong> Comparing three mean scores, announcing that novices are struggling, and recommending a difficulty change. The number is real and the conclusion does not follow from it.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 3–4 sentences</strong>, using <strong>What → Pattern → Meaning → Action</strong>:</p>
+<ul>
+<li><strong>What</strong> did you measure?</li>
+<li><strong>Pattern</strong> — what does the evidence show?</li>
+<li><strong>Meaning</strong> — what might that mean for the design?</li>
+<li><strong>Action</strong> — what is the one change or the one further test you would recommend?</li>
+</ul>
+<hr>
+</section>
+<section id="appendix-mini-dataset-for-part-a" class="level1">
+<h1>Appendix — Mini dataset for Part A</h1>
+<p>If the CSV files are not available, use this in place of <code>sessions</code>.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Show the mini dataset">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Show the mini dataset
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>mini_sessions <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">player_id       =</span> <span class="fu">c</span>(<span class="st">"P01"</span>, <span class="st">"P02"</span>, <span class="st">"P03"</span>, <span class="st">"P04"</span>, <span class="st">"P05"</span>, <span class="st">"P06"</span>, <span class="st">"P07"</span>, <span class="st">"P08"</span>),</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">cohort          =</span> <span class="fu">c</span>(<span class="st">"Novice"</span>, <span class="st">"Veteran"</span>, <span class="st">"Regular"</span>, <span class="st">"Novice"</span>,</span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"Regular"</span>, <span class="st">"Veteran"</span>, <span class="st">"Regular"</span>, <span class="st">"Novice"</span>),</span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">build           =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"A"</span>, <span class="st">"B"</span>),</span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">score           =</span> <span class="fu">c</span>(<span class="dv">1370</span>, <span class="dv">1795</span>, <span class="dv">1690</span>, <span class="dv">1544</span>, <span class="dv">2019</span>, <span class="dv">1614</span>, <span class="dv">1652</span>, <span class="dv">1331</span>),</span>
+<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">kills           =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">7</span>, <span class="dv">12</span>, <span class="dv">7</span>, <span class="dv">6</span>, <span class="dv">7</span>),</span>
+<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">deaths          =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">4</span>, <span class="cn">NA</span>),</span>
+<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">session_minutes =</span> <span class="fu">c</span>(<span class="fl">12.9</span>, <span class="fl">24.6</span>, <span class="fl">12.5</span>, <span class="fl">18.8</span>, <span class="fl">18.7</span>, <span class="fl">29.4</span>, <span class="fl">11.2</span>, <span class="fl">27.0</span>),</span>
+<span id="cb75-10"><a href="#cb75-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">quit_reason     =</span> <span class="fu">c</span>(<span class="st">"Frustrated"</span>, <span class="st">"Lost interest"</span>, <span class="st">"Frustrated"</span>,</span>
+<span id="cb75-11"><a href="#cb75-11" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"Completed test"</span>, <span class="st">"Completed test"</span>, <span class="st">"Completed test"</span>,</span>
+<span id="cb75-12"><a href="#cb75-12" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"Frustrated"</span>, <span class="st">"Technical fault"</span>)</span>
+<span id="cb75-13"><a href="#cb75-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb75-14"><a href="#cb75-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-15"><a href="#cb75-15" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(mini_sessions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="appendix-common-first-week-errors" class="level1">
+<h1>Appendix — Common first-week errors</h1>
+<div class="callout callout-style-default callout-warning callout-titled" title="Show the error guide">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Show the error guide
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Message</th>
+<th style="text-align: left;">What it usually means</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>could not find function "read_csv"</code></td>
+<td style="text-align: left;">You forgot <code>library(readr)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>object 'sessions' not found</code></td>
+<td style="text-align: left;">You have not run the Setup block, or you restarted R</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>object 'Score' not found</code></td>
+<td style="text-align: left;">Wrong capitalisation. R is case-sensitive</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>$ operator is invalid for atomic vectors</code></td>
+<td style="text-align: left;">You used <code>$</code> on a vector instead of a data frame</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>argument "x" is missing, with no default</code></td>
+<td style="text-align: left;">You called a function with no argument, usually a stray <code>()</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>unexpected symbol</code> / <code>unexpected ')'</code></td>
+<td style="text-align: left;">A typo — nearly always a missing comma or an unclosed bracket on the line above</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">The console shows <code>+</code> instead of <code>&gt;</code></td>
+<td style="text-align: left;">R is waiting for you to finish an expression. Press <strong>Esc</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../notes/describing-what-you-have.html" class="pagination-link" aria-label="Describing What You Have">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Describing What You Have</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../reference/r-quarto-reference.html" class="pagination-link" aria-label="R and Quarto Reference">
+        <span class="nav-page-text">R and Quarto Reference</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>COMP I8015 · 3D Game Development · Dundalk Institute of Technology</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
