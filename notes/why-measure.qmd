@@ -1,0 +1,96 @@
+---
+title: "Why Developers Measure Anything"
+subtitle: "And what is actually worth measuring"
+---
+
+Every team makes decisions about their game constantly. Most of those decisions
+are made from memory, taste and the loudest voice in the room, and most of the
+time that is fine — taste is why anyone plays your game rather than a spreadsheet.
+
+Measurement earns its place in the cases where taste reliably fails. There are
+three of them, and they recur in every project.
+
+**You cannot see your own game any more.** You have played your level five hundred
+times. You know where the key is. You cannot un-know it, and no amount of care
+will let you experience your own tutorial as a stranger. This is the single most
+common cause of a game that the team finds obvious and the player finds
+impenetrable.
+
+**You cannot feel a rare event.** A stutter that happens once every two seconds
+occupies less than one per cent of frames. Your average frame rate will not show
+it. Your players will talk about nothing else.
+
+**You cannot remember twenty playtests.** After a session you remember the two
+people who struggled most and the last person you watched. You do not remember the
+distribution, and you will confidently reconstruct one that never existed.
+
+## The Three Sources
+
+Almost everything you will analyse in a game project comes from one of three
+places, and they have very different characters.
+
+**Telemetry** is what the game records about itself while it runs: positions,
+events, deaths, times, item pickups. It is objective, it arrives in enormous
+quantities, and it tells you *what* happened and never *why*. Telemetry is cheap
+to collect and easy to collect badly — a log with no session identifier or no
+timestamp is close to worthless.
+
+**Performance capture** is a special case of telemetry with its own conventions
+and its own failure modes. Frame times, memory, draw calls. It is the one area
+where the standard summary — average frame rate — is actively misleading, which is
+why Section 5 spends its time there.
+
+**Asking people** is surveys, interviews and think-aloud sessions. It is the only
+source that tells you *why*, and the least reliable. People misremember, they are
+polite, they rationalise, and they answer the question they think you meant. A
+survey tells you what a player believes about their experience, which is a real
+and useful thing, but it is not the same as what happened.
+
+**The three disagree, and that is the point.** The most valuable finding in any
+playtest is usually the place where telemetry and opinion contradict each other:
+players say the level is fine and the heat map shows nobody finds the side route;
+players say the game runs smoothly and the frame log shows a hitch every two
+seconds. A team with only one source never finds these.
+
+## Turning a Vague Question into a Measurable One
+
+The question a designer asks is almost never answerable as asked.
+
+| What you are asked | What you can actually measure |
+| :- | :- |
+| "Is the level too hard?" | Deaths per attempt; time to first completion; proportion who never finish; where attempts end |
+| "Does the game feel good?" | Time to first successful interaction; retry rate after failure; rated responsiveness |
+| "Is the tutorial working?" | Proportion who use the taught mechanic later, unprompted |
+| "Do people like the art?" | Rated appeal; which screenshots they choose; where they stop to look |
+
+Notice that each right-hand cell names a **specific number you could write down
+after watching one person play**. That is the test. If you cannot describe how you
+would record it for a single player, you have not finished turning the question
+into a measurement.
+
+Notice also that the right-hand column is often not one measure but several, and
+that they can disagree. This is not a failure of the method. A tutorial that
+everybody completes and nobody learns from is a real and common outcome, and only
+two measures together can find it.
+
+## Deciding in Advance
+
+Before you collect anything, write down what result would change your mind. "If
+more than a third of testers never find the second key, I will add a light cue."
+
+This costs nothing and protects you from the most comfortable mistake in the
+discipline: running the test, getting an ambiguous result, and finding in it
+whatever you already believed. If the threshold is written down beforehand, the
+data gets to answer. If it is not, you will answer and attribute it to the data.
+
+## Reflective Questions
+
+- Pick a mechanic in your own project. Write the designer's question, then three
+  different measures that would bear on it, then say which one you would trust
+  most and why.
+- Name something about your own game that you can no longer judge, because you
+  have played it too often.
+- Your team disagrees about whether a puzzle is too obscure. What number, recorded
+  from a single playtester, would settle it?
+
+---

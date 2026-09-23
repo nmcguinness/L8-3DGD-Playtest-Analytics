@@ -1,0 +1,43 @@
+---
+title: "Ten Rules for Reading Playtest Data"
+subtitle: "The spine of the next three weeks"
+---
+
+> These ten rules are the spine of this module's analytics strand. Each one is
+> unpacked in the notes that follow, and every lab will send you back to at least
+> one of them. When a lab says *"rule 5 again"*, this is the page it means.
+
+---
+
+1. **Decide what would change your mind before you look at the data.**
+   An analysis that cannot come out against you is not an analysis.
+
+2. **A number without a question attached is decoration.**
+   Ask the question first, in words, and in the form a designer would ask it.
+
+3. **Know what kind of number you are holding.**
+   You cannot average a category, and a 1–5 rating is not a measurement.
+
+4. **Look at the shape before you quote the average.**
+   Every summary throws information away; the shape tells you what was thrown.
+
+5. **The mean is the wrong summary more often than you think.**
+   Anything skewed — completion times, session lengths, frame times — belongs to
+   the median.
+
+6. **Cleaning is analysis.**
+   Every row you drop is a decision with a consequence, and you must be able to
+   say what it was.
+
+7. **Compare distributions, not averages.**
+   Two groups with the same mean can be completely different games.
+
+8. **Small samples lie confidently.**
+   Report how many people you measured, every time, in the same breath as the
+   result.
+
+9. **Sometimes the rare value is the whole story.**
+   Averages hide stutter, crashes, and the one puzzle where everybody quits.
+
+10. **A finding that does not name an action is not finished.**
+    What → Pattern → Meaning → Action.

@@ -1,0 +1,139 @@
+---
+title: "Describing What You Have"
+subtitle: "Variable types, tidy data, centre, spread and shape"
+---
+
+Before comparing anything to anything, you have to be able to say what a single
+variable looks like. This section is the vocabulary for that, and it is the part
+students most often skip and most often get caught by.
+
+## What Kind of Number Is This?
+
+Four types, and the type decides which operations are legal.
+
+**Nominal** — labels with no order. Character class, platform, quit reason. You
+can count them. You cannot average them. The mean of `Scout` and `Sentinel` does
+not exist, and if your code produces one, something has gone wrong upstream.
+
+**Ordinal** — ordered labels with unknown gaps. Difficulty setting, player
+experience level, and every agreement scale ever printed. Novice, Regular and
+Veteran are in an order, but Regular is not "halfway" between the other two in any
+meaningful sense.
+
+**Discrete** — counts. Deaths, kills, items collected. Whole numbers, and there is
+no such thing as 2.4 deaths in a single session — though the *average* number of
+deaths across many sessions is perfectly meaningful at 2.4.
+
+**Continuous** — measurements. Completion time, frame time, distance travelled.
+Any value in a range, limited only by the precision of your instrument.
+
+**The awkward case is the rating scale**, and it is awkward every time. A 1–5
+agreement scale is strictly **ordinal**: you know Agree is above Neutral, but you
+do not know that the step from Disagree to Neutral is the same size as the step
+from Agree to Strongly Agree. In practice, when a scale has five or more points
+and the responses are reasonably spread, people treat it as numeric and average
+it. That convention is defensible and universal, and you should still know you are
+making an assumption. Where it matters — where the whole finding rests on a mean
+of 3.2 against 3.4 — report the distribution instead.
+
+## Tidy Data: One Row Per Observation
+
+Data arrives in whatever shape the tool that produced it happened to use. Almost
+all analysis assumes one particular shape, and it is worth naming.
+
+A table is **tidy** when each row is one observation, each column is one variable,
+and each cell is one value. For a playtest: one row per player per session, one
+column per thing you recorded.
+
+The most common violation is a survey export, where the eight questions become
+eight columns. That is convenient to read and inconvenient to analyse, because
+"question" is really a variable and its eight values have been spread across the
+column headings. Reshaping it into one row per player *per question* is what makes
+the whole survey analysable in one operation, and you will do exactly that in
+Lab 03.
+
+## Centre
+
+Two summaries of "the typical value", and choosing between them is a real
+decision, not a formality.
+
+The **mean** adds everything and divides by the count. It uses every value, which
+is its strength, and it is dragged by extremes, which is its weakness.
+
+The **median** is the middle value when sorted. Half above, half below. It ignores
+how extreme the extremes are, which is its strength and its weakness.
+
+**When they disagree, the data is skewed, and the gap tells you which way.** If
+the mean sits well above the median, a few large values are pulling it up: a long
+right tail. If it sits below, a group of small values is pulling it down.
+
+For game data this is not an edge case, it is the norm. Completion times, session
+lengths and frame times are all skewed almost by construction — there is a floor
+on how fast anyone can finish and no ceiling on how slow. **Default to the median
+for anything time-like** and reach for the mean only when you have looked at the
+shape and satisfied yourself it is roughly symmetric.
+
+When you compare the two, compare them relative to the size of the variable. A gap
+of 40 points on a score in the thousands is nothing; a gap of 3 minutes on a median
+of 26 is a real skew.
+
+## Spread
+
+The centre alone is nearly useless. Two levels with identical average completion
+times, one where everybody takes four minutes and one where half take one minute
+and half take seven, are not the same level.
+
+**Range** is minimum to maximum. Easy to quote and almost always misleading, since
+a single unusual value defines it entirely.
+
+**Standard deviation** is the typical distance from the mean. It is the right
+measure for roughly symmetric data and it inherits the mean's sensitivity to
+extremes.
+
+**Quartiles** split the sorted data into four. The first quartile has a quarter
+below it, the third has three quarters. The **interquartile range** — the distance
+between them — is the width of the middle half of your players, and it is the most
+robust description of spread you have. For skewed game data, quote the median and
+the IQR together.
+
+**Percentiles** generalise this: the 95th percentile has 95% of values below it.
+Sections 5 will show you why the 99th percentile of frame time is the single most
+important number in a performance capture.
+
+## Look at the Shape First
+
+Every summary statistic throws information away. That is what a summary is for.
+The risk is that it throws away the finding.
+
+A **histogram** shows you the whole distribution: where the bulk sits, whether it
+is symmetric, whether there is a second hump, whether there are outliers. Draw one
+before quoting any average. It costs one line.
+
+The number of bins changes what you see, sometimes dramatically. Too few and a
+second hump disappears; too many and noise looks like structure. Try several. That
+a chart changes with its settings is not a flaw to hide — it is the first evidence
+that a chart is an argument rather than a fact, and you are responsible for the
+argument you make.
+
+A **boxplot** compresses the same information into median, quartiles and outliers.
+It is less informative than a histogram for one variable and much better for
+comparing several groups side by side, which is what Section 4 is about.
+
+**Two humps are always worth chasing.** A distribution with two peaks usually means
+two populations have been mixed: players who found the key and players who did
+not, sessions that completed and sessions that crashed. The average of a bimodal
+distribution describes nobody at all — it names a value that sits in the valley
+between the two groups, where the fewest players actually are.
+
+## Reflective Questions
+
+- Take a variable from your own project's telemetry. Which of the four types is
+  it, and what would break if you treated it as the type next door?
+- Why is the median usually the right summary for completion time, but not for
+  something like accuracy percentage?
+- You draw a histogram of level completion times and see two clear humps. List
+  three things that could have caused that, and say how you would tell them apart.
+- A teammate reports "average session length is 22 minutes". What two further
+  numbers would you ask for before letting that into a report?
+
+---

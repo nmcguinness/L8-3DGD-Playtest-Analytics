@@ -1,0 +1,10 @@
+block,xmin,xmax,ymin,ymax,kind
+north_wall,0,60,39,40,wall
+south_wall,0,60,0,1,wall
+west_wall,0,1,0,40,wall
+east_wall,59,60,0,40,wall
+core,24,36,14,26,cover
+west_block,8,16,22,32,cover
+south_block,18,26,4,10,cover
+east_block,44,52,8,18,cover
+gantry,46,58,28,38,elevated

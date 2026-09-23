@@ -1,0 +1,532 @@
+---
+title: "Lab 01 — Reading Data"
+subtitle: "Vectors, types, missing values, data frames, and describing one variable"
+---
+
+# Overview
+
+This lab is your first contact with R. You are not expected to have written a line
+of it before today.
+
+The work is deliberately unglamorous. Before you can find anything interesting in
+a playtest you have to be able to **load the data, look at it, and describe it**
+without making a fool of yourself. That is what this sheet trains.
+
+Everything here uses **base R** — the functions that ship with the language. You
+will meet the tidyverse in Lab 02. Learning base R first means you will understand
+what the tidyverse is doing for you rather than treating it as magic.
+
+| Function | What it does |
+| :- | :- |
+| `c()` | Builds a vector from individual values |
+| `length()`, `class()` | How many, and what type |
+| `read_csv()` | Reads a CSV file into a data frame |
+| `str()`, `head()`, `nrow()`, `names()` | Look at a data frame without printing all of it |
+| `$`, `[ , ]` | Pull out a column, or a slice of rows and columns |
+| `mean()`, `median()`, `sd()`, `range()` | Describe a numeric variable |
+| `quantile()`, `IQR()` | Describe the spread and the tails |
+| `table()` | Count a categorical variable |
+| `hist()`, `boxplot()` | See the shape of a variable |
+
+# Learning outcomes
+
+By the end of this lab you can:
+
+- create and index vectors, and explain what `NA` does to a calculation
+- load a CSV into a data frame and inspect it without printing 120 rows
+- classify any column as **nominal**, **ordinal**, **discrete** or **continuous**
+- describe a numeric variable with an appropriate measure of centre and spread
+- state, in one sentence, when the mean is the wrong summary and why
+
+# Ground rules
+
+- Keep the CSV files in the `data/` folder of the project.
+- Type the code. Do not copy and paste from the solutions until you have tried.
+- Open the solution **after** your attempt, even when your attempt worked. The
+  solution sometimes does it a better way.
+- Every exercise ends with a short written answer. Write it. The writing is the
+  part that gets assessed later, not the code.
+- If a line of code fails, read the error before doing anything else. Most R
+  errors name the exact problem.
+
+# Setup (run this first)
+
+```{r}
+#| label: setup
+# readr gives us read_csv(), which is better behaved than base R's read.csv()
+library(readr)
+
+csv_file <- "data/tidebreak_sessions.csv"
+
+if (!file.exists(csv_file))
+  stop("CSV not found: ", csv_file,
+       "\nCheck that the file sits in the data/ folder of the project.")
+
+sessions <- read_csv(csv_file, show_col_types = FALSE)
+
+nrow(sessions)
+```
+
+---
+
+# Part A — Values, vectors and missing data
+
+## Exercise 01 — Build a vector and look at it `[Do]`
+
+Create a vector called `deaths` holding the death counts from six playtest
+sessions: 4, 2, 7, 3, 0, 5.
+
+Report how many values it holds and what type R thinks it is.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex01
+deaths <- c(4, 2, 7, 3, 0, 5)
+
+deaths
+length(deaths)
+class(deaths)
+```
+
+R stores plain numbers as doubles unless you force an integer with `4L`.
+:::
+
+**Write 1 sentence:** why does a vector have to hold values of a single type?
+
+## Exercise 02 — Pull values out by position `[Do]`
+
+Using `deaths` from Exercise 01, extract the first value, the third and fifth
+values, and everything except the first value.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex02
+deaths[1]
+deaths[c(3, 5)]
+deaths[-1]
+```
+
+Square brackets take a position, a vector of positions, or a negative position
+meaning "all except this".
+:::
+
+**Write 1 sentence:** R counts from 1, not 0. If you have written C# or C++, what
+is the one mistake this will cause you?
+
+## Exercise 03 — A missing value poisons the arithmetic `[Do]`
+
+A seventh tester's death count was not recorded. Add `NA` to the end of `deaths`
+and take the mean. Then take it again so that the result is a number.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex03
+deaths <- c(deaths, NA)
+
+mean(deaths)
+mean(deaths, na.rm = TRUE)
+```
+
+`NA` is not zero and it is not "empty". It means *unknown*, and the mean of a set
+containing an unknown value is itself unknown. R tells you that rather than
+quietly guessing.
+:::
+
+**Write 2 sentences:** `na.rm = TRUE` makes the error message go away. Explain why
+that is not the same thing as fixing the problem.
+
+## Exercise 04 — Filter a vector with a condition `[Apply]`
+
+Using the seven-value `deaths` vector, produce a TRUE/FALSE vector showing which
+sessions had more than 3 deaths, use it to extract those death counts, then count
+how many sessions that is.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex04
+deaths > 3
+deaths[deaths > 3]
+sum(deaths > 3, na.rm = TRUE)
+```
+
+Two things worth noticing. `deaths[deaths > 3]` keeps the `NA`, because R does not
+know whether the unknown value is above 3 or not. And `sum()` on a TRUE/FALSE
+vector counts the TRUEs, because TRUE is 1 and FALSE is 0.
+:::
+
+**Write 1–2 sentences:** why is `sum(x > 3)` a count rather than a total?
+
+## Exercise 05 — Build a small table of related vectors `[Apply]`
+
+Create two more vectors the same length as `deaths` — `player` (P01 to P07) and
+`build` (alternating `"A"` and `"B"`, starting with A). Combine all three into a
+data frame called `mini`, then show its structure and first three rows.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex05
+player <- c("P01", "P02", "P03", "P04", "P05", "P06", "P07")
+build  <- rep(c("A", "B"), length.out = 7)
+
+mini <- data.frame(player, build, deaths)
+
+str(mini)
+head(mini, 3)
+```
+
+`rep()` with `length.out` repeats a pattern until it reaches the length you asked
+for — useful for generating alternating conditions.
+:::
+
+**Write 1 sentence:** what does a data frame give you that three separate vectors
+do not?
+
+---
+
+# Part B — Loading and describing real data
+
+From here on you are working with `sessions`, loaded in the Setup block: 120 real
+playtest sessions from the *Tidebreak* arena.
+
+## Exercise 06 — Look at a data frame without drowning in it `[Do]`
+
+Answer these without printing the whole table: how many rows and columns, what the
+column names are, and what the first four rows look like.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex06
+dim(sessions)
+names(sessions)
+head(sessions, 4)
+```
+
+`str(sessions)` gives you dimensions, names and types all at once, and is usually
+the first thing to run on unfamiliar data.
+:::
+
+**Write 1 sentence:** why is printing a whole data frame a bad habit, even when it
+is small?
+
+## Exercise 07 — Get at a single column `[Do]`
+
+Extract the `score` column three different ways: with `$`, with `[[ ]]`, and with
+`[ , ]`. Confirm all three give the same thing.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex07
+by_dollar  <- sessions$score
+by_bracket <- sessions[["score"]]
+by_comma   <- sessions[, "score", drop = TRUE]
+
+identical(by_dollar, by_bracket)
+identical(by_dollar, by_comma)
+```
+
+`drop = TRUE` matters: without it, `[ , ]` on a tibble hands you back a one-column
+table rather than a plain vector, and the identical check fails.
+
+Note the variable names. Never call a variable `c` — you would be shadowing `c()`,
+the function you used to build every vector in Part A.
+:::
+
+**Write 1 sentence:** which of the three would you use in a script another person
+has to read, and why?
+
+## Exercise 08 — Classify every column `[Apply]`
+
+For each of these columns, state whether it is **nominal**, **ordinal**,
+**discrete** or **continuous**: `cohort`, `archetype`, `build`, `score`, `kills`,
+`deaths`, `session_minutes`, `quit_reason`.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+| Column | Type | Why |
+| :- | :- | :- |
+| `cohort` | Ordinal | Novice → Regular → Veteran has a real order |
+| `archetype` | Nominal | Scout is not more or less than Sentinel |
+| `build` | Nominal | Two labels, no order |
+| `score` | Discrete | Whole points, though large enough to treat as continuous |
+| `kills` | Discrete | A count |
+| `deaths` | Discrete | A count |
+| `session_minutes` | Continuous | Measured time, one decimal place |
+| `quit_reason` | Nominal | Four labels, no order |
+
+The interesting one is `cohort`. R has loaded it as `chr` — plain text — and will
+sort it alphabetically as Novice, Regular, Veteran, which happens to be the right
+order by accident. Never rely on that.
+:::
+
+**Write 2 sentences:** pick one column above and explain what would go wrong if you
+treated it as the wrong type.
+
+## Exercise 09 — Count the categorical columns `[Do]`
+
+Produce counts for `cohort`, `archetype` and `quit_reason`. Then produce a
+cross-tabulation of `build` against `quit_reason`.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex09
+table(sessions$cohort)
+table(sessions$archetype)
+table(sessions$quit_reason)
+
+table(sessions$build, sessions$quit_reason)
+```
+
+The cross-tabulation is the one that earns its keep.
+:::
+
+**Write 2 sentences:** look at the cross-tabulation. What is the single most
+noticeable difference between the two builds, and what would you want to check
+next?
+
+## Exercise 10 — Describe a numeric variable properly `[Apply]`
+
+For `score` and for `session_minutes`, compute the mean, median, standard
+deviation, range, quartiles and IQR.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex10
+mean(sessions$score)
+median(sessions$score)
+sd(sessions$score)
+range(sessions$score)
+quantile(sessions$score)
+IQR(sessions$score)
+
+summary(sessions$session_minutes)
+IQR(sessions$session_minutes)
+```
+
+`summary()` gives minimum, quartiles, median, mean and maximum in one call, which
+is usually where to start. `quantile()` is there for when you need a specific
+percentile rather than the standard five.
+:::
+
+**Write 2 sentences:** express the gap between mean and median as a percentage of
+the median, for both variables. Which one is more skewed, and does its tail run
+left or right?
+
+::: {.callout-note collapse="true" title="Check your answer"}
+
+```{r}
+#| label: ex10-check
+#| echo: false
+gap <- function(x) 100 * (mean(x) - median(x)) / median(x)
+g_score <- gap(sessions$score)
+g_mins  <- gap(sessions$session_minutes)
+```
+
+Score sits `r sprintf("%.1f%%", abs(g_score))` below its median. Session minutes
+sits `r sprintf("%.1f%%", abs(g_mins))` below. Both are **left-skewed** — the mean
+falls below the median because a group of short sessions drags it down — but
+session minutes is far more so.
+
+Comparing the raw gaps (`r round(mean(sessions$score) - median(sessions$score))`
+points against `r round(mean(sessions$session_minutes) - median(sessions$session_minutes), 1)`
+minutes) would have told you the opposite, which is why the scale of the variable
+always has to come into it.
+:::
+
+## Exercise 11 — See the shape `[Apply]`
+
+Draw a histogram of `score` and a boxplot of `session_minutes`. Give both a title
+and a sensible axis label.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex11
+hist(sessions$score,
+     breaks = 20,
+     main   = "Distribution of session score",
+     xlab   = "Score",
+     col    = "grey85",
+     border = "white")
+```
+
+```{r}
+#| label: ex11b
+boxplot(sessions$session_minutes,
+        main       = "How long testers played",
+        ylab       = "Minutes",
+        horizontal = TRUE,
+        col        = "grey85")
+```
+
+:::
+
+**Write 2 sentences:** set `breaks = 5` and then `breaks = 40`, and describe what
+happens to the story the histogram tells. See [rule 4](../notes/ten-rules.qmd).
+
+## Exercise 12 — Split a numeric variable by a group `[Apply]`
+
+Draw boxplots of `score` split by `archetype`, in one plot.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex12
+boxplot(score ~ archetype,
+        data = sessions,
+        main = "Score by archetype",
+        ylab = "Score",
+        col  = "grey85")
+```
+
+The `y ~ x` notation reads as "score **as explained by** archetype". You will meet
+it again in every modelling function R has.
+:::
+
+**Write 2 sentences:** one archetype has a much larger spread than the others.
+Which one, and why is "larger spread" a more useful observation here than "lower
+average"?
+
+---
+
+# Challenge — Which cohort is the game actually built for? `[Decide]`
+
+You have been asked a real question by the design lead: **is Tidebreak too hard
+for novice players?**
+
+Using only what is on this sheet, produce the evidence you would take into that
+conversation. There is no single correct answer. There is a defensible one and an
+indefensible one.
+
+::: {.callout-important collapse="true" title="One defensible answer"}
+
+```{r}
+#| label: challenge
+# 1. How many people are we talking about?
+table(sessions$cohort)
+
+# 2. Centre and spread of score, per cohort
+tapply(sessions$score, sessions$cohort, summary)
+
+# 3. Deaths, which is closer to "difficulty" than score is
+tapply(sessions$deaths, sessions$cohort, mean)
+
+# 4. And did they leave early?
+table(sessions$cohort, sessions$quit_reason)
+
+# 5. Show the shape, not just the numbers
+boxplot(score ~ cohort,
+        data = sessions,
+        main = "Score by player cohort",
+        ylab = "Score",
+        col  = "grey85")
+```
+
+**What the evidence actually shows.**
+
+```{r}
+#| label: challenge-table
+#| echo: false
+cohorts <- c("Novice", "Regular", "Veteran")
+frustrated <- tapply(sessions$quit_reason == "Frustrated", sessions$cohort, mean)
+
+knitr::kable(
+  data.frame(
+    Measure = c("Mean score", "Mean deaths",
+                "Median session length (min)", "Quit in frustration"),
+    Novice  = c(round(tapply(sessions$score, sessions$cohort, mean)[["Novice"]]),
+                round(tapply(sessions$deaths, sessions$cohort, mean)[["Novice"]], 2),
+                round(tapply(sessions$session_minutes, sessions$cohort, median)[["Novice"]], 1),
+                sprintf("%.0f%%", 100 * frustrated[["Novice"]])),
+    Regular = c(round(tapply(sessions$score, sessions$cohort, mean)[["Regular"]]),
+                round(tapply(sessions$deaths, sessions$cohort, mean)[["Regular"]], 2),
+                round(tapply(sessions$session_minutes, sessions$cohort, median)[["Regular"]], 1),
+                sprintf("%.0f%%", 100 * frustrated[["Regular"]])),
+    Veteran = c(round(tapply(sessions$score, sessions$cohort, mean)[["Veteran"]]),
+                round(tapply(sessions$deaths, sessions$cohort, mean)[["Veteran"]], 2),
+                round(tapply(sessions$session_minutes, sessions$cohort, median)[["Veteran"]], 1),
+                sprintf("%.0f%%", 100 * frustrated[["Veteran"]]))
+  ),
+  align = c("l", "r", "r", "r")
+)
+```
+
+Novices do score lower, and that is the finding everyone expects. On its own it
+looks like a difficulty problem.
+
+Every other measure contradicts it. Novices die at almost exactly the same rate as
+everyone else, they play for *longer* than either other cohort, and they are less
+likely to quit in frustration than regular players. A game that was too hard for
+novices would show them dying more and leaving sooner. This one does not.
+
+**So the defensible answer is: no.** The score gap looks like inexperience rather
+than difficulty — novices are playing the game safely and slowly and scoring less
+for it. The genuinely odd number on that table is the frustration rate among
+*regular* players, which nobody asked about and which is the thing worth chasing
+next.
+
+**What would make it indefensible.** Comparing three mean scores, announcing that
+novices are struggling, and recommending a difficulty change. The number is real
+and the conclusion does not follow from it.
+:::
+
+**Write 3–4 sentences**, using **What → Pattern → Meaning → Action**:
+
+- **What** did you measure?
+- **Pattern** — what does the evidence show?
+- **Meaning** — what might that mean for the design?
+- **Action** — what is the one change or the one further test you would recommend?
+
+---
+
+# Appendix — Mini dataset for Part A
+
+If the CSV files are not available, use this in place of `sessions`.
+
+::: {.callout-note collapse="true" title="Show the mini dataset"}
+
+```{r}
+#| label: appendix-mini
+#| eval: false
+mini_sessions <- data.frame(
+  player_id       = c("P01", "P02", "P03", "P04", "P05", "P06", "P07", "P08"),
+  cohort          = c("Novice", "Veteran", "Regular", "Novice",
+                      "Regular", "Veteran", "Regular", "Novice"),
+  build           = c("A", "B", "A", "B", "A", "B", "A", "B"),
+  score           = c(1370, 1795, 1690, 1544, 2019, 1614, 1652, 1331),
+  kills           = c(7, 5, 5, 7, 12, 7, 6, 7),
+  deaths          = c(4, 2, 2, 4, 3, 5, 4, NA),
+  session_minutes = c(12.9, 24.6, 12.5, 18.8, 18.7, 29.4, 11.2, 27.0),
+  quit_reason     = c("Frustrated", "Lost interest", "Frustrated",
+                      "Completed test", "Completed test", "Completed test",
+                      "Frustrated", "Technical fault")
+)
+
+str(mini_sessions)
+```
+
+:::
+
+# Appendix — Common first-week errors
+
+::: {.callout-warning collapse="true" title="Show the error guide"}
+
+| Message | What it usually means |
+| :- | :- |
+| `could not find function "read_csv"` | You forgot `library(readr)` |
+| `object 'sessions' not found` | You have not run the Setup block, or you restarted R |
+| `object 'Score' not found` | Wrong capitalisation. R is case-sensitive |
+| `$ operator is invalid for atomic vectors` | You used `$` on a vector instead of a data frame |
+| `argument "x" is missing, with no default` | You called a function with no argument, usually a stray `()` |
+| `unexpected symbol` / `unexpected ')'` | A typo — nearly always a missing comma or an unclosed bracket on the line above |
+| The console shows `+` instead of `>` | R is waiting for you to finish an expression. Press **Esc** |
+
+:::

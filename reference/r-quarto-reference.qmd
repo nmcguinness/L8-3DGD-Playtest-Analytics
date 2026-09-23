@@ -1,0 +1,87 @@
+---
+title: "R and Quarto Reference"
+subtitle: "One page to keep open while you work"
+---
+
+> A lookup sheet, not a tutorial. Everything here appears in the labs; this page
+> exists so you are not scrolling back through three weeks of notes to remember an
+> argument name.
+
+---
+
+## Getting data in
+
+| Task | Code |
+| :- | :- |
+| Load a package | `library(readr)` |
+| Read a CSV | `d <- read_csv("data/file.csv", show_col_types = FALSE)` |
+| Check it loaded | `nrow(d)`, `dim(d)`, `names(d)` |
+| Look at structure and types | `str(d)` |
+| First / last rows | `head(d, 5)`, `tail(d, 5)` |
+
+## Getting at parts of a data frame
+
+| Task | Code |
+| :- | :- |
+| One column as a vector | `d$score` or `d[["score"]]` |
+| Several columns | `d[, c("score", "deaths")]` |
+| Rows meeting a condition | `d[d$score > 1500, ]` |
+| Rows and columns at once | `d[d$build == "A", c("score", "deaths")]` |
+
+## Describing one variable
+
+| Task | Code |
+| :- | :- |
+| Everything at once | `summary(x)` |
+| Centre | `mean(x)`, `median(x)` |
+| Spread | `sd(x)`, `range(x)`, `IQR(x)` |
+| Quartiles | `quantile(x)` |
+| A specific percentile | `quantile(x, 0.99)` |
+| Count a category | `table(d$cohort)` |
+| Cross-tabulate two | `table(d$build, d$quit_reason)` |
+| Ignore missing values | add `na.rm = TRUE` |
+
+## Describing by group
+
+| Task | Code |
+| :- | :- |
+| One summary per group | `tapply(d$score, d$cohort, median)` |
+| Several columns at once | `aggregate(score ~ cohort, data = d, FUN = median)` |
+
+## Plots
+
+| Task | Code |
+| :- | :- |
+| Distribution of one variable | `hist(x, breaks = 20)` |
+| Compare groups | `boxplot(score ~ cohort, data = d)` |
+| Two variables against each other | `plot(d$mobility, d$distance_m)` |
+| A series over time | `plot(x, y, type = "l")` |
+| A reference line | `abline(h = 16.7, lty = 2)` |
+| Counts as bars | `barplot(table(d$quit_reason))` |
+
+Useful arguments for all of them: `main =` (title), `xlab =` / `ylab =` (axis
+labels), `col =` (fill colour).
+
+## Quarto
+
+| Task | Code |
+| :- | :- |
+| Start a code chunk | ```` ```{r} ```` |
+| Hide the code, keep the output | `#| echo: false` |
+| Show the code, skip running it | `#| eval: false` |
+| Name a chunk | `#| label: my-chunk` |
+| Set figure size | `#| fig-width: 7` |
+| A number inside a sentence | `` `r round(mean(d$score))` `` |
+| Render | `quarto render report.qmd` |
+
+## Errors you will meet
+
+| Message | What it means |
+| :- | :- |
+| `could not find function "..."` | Missing `library()` call, or a typo in the name |
+| `object '...' not found` | The variable does not exist yet, or R was restarted |
+| `$ operator is invalid for atomic vectors` | You used `$` on a vector, not a data frame |
+| `undefined columns selected` | A column name is misspelled or wrongly capitalised |
+| `argument "x" is missing, with no default` | A function was called with no argument |
+| Console shows `+` not `>` | R is waiting for you to close a bracket or quote. Press **Esc** |
+| `NA` where you expected a number | Missing values. Decide what to do about them, then use `na.rm = TRUE` |

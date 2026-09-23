@@ -1,0 +1,664 @@
+---
+title: "Eight Views of a Playtest"
+subtitle: "What you will be able to build by the end of these notes"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 2
+    code-fold: true
+    code-summary: "Show the code"
+    fig-width: 8
+    fig-height: 5
+    embed-resources: true
+execute:
+  warning: false
+  message: false
+---
+
+## Ten questions you will be able to answer
+
+These are the questions that come up in the week after a playtest. None of them is
+exotic. All of them are painful to answer with a spreadsheet, and each one is
+answered below by a single figure and a few dozen lines of R.
+
+| The question you are actually asking | Answered by |
+| :- | :- |
+| I have 120 rows of results and no idea what is in them. Where do I start? | [View 1](#view-1-the-table-you-can-actually-read) |
+| All four characters average about the same score. Does that mean they are balanced? | [View 2](#view-2-distributions-not-averages) |
+| I designed four classes to play differently. Did they stay different once real people played them? | [View 3](#view-3-six-numbers-as-a-shape) |
+| I want players to score higher. Which ability is actually worth buffing? | [View 4](#view-4-what-actually-drives-score) |
+| Testers keep giving up partway through. When do I lose them, and is it the same moment every time? | [View 5](#view-5-when-people-stop-playing) |
+| The survey came back with 960 ratings across eight questions. Which complaint do I fix first? | [View 6](#view-6-what-players-said-ranked-by-how-badly-it-went) |
+| My frame-rate counter says 60 FPS. My testers say the game stutters. Who is lying? | [View 7](#view-7-the-frame-rate-counter-is-lying-to-you) |
+| How can I find where players are loitering, sniping, or being funnelled into a kill zone? | [View 8](#view-8-where-players-actually-stand) |
+| Which parts of my level is nobody using? | [View 8](#view-8-where-players-actually-stand) |
+| How did one particular player move through the level — did they learn the route, or wander? | [View 8b](#following-one-player) |
+
+Every one of these is a question about **your own game**, asked of data your own
+engine can already record. The only thing missing is the ability to read it.
+
+## Before you read any code
+
+This document is a **showcase**, not a lesson. Nothing here is examinable and you
+are not expected to understand the code yet. Its only job is to show you what six
+hours of R can do to a pile of raw playtest numbers.
+
+Every figure below was produced from four CSV files, in between eleven and fifty-five
+lines of code. By the end of these notes you will be able to produce all of them.
+
+::: {.callout-note}
+## The data
+*Tidebreak* is a fictional four-player top-down arena, used here so that the
+example is self-contained. The playtest recorded four things:
+
+| File | One row per | Holds |
+| :- | :- | :- |
+| `tidebreak_sessions.csv` | player, per session | Six end-of-match ability ratings, eleven match statistics, session length and quit reason, for 120 sessions |
+| `tidebreak_survey.csv` | player, per session | Eight agreement items rated 1 to 5 |
+| `tidebreak_frame_times.csv` | rendered frame | Frame time in milliseconds, by build and level zone |
+| `tidebreak_positions.csv` | player, per second | Top-down position for eight players across one 180-second match |
+
+All four are synthetic, but they behave like the real thing: the numbers are
+messy, the interesting findings are not the obvious ones, and at least two widely
+held assumptions about the game turn out to be wrong.
+:::
+
+```{r setup}
+library(tidyverse)
+library(plotly)
+library(DT)
+
+sessions    <- read_csv("data/tidebreak_sessions.csv")
+survey      <- read_csv("data/tidebreak_survey.csv")
+frame_times <- read_csv("data/tidebreak_frame_times.csv")
+positions   <- read_csv("data/tidebreak_positions.csv")
+level       <- read_csv("data/tidebreak_level.csv")
+
+# A small, fixed palette used by every figure in this document.
+pal <- c(blue = "#2a78d6", orange = "#eb6834", aqua = "#1baf7a", yellow = "#eda100")
+ink <- c(primary = "#0b0b0b", secondary = "#52514e", grid = "#e6e5e1")
+
+# Each archetype keeps the same colour in every figure, so that a colour always
+# means the same thing no matter which chart you are looking at.
+arch_pal <- c(Scout = pal[["blue"]],  Sentinel = pal[["orange"]],
+              Engineer = pal[["aqua"]], Duelist = pal[["yellow"]])
+
+# Likewise for the two builds, which appear in Views 5 and 7.
+build_pal <- c(A = pal[["orange"]], B = pal[["blue"]])
+
+theme_tb <- function() {
+  theme_minimal(base_size = 12) +
+    theme(
+      plot.title      = element_text(face = "bold", colour = ink["primary"], size = 13),
+      plot.subtitle   = element_text(colour = ink["secondary"], size = 11),
+      axis.title      = element_text(colour = ink["secondary"], size = 10),
+      axis.text       = element_text(colour = ink["secondary"]),
+      panel.grid.minor = element_blank(),
+      panel.grid.major = element_line(colour = ink["grid"], linewidth = 0.3),
+      legend.position = "none"
+    )
+}
+```
+
+## View 1 — The table you can actually read
+
+**Question: what happened in each session?**
+
+Before you analyse anything you need to be able to look at your data. A raw CSV in
+Excel is awkward at 120 rows and unusable at 120,000. A rendered table is
+searchable and sortable, and it goes straight into a report.
+
+Sort by **Score**, or type `Sentinel` into the search box, and you will already
+see the finding that View 2 makes formal.
+
+```{r view-1}
+sessions %>%
+  select(Session = session_id, Player = player_id, Cohort = cohort,
+         Archetype = archetype, Build = build, Score = score,
+         Kills = kills, Deaths = deaths, `Alive (s)` = time_alive_s,
+         Awareness = awareness) %>%
+  datatable(
+    rownames = FALSE,
+    options  = list(pageLength = 8, dom = "ftip", scrollX = TRUE),
+    caption  = "Tidebreak playtest: 120 sessions"
+  ) %>%
+  formatStyle("Score",
+    background = styleColorBar(range(sessions$score), "#cde2fb"),
+    backgroundSize = "98% 60%", backgroundRepeat = "no-repeat",
+    backgroundPosition = "center")
+```
+
+## View 2 — Distributions, not averages
+
+**Question: which archetype performs best?**
+
+The tempting answer is to compare four average scores. Do that here and the
+archetypes look almost identical, which would be a design decision made on a
+misreading.
+
+A violin plot draws the whole distribution. Read the **Sentinel** shape: it is not
+one hump but two. Sentinel runs either anchor the objective and score well, or
+collapse in the opening seconds and score badly. There is almost no middle. That
+is a balance problem an average would have hidden completely.
+
+```{r view-2}
+sessions %>%
+  mutate(archetype = fct_reorder(archetype, score, .fun = median)) %>%
+  ggplot(aes(archetype, score, fill = archetype)) +
+  geom_violin(colour = NA, alpha = 0.85, width = 0.9) +
+  geom_boxplot(width = 0.12, fill = "white", colour = ink[["secondary"]],
+               outlier.shape = NA, linewidth = 0.4) +
+  scale_fill_manual(values = arch_pal) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(
+    title    = "Sentinel is bimodal: it either anchors the round or dies in it",
+    subtitle = "Score distribution by archetype, 30 sessions each. Box shows median and interquartile range.",
+    x = NULL, y = "Score"
+  ) +
+  theme_tb()
+```
+
+## View 3 — Six numbers as a shape
+
+**Question: are the four archetypes actually playing differently?**
+
+Each session ends with six ability ratings on a 0–100 scale. Comparing four
+archetypes across six measures means twenty-four numbers, which no one can hold in
+their head. Drawn as a radar, each archetype becomes a shape you can recognise at a
+glance, and the grey outline behind each one is the all-player average for
+reference.
+
+The shapes are distinct and they are roughly the shapes the design intended. That
+is the result you want from this chart: confirmation that the archetypes are not
+quietly converging on the same playstyle.
+
+```{r view-3, fig.width=9, fig.height=3.4}
+metrics <- c("accuracy", "mobility", "survivability",
+             "objective_control", "support", "awareness")
+
+pretty <- c(accuracy = "Accuracy", mobility = "Mobility",
+            survivability = "Survival", objective_control = "Objective",
+            support = "Support", awareness = "Awareness")
+
+long <- sessions %>%
+  select(archetype, all_of(metrics)) %>%
+  pivot_longer(-archetype, names_to = "metric", values_to = "value") %>%
+  mutate(metric = factor(pretty[metric], levels = unname(pretty)))
+
+by_arch <- long %>% group_by(archetype, metric) %>% summarise(value = mean(value))
+overall <- long %>% group_by(metric) %>% summarise(value = mean(value))
+
+ggplot() +
+  geom_polygon(data = overall, aes(metric, value, group = 1),
+               fill = NA, colour = ink[["grid"]], linewidth = 0.8) +
+  geom_polygon(data = by_arch,
+               aes(metric, value, group = archetype, fill = archetype, colour = archetype),
+               alpha = 0.35, linewidth = 0.9) +
+  geom_point(data = by_arch, aes(metric, value, colour = archetype), size = 1.8) +
+  coord_polar(clip = "off") +
+  facet_wrap(~archetype, nrow = 1) +
+  scale_fill_manual(values = arch_pal) +
+  scale_colour_manual(values = arch_pal) +
+  scale_y_continuous(limits = c(0, 100), breaks = c(25, 50, 75)) +
+  labs(
+    title    = "Four archetypes, four distinct ability profiles",
+    subtitle = "Mean end-of-match rating per ability. Grey outline is the all-player average.",
+    x = NULL, y = NULL
+  ) +
+  theme_tb() +
+  theme(axis.text.y   = element_blank(),
+        axis.text.x   = element_text(size = 7),
+        strip.text    = element_text(face = "bold", colour = ink[["primary"]]),
+        panel.spacing = unit(1.6, "lines"),
+        plot.margin   = margin(10, 20, 10, 20))
+```
+
+## View 4 — What actually drives score
+
+**Question: which abilities and behaviours move the scoreboard?**
+
+A correlogram puts every pair of variables in one picture. Blue means the two rise
+together, red means one rises as the other falls, and pale means no relationship
+at all.
+
+Three things to read off it:
+
+- **Awareness** is the strongest positive correlate of score. Map knowledge beats
+  mechanical skill in this build.
+- **Shots fired** is essentially uncorrelated with score. Players who shoot more do
+  not win more, which contradicts what the team assumed.
+- **Mobility** and **survivability** pull against each other, which is the intended
+  trade-off working as designed.
+
+```{r view-4, fig.height=6}
+vars <- c("accuracy", "mobility", "survivability", "objective_control",
+          "support", "awareness", "shots_fired", "distance_m",
+          "kills", "deaths", "objectives", "score")
+
+nice <- c(accuracy = "Accuracy", mobility = "Mobility", survivability = "Survival",
+          objective_control = "Objective ctrl", support = "Support",
+          awareness = "Awareness", shots_fired = "Shots fired",
+          distance_m = "Distance", kills = "Kills", deaths = "Deaths",
+          objectives = "Objectives", score = "Score")
+
+cm <- cor(sessions[vars])
+ord <- hclust(as.dist(1 - cm))$order
+lv  <- nice[vars[ord]]
+
+cm_long <- as.data.frame(as.table(cm)) %>%
+  setNames(c("a", "b", "r")) %>%
+  mutate(a = factor(nice[as.character(a)], levels = lv),
+         b = factor(nice[as.character(b)], levels = lv)) %>%
+  filter(as.integer(a) < as.integer(b))   # lower triangle only; the diagonal is always 1
+
+ggplot(cm_long, aes(a, b, fill = r)) +
+  geom_tile(colour = "white", linewidth = 1.2) +
+  geom_text(aes(label = sprintf("%.2f", r),
+                colour = abs(r) > 0.55), size = 2.9) +
+  scale_fill_gradient2(low = "#e34948", mid = "#f0efec", high = "#2a78d6",
+                       midpoint = 0, limits = c(-1, 1), name = "r") +
+  scale_colour_manual(values = c(`TRUE` = "white", `FALSE` = ink[["secondary"]]),
+                      guide = "none") +
+  coord_fixed() +
+  labs(
+    title    = "Awareness drives score; shots fired does not",
+    subtitle = "Pearson correlation between every pair of measures, 120 sessions.",
+    x = NULL, y = NULL
+  ) +
+  theme_tb() +
+  theme(axis.text.x       = element_text(angle = 45, hjust = 1),
+        legend.position   = "right",
+        panel.grid.major  = element_blank(),
+        panel.grid.minor  = element_blank())
+```
+
+## View 5 — When people stop playing
+
+**Question: we changed how the game explains its objective. Did it keep anyone?**
+
+A retention curve shows what fraction of participants were still playing at each
+minute of the test. It is the shape that matters, not the endpoint: a smooth decay
+means people drifted away, a cliff means something specific pushed them out.
+
+Build A has a cliff. Between minutes 11 and 13 it drops from 88% to 68%, and 15 of
+the 17 people who left in that window are logged as frustration quits. Build B,
+which explains its objective differently, is still at 90% at minute 13 and loses
+five people to frustration across the whole test against Build A's twenty.
+
+Now look at what a summary table would have told you: median session length is 23.2
+minutes for Build A and 27.1 for Build B. That reads as a modest improvement. The
+curve shows something else — one specific, fixable moment where a fifth of the
+Build A testers gave up.
+
+```{r view-5, fig.height=5}
+minutes <- seq(0, 32, by = 0.25)
+
+retention <- map_dfr(c("A", "B"), function(b) {
+  lengths <- sessions %>% filter(build == b) %>% pull(session_minutes)
+  tibble(build = b, minute = minutes,
+         pct = map_dbl(minutes, ~ 100 * mean(lengths >= .x)))
+})
+
+ends <- retention %>% group_by(build) %>% slice_max(minute, n = 1)
+
+ggplot(retention, aes(minute, pct, colour = build)) +
+  annotate("rect", xmin = 11, xmax = 13, ymin = 0, ymax = 100,
+           fill = ink[["grid"]], alpha = 0.55) +
+  annotate("text", x = 13.4, y = 24, hjust = 0, size = 3.2,
+           colour = ink[["secondary"]],
+           label = "88% to 68% in two minutes,\nalmost all frustration quits") +
+  geom_step(linewidth = 1.1, direction = "hv") +
+  geom_text(data = ends, aes(label = paste0("Build ", build)),
+            hjust = 0, nudge_x = 0.6, size = 3.6, fontface = "bold",
+            show.legend = FALSE) +
+  scale_colour_manual(values = build_pal) +
+  scale_x_continuous(limits = c(0, 37), breaks = seq(0, 30, 5),
+                     labels = function(x) paste0(x, " min")) +
+  scale_y_continuous(limits = c(0, 100), labels = function(y) paste0(y, "%")) +
+  labs(
+    title    = "Build A loses people at a cliff; Build B does not",
+    subtitle = "Percentage of participants still playing, by minute of the test session.",
+    x = NULL, y = "Still playing"
+  ) +
+  theme_tb()
+```
+
+## View 6 — What players said, ranked by how badly it went
+
+**Question: the survey has eight questions and 120 responses. Which one should we
+act on first?**
+
+Eight averages tell you almost nothing, because a mean of 3.0 can mean everyone
+was indifferent or that half loved it and half hated it. A diverging bar chart
+splits each item at the neutral response: disagreement runs left, agreement runs
+right, and the items sort by the net.
+
+The result is uncomfortable in the way real survey results usually are. The art is
+the best-rated thing in the game by a distance. The worst-rated item is whether
+players ever knew what they were supposed to be doing — the same thing that drives
+the cliff in View 5. People praise the visuals and quit over the design.
+
+```{r view-6, fig.height=5}
+item_label <- c(
+  objective_clear     = "I always knew what my objective was",
+  death_understood    = "I understood why I died",
+  difficulty_fair     = "The difficulty felt fair",
+  level_navigable     = "The level was easy to navigate",
+  would_play_again    = "I would play this again",
+  match_length        = "The match length felt right",
+  controls_responsive = "The controls felt responsive",
+  visual_style        = "The visual style is appealing"
+)
+
+resp_label <- c("Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree")
+
+props <- survey %>%
+  pivot_longer(-session_id, names_to = "item", values_to = "resp") %>%
+  count(item, resp) %>%
+  complete(item, resp = 1:5, fill = list(n = 0)) %>%
+  group_by(item) %>% mutate(pct = 100 * n / sum(n)) %>% ungroup()
+
+# Net agreement decides the order; the neutral block is split so the bars
+# pivot on a true zero rather than on the left edge.
+ranking <- props %>%
+  group_by(item) %>%
+  summarise(net = sum(pct[resp >= 4]) - sum(pct[resp <= 2])) %>%
+  arrange(net)
+
+item_levels <- unname(item_label[ranking$item])
+
+as_bars <- function(d, sign) {
+  d %>%
+    mutate(signed = sign * if_else(resp == 3, pct / 2, pct),
+           item   = factor(unname(item_label[item]), levels = item_levels),
+           resp   = factor(resp_label[resp], levels = resp_label))
+}
+
+# The two sides stack in opposite directions, so that the strongest opinion
+# always sits furthest from the centre line.
+bars_neg <- props %>% filter(resp <= 3) %>% as_bars(-1)
+bars_pos <- props %>% filter(resp >= 3) %>% as_bars(+1)
+
+ranking <- ranking %>%
+  mutate(item = factor(unname(item_label[item]), levels = item_levels))
+
+ggplot(mapping = aes(signed, item, fill = resp)) +
+  geom_col(data = bars_neg, width = 0.72, position = position_stack()) +
+  geom_col(data = bars_pos, width = 0.72, position = position_stack(reverse = TRUE)) +
+  geom_vline(xintercept = 0, colour = "#fcfcfb", linewidth = 0.9) +
+  geom_text(data = ranking, aes(x = 106, y = item, label = sprintf("%+.0f", net)),
+            inherit.aes = FALSE, size = 3.3, fontface = "bold",
+            colour = ink[["secondary"]]) +
+  scale_fill_manual(values = c("Strongly disagree" = "#e34948",
+                               "Disagree"          = "#f2a9a8",
+                               "Neutral"           = "#d9d8d4",
+                               "Agree"             = "#9ec5f4",
+                               "Strongly agree"    = "#2a78d6")) +
+  # coord_cartesian zooms; scale limits would DROP the segments that fall
+  # outside them, silently truncating the longest bars.
+  scale_x_continuous(breaks = seq(-60, 90, 30),
+                     labels = function(x) paste0(abs(x), "%")) +
+  coord_cartesian(xlim = c(-68, 112)) +
+  labs(
+    title    = "They love the art and cannot tell what the game wants",
+    subtitle = "Share of 120 responses. Bars pivot on neutral; the number is net agreement.",
+    x = NULL, y = NULL, fill = NULL
+  ) +
+  theme_tb() +
+  theme(legend.position = "top",
+        legend.text     = element_text(size = 9),
+        panel.grid.major.y = element_blank())
+```
+
+## View 7 — The frame-rate counter is lying to you
+
+**Question: both builds average about 59 FPS. Testers say Build B stutters. Who is
+right?**
+
+Both are. Average frame rate is a mean, and a mean is exactly the wrong summary for
+a quantity where the rare bad values are the entire user experience. Build B
+renders almost every frame slightly faster than Build A. It also renders one frame
+in every twenty-five — about twice a second — in 35 to 55 ms instead of 17, and
+only in one zone of the level: the corridor that View 8 identifies as the choke
+point.
+
+The trace shows it. The table shows why the FPS readout missed it: the two builds
+are separated by 0.05 ms at the mean and by 20 ms at the 99th percentile.
+
+```{r view-7, fig.height=4.2}
+ggplot(frame_times %>% filter(zone == "Corridor", frame <= 400),
+       aes(frame, ms, colour = build)) +
+  geom_hline(yintercept = 1000 / 60, linetype = "22",
+             colour = ink[["secondary"]], linewidth = 0.4) +
+  geom_line(linewidth = 0.45) +
+  facet_wrap(~build, ncol = 1, labeller = labeller(build = function(b) paste("Build", b))) +
+  scale_colour_manual(values = build_pal) +
+  scale_y_continuous(limits = c(0, 60), breaks = c(1000/60, 30, 45, 60),
+                     labels = c("16.7\n(60 FPS)", "30", "45", "60")) +
+  labs(
+    title    = "Identical average, one of them unplayable",
+    subtitle = "Frame time in the Corridor zone, first 400 frames. Dashed line is the 60 FPS budget.",
+    x = "Frame", y = "Frame time (ms)"
+  ) +
+  theme_tb() +
+  theme(strip.text = element_text(face = "bold", colour = ink[["primary"]]))
+```
+
+```{r view-7-table}
+frame_times %>%
+  group_by(Build = build) %>%
+  summarise(
+    `Mean FPS`     = round(1000 / mean(ms), 1),
+    `Mean (ms)`    = round(mean(ms), 2),
+    `Median (ms)`  = round(median(ms), 1),
+    `95th (ms)`    = round(quantile(ms, 0.95), 1),
+    `99th (ms)`    = round(quantile(ms, 0.99), 1),
+    `Worst (ms)`   = round(max(ms), 1)
+  ) %>%
+  knitr::kable(caption = "Every column agrees the builds are the same until the last two.")
+```
+
+## View 8 — Where players actually stand
+
+**Question: where are the choke points, the camping spots and the dead space?**
+
+This is the figure that changes level layouts. The blue field is total time spent
+per square metre across the whole match. The moving dots are the eight players,
+one frame per second, coloured by whether they are moving, loitering or holding
+position. Dark blocks are cover; the block in the north-east is the raised gantry.
+
+Press play, or drag the slider.
+
+Three readings, all of them actionable:
+
+- The gap between the central core and the east block carries almost all lateral
+  traffic, and **14 of the 20 deaths in this match happened inside it**. That is a
+  choke point.
+- Two players spend the entire match holding the **north-east gantry**. Long dwell,
+  no movement, high kill share: a sniper perch.
+- The **west corner** is never visited by anyone. That is floor space the level is
+  paying for and not using.
+
+```{r view-8, fig.height=6}
+# Time spent per 2m x 2m cell, for the background field.
+gx_seq <- seq(1, 59, 2)
+gy_seq <- seq(1, 39, 2)
+
+field <- positions %>%
+  mutate(gx = floor(x / 2) * 2 + 1, gy = floor(y / 2) * 2 + 1) %>%
+  count(gx, gy) %>%
+  complete(gx = gx_seq, gy = gy_seq, fill = list(n = 0)) %>%
+  arrange(gy, gx)
+
+z <- matrix(field$n, nrow = length(gy_seq), ncol = length(gx_seq), byrow = TRUE)
+
+# Level geometry drawn as rectangles behind the data.
+shapes <- pmap(level, function(block, xmin, xmax, ymin, ymax, kind) {
+  list(type = "rect", x0 = xmin, x1 = xmax, y0 = ymin, y1 = ymax,
+       fillcolor = if (kind == "elevated") "#6f6e6a" else "#2f2e2c",
+       # The gantry is walkable, so it stays translucent and the dwell field
+       # underneath it still reads.
+       opacity = if (kind == "elevated") 0.35 else 0.92,
+       line = list(width = 0), layer = "above")
+})
+
+# The animated layer starts at the first second where all three states occur, so
+# that the legend is complete from the first frame.
+first_full <- positions %>%
+  group_by(t) %>% summarise(k = n_distinct(state)) %>%
+  filter(k == 3) %>% slice_min(t) %>% pull(t)
+
+deaths <- positions %>% filter(event == "death")
+
+plot_ly(height = 560) %>%
+  add_heatmap(
+    x = gx_seq, y = gy_seq, z = z, zmin = 0, zmax = 60,
+    colorscale = list(c(0, "#fcfcfb"), c(0.25, "#cde2fb"),
+                      c(0.6, "#5598e7"), c(1, "#104281")),
+    showscale = TRUE, hoverinfo = "z",
+    colorbar = list(title = "Seconds\nspent", len = 0.55, thickness = 12,
+                    y = 0.72, ticksuffix = "  ")
+  ) %>%
+  add_markers(
+    data = deaths, x = ~x, y = ~y, name = "Death",
+    marker = list(symbol = "x", size = 11, color = "#e34948",
+                  line = list(color = "#fcfcfb", width = 1)),
+    text = ~paste0("death · ", player_id, " · t=", t, "s"), hoverinfo = "text"
+  ) %>%
+  add_markers(
+    data = positions %>% filter(t >= first_full),
+    x = ~x, y = ~y, frame = ~t, color = ~state,
+    colors = c(Holding = pal[["orange"]], Loitering = pal[["aqua"]],
+               Moving = pal[["blue"]]),
+    marker = list(size = 13, line = list(color = "#fcfcfb", width = 2)),
+    text = ~paste0(player_id, " · t=", t, "s · ", state),
+    hoverinfo = "text"
+  ) %>%
+  layout(
+    title  = list(text = "<b>One corridor carries the traffic and most of the deaths</b>",
+                  x = 0, font = list(size = 14)),
+    shapes = shapes,
+    xaxis  = list(title = "x (m)", range = c(0, 60), constrain = "domain"),
+    yaxis  = list(title = "y (m)", range = c(0, 40), scaleanchor = "x"),
+    legend = list(orientation = "h", x = 0, y = 1.02, title = list(text = "")),
+    margin = list(t = 80)
+  ) %>%
+  animation_opts(frame = 90, transition = 45, redraw = FALSE) %>%
+  animation_slider(currentvalue = list(prefix = "t = ", suffix = " s"))
+```
+
+### Following one player
+
+The map above answers questions about the *level*. To ask questions about a
+*player* — did they learn the route, did they loop, did they ever leave their
+corner — you need to follow one of them.
+
+First, all eight routes at once. The line darkens as the match progresses, so you
+can read direction without playing anything. P03 covers the most ground (268 m).
+P07 travels almost as far (190 m) without ever leaving a two-metre-wide lane — it
+shuttles up and down the same corridor for the whole match. P01 and P02 manage 51 m
+and 35 m between them across three minutes.
+
+```{r view-8b-overview, fig.width=9, fig.height=4.6}
+walls <- level %>% filter(kind != "elevated")
+raised <- level %>% filter(kind == "elevated")
+
+ggplot() +
+  geom_rect(data = walls, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+            fill = "#2f2e2c", alpha = 0.9) +
+  geom_rect(data = raised, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+            fill = "#6f6e6a", alpha = 0.55) +
+  geom_path(data = positions, aes(x, y, colour = t), linewidth = 0.7) +
+  facet_wrap(~player_id, nrow = 2) +
+  scale_colour_gradient(low = "#cde2fb", high = "#104281",
+                        name = "Time (s)", breaks = c(1, 90, 180)) +
+  coord_fixed(xlim = c(0, 60), ylim = c(0, 40), expand = FALSE) +
+  labs(
+    title    = "Eight routes through the same three minutes",
+    subtitle = "Line darkens as the match progresses. Two players never leave the gantry.",
+    x = NULL, y = NULL
+  ) +
+  theme_tb() +
+  theme(axis.text         = element_blank(),
+        panel.grid.major  = element_blank(),
+        panel.grid.minor  = element_blank(),
+        strip.text        = element_text(face = "bold", colour = ink[["primary"]]),
+        legend.position   = "right",
+        legend.key.height = unit(0.9, "lines"))
+```
+
+Now one player, animated, with the trail drawn behind them. Change `focus_player`
+to any ID from the panel above and re-run the chunk. The orange dots mark every
+second this player spent holding position, so you can see where they will stop
+before they get there.
+
+```{r view-8b-animated, fig.height=6}
+focus_player <- "P06"
+
+path <- positions %>% filter(player_id == focus_player) %>% arrange(t)
+
+# For each second, every position up to that second: this is what makes the
+# trail grow rather than jump.
+trail <- map_dfr(path$t, function(k) path %>% filter(t <= k) %>% mutate(f = k))
+
+plot_ly(height = 560) %>%
+  add_markers(
+    data = path %>% filter(state == "Holding"), x = ~x, y = ~y,
+    name = "Held position",
+    marker = list(size = 7, color = pal[["orange"]], opacity = 0.7),
+    text = ~paste0("holding · t=", t, "s"), hoverinfo = "text"
+  ) %>%
+  add_markers(
+    data = path %>% slice(1), x = ~x, y = ~y, name = "Start",
+    marker = list(symbol = "circle-open", size = 16, color = ink[["primary"]],
+                  line = list(width = 2.5)),
+    hoverinfo = "text", text = "start"
+  ) %>%
+  add_paths(
+    data = trail, x = ~x, y = ~y, frame = ~f,
+    line = list(color = pal[["blue"]], width = 2.5),
+    opacity = 0.8, showlegend = FALSE, hoverinfo = "skip"
+  ) %>%
+  add_markers(
+    data = path, x = ~x, y = ~y, frame = ~t,
+    marker = list(size = 16, color = pal[["blue"]],
+                  line = list(color = "#fcfcfb", width = 2.5)),
+    showlegend = FALSE,
+    text = ~paste0(focus_player, " · t=", t, "s · ", state), hoverinfo = "text"
+  ) %>%
+  layout(
+    title  = list(text = paste0("<b>", focus_player, "'s route through the match</b>"),
+                  x = 0, font = list(size = 14)),
+    shapes = shapes,
+    xaxis  = list(title = "x (m)", range = c(0, 60), constrain = "domain"),
+    yaxis  = list(title = "y (m)", range = c(0, 40), scaleanchor = "x"),
+    legend = list(orientation = "h", x = 0, y = 1.02, title = list(text = "")),
+    margin = list(t = 80)
+  ) %>%
+  animation_opts(frame = 70, transition = 0, redraw = FALSE) %>%
+  animation_slider(currentvalue = list(prefix = "t = ", suffix = " s"))
+```
+
+## What each view cost
+
+| View | Chart type | Lines of R | Skills it needs |
+| :- | :- | :- | :- |
+| 1 | Interactive table | 14 | Reading data; selecting and renaming columns |
+| 2 | Violin with boxplot | 14 | Describing distributions |
+| 3 | Radar small multiples | 34 | Reshaping data; grouped summaries |
+| 4 | Correlogram | 35 | Relationships between variables |
+| 5 | Retention step curve | 27 | Building a summary from scratch; annotation |
+| 6 | Diverging Likert bars | 55 | Reshaping; ordering by a computed value |
+| 7 | Frame-time trace + summary table | 16 + 11 | Filtering; percentiles; rendered tables |
+| 8 | Animated position map | 53 | Grouping, counting, interactive output |
+| 8b | Route small multiples | 24 | Drawing paths; faceting by player |
+| 8b | Animated single-player trail | 39 | Filtering to one case; building frames |
+
+None of this is difficult, and most of the length in Views 3 onwards is labelling
+and styling rather than analysis. All of it is repeatable: the same code runs unchanged
+on next week's build, which is the real reason to write analysis as code rather
+than clicking through a spreadsheet.
+
+The rest of these notes teach you the parts, in order, starting with the question
+that matters most: **what are you actually trying to find out?**

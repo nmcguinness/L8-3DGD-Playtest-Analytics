@@ -1,0 +1,121 @@
+session_id,player_id,cohort,archetype,build,accuracy,mobility,survivability,objective_control,support,awareness,score,kills,deaths,objectives,shots_fired,time_alive_s,distance_m,session_minutes,quit_reason
+S001,P01,Regular,Scout,A,55,84,48,39,52,77,1370,7,4,0,148,98,571,12.9,Frustrated
+S002,P02,Veteran,Scout,B,54,91,52,66,46,91,1795,5,2,2,140,105,520,24.6,Lost interest
+S003,P03,Regular,Scout,A,48,89,42,43,52,74,1690,5,2,4,190,115,533,12.5,Frustrated
+S004,P04,Novice,Scout,B,35,80,35,47,28,74,1544,7,4,2,92,80,349,18.8,Lost interest
+S005,P05,Veteran,Scout,A,67,97,56,55,38,95,2019,12,3,4,143,121,542,18.7,Lost interest
+S006,P06,Regular,Scout,B,51,90,41,45,56,87,1614,7,5,4,149,115,566,25.3,Completed test
+S007,P07,Veteran,Scout,A,57,95,45,53,47,83,1652,6,4,3,143,118,572,11.5,Frustrated
+S008,P08,Novice,Scout,B,42,73,30,39,46,67,1331,7,4,2,126,99,308,27,Completed test
+S009,P09,Regular,Scout,A,51,86,35,51,34,79,1632,7,3,3,138,103,560,14.4,Frustrated
+S010,P10,Regular,Scout,B,47,86,40,49,51,82,1631,10,4,3,137,71,451,26.6,Completed test
+S011,P11,Veteran,Scout,A,56,84,49,52,55,88,1984,9,3,4,118,143,406,10.7,Frustrated
+S012,P12,Novice,Scout,B,40,83,27,35,40,67,934,5,5,1,120,77,440,26.8,Completed test
+S013,P13,Veteran,Scout,A,60,92,46,52,53,88,1511,10,5,1,124,102,551,21.1,Lost interest
+S014,P14,Regular,Scout,B,57,92,38,50,31,67,1227,10,5,1,109,117,536,28.1,Completed test
+S015,P15,Regular,Scout,A,46,78,46,46,34,74,1425,5,5,2,136,113,525,12.7,Frustrated
+S016,P16,Regular,Scout,B,40,85,36,60,46,83,1678,8,4,4,92,74,514,13.5,Lost interest
+S017,P17,Regular,Scout,A,51,96,44,43,45,83,1304,6,4,1,172,137,559,29.6,Completed test
+S018,P18,Regular,Scout,B,51,79,47,51,43,75,1516,8,2,2,88,122,471,29.5,Completed test
+S019,P19,Regular,Scout,A,49,79,44,54,34,82,1446,6,4,2,165,93,453,12.5,Frustrated
+S020,P20,Veteran,Scout,B,58,100,47,42,55,82,1471,6,4,1,188,100,653,31,Completed test
+S021,P21,Novice,Scout,A,53,74,35,55,32,85,1627,6,2,3,111,124,487,32,Completed test
+S022,P22,Veteran,Scout,B,74,85,50,53,50,86,1894,9,2,2,160,126,497,11.9,Lost interest
+S023,P23,Novice,Scout,A,57,89,35,41,23,68,1218,7,5,3,127,121,566,32,Completed test
+S024,P24,Regular,Scout,B,59,95,49,50,39,75,1548,7,2,3,143,110,483,9,Frustrated
+S025,P25,Novice,Scout,A,48,83,43,47,24,70,1301,7,4,2,164,105,509,30.2,Completed test
+S026,P26,Regular,Scout,B,52,93,33,51,53,85,1788,8,3,3,119,86,451,30.1,Completed test
+S027,P27,Veteran,Scout,A,60,93,44,62,44,88,1978,7,3,4,144,100,405,32,Completed test
+S028,P28,Veteran,Scout,B,61,98,51,61,60,82,1594,9,5,4,156,108,597,18.9,Lost interest
+S029,P29,Regular,Scout,A,49,90,46,40,57,77,1438,8,3,2,187,82,578,24.9,Completed test
+S030,P30,Novice,Scout,B,66,77,36,44,24,65,1347,7,3,2,116,132,574,17,Lost interest
+S031,P01,Novice,Sentinel,A,61,27,74,73,50,54,1526,7,0,3,114,165,294,32,Completed test
+S032,P02,Novice,Sentinel,B,49,29,65,68,39,38,932,6,4,2,104,148,318,11.7,Frustrated
+S033,P03,Regular,Sentinel,A,57,41,88,85,47,68,1678,5,1,1,195,180,336,22.3,Completed test
+S034,P04,Regular,Sentinel,B,60,30,85,76,47,61,584,8,4,4,134,72,253,32,Completed test
+S035,P05,Novice,Sentinel,A,55,16,77,78,40,45,1327,9,2,4,67,180,244,27.4,Completed test
+S036,P06,Regular,Sentinel,B,43,35,87,74,58,62,1553,0,1,1,84,180,344,27.1,Completed test
+S037,P07,Novice,Sentinel,A,44,29,74,65,44,41,1391,7,1,3,69,133,250,30.7,Completed test
+S038,P08,Veteran,Sentinel,B,68,44,90,100,65,75,1751,8,3,2,133,180,290,15.6,Lost interest
+S039,P09,Regular,Sentinel,A,68,23,86,77,58,48,1202,5,3,2,141,180,188,10.3,Frustrated
+S040,P10,Regular,Sentinel,B,61,20,80,74,60,58,1529,3,2,3,102,173,124,32,Completed test
+S041,P11,Regular,Sentinel,A,56,35,87,70,46,45,1249,4,2,3,78,174,242,28.2,Completed test
+S042,P12,Veteran,Sentinel,B,68,43,96,82,58,66,1733,5,1,3,146,180,231,29.6,Completed test
+S043,P13,Novice,Sentinel,A,49,24,76,65,33,50,1281,6,1,1,74,157,273,9.3,Frustrated
+S044,P14,Regular,Sentinel,B,63,37,74,84,53,51,1592,5,3,4,45,180,377,19.8,Lost interest
+S045,P15,Veteran,Sentinel,A,70,50,92,71,60,63,597,9,4,4,165,71,315,15.9,Lost interest
+S046,P16,Veteran,Sentinel,B,82,42,100,96,50,55,579,9,4,5,143,71,292,15.2,Lost interest
+S047,P17,Regular,Sentinel,A,55,31,87,88,60,59,643,5,6,5,108,67,358,11.5,Frustrated
+S048,P18,Regular,Sentinel,B,54,43,75,85,57,43,1213,3,2,2,101,145,280,23.1,Completed test
+S049,P19,Veteran,Sentinel,A,71,34,85,98,50,69,1908,8,1,4,108,180,257,14,Frustrated
+S050,P20,Regular,Sentinel,B,58,26,69,83,47,48,658,7,5,3,96,61,193,17.5,Technical fault
+S051,P21,Regular,Sentinel,A,68,20,77,67,45,53,1533,4,1,4,138,154,173,24.2,Lost interest
+S052,P22,Regular,Sentinel,B,62,41,89,92,54,54,541,7,6,3,106,72,253,28.2,Completed test
+S053,P23,Regular,Sentinel,A,62,39,94,77,56,68,1665,12,1,4,142,180,316,10.6,Frustrated
+S054,P24,Regular,Sentinel,B,58,34,78,71,44,68,1567,5,1,2,41,152,251,16.1,Technical fault
+S055,P25,Veteran,Sentinel,A,62,47,86,89,57,68,1744,8,3,2,93,180,408,31.6,Completed test
+S056,P26,Regular,Sentinel,B,60,37,76,74,54,60,1538,5,3,4,102,157,366,12.4,Frustrated
+S057,P27,Veteran,Sentinel,A,62,49,89,96,68,67,1850,6,1,5,89,136,403,28,Completed test
+S058,P28,Veteran,Sentinel,B,75,40,86,86,60,71,1897,9,1,2,112,163,293,29.2,Completed test
+S059,P29,Veteran,Sentinel,A,64,42,85,68,65,78,587,11,7,4,126,60,208,28.8,Completed test
+S060,P30,Novice,Sentinel,B,61,23,71,64,42,56,1539,5,1,4,110,160,320,16.2,Lost interest
+S061,P01,Regular,Engineer,A,40,48,53,75,91,66,1628,7,2,2,161,166,397,18.3,Lost interest
+S062,P02,Veteran,Engineer,B,52,56,74,78,100,68,1532,6,4,4,112,180,337,23.6,Completed test
+S063,P03,Veteran,Engineer,A,52,46,75,81,94,76,1837,7,1,2,118,162,258,24.9,Completed test
+S064,P04,Regular,Engineer,B,50,59,53,79,89,64,1285,8,4,4,104,142,368,30.8,Completed test
+S065,P05,Novice,Engineer,A,41,44,58,56,75,51,1144,9,2,1,66,147,240,28.7,Completed test
+S066,P06,Regular,Engineer,B,56,50,66,76,90,57,1607,7,4,4,138,145,357,27.7,Lost interest
+S067,P07,Novice,Engineer,A,46,45,43,63,72,62,1308,5,4,2,49,117,376,26.1,Completed test
+S068,P08,Veteran,Engineer,B,55,71,71,83,85,66,1616,6,1,2,97,174,323,32,Completed test
+S069,P09,Regular,Engineer,A,45,38,59,69,87,62,1591,6,0,3,96,151,220,27.9,Completed test
+S070,P10,Regular,Engineer,B,44,56,61,73,78,66,1592,5,2,2,157,140,335,19.3,Lost interest
+S071,P11,Novice,Engineer,A,29,34,59,51,82,44,773,4,5,1,151,128,298,26.8,Completed test
+S072,P12,Veteran,Engineer,B,52,68,70,85,83,78,1871,5,2,4,133,157,456,27.5,Completed test
+S073,P13,Novice,Engineer,A,24,35,57,64,74,64,1345,4,3,1,88,174,204,12.6,Frustrated
+S074,P14,Veteran,Engineer,B,55,54,60,87,91,65,1646,6,2,4,122,151,371,8.8,Frustrated
+S075,P15,Regular,Engineer,A,50,43,54,69,86,64,1476,4,2,4,97,146,217,21.5,Completed test
+S076,P16,Regular,Engineer,B,30,50,67,65,85,56,1225,4,4,2,90,177,368,29.2,Completed test
+S077,P17,Regular,Engineer,A,41,50,57,66,86,65,1291,6,4,1,143,133,462,26.3,Completed test
+S078,P18,Novice,Engineer,B,47,34,50,72,66,47,1099,6,4,1,81,144,237,29.3,Completed test
+S079,P19,Veteran,Engineer,A,52,55,61,81,92,69,1663,8,0,2,116,154,350,19,Lost interest
+S080,P20,Veteran,Engineer,B,49,60,71,65,100,70,1664,7,2,4,136,175,313,27.1,Completed test
+S081,P21,Regular,Engineer,A,40,46,58,72,84,66,1412,4,4,4,129,140,371,26.3,Lost interest
+S082,P22,Regular,Engineer,B,45,50,60,71,87,74,1917,9,0,5,126,129,401,26,Completed test
+S083,P23,Novice,Engineer,A,23,36,46,53,79,61,1393,3,2,3,29,106,200,21.7,Completed test
+S084,P24,Regular,Engineer,B,43,48,56,67,87,55,1408,4,3,2,130,149,443,31.5,Completed test
+S085,P25,Regular,Engineer,A,46,58,55,73,89,76,1660,5,4,4,128,143,275,12,Technical fault
+S086,P26,Veteran,Engineer,B,57,50,69,75,100,73,1624,7,3,4,113,151,332,15.7,Lost interest
+S087,P27,Regular,Engineer,A,48,49,57,77,100,53,1467,5,4,6,147,157,354,27,Completed test
+S088,P28,Novice,Engineer,B,33,41,54,66,78,53,1437,4,2,2,75,155,295,29.4,Completed test
+S089,P29,Novice,Engineer,A,34,36,60,58,70,49,943,2,5,1,23,135,250,31.4,Completed test
+S090,P30,Novice,Engineer,B,37,42,37,68,69,52,1396,5,3,3,88,100,383,32,Completed test
+S091,P01,Veteran,Duelist,A,100,86,63,49,35,82,1752,9,1,2,205,125,519,30.1,Completed test
+S092,P02,Regular,Duelist,B,96,62,57,41,31,67,1293,10,4,0,146,162,395,16.2,Technical fault
+S093,P03,Veteran,Duelist,A,100,78,65,46,47,69,1601,11,2,2,166,128,426,12.2,Frustrated
+S094,P04,Novice,Duelist,B,74,67,41,35,22,59,1057,9,5,1,120,94,437,27.4,Completed test
+S095,P05,Veteran,Duelist,A,86,85,60,55,50,78,1707,8,3,2,170,147,539,31,Completed test
+S096,P06,Regular,Duelist,B,77,72,64,47,35,68,1469,7,2,1,157,124,354,31.4,Completed test
+S097,P07,Novice,Duelist,A,71,59,57,32,14,74,1572,11,3,3,119,137,390,9.6,Frustrated
+S098,P08,Veteran,Duelist,B,88,76,70,42,37,76,1574,8,3,1,201,144,404,28.5,Completed test
+S099,P09,Regular,Duelist,A,69,65,50,44,34,59,1451,5,4,3,115,104,436,11,Frustrated
+S100,P10,Regular,Duelist,B,73,76,53,32,38,72,1416,8,2,2,124,146,568,28.4,Completed test
+S101,P11,Regular,Duelist,A,84,62,61,37,35,57,1270,9,3,3,154,141,482,29.5,Completed test
+S102,P12,Veteran,Duelist,B,93,77,69,39,46,76,1611,12,1,3,202,161,380,24.8,Completed test
+S103,P13,Regular,Duelist,A,79,87,45,49,31,56,1205,8,6,2,154,129,525,13.3,Frustrated
+S104,P14,Novice,Duelist,B,79,68,42,39,12,59,1249,8,3,0,191,94,431,27.9,Completed test
+S105,P15,Regular,Duelist,A,88,74,57,34,36,62,1270,7,4,2,168,122,401,31.5,Completed test
+S106,P16,Novice,Duelist,B,79,64,54,21,28,56,1200,7,2,0,226,124,420,30.9,Completed test
+S107,P17,Veteran,Duelist,A,93,94,65,62,38,62,1500,6,4,2,153,110,554,30.6,Completed test
+S108,P18,Veteran,Duelist,B,78,78,67,50,28,88,1804,7,1,3,93,168,398,31.7,Completed test
+S109,P19,Novice,Duelist,A,78,60,50,31,22,48,1221,11,3,2,146,120,281,11.9,Frustrated
+S110,P20,Novice,Duelist,B,67,71,49,25,23,53,1033,6,3,1,149,109,510,32,Completed test
+S111,P21,Novice,Duelist,A,87,64,42,37,21,72,1464,10,4,1,174,127,347,26.2,Completed test
+S112,P22,Veteran,Duelist,B,84,83,52,45,25,81,1592,7,4,3,183,104,442,29.1,Completed test
+S113,P23,Novice,Duelist,A,79,69,47,42,23,43,1018,10,2,0,216,136,393,12.6,Technical fault
+S114,P24,Regular,Duelist,B,76,76,54,45,32,67,1431,6,2,2,163,85,417,32,Completed test
+S115,P25,Novice,Duelist,A,77,64,51,45,22,51,1264,9,5,3,127,133,450,28.9,Completed test
+S116,P26,Regular,Duelist,B,93,68,42,60,36,68,1422,8,6,3,227,89,381,21,Lost interest
+S117,P27,Regular,Duelist,A,77,69,58,45,27,69,1653,7,1,2,141,120,546,8.6,Frustrated
+S118,P28,Novice,Duelist,B,80,58,42,24,22,60,1120,6,4,0,160,96,382,12.4,Frustrated
+S119,P29,Regular,Duelist,A,84,60,60,29,25,63,1467,9,2,0,163,169,376,7.7,Frustrated
+S120,P30,Novice,Duelist,B,74,79,35,44,34,52,1022,6,7,4,153,82,494,27.1,Completed test
