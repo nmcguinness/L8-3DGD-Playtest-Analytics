@@ -43,11 +43,3 @@ The data in `data/` is synthetic. It describes *Tidebreak*, a fictional
 four-player top-down arena, and exists so that every example is self-contained
 and reproducible.
 
-## A note on private material
-
-Authoring files — the build spec, the data generator, session plans and the
-Claude Code instructions — are held in a `lecturer/` folder and a root
-`CLAUDE.md`, both git-ignored. They are not part of this repository and are not
-published. If you have cloned this repo you have everything needed to render the
-site; you will not be able to regenerate the CSVs, which are committed for that
-reason.
