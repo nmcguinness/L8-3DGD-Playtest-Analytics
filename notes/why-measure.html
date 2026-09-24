@@ -26,6 +26,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -146,6 +181,12 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Describing What You Have</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/distributions-and-variation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Distributions and Variation</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -198,9 +239,18 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#the-three-sources" id="toc-the-three-sources" class="nav-link active" data-scroll-target="#the-three-sources">The Three Sources</a></li>
+  <li><a href="#learning-outcomes" id="toc-learning-outcomes" class="nav-link active" data-scroll-target="#learning-outcomes">Learning Outcomes</a></li>
+  <li><a href="#why-this-matters-for-playtesting" id="toc-why-this-matters-for-playtesting" class="nav-link" data-scroll-target="#why-this-matters-for-playtesting">Why This Matters for Playtesting</a></li>
+  <li><a href="#the-three-sources" id="toc-the-three-sources" class="nav-link" data-scroll-target="#the-three-sources">The Three Sources</a></li>
   <li><a href="#turning-a-vague-question-into-a-measurable-one" id="toc-turning-a-vague-question-into-a-measurable-one" class="nav-link" data-scroll-target="#turning-a-vague-question-into-a-measurable-one">Turning a Vague Question into a Measurable One</a></li>
   <li><a href="#deciding-in-advance" id="toc-deciding-in-advance" class="nav-link" data-scroll-target="#deciding-in-advance">Deciding in Advance</a></li>
+  <li><a href="#worked-examples" id="toc-worked-examples" class="nav-link" data-scroll-target="#worked-examples">Worked Examples</a></li>
+  <li><a href="#r-demonstrations" id="toc-r-demonstrations" class="nav-link" data-scroll-target="#r-demonstrations">R Demonstrations</a></li>
+  <li><a href="#interpretation-guidance" id="toc-interpretation-guidance" class="nav-link" data-scroll-target="#interpretation-guidance">Interpretation Guidance</a></li>
+  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a></li>
+  <li><a href="#short-practice-activities" id="toc-short-practice-activities" class="nav-link" data-scroll-target="#short-practice-activities">Short Practice Activities</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  <li><a href="#links-to-relevant-reference-material" id="toc-links-to-relevant-reference-material" class="nav-link" data-scroll-target="#links-to-relevant-reference-material">Links to Relevant Reference Material</a></li>
   <li><a href="#reflective-questions" id="toc-reflective-questions" class="nav-link" data-scroll-target="#reflective-questions">Reflective Questions</a></li>
   </ul>
 </nav>
@@ -228,11 +278,31 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<blockquote class="blockquote">
+<p>The first notes page of the strand, for everyone, before Lab 01. It sets out when measurement is worth the effort, where playtest data comes from, and how to turn a designer’s question into something you can record. The only code is in the R Demonstrations section near the end.</p>
+</blockquote>
+<hr>
+<section id="learning-outcomes" class="level2">
+<h2 class="anchored" data-anchor-id="learning-outcomes">Learning Outcomes</h2>
+<p>By the end of these notes you can:</p>
+<ul>
+<li>name the three cases where a team’s judgement of its own game reliably fails;</li>
+<li>distinguish telemetry, performance capture and asking people, and say what each can and cannot tell you;</li>
+<li>rewrite a vague design question as a measure you could record for a single player;</li>
+<li>write down, before collecting anything, the result that would change your mind;</li>
+<li>load a playtest CSV into R and take a first look at it with <code>read_csv()</code>, <code>glimpse()</code> and <code>summary()</code>.</li>
+</ul>
+<hr>
+</section>
+<section id="why-this-matters-for-playtesting" class="level2">
+<h2 class="anchored" data-anchor-id="why-this-matters-for-playtesting">Why This Matters for Playtesting</h2>
 <p>Every team makes decisions about their game constantly. Most of those decisions are made from memory, taste and the loudest voice in the room, and most of the time that is fine — taste is why anyone plays your game rather than a spreadsheet.</p>
 <p>Measurement earns its place in the cases where taste reliably fails. There are three of them, and they recur in every project.</p>
 <p><strong>You cannot see your own game any more.</strong> You have played your level five hundred times. You know where the key is. You cannot un-know it, and no amount of care will let you experience your own tutorial as a stranger. This is the single most common cause of a game that the team finds obvious and the player finds impenetrable.</p>
 <p><strong>You cannot feel a rare event.</strong> A stutter that happens once every two seconds occupies less than one per cent of frames. Your average frame rate will not show it. Your players will talk about nothing else.</p>
 <p><strong>You cannot remember twenty playtests.</strong> After a session you remember the two people who struggled most and the last person you watched. You do not remember the distribution, and you will confidently reconstruct one that never existed.</p>
+<hr>
+</section>
 <section id="the-three-sources" class="level2">
 <h2 class="anchored" data-anchor-id="the-three-sources">The Three Sources</h2>
 <p>Almost everything you will analyse in a game project comes from one of three places, and they have very different characters.</p>
@@ -240,6 +310,7 @@ ul.task-list li input[type="checkbox"] {
 <p><strong>Performance capture</strong> is a special case of telemetry with its own conventions and its own failure modes. Frame times, memory, draw calls. It is the one area where the standard summary — average frame rate — is actively misleading, which is why Section 5 spends its time there.</p>
 <p><strong>Asking people</strong> is surveys, interviews and think-aloud sessions. It is the only source that tells you <em>why</em>, and the least reliable. People misremember, they are polite, they rationalise, and they answer the question they think you meant. A survey tells you what a player believes about their experience, which is a real and useful thing, but it is not the same as what happened.</p>
 <p><strong>The three disagree, and that is the point.</strong> The most valuable finding in any playtest is usually the place where telemetry and opinion contradict each other: players say the level is fine and the heat map shows nobody finds the side route; players say the game runs smoothly and the frame log shows a hitch every two seconds. A team with only one source never finds these.</p>
+<hr>
 </section>
 <section id="turning-a-vague-question-into-a-measurable-one" class="level2">
 <h2 class="anchored" data-anchor-id="turning-a-vague-question-into-a-measurable-one">Turning a Vague Question into a Measurable One</h2>
@@ -276,11 +347,227 @@ ul.task-list li input[type="checkbox"] {
 </table>
 <p>Notice that each right-hand cell names a <strong>specific number you could write down after watching one person play</strong>. That is the test. If you cannot describe how you would record it for a single player, you have not finished turning the question into a measurement.</p>
 <p>Notice also that the right-hand column is often not one measure but several, and that they can disagree. This is not a failure of the method. A tutorial that everybody completes and nobody learns from is a real and common outcome, and only two measures together can find it.</p>
+<hr>
 </section>
 <section id="deciding-in-advance" class="level2">
 <h2 class="anchored" data-anchor-id="deciding-in-advance">Deciding in Advance</h2>
 <p>Before you collect anything, write down what result would change your mind. “If more than a third of testers never find the second key, I will add a light cue.”</p>
 <p>This costs nothing and protects you from the most comfortable mistake in the discipline: running the test, getting an ambiguous result, and finding in it whatever you already believed. If the threshold is written down beforehand, the data gets to answer. If it is not, you will answer and attribute it to the data.</p>
+<hr>
+</section>
+<section id="worked-examples" class="level2">
+<h2 class="anchored" data-anchor-id="worked-examples">Worked Examples</h2>
+<p><strong>The question as asked.</strong> The <em>Tidebreak</em> team ran 120 playtest sessions, 60 on Build A and 60 on Build B. The designer’s question is “is Build A worse?”, which cannot be answered as asked: worse at what, for whom, by how much?</p>
+<p><strong>The question as measured.</strong> Two measures bear on it, one from each end of the three sources:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Source</th>
+<th style="text-align: left;">Measure</th>
+<th style="text-align: left;">Recorded per player as</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Telemetry</td>
+<td style="text-align: left;">Did the session end in a frustration quit?</td>
+<td style="text-align: left;"><code>quit_reason</code> is <code>Frustrated</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Asking people</td>
+<td style="text-align: left;">“I always knew what my objective was”</td>
+<td style="text-align: left;">A rating from 1 to 5</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The threshold, written first.</strong> Before anyone opens the file, the team writes: <em>“If more than a quarter of the sessions on either build end in a frustration quit, that build does not ship.”</em></p>
+<p><strong>The result.</strong> 20 of 60 Build A sessions ended in a frustration quit (33%), against 5 of 60 on Build B (8%). Build A crosses the line; Build B does not. Nobody has to argue about it, because the argument happened before the data arrived.</p>
+<p><strong>The second source.</strong> Of the 8 survey items, the objective item is the lowest rated, with a mean of 2.61 on the 1 to 5 scale. Telemetry says <em>what</em> happened: players on Build A left in frustration. The survey offers a candidate for <em>why</em>: players did not know what they were meant to be doing. Neither source alone would have pointed a designer at the objective marker.</p>
+<hr>
+</section>
+<section id="r-demonstrations" class="level2">
+<h2 class="anchored" data-anchor-id="r-demonstrations">R Demonstrations</h2>
+<p>Everything below runs as written, provided the data files sit in the <code>data/</code> folder of your project as set up in <a href="../labs/setting-up.html">Lab 00</a>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>sessions <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_sessions.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>survey   <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_survey.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>read_csv()</code> reads a file into a <strong>tibble</strong>, R’s table of rows and columns. The path is relative to the project folder, which is why it starts <code>data/</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(sessions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 120
+Columns: 20
+$ session_id        &lt;chr&gt; "S001", "S002", "S003", "S004", "S005", "S006", "S00…
+$ player_id         &lt;chr&gt; "P01", "P02", "P03", "P04", "P05", "P06", "P07", "P0…
+$ cohort            &lt;chr&gt; "Regular", "Veteran", "Regular", "Novice", "Veteran"…
+$ archetype         &lt;chr&gt; "Scout", "Scout", "Scout", "Scout", "Scout", "Scout"…
+$ build             &lt;chr&gt; "A", "B", "A", "B", "A", "B", "A", "B", "A", "B", "A…
+$ accuracy          &lt;dbl&gt; 55, 54, 48, 35, 67, 51, 57, 42, 51, 47, 56, 40, 60, …
+$ mobility          &lt;dbl&gt; 84, 91, 89, 80, 97, 90, 95, 73, 86, 86, 84, 83, 92, …
+$ survivability     &lt;dbl&gt; 48, 52, 42, 35, 56, 41, 45, 30, 35, 40, 49, 27, 46, …
+$ objective_control &lt;dbl&gt; 39, 66, 43, 47, 55, 45, 53, 39, 51, 49, 52, 35, 52, …
+$ support           &lt;dbl&gt; 52, 46, 52, 28, 38, 56, 47, 46, 34, 51, 55, 40, 53, …
+$ awareness         &lt;dbl&gt; 77, 91, 74, 74, 95, 87, 83, 67, 79, 82, 88, 67, 88, …
+$ score             &lt;dbl&gt; 1370, 1795, 1690, 1544, 2019, 1614, 1652, 1331, 1632…
+$ kills             &lt;dbl&gt; 7, 5, 5, 7, 12, 7, 6, 7, 7, 10, 9, 5, 10, 10, 5, 8, …
+$ deaths            &lt;dbl&gt; 4, 2, 2, 4, 3, 5, 4, 4, 3, 4, 3, 5, 5, 5, 5, 4, 4, 2…
+$ objectives        &lt;dbl&gt; 0, 2, 4, 2, 4, 4, 3, 2, 3, 3, 4, 1, 1, 1, 2, 4, 1, 2…
+$ shots_fired       &lt;dbl&gt; 148, 140, 190, 92, 143, 149, 143, 126, 138, 137, 118…
+$ time_alive_s      &lt;dbl&gt; 98, 105, 115, 80, 121, 115, 118, 99, 103, 71, 143, 7…
+$ distance_m        &lt;dbl&gt; 571, 520, 533, 349, 542, 566, 572, 308, 560, 451, 40…
+$ session_minutes   &lt;dbl&gt; 12.9, 24.6, 12.5, 18.8, 18.7, 25.3, 11.5, 27.0, 14.4…
+$ quit_reason       &lt;chr&gt; "Frustrated", "Lost interest", "Frustrated", "Lost i…</code></pre>
+</div>
+</div>
+<p><code>glimpse()</code> prints one line per column: its name, its type and its first few values. <code>&lt;chr&gt;</code> is text and <code>&lt;dbl&gt;</code> is a number. This is the first check on any new file: does every column have the type you expected? Here <code>cohort</code> is text, which is correct, but R has no idea that Novice, Regular and Veteran come in an order. That knowledge is yours to supply (<a href="../notes/ten-rules.html">rule 3</a>).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(survey)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     session_id  controls_responsive objective_clear difficulty_fair
+ Length   :120   Min.   :2.000       Min.   :1.000   Min.   :1      
+ N.unique :120   1st Qu.:4.000       1st Qu.:2.000   1st Qu.:2      
+ N.blank  :  0   Median :4.000       Median :3.000   Median :3      
+ Min.nchar:  4   Mean   :4.142       Mean   :2.608   Mean   :3      
+ Max.nchar:  4   3rd Qu.:5.000       3rd Qu.:3.000   3rd Qu.:4      
+                 Max.   :5.000       Max.   :5.000   Max.   :5      
+ level_navigable death_understood  visual_style   would_play_again
+ Min.   :1.000   Min.   :1.000    Min.   :3.000   Min.   :1.00    
+ 1st Qu.:3.000   1st Qu.:2.000    1st Qu.:4.000   1st Qu.:3.00    
+ Median :3.000   Median :3.000    Median :5.000   Median :4.00    
+ Mean   :3.217   Mean   :2.858    Mean   :4.458   Mean   :3.45    
+ 3rd Qu.:4.000   3rd Qu.:3.000    3rd Qu.:5.000   3rd Qu.:4.00    
+ Max.   :5.000   Max.   :5.000    Max.   :5.000   Max.   :5.00    
+  match_length  
+ Min.   :1.000  
+ 1st Qu.:4.000  
+ Median :4.000  
+ Mean   :4.025  
+ 3rd Qu.:5.000  
+ Max.   :5.000  </code></pre>
+</div>
+</div>
+<p><code>summary()</code> gives the minimum, quartiles, median, mean and maximum of every numeric column. Read down the <code>Mean</code> rows and the weakest survey item stands out without any further code.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(sessions<span class="sc">$</span>build <span class="sc">==</span> <span class="st">"A"</span> <span class="sc">&amp;</span> sessions<span class="sc">$</span>quit_reason <span class="sc">==</span> <span class="st">"Frustrated"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 20</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(sessions<span class="sc">$</span>build <span class="sc">==</span> <span class="st">"B"</span> <span class="sc">&amp;</span> sessions<span class="sc">$</span>quit_reason <span class="sc">==</span> <span class="st">"Frustrated"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5</code></pre>
+</div>
+</div>
+<p>A condition such as <code>sessions$build == "A"</code> produces one <code>TRUE</code> or <code>FALSE</code> per row, and <code>sum()</code> counts the <code>TRUE</code>s. Combining two conditions with <code>&amp;</code> counts the rows where both hold. This is how every number in the worked example was produced.</p>
+<hr>
+</section>
+<section id="interpretation-guidance" class="level2">
+<h2 class="anchored" data-anchor-id="interpretation-guidance">Interpretation Guidance</h2>
+<p>Every finding is read at three levels, and the discipline is keeping them apart.</p>
+<p><strong>What the data shows.</strong> 20 of 60 Build A sessions ended in a frustration quit, against 5 of 60 on Build B. This is a count. It is not in dispute.</p>
+<p><strong>What the analysis suggests.</strong> Something in Build A frustrates players that Build B avoided, and the survey’s weakest item points at objective clarity as a candidate.</p>
+<p><strong>What can legitimately be concluded.</strong> Build A fails the threshold the team set in advance. That is all. The survey figure is averaged across both builds, so on its own it cannot say that the unclear objective belongs to Build A. Linking the two is a hypothesis for the next test, not a finding.</p>
+<p>Telemetry reports behaviour and surveys report belief. When they agree, you have a lead. When they disagree, you have the most valuable finding in the playtest, and the disagreement itself is what goes in the report.</p>
+<hr>
+</section>
+<section id="common-mistakes" class="level2">
+<h2 class="anchored" data-anchor-id="common-mistakes">Common Mistakes</h2>
+<p><strong>Collecting first, asking later.</strong> Logging everything and hoping a question emerges produces large files and no decisions. Write the question down first (<a href="../notes/ten-rules.html">rule 2</a>).</p>
+<p><strong>Trusting one source.</strong> A survey on its own tells you what players believe; a log on its own tells you what they did. Treat either alone as half the evidence.</p>
+<p><strong>Setting the threshold after seeing the result.</strong> A threshold chosen after the data has been seen is always met by exactly the right margin. If it was not written down beforehand, it is not a threshold (<a href="../notes/ten-rules.html">rule 1</a>).</p>
+<p><strong>Logging without identifiers.</strong> A death event with no session or player ID cannot be joined to anything, and a survey response with no session ID cannot be joined to the telemetry from the same match.</p>
+<p><strong>Reading <code>glimpse()</code> and moving on.</strong> The types it prints are R’s guess. A 1 to 5 rating arrives as <code>&lt;dbl&gt;</code>, and R will average it without complaint. Whether it should be averaged is a decision R cannot make for you.</p>
+<hr>
+</section>
+<section id="short-practice-activities" class="level2">
+<h2 class="anchored" data-anchor-id="short-practice-activities">Short Practice Activities</h2>
+<p>Each takes two or three minutes.</p>
+<p><strong>1.</strong> Run <code>glimpse(survey)</code>. How many survey items are there, and what type has R given them?</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Check your answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Check your answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>There are 8 items after <code>session_id</code>, and every one is <code>&lt;dbl&gt;</code>. R treats them as ordinary numbers; they are ordinal ratings, and the difference matters as soon as you average them.</p>
+</div>
+</div>
+</div>
+<p><strong>2.</strong> Count the sessions that ended with <code>quit_reason</code> equal to <code>"Technical fault"</code>, then write the threshold that would make you delay a release over it.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Check your answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Check your answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(sessions<span class="sc">$</span>quit_reason <span class="sc">==</span> <span class="st">"Technical fault"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5</code></pre>
+</div>
+</div>
+<p>Any threshold is defensible if it was written first and names a number: “if more than one session in twenty ends in a technical fault, we do not release”. “If it seems like a lot” is not a threshold.</p>
+</div>
+</div>
+</div>
+<p><strong>3.</strong> Rewrite “is the corridor too dangerous?” as one telemetry measure and one survey measure, each recordable for a single player.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Check your answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Check your answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Telemetry: deaths in the corridor per session. Asking people: agreement with “I understood why I died”. Either alone is weaker than both together: players who die there often <em>and</em> do not understand why describe a different problem from players who die there often and accept it.</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ul>
+<li>Measurement earns its place where taste fails: you cannot see your own game, feel a rare event, or remember twenty playtests.</li>
+<li>Telemetry says what happened, performance capture says how the machine coped, and asking people says what players believe. The disagreements are the findings.</li>
+<li>A question is measurable when you can say how you would record it for one player.</li>
+<li>Write the threshold that would change your mind before you look.</li>
+<li><code>read_csv()</code>, <code>glimpse()</code> and <code>summary()</code> are the first three things you run on any new file.</li>
+</ul>
+<hr>
+</section>
+<section id="links-to-relevant-reference-material" class="level2">
+<h2 class="anchored" data-anchor-id="links-to-relevant-reference-material">Links to Relevant Reference Material</h2>
+<ul>
+<li><a href="../notes/ten-rules.html">Ten Rules</a>: rule 1 (decide what would change your mind) and rule 2 (a number without a question is decoration)</li>
+<li><a href="../reference/r-quarto-reference.html#getting-data-in">R and Quarto Reference: getting data in</a></li>
+<li><a href="../labs/setting-up.html">Lab 00: setting up</a> and <a href="../labs/reading-data.html">Lab 01: exploring playtest data</a>, Part B</li>
+</ul>
+<hr>
 </section>
 <section id="reflective-questions" class="level2">
 <h2 class="anchored" data-anchor-id="reflective-questions">Reflective Questions</h2>
@@ -368,7 +655,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/nmcguinness\.github\.io\/L8-3DGD-Playtest-Analytics\/");
+        var filterRegex = new RegExp('/' + window.location.host + '/');
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

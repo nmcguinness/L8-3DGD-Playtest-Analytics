@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Describing What You Have – Playtest Analytics</title>
+<title>Distributions and Variation – Playtest Analytics</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -71,8 +71,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../notes/distributions-and-variation.html" rel="next">
-<link href="../notes/why-measure.html" rel="prev">
+<link href="../labs/setting-up.html" rel="next">
+<link href="../notes/describing-what-you-have.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -123,7 +123,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notes/ten-rules.html">Notes</a></li><li class="breadcrumb-item"><a href="../notes/describing-what-you-have.html">Describing What You Have</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notes/ten-rules.html">Notes</a></li><li class="breadcrumb-item"><a href="../notes/distributions-and-variation.html">Distributions and Variation</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -177,13 +177,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../notes/describing-what-you-have.html" class="sidebar-item-text sidebar-link active">
+  <a href="../notes/describing-what-you-have.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Describing What You Have</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../notes/distributions-and-variation.html" class="sidebar-item-text sidebar-link">
+  <a href="../notes/distributions-and-variation.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Distributions and Variation</span></a>
   </div>
 </li>
@@ -241,12 +241,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#learning-outcomes" id="toc-learning-outcomes" class="nav-link active" data-scroll-target="#learning-outcomes">Learning Outcomes</a></li>
   <li><a href="#why-this-matters-for-playtesting" id="toc-why-this-matters-for-playtesting" class="nav-link" data-scroll-target="#why-this-matters-for-playtesting">Why This Matters for Playtesting</a></li>
-  <li><a href="#what-kind-of-number-is-this" id="toc-what-kind-of-number-is-this" class="nav-link" data-scroll-target="#what-kind-of-number-is-this">What Kind of Number Is This?</a></li>
-  <li><a href="#tidy-data-one-row-per-observation" id="toc-tidy-data-one-row-per-observation" class="nav-link" data-scroll-target="#tidy-data-one-row-per-observation">Tidy Data: One Row Per Observation</a></li>
-  <li><a href="#sample-and-population" id="toc-sample-and-population" class="nav-link" data-scroll-target="#sample-and-population">Sample and Population</a></li>
-  <li><a href="#centre" id="toc-centre" class="nav-link" data-scroll-target="#centre">Centre</a></li>
-  <li><a href="#spread" id="toc-spread" class="nav-link" data-scroll-target="#spread">Spread</a></li>
-  <li><a href="#look-at-the-shape-first" id="toc-look-at-the-shape-first" class="nav-link" data-scroll-target="#look-at-the-shape-first">Look at the Shape First</a></li>
+  <li><a href="#variation-between-players" id="toc-variation-between-players" class="nav-link" data-scroll-target="#variation-between-players">Variation Between Players</a></li>
+  <li><a href="#distributions-and-skew" id="toc-distributions-and-skew" class="nav-link" data-scroll-target="#distributions-and-skew">Distributions and Skew</a></li>
+  <li><a href="#outliers" id="toc-outliers" class="nav-link" data-scroll-target="#outliers">Outliers</a></li>
+  <li><a href="#reading-several-summaries-together" id="toc-reading-several-summaries-together" class="nav-link" data-scroll-target="#reading-several-summaries-together">Reading Several Summaries Together</a></li>
   <li><a href="#worked-examples" id="toc-worked-examples" class="nav-link" data-scroll-target="#worked-examples">Worked Examples</a></li>
   <li><a href="#r-demonstrations" id="toc-r-demonstrations" class="nav-link" data-scroll-target="#r-demonstrations">R Demonstrations</a></li>
   <li><a href="#interpretation-guidance" id="toc-interpretation-guidance" class="nav-link" data-scroll-target="#interpretation-guidance">Interpretation Guidance</a></li>
@@ -261,10 +259,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notes/ten-rules.html">Notes</a></li><li class="breadcrumb-item"><a href="../notes/describing-what-you-have.html">Describing What You Have</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notes/ten-rules.html">Notes</a></li><li class="breadcrumb-item"><a href="../notes/distributions-and-variation.html">Distributions and Variation</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Describing What You Have</h1>
-<p class="subtitle lead">Variable types, tidy data, centre, spread and shape</p>
+<h1 class="title">Distributions and Variation</h1>
+<p class="subtitle lead">Why the average is never the whole story</p>
 </div>
 
 
@@ -282,206 +280,275 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <blockquote class="blockquote">
-<p>Week 1, for everyone, before Part B of Lab 01. This is the vocabulary for describing a single variable: what kind of number it is, where its centre sits, how spread out it is and what shape it has. Every later page assumes it.</p>
+<p>Week 1, second cycle, for everyone, before Part B of Lab 01. It moves on from a single typical value to the whole spread of players: how much they differ, what shape that difference takes, and which values sit outside it. The worked example is the one to remember: two builds with the same frame rate, one of which stutters.</p>
 </blockquote>
 <hr>
 <section id="learning-outcomes" class="level2">
 <h2 class="anchored" data-anchor-id="learning-outcomes">Learning Outcomes</h2>
 <p>By the end of these notes you can:</p>
 <ul>
-<li>classify a variable as nominal, ordinal, discrete or continuous, and say which operations that allows;</li>
-<li>recognise a tidy table and name the most common way data fails to be one;</li>
-<li>say what a sample is, and why every number you compute describes the sample rather than your audience;</li>
-<li>choose between mean and median, and read the gap between them as evidence of skew;</li>
-<li>describe spread with the standard deviation, quartiles and IQR, and say why the range is rarely enough;</li>
-<li>draw a histogram and a boxplot in base R and say what each shows that a summary hides.</li>
+<li>explain why an average on its own cannot describe a playtest;</li>
+<li>read a standard deviation as the typical distance of a player from the mean;</li>
+<li>describe a distribution by its centre, spread, skew and outliers;</li>
+<li>say whether an outlier is an error, an extreme player or the finding itself;</li>
+<li>read the mean, median, standard deviation and high percentiles together and say what each adds;</li>
+<li>draw <code>hist()</code>, <code>boxplot()</code>, <code>barplot()</code> and <code>plot()</code> in base R and say what each one is for.</li>
 </ul>
 <hr>
 </section>
 <section id="why-this-matters-for-playtesting" class="level2">
 <h2 class="anchored" data-anchor-id="why-this-matters-for-playtesting">Why This Matters for Playtesting</h2>
-<p>Before comparing anything to anything, you have to be able to say what a single variable looks like. This section is the vocabulary for that, and it is the part students most often skip and most often get caught by.</p>
+<p>Every design question is really a question about players, plural, and players differ. A level that takes eight minutes on average can be a level everyone finishes in eight minutes, or a level half the testers finish in four and the other half abandon. Those are different games with different fixes, and the average cannot tell them apart.</p>
+<p><strong>The players you design for are rarely the average player.</strong> The ones who quit, the ones who get stuck, the ones whose machine stutters: they live in the edges of the distribution, and the edges are exactly what a mean averages away.</p>
+<p><strong>Variation is information, not noise.</strong> When two builds differ in how spread out their players are, that difference is often the finding. A build that tightens the spread has made the experience more consistent, even if the average has not moved.</p>
 <hr>
 </section>
-<section id="what-kind-of-number-is-this" class="level2">
-<h2 class="anchored" data-anchor-id="what-kind-of-number-is-this">What Kind of Number Is This?</h2>
-<p>Four types, and the type decides which operations are legal.</p>
-<p><strong>Nominal</strong> — labels with no order. Character class, platform, quit reason. You can count them. You cannot average them. The mean of <code>Scout</code> and <code>Sentinel</code> does not exist, and if your code produces one, something has gone wrong upstream.</p>
-<p><strong>Ordinal</strong> — ordered labels with unknown gaps. Difficulty setting, player experience level, and every agreement scale ever printed. Novice, Regular and Veteran are in an order, but Regular is not “halfway” between the other two in any meaningful sense.</p>
-<p><strong>Discrete</strong> — counts. Deaths, kills, items collected. Whole numbers, and there is no such thing as 2.4 deaths in a single session — though the <em>average</em> number of deaths across many sessions is perfectly meaningful at 2.4.</p>
-<p><strong>Continuous</strong> — measurements. Completion time, frame time, distance travelled. Any value in a range, limited only by the precision of your instrument.</p>
-<p><strong>The awkward case is the rating scale</strong>, and it is awkward every time. A 1–5 agreement scale is strictly <strong>ordinal</strong>: you know Agree is above Neutral, but you do not know that the step from Disagree to Neutral is the same size as the step from Agree to Strongly Agree. In practice, when a scale has five or more points and the responses are reasonably spread, people treat it as numeric and average it. That convention is defensible and universal, and you should still know you are making an assumption. Where it matters — where the whole finding rests on a mean of 3.2 against 3.4 — report the distribution instead.</p>
+<section id="variation-between-players" class="level2">
+<h2 class="anchored" data-anchor-id="variation-between-players">Variation Between Players</h2>
+<p>The <strong>variation</strong> in a variable is how much its values differ from one another. Some of it is the game: a harder route produces more deaths. Some of it is the player: skill, experience and patience vary before anyone touches your build. You cannot remove the second kind, so you have to measure it.</p>
+<p>The <strong>standard deviation</strong> is the typical distance of a value from the mean. A small standard deviation means players cluster tightly around the average; a large one means the average is a poor guide to any individual. It is in the same units as the data, so a standard deviation of 3 ms on a frame time is directly comparable to the 16.7 ms a 60 FPS frame is allowed.</p>
+<p><strong>Standard deviation belongs to the mean.</strong> It measures distance from the mean, so it inherits the mean’s weakness: a few extreme values inflate it. For skewed data, the interquartile range from the previous notes is the better description of spread.</p>
 <hr>
 </section>
-<section id="tidy-data-one-row-per-observation" class="level2">
-<h2 class="anchored" data-anchor-id="tidy-data-one-row-per-observation">Tidy Data: One Row Per Observation</h2>
-<p>Data arrives in whatever shape the tool that produced it happened to use. Almost all analysis assumes one particular shape, and it is worth naming.</p>
-<p>A table is <strong>tidy</strong> when each row is one observation, each column is one variable, and each cell is one value. For a playtest: one row per player per session, one column per thing you recorded.</p>
-<p>The most common violation is a survey export, where the eight questions become eight columns. That is convenient to read and inconvenient to analyse, because “question” is really a variable and its eight values have been spread across the column headings. Reshaping it into one row per player <em>per question</em> is what makes the whole survey analysable in one operation, and you will do exactly that in Lab 03.</p>
+<section id="distributions-and-skew" class="level2">
+<h2 class="anchored" data-anchor-id="distributions-and-skew">Distributions and Skew</h2>
+<p>A <strong>distribution</strong> is the full pattern of values: which ones occur, and how often. A histogram draws it. Every summary statistic is an attempt to describe a distribution in one number, and every one of them fails for some distribution.</p>
+<p><strong>Skew</strong> is a distribution leaning to one side. A <strong>right skew</strong> has a long tail of large values: most frames are quick, a few are very slow. A <strong>left skew</strong> has a long tail of small values: most players stay for the full session, a few leave early. The mean is pulled towards the tail; the median is not. That is why the gap between them tells you which way the data leans.</p>
+<p><strong>Game data is rarely symmetric.</strong> Times have a floor and no ceiling. Match lengths have a ceiling set by the timer. Ratings bunch against the ends of the scale. Expect skew and check for it, rather than assuming the bell shape from school statistics.</p>
 <hr>
 </section>
-<section id="sample-and-population" class="level2">
-<h2 class="anchored" data-anchor-id="sample-and-population">Sample and Population</h2>
-<p>The 120 <em>Tidebreak</em> sessions come from 30 players who happened to attend this playtest. They are a <strong>sample</strong>. The <strong>population</strong> is everybody you are making the game for, and you never get to measure it.</p>
-<p><strong>Every number describes the sample.</strong> The question you care about is always about the population: not “did these players struggle?” but “will players struggle?”. Bring in a different group next week and every figure on this page moves. How far it can move is the subject of Week 2; until then, report how many people a number came from every time you quote it (<a href="../notes/ten-rules.html">rule 8</a>).</p>
-<p><strong>Who is in the sample matters as much as how many.</strong> A playtest recruited from the studio’s own Discord samples the game’s most committed fans, not its audience. No amount of analysis afterwards corrects for who walked in the door.</p>
+<section id="outliers" class="level2">
+<h2 class="anchored" data-anchor-id="outliers">Outliers</h2>
+<p>An <strong>outlier</strong> is a value far from the rest. The boxplot’s convention is any point more than one and a half box-widths beyond the edge of the box, and R draws those points individually. That rule is a prompt to look, not a verdict.</p>
+<p>An outlier is one of three things, and the response to each is different:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">The outlier is</th>
+<th style="text-align: left;">Example</th>
+<th style="text-align: left;">What you do</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">An error</td>
+<td style="text-align: left;">A session length of −3 minutes; a rating of 7 on a 1–5 scale</td>
+<td style="text-align: left;">Fix it or remove it, and record that you did</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">An extreme but ordinary player</td>
+<td style="text-align: left;">One tester who never died</td>
+<td style="text-align: left;">Keep it; report the median rather than the mean</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">The finding</td>
+<td style="text-align: left;">A cluster of games that collapse early</td>
+<td style="text-align: left;">Keep it and investigate it; it is why you ran the test</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Never delete an outlier because it is inconvenient.</strong> Every row you drop is a decision with a consequence (<a href="../notes/ten-rules.html">rule 6</a>), and the value most tempting to drop is often the one the playtest was run to find (<a href="../notes/ten-rules.html">rule 9</a>).</p>
 <hr>
 </section>
-<section id="centre" class="level2">
-<h2 class="anchored" data-anchor-id="centre">Centre</h2>
-<p>Two summaries of “the typical value”, and choosing between them is a real decision, not a formality.</p>
-<p>The <strong>mean</strong> adds everything and divides by the count. It uses every value, which is its strength, and it is dragged by extremes, which is its weakness.</p>
-<p>The <strong>median</strong> is the middle value when sorted. Half above, half below. It ignores how extreme the extremes are, which is its strength and its weakness.</p>
-<p><strong>When they disagree, the data is skewed, and the gap tells you which way.</strong> If the mean sits well above the median, a few large values are pulling it up: a long right tail. If it sits below, a group of small values is pulling it down.</p>
-<p>For game data this is not an edge case, it is the norm. Completion times, session lengths and frame times are all skewed almost by construction — there is a floor on how fast anyone can finish and no ceiling on how slow. <strong>Default to the median for anything time-like</strong> and reach for the mean only when you have looked at the shape and satisfied yourself it is roughly symmetric.</p>
-<p>When you compare the two, compare them relative to the size of the variable. A gap of 40 points on a score in the thousands is nothing; a gap of 3 minutes on a median of 26 is a real skew.</p>
-<hr>
-</section>
-<section id="spread" class="level2">
-<h2 class="anchored" data-anchor-id="spread">Spread</h2>
-<p>The centre alone is nearly useless. Two levels with identical average completion times, one where everybody takes four minutes and one where half take one minute and half take seven, are not the same level.</p>
-<p><strong>Range</strong> is minimum to maximum. Easy to quote and almost always misleading, since a single unusual value defines it entirely.</p>
-<p><strong>Standard deviation</strong> is the typical distance from the mean. It is the right measure for roughly symmetric data and it inherits the mean’s sensitivity to extremes.</p>
-<p><strong>Quartiles</strong> split the sorted data into four. The first quartile has a quarter below it, the third has three quarters. The <strong>interquartile range</strong> — the distance between them — is the width of the middle half of your players, and it is the most robust description of spread you have. For skewed game data, quote the median and the IQR together.</p>
-<p><strong>Percentiles</strong> generalise this: the 95th percentile has 95% of values below it. <a href="../notes/distributions-and-variation.html">Distributions and Variation</a> will show you why the 99th percentile of frame time is the single most important number in a performance capture.</p>
-<hr>
-</section>
-<section id="look-at-the-shape-first" class="level2">
-<h2 class="anchored" data-anchor-id="look-at-the-shape-first">Look at the Shape First</h2>
-<p>Every summary statistic throws information away. That is what a summary is for. The risk is that it throws away the finding.</p>
-<p>A <strong>histogram</strong> shows you the whole distribution: where the bulk sits, whether it is symmetric, whether there is a second hump, whether there are outliers. Draw one before quoting any average. It costs one line.</p>
-<p>The number of bins changes what you see, sometimes dramatically. Too few and a second hump disappears; too many and noise looks like structure. Try several. That a chart changes with its settings is not a flaw to hide — it is the first evidence that a chart is an argument rather than a fact, and you are responsible for the argument you make.</p>
-<p>A <strong>boxplot</strong> compresses the same information into median, quartiles and outliers. It is less informative than a histogram for one variable and much better for comparing several groups side by side, which is what Section 4 is about.</p>
-<p><strong>Two humps are always worth chasing.</strong> A distribution with two peaks usually means two populations have been mixed: players who found the key and players who did not, sessions that completed and sessions that crashed. The average of a bimodal distribution describes nobody at all — it names a value that sits in the valley between the two groups, where the fewest players actually are.</p>
+<section id="reading-several-summaries-together" class="level2">
+<h2 class="anchored" data-anchor-id="reading-several-summaries-together">Reading Several Summaries Together</h2>
+<p>No single statistic describes a distribution, but a small set of them, read together, usually does.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Summary</th>
+<th style="text-align: left;">What it tells you</th>
+<th style="text-align: left;">What it misses</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mean</td>
+<td style="text-align: left;">The total spread evenly across players</td>
+<td style="text-align: left;">Skew, clusters, tails</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Median</td>
+<td style="text-align: left;">The middle player</td>
+<td style="text-align: left;">How extreme the extremes are</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Standard deviation</td>
+<td style="text-align: left;">Typical distance from the mean</td>
+<td style="text-align: left;">Which direction the spread goes</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IQR</td>
+<td style="text-align: left;">Width of the middle half</td>
+<td style="text-align: left;">Everything outside the middle half</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">95th or 99th percentile</td>
+<td style="text-align: left;">How bad the worst few per cent get</td>
+<td style="text-align: left;">The typical case</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Where the summaries disagree, look at the picture.</strong> Mean and median apart means skew. A large standard deviation with a small IQR means a few extreme values. A normal median with a bad 99th percentile means a rare problem that the average will never show. Each disagreement is a pointer to a specific shape, and the histogram confirms which one (<a href="../notes/ten-rules.html">rule 4</a>).</p>
 <hr>
 </section>
 <section id="worked-examples" class="level2">
 <h2 class="anchored" data-anchor-id="worked-examples">Worked Examples</h2>
-<p><strong>Is the Sentinel underpowered?</strong> Sort the four archetypes by mean score and the Sentinel comes last, at 1313 points. A balance pass built on that number buffs the Sentinel.</p>
-<p>Sort by median instead and the Sentinel is the second-highest, at 1528. The mean and the median disagree by 215 points, and the standard deviation is 455 against 225 to 259 for the other three. Something is dragging the mean down without moving the middle.</p>
+<p><strong>Which build runs better?</strong> The <em>Tidebreak</em> team captured 4500 frames from each build, split across 3 level zones. The frame-rate counter reports Build A at 58.8 FPS and Build B at 59 FPS. By the number everyone quotes, Build B is marginally the faster build.</p>
+<p>The median agrees: 16.99 ms per frame for Build A, 16.63 ms for Build B. So does the 95th percentile: 18.8 ms against 18.4 ms. Three summaries, one verdict.</p>
+<p>The 99th percentile disagrees. Build A’s is 19.5 ms; Build B’s is 39.4 ms, 2.0 times as long. The standard deviation says the same thing more quietly: 1.05 ms for Build A, 3.4 ms for Build B.</p>
+<p>Count the frames slower than 30 FPS (33.3 ms). Build A has 0. Build B has 60, every one of them in the Corridor zone, and exactly 25 frames apart: at 60 FPS, a hitch 2.4 times a second for as long as the player is in the corridor.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(sentinel,</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">breaks =</span> <span class="dv">12</span>,</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">main   =</span> <span class="st">"Sentinel score, one bar per band"</span>,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab   =</span> <span class="st">"Score"</span>,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">col    =</span> <span class="st">"grey85"</span>,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">border =</span> <span class="st">"white"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>corridor_a <span class="ot">&lt;-</span> frames<span class="sc">$</span>ms[frames<span class="sc">$</span>build <span class="sc">==</span> <span class="st">"A"</span> <span class="sc">&amp;</span> frames<span class="sc">$</span>zone <span class="sc">==</span> <span class="st">"Corridor"</span>]</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(corridor_b[<span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">col =</span> <span class="st">"firebrick"</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">65</span>),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Corridor frame times, first 200 frames"</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Frame"</span>, <span class="at">ylab =</span> <span class="st">"Frame time (ms)"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(corridor_a[<span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>], <span class="at">col =</span> <span class="st">"grey40"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">1000</span> <span class="sc">/</span> <span class="dv">60</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"top"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Build A"</span>, <span class="st">"Build B"</span>), <span class="at">horiz =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"grey40"</span>, <span class="st">"firebrick"</span>), <span class="at">lty =</span> <span class="dv">1</span>, <span class="at">bty =</span> <span class="st">"n"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="describing-what-you-have_files/figure-html/worked-sentinel-hist-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="distributions-and-variation_files/figure-html/worked-frame-trace-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>The histogram answers it. 7 of the 30 Sentinel sessions scored under 700 and sit in a clump of their own at the far left, 274 points below the next-lowest Sentinel game. The Sentinel either anchors the round or collapses early. It is not underpowered; it is inconsistent. A flat buff raises the scores of the players already doing well, and the design question becomes what the collapsing games have in common (<a href="../notes/ten-rules.html">rule 4</a>).</p>
-<p><strong>How clear was the objective?</strong> The survey item “I always knew what my objective was” averages 2.61 on a 1 to 5 scale. That is a mean of an ordinal rating, and the distribution says more:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(survey<span class="sc">$</span>objective_clear)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
- 1  2  3  4  5 
-24 31 37 24  4 </code></pre>
-</div>
-</div>
-<p>55 of 120 players chose 1 or 2, and 4 chose 5. “46% of players disagreed that they always knew their objective” is a sentence a designer acts on. “Mean 2.61” is not (<a href="../notes/ten-rules.html">rule 3</a>).</p>
+<p><strong>Why the mean cannot see it.</strong> The slow frames are 1.3% of Build B’s total. Spread across every frame of the capture, they barely move the mean, and Build B’s faster frames elsewhere more than make up for them. The 95th percentile sits below the problem because the problem is rarer than one frame in twenty. Only a summary aimed at the worst one per cent can see it, which is why the 99th percentile is the standard figure in performance capture. The mean is not approximately wrong here. It is structurally incapable of showing the thing players experience.</p>
 <hr>
 </section>
 <section id="r-demonstrations" class="level2">
 <h2 class="anchored" data-anchor-id="r-demonstrations">R Demonstrations</h2>
-<p>All base R. The variable here is <code>time_alive_s</code>, seconds survived in the match.</p>
+<p>Base R first, then the tidyverse equivalent for the grouped summary.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(sessions<span class="sc">$</span>time_alive_s)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   60.0   105.0   133.0   130.4   155.5   180.0 </code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>sessions <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_sessions.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>frames   <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_frame_times.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(sessions<span class="sc">$</span>time_alive_s)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 32.74505</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">IQR</span>(sessions<span class="sc">$</span>time_alive_s)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 50.5</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(sessions<span class="sc">$</span>time_alive_s, <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  10%   90% 
- 82.0 175.2 </code></pre>
-</div>
-</div>
-<p><code>summary()</code> gives centre and quartiles in one call; <code>sd()</code> and <code>IQR()</code> give the two measures of spread; <code>quantile()</code> with a vector of proportions gives any percentiles you ask for, here the 10th and 90th.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(sessions<span class="sc">$</span>time_alive_s,</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">breaks =</span> <span class="dv">15</span>,</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">main   =</span> <span class="st">"Time alive per session"</span>,</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab   =</span> <span class="st">"Seconds"</span>,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">col    =</span> <span class="st">"grey85"</span>,</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">border =</span> <span class="st">"white"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(sessions<span class="sc">$</span>session_minutes, <span class="at">breaks =</span> <span class="dv">20</span>,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Session length"</span>, <span class="at">xlab =</span> <span class="st">"Minutes"</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"grey85"</span>, <span class="at">border =</span> <span class="st">"white"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="describing-what-you-have_files/figure-html/demo-hist-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="distributions-and-variation_files/figure-html/demo-hist-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
 </div>
-<p><code>breaks</code> sets roughly how many bars. Change it and look again before believing any shape.</p>
+<p><code>hist()</code> draws the distribution of one numeric variable. Look for the bulk, the tails, and any second hump.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sessions<span class="sc">$</span>cohort)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
- Novice Regular Veteran 
-     33      53      34 </code></pre>
-</div>
-</div>
-<p><code>table()</code> counts a categorical variable. It is the only summary a nominal variable has.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tapply</span>(sessions<span class="sc">$</span>time_alive_s, sessions<span class="sc">$</span>cohort, median)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code> Novice Regular Veteran 
-  127.0   137.0   143.5 </code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(time_alive_s <span class="sc">~</span> cohort,</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> sessions,</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Time alive by cohort"</span>,</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Seconds"</span>,</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">col  =</span> <span class="st">"grey85"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(session_minutes <span class="sc">~</span> build, <span class="at">data =</span> sessions,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Session length by build"</span>, <span class="at">ylab =</span> <span class="st">"Minutes"</span>, <span class="at">col =</span> <span class="st">"grey85"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="describing-what-you-have_files/figure-html/demo-by-group-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="distributions-and-variation_files/figure-html/demo-box-build-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tapply</span>(sessions<span class="sc">$</span>session_minutes, sessions<span class="sc">$</span>build, sd)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       A        B 
+8.301448 6.942605 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tapply</span>(sessions<span class="sc">$</span>session_minutes, sessions<span class="sc">$</span>build, IQR)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    A     B 
+16.25 10.95 </code></pre>
+</div>
+</div>
+<p><code>boxplot()</code> with <code>y ~ group</code> puts one box per group on the same axis, which is the quickest way to compare distributions. Build A’s box is wider: its IQR is 16.3 minutes against 10.9 for Build B. 88% of Build A sessions were still going at minute 11, and 68% at minute 13. The spread is where Build A loses its players.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(<span class="fu">table</span>(sessions<span class="sc">$</span>quit_reason),</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"How sessions ended"</span>, <span class="at">ylab =</span> <span class="st">"Sessions"</span>, <span class="at">col =</span> <span class="st">"grey85"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="distributions-and-variation_files/figure-html/demo-barplot-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
 </div>
-<p><code>tapply()</code> applies one function to one variable, split by a group. The boxplot shows the same split as a picture: the thick line is the median, the box is the middle half, and the whiskers and points show the rest.</p>
+<p><code>barplot()</code> draws counts of a categorical variable. Give it the output of <code>table()</code>, not the raw column.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sessions<span class="sc">$</span>deaths, sessions<span class="sc">$</span>score,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Deaths against score"</span>, <span class="at">xlab =</span> <span class="st">"Deaths"</span>, <span class="at">ylab =</span> <span class="st">"Score"</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"grey40"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="distributions-and-variation_files/figure-html/demo-scatter-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><code>plot()</code> with two numeric variables draws a scatterplot: one point per session. Read it for direction and for scatter. How strongly two variables are related is Week 3’s subject.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(frames<span class="sc">$</span>ms[frames<span class="sc">$</span>build <span class="sc">==</span> <span class="st">"B"</span>], <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.95</span>, <span class="fl">0.99</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    50%     95%     99% 
+16.6300 18.4300 39.3708 </code></pre>
+</div>
+</div>
+<p><code>quantile()</code> with a vector of proportions returns any percentiles you ask for. For performance data, always ask for the 99th.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>frames <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(build) <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_ms   =</span> <span class="fu">mean</span>(ms),</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">median_ms =</span> <span class="fu">median</span>(ms),</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd_ms     =</span> <span class="fu">sd</span>(ms),</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">p99_ms    =</span> <span class="fu">quantile</span>(ms, <span class="fl">0.99</span>),</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">fps       =</span> <span class="dv">1000</span> <span class="sc">/</span> <span class="fu">mean</span>(ms))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 6
+  build mean_ms median_ms sd_ms p99_ms   fps
+  &lt;chr&gt;   &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+1 A        17.0      17.0  1.05   19.5  58.8
+2 B        16.9      16.6  3.40   39.4  59.0</code></pre>
+</div>
+</div>
+<p><code>group_by()</code> splits the data and <code>summarise()</code> computes one row of summaries per group. This is the several-summaries-together table from the worked example in six lines, and it is the base R <code>tapply()</code> repeated five times.</p>
 <hr>
 </section>
 <section id="interpretation-guidance" class="level2">
 <h2 class="anchored" data-anchor-id="interpretation-guidance">Interpretation Guidance</h2>
-<p><strong>A description has four parts: centre, spread, shape and size.</strong> One sentence can hold all four:</p>
-<blockquote class="blockquote">
-<p>Median time alive was 133 seconds (IQR 50.5, n = 120). The mean sits 2.6 seconds from the median, so the centre is not being pulled by a tail. 11 sessions sit at exactly 180 seconds, the full match: those players never died, and the tallest bar on the right is a ceiling, not a peak.</p>
-</blockquote>
-<p><strong>Pick the summary to fit the shape, and say why.</strong> Median and IQR for anything skewed or with outliers; mean and standard deviation only when the histogram is roughly symmetric.</p>
-<p><strong>Keep what the data shows apart from what it suggests.</strong> “The Sentinel’s scores fall into two groups” is what the data shows. “Some Sentinel players do not know how to play the role” is a suggestion, and it needs a different kind of evidence before it becomes a conclusion.</p>
+<p><strong>What the data shows.</strong> Build A and Build B have near-identical mean frame times. Build B has 60 frames slower than 30 FPS, all in the Corridor, and Build A has 0.</p>
+<p><strong>What the analysis suggests.</strong> Something in Build B’s Corridor costs a frame at a fixed interval. The regular spacing points at a periodic job, such as streaming, garbage collection or a timed effect, rather than at scene complexity.</p>
+<p><strong>What can legitimately be concluded.</strong> Build B introduced a hitch confined to the Corridor, and a report that quotes average FPS alone would have shipped it. The cause is not established by frame times; that needs a profiler.</p>
+<p><strong>Quote the tail with the centre.</strong> For anything where the worst case is what players remember, such as frame time, load time or matchmaking wait, report the median and a high percentile together. “Median 16.6 ms, 99th percentile 39 ms” is a performance report. “59 FPS” is a slogan.</p>
 <hr>
 </section>
 <section id="common-mistakes" class="level2">
 <h2 class="anchored" data-anchor-id="common-mistakes">Common Mistakes</h2>
-<p><strong>Averaging a label.</strong> <code>mean(sessions$cohort)</code> returns <code>NA</code> with a warning, which is R protecting you. Code the cohorts as 1, 2 and 3 and R will average them happily, and the answer will mean nothing.</p>
-<p><strong>Trusting R’s idea of the type.</strong> R stores <code>cohort</code> as text and every survey item as a number. Neither is wrong, but neither tells R that cohorts come in an order or that a rating is ordinal. The type R prints is where your checking starts (<a href="../notes/ten-rules.html">rule 3</a>).</p>
-<p><strong>Quoting a mean without looking.</strong> The Sentinel’s mean is a correct calculation that describes no Sentinel game. Draw the histogram first (<a href="../notes/ten-rules.html">rule 4</a>).</p>
-<p><strong>Quoting the range as the spread.</strong> One extreme player sets the range on their own. Quote the IQR.</p>
-<p><strong>Trusting one bin setting.</strong> A histogram drawn once is one argument among several the data could make. Redraw it with fewer and more bars.</p>
-<p><strong>Leaving out n.</strong> “Players rated it 2.6” means nothing without “out of how many” (<a href="../notes/ten-rules.html">rule 8</a>).</p>
+<p><strong>Reporting average FPS as the performance result.</strong> It is the number the engine shows and the number least able to show a hitch.</p>
+<p><strong>Comparing groups by their means alone.</strong> Two builds with the same mean can be different games (<a href="../notes/ten-rules.html">rule 7</a>). Draw the boxplots side by side.</p>
+<p><strong>Deleting outliers to clean the chart.</strong> Find out which of the three kinds each one is first. The Sentinel’s low scores in <a href="../notes/describing-what-you-have.html">Describing What You Have</a> are the finding, not the noise.</p>
+<p><strong>Quoting a standard deviation for skewed data.</strong> It measures distance from the mean, and on skewed data the mean is in the wrong place. Use the IQR.</p>
+<p><strong>Stopping at the 95th percentile.</strong> A problem affecting one frame in a hundred is invisible at the 95th. Match the percentile to how rare the problem could be.</p>
+<p><strong>Reading a scatterplot as proof.</strong> A downward cloud of points shows that two things move together in this sample. It does not say which one causes the other.</p>
 <hr>
 </section>
 <section id="short-practice-activities" class="level2">
 <h2 class="anchored" data-anchor-id="short-practice-activities">Short Practice Activities</h2>
 <p>Each takes two or three minutes.</p>
-<p><strong>1.</strong> Classify each of these as nominal, ordinal, discrete or continuous: <code>kills</code>, <code>quit_reason</code>, <code>cohort</code>, <code>distance_m</code>, <code>visual_style</code>.</p>
+<p><strong>1.</strong> Compute the 99th percentile of frame time for each zone in Build B. Which zone is responsible?</p>
 <div class="callout callout-style-default callout-note callout-titled" title="Check your answer">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -494,11 +561,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><code>kills</code> discrete; <code>quit_reason</code> nominal; <code>cohort</code> ordinal; <code>distance_m</code> continuous; <code>visual_style</code> ordinal (a 1 to 5 rating), whatever type R gives it.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>frames_b <span class="ot">&lt;-</span> frames[frames<span class="sc">$</span>build <span class="sc">==</span> <span class="st">"B"</span>, ]</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tapply</span>(frames_b<span class="sc">$</span>ms, frames_b<span class="sc">$</span>zone, quantile, <span class="fl">0.99</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Atrium Corridor   Gantry 
+ 18.9300  48.5451  19.1502 </code></pre>
+</div>
+</div>
+<p>The Corridor, at 48.5 ms. The other two zones are at most 19.2 ms. Splitting a summary by where it happened turns “Build B stutters” into “Build B stutters in one place”, which is a ticket someone can fix.</p>
 </div>
 </div>
 </div>
-<p><strong>2.</strong> Describe <code>distance_m</code> in one sentence with centre, spread and size. Does the mean sit above or below the median?</p>
+<p><strong>2.</strong> Redraw the quit-reason bar chart with one bar per build side by side. What does it add to the single bar chart?</p>
 <div class="callout callout-style-default callout-note callout-titled" title="Check your answer">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -512,24 +587,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(sessions<span class="sc">$</span>distance_m)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 381.5</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">IQR</span>(sessions<span class="sc">$</span>distance_m)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 176.5</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sessions<span class="sc">$</span>distance_m)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 387.8833</code></pre>
-</div>
-</div>
-<p>Median distance was 381.5 m (IQR 176.5, n = 120). The mean sits above the median by 6.4 m, which is small against a spread of that size.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(<span class="fu">table</span>(sessions<span class="sc">$</span>build, sessions<span class="sc">$</span>quit_reason),</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">beside =</span> <span class="cn">TRUE</span>, <span class="at">legend.text =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"How sessions ended, by build"</span>, <span class="at">ylab =</span> <span class="st">"Sessions"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="distributions-and-variation_files/figure-html/practice-quit-build-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
 </div>
 </div>
 </div>
-<p><strong>3.</strong> Use <code>table()</code> to find the most common number of deaths in a session. Why is <code>table()</code> sensible for <code>deaths</code> but not for <code>distance_m</code>?</p>
+<p>20 Build A sessions ended in frustration against 5 in Build B. The single chart showed how often players left frustrated; the split shows which build they left.</p>
+</div>
+</div>
+</div>
+<p><strong>3.</strong> Using <code>tapply()</code>, find the median score for each number of deaths. Does the pattern in the scatterplot hold up?</p>
 <div class="callout callout-style-default callout-note callout-titled" title="Check your answer">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -543,14 +616,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sessions<span class="sc">$</span>deaths)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tapply</span>(sessions<span class="sc">$</span>score, sessions<span class="sc">$</span>deaths, median)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>
- 0  1  2  3  4  5  6  7 
- 4 18 26 23 31 12  4  2 </code></pre>
+<pre><code>     0      1      2      3      4      5      6      7 
+1627.0 1659.0 1496.0 1572.0 1370.0 1222.5  924.0  804.5 </code></pre>
 </div>
 </div>
-<p>The most common count is 4 deaths. Deaths is discrete with only a handful of possible values, so counting each one is informative. 110 of the 120 <code>distance_m</code> values are different, so its table is mostly a list of ones; a continuous variable needs a histogram instead.</p>
+<p>Broadly, yes: sessions with no deaths have a median score of 1627, and sessions with 7 deaths have 804.5. Check how many sessions sit behind each median with <code>table(sessions$deaths)</code> before trusting the ends of that list (<a href="../notes/ten-rules.html">rule 8</a>).</p>
 </div>
 </div>
 </div>
@@ -559,19 +631,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="summary" class="level2">
 <h2 class="anchored" data-anchor-id="summary">Summary</h2>
 <ul>
-<li>The type of a variable decides which summaries are legal. A 1 to 5 rating is ordinal, and averaging it is an assumption you should know you are making.</li>
-<li>Tidy data has one row per observation and one column per variable.</li>
-<li>Every number describes the sample. Report n every time.</li>
-<li>When mean and median disagree, the data is skewed. Default to the median for anything time-like.</li>
-<li>Describe spread with the IQR for skewed data and the standard deviation for symmetric data. The range is rarely enough.</li>
-<li>Look at the histogram before quoting any average. Two humps mean two groups.</li>
+<li>An average describes a group; it does not describe any player in it.</li>
+<li>The standard deviation is the typical distance from the mean. Use the IQR when the data is skewed.</li>
+<li>Skew pulls the mean towards the tail. Game data is rarely symmetric.</li>
+<li>An outlier is an error, an extreme player or the finding. Work out which before doing anything to it.</li>
+<li>Read several summaries together, and where they disagree, draw the picture.</li>
+<li>For performance data, quote a high percentile. Both builds run at about 59 FPS, and only one of them stutters.</li>
 </ul>
 <hr>
 </section>
 <section id="links-to-relevant-reference-material" class="level2">
 <h2 class="anchored" data-anchor-id="links-to-relevant-reference-material">Links to Relevant Reference Material</h2>
 <ul>
-<li><a href="../notes/ten-rules.html">Ten Rules</a>: rule 3 (know what kind of number you are holding), rule 4 (look at the shape before you quote the average), rule 5 (the mean is the wrong summary more often than you think) and rule 8 (small samples lie confidently)</li>
+<li><a href="../notes/ten-rules.html">Ten Rules</a>: rule 4 (look at the shape before you quote the average), rule 7 (compare distributions, not averages) and rule 9 (sometimes the rare value is the whole story)</li>
+<li><a href="../notes/describing-what-you-have.html">Describing What You Have</a>: centre, spread and the mean against the median</li>
 <li><a href="../reference/r-quarto-reference.html#describing-one-variable">R and Quarto Reference: describing one variable</a>, <a href="../reference/r-quarto-reference.html#describing-by-group">describing by group</a> and <a href="../reference/r-quarto-reference.html#plots">plots</a></li>
 <li><a href="../labs/reading-data.html">Lab 01: exploring playtest data</a>, Part B</li>
 </ul>
@@ -580,10 +653,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="reflective-questions" class="level2">
 <h2 class="anchored" data-anchor-id="reflective-questions">Reflective Questions</h2>
 <ul>
-<li>Take a variable from your own project’s telemetry. Which of the four types is it, and what would break if you treated it as the type next door?</li>
-<li>Why is the median usually the right summary for completion time, but not for something like accuracy percentage?</li>
-<li>You draw a histogram of level completion times and see two clear humps. List three things that could have caused that, and say how you would tell them apart.</li>
-<li>A teammate reports “average session length is 22 minutes”. What two further numbers would you ask for before letting that into a report?</li>
+<li>A producer asks for “one number” to show the build’s performance has improved. Which number do you give, and what do you say about the numbers you left out?</li>
+<li>Build A’s session lengths are more spread out than Build B’s. Is a narrower spread always better for a game? Give a case where it would not be.</li>
+<li>You find three sessions with a score of zero. What would you check before deciding they are errors, and what would change your mind?</li>
+<li>The Corridor hitch affects 1.3% of Build B’s frames. At what point does a rare problem stop being worth fixing, and who should decide?</li>
 </ul>
 <hr>
 
@@ -993,13 +1066,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../notes/why-measure.html" class="pagination-link" aria-label="Why Developers Measure Anything">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Why Developers Measure Anything</span>
+      <a href="../notes/describing-what-you-have.html" class="pagination-link" aria-label="Describing What You Have">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Describing What You Have</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../notes/distributions-and-variation.html" class="pagination-link" aria-label="Distributions and Variation">
-        <span class="nav-page-text">Distributions and Variation</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../labs/setting-up.html" class="pagination-link" aria-label="Lab 00 — Setting Up">
+        <span class="nav-page-text">Lab 00 — Setting Up</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

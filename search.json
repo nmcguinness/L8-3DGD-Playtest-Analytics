@@ -99,156 +99,190 @@
     ]
   },
   {
-    "objectID": "labs/setting-up.html",
-    "href": "labs/setting-up.html",
-    "title": "Lab 00 — Setting Up",
+    "objectID": "notes/describing-what-you-have.html",
+    "href": "notes/describing-what-you-have.html",
+    "title": "Describing What You Have",
     "section": "",
-    "text": "Before any of the analysis labs will run, you need three things on your machine and — the part that catches nearly everyone — your terminal needs to be able to find them.\nThis lab is not analysis. It is plumbing. Work through it in order and do not skip the checkpoints: each one tells you whether the previous step actually worked, which is much cheaper than discovering it in the middle of Lab 01.\nBudget about forty minutes, most of which is waiting for downloads.\n\n\n\n\n\n\n\n\nTool\nWhat it does\nDo you need it?\n\n\n\n\nR\nThe language that does the analysis\nYes\n\n\nQuarto\nTurns a document containing R code into a web page\nYes\n\n\nVS Code\nThe editor you write in\nYes\n\n\nRStudio\nAn alternative editor, built specifically for R\nOptional\n\n\n\n\n\n\n\n\n\nNoteIf you would rather use RStudio\n\n\n\nRStudio bundles Quarto and needs less setup than VS Code. If you already have it and are happy in it, install R (Step 1), skip Steps 3 and 4, and go straight to the checkpoints. Everything in the analysis labs works identically. This sheet uses VS Code because that is what the module demonstrates.",
+    "text": "Week 1, for everyone, before Part B of Lab 01. This is the vocabulary for describing a single variable: what kind of number it is, where its centre sits, how spread out it is and what shape it has. Every later page assumes it.",
     "crumbs": [
-      "Labs",
-      "Lab 00 — Setting Up"
+      "Notes",
+      "Describing What You Have"
     ]
   },
   {
-    "objectID": "labs/setting-up.html#your-path-may-not-include-r",
-    "href": "labs/setting-up.html#your-path-may-not-include-r",
-    "title": "Lab 00 — Setting Up",
-    "section": "Your PATH may not include R",
-    "text": "Your PATH may not include R\nOpen a terminal in VS Code with Ctrl+` and run:\nRscript --version\nIf that reports a version, skip to the next heading. If it says not recognized, find your R installation and add it:\nGet-ChildItem \"C:\\Program Files\\R\"\nTake the folder name it reports — something like R-4.4.1 — and substitute it below:\n[Environment]::SetEnvironmentVariable(\"Path\", $env:Path + \";C:\\Program Files\\R\\R-4.4.1\\bin\", \"User\")",
+    "objectID": "notes/describing-what-you-have.html#learning-outcomes",
+    "href": "notes/describing-what-you-have.html#learning-outcomes",
+    "title": "Describing What You Have",
+    "section": "Learning Outcomes",
+    "text": "Learning Outcomes\nBy the end of these notes you can:\n\nclassify a variable as nominal, ordinal, discrete or continuous, and say which operations that allows;\nrecognise a tidy table and name the most common way data fails to be one;\nsay what a sample is, and why every number you compute describes the sample rather than your audience;\nchoose between mean and median, and read the gap between them as evidence of skew;\ndescribe spread with the standard deviation, quartiles and IQR, and say why the range is rarely enough;\ndraw a histogram and a boxplot in base R and say what each shows that a summary hides.",
     "crumbs": [
-      "Labs",
-      "Lab 00 — Setting Up"
+      "Notes",
+      "Describing What You Have"
     ]
   },
   {
-    "objectID": "labs/setting-up.html#your-terminal-is-holding-a-stale-copy-of-path",
-    "href": "labs/setting-up.html#your-terminal-is-holding-a-stale-copy-of-path",
-    "title": "Lab 00 — Setting Up",
-    "section": "Your terminal is holding a stale copy of PATH",
-    "text": "Your terminal is holding a stale copy of PATH\nA terminal keeps the environment it started with, and VS Code hands every new terminal a cached copy. So after installing anything, a brand new terminal panel will still not see it.\nTo refresh the terminal you are in right now:\n$env:Path = [Environment]::GetEnvironmentVariable(\"Path\",\"Machine\") + \";\" + [Environment]::GetEnvironmentVariable(\"Path\",\"User\")\nTo fix it permanently, close VS Code completely — every window, not Reload Window — and reopen it.\n\n\n\n\n\n\nNotemacOS and Linux\n\n\n\nBoth installers put R and Quarto on your PATH without help. If a command is not found, close the terminal and open a new one, and if that fails, restart VS Code.",
+    "objectID": "notes/describing-what-you-have.html#why-this-matters-for-playtesting",
+    "href": "notes/describing-what-you-have.html#why-this-matters-for-playtesting",
+    "title": "Describing What You Have",
+    "section": "Why This Matters for Playtesting",
+    "text": "Why This Matters for Playtesting\nBefore comparing anything to anything, you have to be able to say what a single variable looks like. This section is the vocabulary for that, and it is the part students most often skip and most often get caught by.",
     "crumbs": [
-      "Labs",
-      "Lab 00 — Setting Up"
+      "Notes",
+      "Describing What You Have"
     ]
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Eight Views of a Playtest",
-    "section": "",
-    "text": "These are the questions that come up in the week after a playtest. None of them is exotic. All of them are painful to answer with a spreadsheet, and each one is answered below by a single figure and a few dozen lines of R.\n\n\n\nThe question you are actually asking\nAnswered by\n\n\n\n\nI have 120 rows of results and no idea what is in them. Where do I start?\nView 1\n\n\nAll four characters average about the same score. Does that mean they are balanced?\nView 2\n\n\nI designed four classes to play differently. Did they stay different once real people played them?\nView 3\n\n\nI want players to score higher. Which ability is actually worth buffing?\nView 4\n\n\nTesters keep giving up partway through. When do I lose them, and is it the same moment every time?\nView 5\n\n\nThe survey came back with 960 ratings across eight questions. Which complaint do I fix first?\nView 6\n\n\nMy frame-rate counter says 60 FPS. My testers say the game stutters. Who is lying?\nView 7\n\n\nHow can I find where players are loitering, sniping, or being funnelled into a kill zone?\nView 8\n\n\nWhich parts of my level is nobody using?\nView 8\n\n\nHow did one particular player move through the level — did they learn the route, or wander?\nView 8b\n\n\n\nEvery one of these is a question about your own game, asked of data your own engine can already record. The only thing missing is the ability to read it.",
+    "objectID": "notes/describing-what-you-have.html#what-kind-of-number-is-this",
+    "href": "notes/describing-what-you-have.html#what-kind-of-number-is-this",
+    "title": "Describing What You Have",
+    "section": "What Kind of Number Is This?",
+    "text": "What Kind of Number Is This?\nFour types, and the type decides which operations are legal.\nNominal — labels with no order. Character class, platform, quit reason. You can count them. You cannot average them. The mean of Scout and Sentinel does not exist, and if your code produces one, something has gone wrong upstream.\nOrdinal — ordered labels with unknown gaps. Difficulty setting, player experience level, and every agreement scale ever printed. Novice, Regular and Veteran are in an order, but Regular is not “halfway” between the other two in any meaningful sense.\nDiscrete — counts. Deaths, kills, items collected. Whole numbers, and there is no such thing as 2.4 deaths in a single session — though the average number of deaths across many sessions is perfectly meaningful at 2.4.\nContinuous — measurements. Completion time, frame time, distance travelled. Any value in a range, limited only by the precision of your instrument.\nThe awkward case is the rating scale, and it is awkward every time. A 1–5 agreement scale is strictly ordinal: you know Agree is above Neutral, but you do not know that the step from Disagree to Neutral is the same size as the step from Agree to Strongly Agree. In practice, when a scale has five or more points and the responses are reasonably spread, people treat it as numeric and average it. That convention is defensible and universal, and you should still know you are making an assumption. Where it matters — where the whole finding rests on a mean of 3.2 against 3.4 — report the distribution instead.",
     "crumbs": [
-      "Start here"
+      "Notes",
+      "Describing What You Have"
     ]
   },
   {
-    "objectID": "index.html#ten-questions-you-will-be-able-to-answer",
-    "href": "index.html#ten-questions-you-will-be-able-to-answer",
-    "title": "Eight Views of a Playtest",
-    "section": "",
-    "text": "These are the questions that come up in the week after a playtest. None of them is exotic. All of them are painful to answer with a spreadsheet, and each one is answered below by a single figure and a few dozen lines of R.\n\n\n\nThe question you are actually asking\nAnswered by\n\n\n\n\nI have 120 rows of results and no idea what is in them. Where do I start?\nView 1\n\n\nAll four characters average about the same score. Does that mean they are balanced?\nView 2\n\n\nI designed four classes to play differently. Did they stay different once real people played them?\nView 3\n\n\nI want players to score higher. Which ability is actually worth buffing?\nView 4\n\n\nTesters keep giving up partway through. When do I lose them, and is it the same moment every time?\nView 5\n\n\nThe survey came back with 960 ratings across eight questions. Which complaint do I fix first?\nView 6\n\n\nMy frame-rate counter says 60 FPS. My testers say the game stutters. Who is lying?\nView 7\n\n\nHow can I find where players are loitering, sniping, or being funnelled into a kill zone?\nView 8\n\n\nWhich parts of my level is nobody using?\nView 8\n\n\nHow did one particular player move through the level — did they learn the route, or wander?\nView 8b\n\n\n\nEvery one of these is a question about your own game, asked of data your own engine can already record. The only thing missing is the ability to read it.",
+    "objectID": "notes/describing-what-you-have.html#tidy-data-one-row-per-observation",
+    "href": "notes/describing-what-you-have.html#tidy-data-one-row-per-observation",
+    "title": "Describing What You Have",
+    "section": "Tidy Data: One Row Per Observation",
+    "text": "Tidy Data: One Row Per Observation\nData arrives in whatever shape the tool that produced it happened to use. Almost all analysis assumes one particular shape, and it is worth naming.\nA table is tidy when each row is one observation, each column is one variable, and each cell is one value. For a playtest: one row per player per session, one column per thing you recorded.\nThe most common violation is a survey export, where the eight questions become eight columns. That is convenient to read and inconvenient to analyse, because “question” is really a variable and its eight values have been spread across the column headings. Reshaping it into one row per player per question is what makes the whole survey analysable in one operation, and you will do exactly that in Lab 03.",
     "crumbs": [
-      "Start here"
+      "Notes",
+      "Describing What You Have"
     ]
   },
   {
-    "objectID": "index.html#before-you-read-any-code",
-    "href": "index.html#before-you-read-any-code",
-    "title": "Eight Views of a Playtest",
-    "section": "Before you read any code",
-    "text": "Before you read any code\nThis document is a showcase, not a lesson. Nothing here is examinable and you are not expected to understand the code yet. Its only job is to show you what six hours of R can do to a pile of raw playtest numbers.\nEvery figure below was produced from four CSV files, in between eleven and fifty-five lines of code. By the end of these notes you will be able to produce all of them.\n\n\n\n\n\n\nNoteThe data\n\n\n\nTidebreak is a fictional four-player top-down arena, used here so that the example is self-contained. The playtest recorded four things:\n\n\n\n\n\n\n\n\nFile\nOne row per\nHolds\n\n\n\n\ntidebreak_sessions.csv\nplayer, per session\nSix end-of-match ability ratings, eleven match statistics, session length and quit reason, for 120 sessions\n\n\ntidebreak_survey.csv\nplayer, per session\nEight agreement items rated 1 to 5\n\n\ntidebreak_frame_times.csv\nrendered frame\nFrame time in milliseconds, by build and level zone\n\n\ntidebreak_positions.csv\nplayer, per second\nTop-down position for eight players across one 180-second match\n\n\n\nAll four are synthetic, but they behave like the real thing: the numbers are messy, the interesting findings are not the obvious ones, and at least two widely held assumptions about the game turn out to be wrong.\n\n\n\n\nShow the code\nlibrary(tidyverse)\nlibrary(plotly)\nlibrary(DT)\n\nsessions    &lt;- read_csv(\"data/tidebreak_sessions.csv\")\nsurvey      &lt;- read_csv(\"data/tidebreak_survey.csv\")\nframe_times &lt;- read_csv(\"data/tidebreak_frame_times.csv\")\npositions   &lt;- read_csv(\"data/tidebreak_positions.csv\")\nlevel       &lt;- read_csv(\"data/tidebreak_level.csv\")\n\n# A small, fixed palette used by every figure in this document.\npal &lt;- c(blue = \"#2a78d6\", orange = \"#eb6834\", aqua = \"#1baf7a\", yellow = \"#eda100\")\nink &lt;- c(primary = \"#0b0b0b\", secondary = \"#52514e\", grid = \"#e6e5e1\")\n\n# Each archetype keeps the same colour in every figure, so that a colour always\n# means the same thing no matter which chart you are looking at.\narch_pal &lt;- c(Scout = pal[[\"blue\"]],  Sentinel = pal[[\"orange\"]],\n              Engineer = pal[[\"aqua\"]], Duelist = pal[[\"yellow\"]])\n\n# Likewise for the two builds, which appear in Views 5 and 7.\nbuild_pal &lt;- c(A = pal[[\"orange\"]], B = pal[[\"blue\"]])\n\ntheme_tb &lt;- function() {\n  theme_minimal(base_size = 12) +\n    theme(\n      plot.title      = element_text(face = \"bold\", colour = ink[\"primary\"], size = 13),\n      plot.subtitle   = element_text(colour = ink[\"secondary\"], size = 11),\n      axis.title      = element_text(colour = ink[\"secondary\"], size = 10),\n      axis.text       = element_text(colour = ink[\"secondary\"]),\n      panel.grid.minor = element_blank(),\n      panel.grid.major = element_line(colour = ink[\"grid\"], linewidth = 0.3),\n      legend.position = \"none\"\n    )\n}",
+    "objectID": "notes/describing-what-you-have.html#sample-and-population",
+    "href": "notes/describing-what-you-have.html#sample-and-population",
+    "title": "Describing What You Have",
+    "section": "Sample and Population",
+    "text": "Sample and Population\nThe 120 Tidebreak sessions come from 30 players who happened to attend this playtest. They are a sample. The population is everybody you are making the game for, and you never get to measure it.\nEvery number describes the sample. The question you care about is always about the population: not “did these players struggle?” but “will players struggle?”. Bring in a different group next week and every figure on this page moves. How far it can move is the subject of Week 2; until then, report how many people a number came from every time you quote it (rule 8).\nWho is in the sample matters as much as how many. A playtest recruited from the studio’s own Discord samples the game’s most committed fans, not its audience. No amount of analysis afterwards corrects for who walked in the door.",
     "crumbs": [
-      "Start here"
+      "Notes",
+      "Describing What You Have"
     ]
   },
   {
-    "objectID": "index.html#view-1-the-table-you-can-actually-read",
-    "href": "index.html#view-1-the-table-you-can-actually-read",
-    "title": "Eight Views of a Playtest",
-    "section": "View 1 — The table you can actually read",
-    "text": "View 1 — The table you can actually read\nQuestion: what happened in each session?\nBefore you analyse anything you need to be able to look at your data. A raw CSV in Excel is awkward at 120 rows and unusable at 120,000. A rendered table is searchable and sortable, and it goes straight into a report.\nSort by Score, or type Sentinel into the search box, and you will already see the finding that View 2 makes formal.\n\n\nShow the code\nsessions %&gt;%\n  select(Session = session_id, Player = player_id, Cohort = cohort,\n         Archetype = archetype, Build = build, Score = score,\n         Kills = kills, Deaths = deaths, `Alive (s)` = time_alive_s,\n         Awareness = awareness) %&gt;%\n  datatable(\n    rownames = FALSE,\n    options  = list(pageLength = 8, dom = \"ftip\", scrollX = TRUE),\n    caption  = \"Tidebreak playtest: 120 sessions\"\n  ) %&gt;%\n  formatStyle(\"Score\",\n    background = styleColorBar(range(sessions$score), \"#cde2fb\"),\n    backgroundSize = \"98% 60%\", backgroundRepeat = \"no-repeat\",\n    backgroundPosition = \"center\")",
+    "objectID": "notes/describing-what-you-have.html#centre",
+    "href": "notes/describing-what-you-have.html#centre",
+    "title": "Describing What You Have",
+    "section": "Centre",
+    "text": "Centre\nTwo summaries of “the typical value”, and choosing between them is a real decision, not a formality.\nThe mean adds everything and divides by the count. It uses every value, which is its strength, and it is dragged by extremes, which is its weakness.\nThe median is the middle value when sorted. Half above, half below. It ignores how extreme the extremes are, which is its strength and its weakness.\nWhen they disagree, the data is skewed, and the gap tells you which way. If the mean sits well above the median, a few large values are pulling it up: a long right tail. If it sits below, a group of small values is pulling it down.\nFor game data this is not an edge case, it is the norm. Completion times, session lengths and frame times are all skewed almost by construction — there is a floor on how fast anyone can finish and no ceiling on how slow. Default to the median for anything time-like and reach for the mean only when you have looked at the shape and satisfied yourself it is roughly symmetric.\nWhen you compare the two, compare them relative to the size of the variable. A gap of 40 points on a score in the thousands is nothing; a gap of 3 minutes on a median of 26 is a real skew.",
     "crumbs": [
-      "Start here"
+      "Notes",
+      "Describing What You Have"
     ]
   },
   {
-    "objectID": "index.html#view-2-distributions-not-averages",
-    "href": "index.html#view-2-distributions-not-averages",
-    "title": "Eight Views of a Playtest",
-    "section": "View 2 — Distributions, not averages",
-    "text": "View 2 — Distributions, not averages\nQuestion: which archetype performs best?\nThe tempting answer is to compare four average scores. Do that here and the archetypes look almost identical, which would be a design decision made on a misreading.\nA violin plot draws the whole distribution. Read the Sentinel shape: it is not one hump but two. Sentinel runs either anchor the objective and score well, or collapse in the opening seconds and score badly. There is almost no middle. That is a balance problem an average would have hidden completely.\n\n\nShow the code\nsessions %&gt;%\n  mutate(archetype = fct_reorder(archetype, score, .fun = median)) %&gt;%\n  ggplot(aes(archetype, score, fill = archetype)) +\n  geom_violin(colour = NA, alpha = 0.85, width = 0.9) +\n  geom_boxplot(width = 0.12, fill = \"white\", colour = ink[[\"secondary\"]],\n               outlier.shape = NA, linewidth = 0.4) +\n  scale_fill_manual(values = arch_pal) +\n  scale_y_continuous(labels = scales::comma) +\n  labs(\n    title    = \"Sentinel is bimodal: it either anchors the round or dies in it\",\n    subtitle = \"Score distribution by archetype, 30 sessions each. Box shows median and interquartile range.\",\n    x = NULL, y = \"Score\"\n  ) +\n  theme_tb()",
+    "objectID": "notes/describing-what-you-have.html#spread",
+    "href": "notes/describing-what-you-have.html#spread",
+    "title": "Describing What You Have",
+    "section": "Spread",
+    "text": "Spread\nThe centre alone is nearly useless. Two levels with identical average completion times, one where everybody takes four minutes and one where half take one minute and half take seven, are not the same level.\nRange is minimum to maximum. Easy to quote and almost always misleading, since a single unusual value defines it entirely.\nStandard deviation is the typical distance from the mean. It is the right measure for roughly symmetric data and it inherits the mean’s sensitivity to extremes.\nQuartiles split the sorted data into four. The first quartile has a quarter below it, the third has three quarters. The interquartile range — the distance between them — is the width of the middle half of your players, and it is the most robust description of spread you have. For skewed game data, quote the median and the IQR together.\nPercentiles generalise this: the 95th percentile has 95% of values below it. Distributions and Variation will show you why the 99th percentile of frame time is the single most important number in a performance capture.",
     "crumbs": [
-      "Start here"
+      "Notes",
+      "Describing What You Have"
     ]
   },
   {
-    "objectID": "index.html#view-3-six-numbers-as-a-shape",
-    "href": "index.html#view-3-six-numbers-as-a-shape",
-    "title": "Eight Views of a Playtest",
-    "section": "View 3 — Six numbers as a shape",
-    "text": "View 3 — Six numbers as a shape\nQuestion: are the four archetypes actually playing differently?\nEach session ends with six ability ratings on a 0–100 scale. Comparing four archetypes across six measures means twenty-four numbers, which no one can hold in their head. Drawn as a radar, each archetype becomes a shape you can recognise at a glance, and the grey outline behind each one is the all-player average for reference.\nThe shapes are distinct and they are roughly the shapes the design intended. That is the result you want from this chart: confirmation that the archetypes are not quietly converging on the same playstyle.\n\n\nShow the code\nmetrics &lt;- c(\"accuracy\", \"mobility\", \"survivability\",\n             \"objective_control\", \"support\", \"awareness\")\n\npretty &lt;- c(accuracy = \"Accuracy\", mobility = \"Mobility\",\n            survivability = \"Survival\", objective_control = \"Objective\",\n            support = \"Support\", awareness = \"Awareness\")\n\nlong &lt;- sessions %&gt;%\n  select(archetype, all_of(metrics)) %&gt;%\n  pivot_longer(-archetype, names_to = \"metric\", values_to = \"value\") %&gt;%\n  mutate(metric = factor(pretty[metric], levels = unname(pretty)))\n\nby_arch &lt;- long %&gt;% group_by(archetype, metric) %&gt;% summarise(value = mean(value))\noverall &lt;- long %&gt;% group_by(metric) %&gt;% summarise(value = mean(value))\n\nggplot() +\n  geom_polygon(data = overall, aes(metric, value, group = 1),\n               fill = NA, colour = ink[[\"grid\"]], linewidth = 0.8) +\n  geom_polygon(data = by_arch,\n               aes(metric, value, group = archetype, fill = archetype, colour = archetype),\n               alpha = 0.35, linewidth = 0.9) +\n  geom_point(data = by_arch, aes(metric, value, colour = archetype), size = 1.8) +\n  coord_polar(clip = \"off\") +\n  facet_wrap(~archetype, nrow = 1) +\n  scale_fill_manual(values = arch_pal) +\n  scale_colour_manual(values = arch_pal) +\n  scale_y_continuous(limits = c(0, 100), breaks = c(25, 50, 75)) +\n  labs(\n    title    = \"Four archetypes, four distinct ability profiles\",\n    subtitle = \"Mean end-of-match rating per ability. Grey outline is the all-player average.\",\n    x = NULL, y = NULL\n  ) +\n  theme_tb() +\n  theme(axis.text.y   = element_blank(),\n        axis.text.x   = element_text(size = 7),\n        strip.text    = element_text(face = \"bold\", colour = ink[[\"primary\"]]),\n        panel.spacing = unit(1.6, \"lines\"),\n        plot.margin   = margin(10, 20, 10, 20))",
+    "objectID": "notes/describing-what-you-have.html#look-at-the-shape-first",
+    "href": "notes/describing-what-you-have.html#look-at-the-shape-first",
+    "title": "Describing What You Have",
+    "section": "Look at the Shape First",
+    "text": "Look at the Shape First\nEvery summary statistic throws information away. That is what a summary is for. The risk is that it throws away the finding.\nA histogram shows you the whole distribution: where the bulk sits, whether it is symmetric, whether there is a second hump, whether there are outliers. Draw one before quoting any average. It costs one line.\nThe number of bins changes what you see, sometimes dramatically. Too few and a second hump disappears; too many and noise looks like structure. Try several. That a chart changes with its settings is not a flaw to hide — it is the first evidence that a chart is an argument rather than a fact, and you are responsible for the argument you make.\nA boxplot compresses the same information into median, quartiles and outliers. It is less informative than a histogram for one variable and much better for comparing several groups side by side, which is what Section 4 is about.\nTwo humps are always worth chasing. A distribution with two peaks usually means two populations have been mixed: players who found the key and players who did not, sessions that completed and sessions that crashed. The average of a bimodal distribution describes nobody at all — it names a value that sits in the valley between the two groups, where the fewest players actually are.",
     "crumbs": [
-      "Start here"
+      "Notes",
+      "Describing What You Have"
     ]
   },
   {
-    "objectID": "index.html#view-4-what-actually-drives-score",
-    "href": "index.html#view-4-what-actually-drives-score",
-    "title": "Eight Views of a Playtest",
-    "section": "View 4 — What actually drives score",
-    "text": "View 4 — What actually drives score\nQuestion: which abilities and behaviours move the scoreboard?\nA correlogram puts every pair of variables in one picture. Blue means the two rise together, red means one rises as the other falls, and pale means no relationship at all.\nThree things to read off it:\n\nAwareness is the strongest positive correlate of score. Map knowledge beats mechanical skill in this build.\nShots fired is essentially uncorrelated with score. Players who shoot more do not win more, which contradicts what the team assumed.\nMobility and survivability pull against each other, which is the intended trade-off working as designed.\n\n\n\nShow the code\nvars &lt;- c(\"accuracy\", \"mobility\", \"survivability\", \"objective_control\",\n          \"support\", \"awareness\", \"shots_fired\", \"distance_m\",\n          \"kills\", \"deaths\", \"objectives\", \"score\")\n\nnice &lt;- c(accuracy = \"Accuracy\", mobility = \"Mobility\", survivability = \"Survival\",\n          objective_control = \"Objective ctrl\", support = \"Support\",\n          awareness = \"Awareness\", shots_fired = \"Shots fired\",\n          distance_m = \"Distance\", kills = \"Kills\", deaths = \"Deaths\",\n          objectives = \"Objectives\", score = \"Score\")\n\ncm &lt;- cor(sessions[vars])\nord &lt;- hclust(as.dist(1 - cm))$order\nlv  &lt;- nice[vars[ord]]\n\ncm_long &lt;- as.data.frame(as.table(cm)) %&gt;%\n  setNames(c(\"a\", \"b\", \"r\")) %&gt;%\n  mutate(a = factor(nice[as.character(a)], levels = lv),\n         b = factor(nice[as.character(b)], levels = lv)) %&gt;%\n  filter(as.integer(a) &lt; as.integer(b))   # lower triangle only; the diagonal is always 1\n\nggplot(cm_long, aes(a, b, fill = r)) +\n  geom_tile(colour = \"white\", linewidth = 1.2) +\n  geom_text(aes(label = sprintf(\"%.2f\", r),\n                colour = abs(r) &gt; 0.55), size = 2.9) +\n  scale_fill_gradient2(low = \"#e34948\", mid = \"#f0efec\", high = \"#2a78d6\",\n                       midpoint = 0, limits = c(-1, 1), name = \"r\") +\n  scale_colour_manual(values = c(`TRUE` = \"white\", `FALSE` = ink[[\"secondary\"]]),\n                      guide = \"none\") +\n  coord_fixed() +\n  labs(\n    title    = \"Awareness drives score; shots fired does not\",\n    subtitle = \"Pearson correlation between every pair of measures, 120 sessions.\",\n    x = NULL, y = NULL\n  ) +\n  theme_tb() +\n  theme(axis.text.x       = element_text(angle = 45, hjust = 1),\n        legend.position   = \"right\",\n        panel.grid.major  = element_blank(),\n        panel.grid.minor  = element_blank())",
+    "objectID": "notes/describing-what-you-have.html#worked-examples",
+    "href": "notes/describing-what-you-have.html#worked-examples",
+    "title": "Describing What You Have",
+    "section": "Worked Examples",
+    "text": "Worked Examples\nIs the Sentinel underpowered? Sort the four archetypes by mean score and the Sentinel comes last, at 1313 points. A balance pass built on that number buffs the Sentinel.\nSort by median instead and the Sentinel is the second-highest, at 1528. The mean and the median disagree by 215 points, and the standard deviation is 455 against 225 to 259 for the other three. Something is dragging the mean down without moving the middle.\n\nhist(sentinel,\n     breaks = 12,\n     main   = \"Sentinel score, one bar per band\",\n     xlab   = \"Score\",\n     col    = \"grey85\",\n     border = \"white\")\n\n\n\n\n\n\n\n\nThe histogram answers it. 7 of the 30 Sentinel sessions scored under 700 and sit in a clump of their own at the far left, 274 points below the next-lowest Sentinel game. The Sentinel either anchors the round or collapses early. It is not underpowered; it is inconsistent. A flat buff raises the scores of the players already doing well, and the design question becomes what the collapsing games have in common (rule 4).\nHow clear was the objective? The survey item “I always knew what my objective was” averages 2.61 on a 1 to 5 scale. That is a mean of an ordinal rating, and the distribution says more:\n\ntable(survey$objective_clear)\n\n\n 1  2  3  4  5 \n24 31 37 24  4 \n\n\n55 of 120 players chose 1 or 2, and 4 chose 5. “46% of players disagreed that they always knew their objective” is a sentence a designer acts on. “Mean 2.61” is not (rule 3).",
     "crumbs": [
-      "Start here"
+      "Notes",
+      "Describing What You Have"
     ]
   },
   {
-    "objectID": "index.html#view-5-when-people-stop-playing",
-    "href": "index.html#view-5-when-people-stop-playing",
-    "title": "Eight Views of a Playtest",
-    "section": "View 5 — When people stop playing",
-    "text": "View 5 — When people stop playing\nQuestion: we changed how the game explains its objective. Did it keep anyone?\nA retention curve shows what fraction of participants were still playing at each minute of the test. It is the shape that matters, not the endpoint: a smooth decay means people drifted away, a cliff means something specific pushed them out.\nBuild A has a cliff. Between minutes 11 and 13 it drops from 88% to 68%, and 15 of the 17 people who left in that window are logged as frustration quits. Build B, which explains its objective differently, is still at 90% at minute 13 and loses five people to frustration across the whole test against Build A’s twenty.\nNow look at what a summary table would have told you: median session length is 23.2 minutes for Build A and 27.1 for Build B. That reads as a modest improvement. The curve shows something else — one specific, fixable moment where a fifth of the Build A testers gave up.\n\n\nShow the code\nminutes &lt;- seq(0, 32, by = 0.25)\n\nretention &lt;- map_dfr(c(\"A\", \"B\"), function(b) {\n  lengths &lt;- sessions %&gt;% filter(build == b) %&gt;% pull(session_minutes)\n  tibble(build = b, minute = minutes,\n         pct = map_dbl(minutes, ~ 100 * mean(lengths &gt;= .x)))\n})\n\nends &lt;- retention %&gt;% group_by(build) %&gt;% slice_max(minute, n = 1)\n\nggplot(retention, aes(minute, pct, colour = build)) +\n  annotate(\"rect\", xmin = 11, xmax = 13, ymin = 0, ymax = 100,\n           fill = ink[[\"grid\"]], alpha = 0.55) +\n  annotate(\"text\", x = 13.4, y = 24, hjust = 0, size = 3.2,\n           colour = ink[[\"secondary\"]],\n           label = \"88% to 68% in two minutes,\\nalmost all frustration quits\") +\n  geom_step(linewidth = 1.1, direction = \"hv\") +\n  geom_text(data = ends, aes(label = paste0(\"Build \", build)),\n            hjust = 0, nudge_x = 0.6, size = 3.6, fontface = \"bold\",\n            show.legend = FALSE) +\n  scale_colour_manual(values = build_pal) +\n  scale_x_continuous(limits = c(0, 37), breaks = seq(0, 30, 5),\n                     labels = function(x) paste0(x, \" min\")) +\n  scale_y_continuous(limits = c(0, 100), labels = function(y) paste0(y, \"%\")) +\n  labs(\n    title    = \"Build A loses people at a cliff; Build B does not\",\n    subtitle = \"Percentage of participants still playing, by minute of the test session.\",\n    x = NULL, y = \"Still playing\"\n  ) +\n  theme_tb()",
+    "objectID": "notes/describing-what-you-have.html#r-demonstrations",
+    "href": "notes/describing-what-you-have.html#r-demonstrations",
+    "title": "Describing What You Have",
+    "section": "R Demonstrations",
+    "text": "R Demonstrations\nAll base R. The variable here is time_alive_s, seconds survived in the match.\n\nsummary(sessions$time_alive_s)\n\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n   60.0   105.0   133.0   130.4   155.5   180.0 \n\nsd(sessions$time_alive_s)\n\n[1] 32.74505\n\nIQR(sessions$time_alive_s)\n\n[1] 50.5\n\nquantile(sessions$time_alive_s, c(0.1, 0.9))\n\n  10%   90% \n 82.0 175.2 \n\n\nsummary() gives centre and quartiles in one call; sd() and IQR() give the two measures of spread; quantile() with a vector of proportions gives any percentiles you ask for, here the 10th and 90th.\n\nhist(sessions$time_alive_s,\n     breaks = 15,\n     main   = \"Time alive per session\",\n     xlab   = \"Seconds\",\n     col    = \"grey85\",\n     border = \"white\")\n\n\n\n\n\n\n\n\nbreaks sets roughly how many bars. Change it and look again before believing any shape.\n\ntable(sessions$cohort)\n\n\n Novice Regular Veteran \n     33      53      34 \n\n\ntable() counts a categorical variable. It is the only summary a nominal variable has.\n\ntapply(sessions$time_alive_s, sessions$cohort, median)\n\n Novice Regular Veteran \n  127.0   137.0   143.5 \n\nboxplot(time_alive_s ~ cohort,\n        data = sessions,\n        main = \"Time alive by cohort\",\n        ylab = \"Seconds\",\n        col  = \"grey85\")\n\n\n\n\n\n\n\n\ntapply() applies one function to one variable, split by a group. The boxplot shows the same split as a picture: the thick line is the median, the box is the middle half, and the whiskers and points show the rest.",
     "crumbs": [
-      "Start here"
+      "Notes",
+      "Describing What You Have"
     ]
   },
   {
-    "objectID": "index.html#view-6-what-players-said-ranked-by-how-badly-it-went",
-    "href": "index.html#view-6-what-players-said-ranked-by-how-badly-it-went",
-    "title": "Eight Views of a Playtest",
-    "section": "View 6 — What players said, ranked by how badly it went",
-    "text": "View 6 — What players said, ranked by how badly it went\nQuestion: the survey has eight questions and 120 responses. Which one should we act on first?\nEight averages tell you almost nothing, because a mean of 3.0 can mean everyone was indifferent or that half loved it and half hated it. A diverging bar chart splits each item at the neutral response: disagreement runs left, agreement runs right, and the items sort by the net.\nThe result is uncomfortable in the way real survey results usually are. The art is the best-rated thing in the game by a distance. The worst-rated item is whether players ever knew what they were supposed to be doing — the same thing that drives the cliff in View 5. People praise the visuals and quit over the design.\n\n\nShow the code\nitem_label &lt;- c(\n  objective_clear     = \"I always knew what my objective was\",\n  death_understood    = \"I understood why I died\",\n  difficulty_fair     = \"The difficulty felt fair\",\n  level_navigable     = \"The level was easy to navigate\",\n  would_play_again    = \"I would play this again\",\n  match_length        = \"The match length felt right\",\n  controls_responsive = \"The controls felt responsive\",\n  visual_style        = \"The visual style is appealing\"\n)\n\nresp_label &lt;- c(\"Strongly disagree\", \"Disagree\", \"Neutral\", \"Agree\", \"Strongly agree\")\n\nprops &lt;- survey %&gt;%\n  pivot_longer(-session_id, names_to = \"item\", values_to = \"resp\") %&gt;%\n  count(item, resp) %&gt;%\n  complete(item, resp = 1:5, fill = list(n = 0)) %&gt;%\n  group_by(item) %&gt;% mutate(pct = 100 * n / sum(n)) %&gt;% ungroup()\n\n# Net agreement decides the order; the neutral block is split so the bars\n# pivot on a true zero rather than on the left edge.\nranking &lt;- props %&gt;%\n  group_by(item) %&gt;%\n  summarise(net = sum(pct[resp &gt;= 4]) - sum(pct[resp &lt;= 2])) %&gt;%\n  arrange(net)\n\nitem_levels &lt;- unname(item_label[ranking$item])\n\nas_bars &lt;- function(d, sign) {\n  d %&gt;%\n    mutate(signed = sign * if_else(resp == 3, pct / 2, pct),\n           item   = factor(unname(item_label[item]), levels = item_levels),\n           resp   = factor(resp_label[resp], levels = resp_label))\n}\n\n# The two sides stack in opposite directions, so that the strongest opinion\n# always sits furthest from the centre line.\nbars_neg &lt;- props %&gt;% filter(resp &lt;= 3) %&gt;% as_bars(-1)\nbars_pos &lt;- props %&gt;% filter(resp &gt;= 3) %&gt;% as_bars(+1)\n\nranking &lt;- ranking %&gt;%\n  mutate(item = factor(unname(item_label[item]), levels = item_levels))\n\nggplot(mapping = aes(signed, item, fill = resp)) +\n  geom_col(data = bars_neg, width = 0.72, position = position_stack()) +\n  geom_col(data = bars_pos, width = 0.72, position = position_stack(reverse = TRUE)) +\n  geom_vline(xintercept = 0, colour = \"#fcfcfb\", linewidth = 0.9) +\n  geom_text(data = ranking, aes(x = 106, y = item, label = sprintf(\"%+.0f\", net)),\n            inherit.aes = FALSE, size = 3.3, fontface = \"bold\",\n            colour = ink[[\"secondary\"]]) +\n  scale_fill_manual(values = c(\"Strongly disagree\" = \"#e34948\",\n                               \"Disagree\"          = \"#f2a9a8\",\n                               \"Neutral\"           = \"#d9d8d4\",\n                               \"Agree\"             = \"#9ec5f4\",\n                               \"Strongly agree\"    = \"#2a78d6\")) +\n  # coord_cartesian zooms; scale limits would DROP the segments that fall\n  # outside them, silently truncating the longest bars.\n  scale_x_continuous(breaks = seq(-60, 90, 30),\n                     labels = function(x) paste0(abs(x), \"%\")) +\n  coord_cartesian(xlim = c(-68, 112)) +\n  labs(\n    title    = \"They love the art and cannot tell what the game wants\",\n    subtitle = \"Share of 120 responses. Bars pivot on neutral; the number is net agreement.\",\n    x = NULL, y = NULL, fill = NULL\n  ) +\n  theme_tb() +\n  theme(legend.position = \"top\",\n        legend.text     = element_text(size = 9),\n        panel.grid.major.y = element_blank())",
+    "objectID": "notes/describing-what-you-have.html#interpretation-guidance",
+    "href": "notes/describing-what-you-have.html#interpretation-guidance",
+    "title": "Describing What You Have",
+    "section": "Interpretation Guidance",
+    "text": "Interpretation Guidance\nA description has four parts: centre, spread, shape and size. One sentence can hold all four:\n\nMedian time alive was 133 seconds (IQR 50.5, n = 120). The mean sits 2.6 seconds from the median, so the centre is not being pulled by a tail. 11 sessions sit at exactly 180 seconds, the full match: those players never died, and the tallest bar on the right is a ceiling, not a peak.\n\nPick the summary to fit the shape, and say why. Median and IQR for anything skewed or with outliers; mean and standard deviation only when the histogram is roughly symmetric.\nKeep what the data shows apart from what it suggests. “The Sentinel’s scores fall into two groups” is what the data shows. “Some Sentinel players do not know how to play the role” is a suggestion, and it needs a different kind of evidence before it becomes a conclusion.",
     "crumbs": [
-      "Start here"
+      "Notes",
+      "Describing What You Have"
     ]
   },
   {
-    "objectID": "index.html#view-7-the-frame-rate-counter-is-lying-to-you",
-    "href": "index.html#view-7-the-frame-rate-counter-is-lying-to-you",
-    "title": "Eight Views of a Playtest",
-    "section": "View 7 — The frame-rate counter is lying to you",
-    "text": "View 7 — The frame-rate counter is lying to you\nQuestion: both builds average about 59 FPS. Testers say Build B stutters. Who is right?\nBoth are. Average frame rate is a mean, and a mean is exactly the wrong summary for a quantity where the rare bad values are the entire user experience. Build B renders almost every frame slightly faster than Build A. It also renders one frame in every twenty-five — about twice a second — in 35 to 55 ms instead of 17, and only in one zone of the level: the corridor that View 8 identifies as the choke point.\nThe trace shows it. The table shows why the FPS readout missed it: the two builds are separated by 0.05 ms at the mean and by 20 ms at the 99th percentile.\n\n\nShow the code\nggplot(frame_times %&gt;% filter(zone == \"Corridor\", frame &lt;= 400),\n       aes(frame, ms, colour = build)) +\n  geom_hline(yintercept = 1000 / 60, linetype = \"22\",\n             colour = ink[[\"secondary\"]], linewidth = 0.4) +\n  geom_line(linewidth = 0.45) +\n  facet_wrap(~build, ncol = 1, labeller = labeller(build = function(b) paste(\"Build\", b))) +\n  scale_colour_manual(values = build_pal) +\n  scale_y_continuous(limits = c(0, 60), breaks = c(1000/60, 30, 45, 60),\n                     labels = c(\"16.7\\n(60 FPS)\", \"30\", \"45\", \"60\")) +\n  labs(\n    title    = \"Identical average, one of them unplayable\",\n    subtitle = \"Frame time in the Corridor zone, first 400 frames. Dashed line is the 60 FPS budget.\",\n    x = \"Frame\", y = \"Frame time (ms)\"\n  ) +\n  theme_tb() +\n  theme(strip.text = element_text(face = \"bold\", colour = ink[[\"primary\"]]))\n\n\n\n\n\n\n\n\n\n\n\nShow the code\nframe_times %&gt;%\n  group_by(Build = build) %&gt;%\n  summarise(\n    `Mean FPS`     = round(1000 / mean(ms), 1),\n    `Mean (ms)`    = round(mean(ms), 2),\n    `Median (ms)`  = round(median(ms), 1),\n    `95th (ms)`    = round(quantile(ms, 0.95), 1),\n    `99th (ms)`    = round(quantile(ms, 0.99), 1),\n    `Worst (ms)`   = round(max(ms), 1)\n  ) %&gt;%\n  knitr::kable(caption = \"Every column agrees the builds are the same until the last two.\")\n\n\n\nEvery column agrees the builds are the same until the last two.\n\n\n\n\n\n\n\n\n\n\n\nBuild\nMean FPS\nMean (ms)\nMedian (ms)\n95th (ms)\n99th (ms)\nWorst (ms)\n\n\n\n\nA\n58.8\n17.00\n17.0\n18.8\n19.5\n20.7\n\n\nB\n59.0\n16.95\n16.6\n18.4\n39.4\n54.2",
+    "objectID": "notes/describing-what-you-have.html#common-mistakes",
+    "href": "notes/describing-what-you-have.html#common-mistakes",
+    "title": "Describing What You Have",
+    "section": "Common Mistakes",
+    "text": "Common Mistakes\nAveraging a label. mean(sessions$cohort) returns NA with a warning, which is R protecting you. Code the cohorts as 1, 2 and 3 and R will average them happily, and the answer will mean nothing.\nTrusting R’s idea of the type. R stores cohort as text and every survey item as a number. Neither is wrong, but neither tells R that cohorts come in an order or that a rating is ordinal. The type R prints is where your checking starts (rule 3).\nQuoting a mean without looking. The Sentinel’s mean is a correct calculation that describes no Sentinel game. Draw the histogram first (rule 4).\nQuoting the range as the spread. One extreme player sets the range on their own. Quote the IQR.\nTrusting one bin setting. A histogram drawn once is one argument among several the data could make. Redraw it with fewer and more bars.\nLeaving out n. “Players rated it 2.6” means nothing without “out of how many” (rule 8).",
     "crumbs": [
-      "Start here"
+      "Notes",
+      "Describing What You Have"
     ]
   },
   {
-    "objectID": "index.html#view-8-where-players-actually-stand",
-    "href": "index.html#view-8-where-players-actually-stand",
-    "title": "Eight Views of a Playtest",
-    "section": "View 8 — Where players actually stand",
-    "text": "View 8 — Where players actually stand\nQuestion: where are the choke points, the camping spots and the dead space?\nThis is the figure that changes level layouts. The blue field is total time spent per square metre across the whole match. The moving dots are the eight players, one frame per second, coloured by whether they are moving, loitering or holding position. Dark blocks are cover; the block in the north-east is the raised gantry.\nPress play, or drag the slider.\nThree readings, all of them actionable:\n\nThe gap between the central core and the east block carries almost all lateral traffic, and 14 of the 20 deaths in this match happened inside it. That is a choke point.\nTwo players spend the entire match holding the north-east gantry. Long dwell, no movement, high kill share: a sniper perch.\nThe west corner is never visited by anyone. That is floor space the level is paying for and not using.\n\n\n\nShow the code\n# Time spent per 2m x 2m cell, for the background field.\ngx_seq &lt;- seq(1, 59, 2)\ngy_seq &lt;- seq(1, 39, 2)\n\nfield &lt;- positions %&gt;%\n  mutate(gx = floor(x / 2) * 2 + 1, gy = floor(y / 2) * 2 + 1) %&gt;%\n  count(gx, gy) %&gt;%\n  complete(gx = gx_seq, gy = gy_seq, fill = list(n = 0)) %&gt;%\n  arrange(gy, gx)\n\nz &lt;- matrix(field$n, nrow = length(gy_seq), ncol = length(gx_seq), byrow = TRUE)\n\n# Level geometry drawn as rectangles behind the data.\nshapes &lt;- pmap(level, function(block, xmin, xmax, ymin, ymax, kind) {\n  list(type = \"rect\", x0 = xmin, x1 = xmax, y0 = ymin, y1 = ymax,\n       fillcolor = if (kind == \"elevated\") \"#6f6e6a\" else \"#2f2e2c\",\n       # The gantry is walkable, so it stays translucent and the dwell field\n       # underneath it still reads.\n       opacity = if (kind == \"elevated\") 0.35 else 0.92,\n       line = list(width = 0), layer = \"above\")\n})\n\n# The animated layer starts at the first second where all three states occur, so\n# that the legend is complete from the first frame.\nfirst_full &lt;- positions %&gt;%\n  group_by(t) %&gt;% summarise(k = n_distinct(state)) %&gt;%\n  filter(k == 3) %&gt;% slice_min(t) %&gt;% pull(t)\n\ndeaths &lt;- positions %&gt;% filter(event == \"death\")\n\nplot_ly(height = 560) %&gt;%\n  add_heatmap(\n    x = gx_seq, y = gy_seq, z = z, zmin = 0, zmax = 60,\n    colorscale = list(c(0, \"#fcfcfb\"), c(0.25, \"#cde2fb\"),\n                      c(0.6, \"#5598e7\"), c(1, \"#104281\")),\n    showscale = TRUE, hoverinfo = \"z\",\n    colorbar = list(title = \"Seconds\\nspent\", len = 0.55, thickness = 12,\n                    y = 0.72, ticksuffix = \"  \")\n  ) %&gt;%\n  add_markers(\n    data = deaths, x = ~x, y = ~y, name = \"Death\",\n    marker = list(symbol = \"x\", size = 11, color = \"#e34948\",\n                  line = list(color = \"#fcfcfb\", width = 1)),\n    text = ~paste0(\"death · \", player_id, \" · t=\", t, \"s\"), hoverinfo = \"text\"\n  ) %&gt;%\n  add_markers(\n    data = positions %&gt;% filter(t &gt;= first_full),\n    x = ~x, y = ~y, frame = ~t, color = ~state,\n    colors = c(Holding = pal[[\"orange\"]], Loitering = pal[[\"aqua\"]],\n               Moving = pal[[\"blue\"]]),\n    marker = list(size = 13, line = list(color = \"#fcfcfb\", width = 2)),\n    text = ~paste0(player_id, \" · t=\", t, \"s · \", state),\n    hoverinfo = \"text\"\n  ) %&gt;%\n  layout(\n    title  = list(text = \"&lt;b&gt;One corridor carries the traffic and most of the deaths&lt;/b&gt;\",\n                  x = 0, font = list(size = 14)),\n    shapes = shapes,\n    xaxis  = list(title = \"x (m)\", range = c(0, 60), constrain = \"domain\"),\n    yaxis  = list(title = \"y (m)\", range = c(0, 40), scaleanchor = \"x\"),\n    legend = list(orientation = \"h\", x = 0, y = 1.02, title = list(text = \"\")),\n    margin = list(t = 80)\n  ) %&gt;%\n  animation_opts(frame = 90, transition = 45, redraw = FALSE) %&gt;%\n  animation_slider(currentvalue = list(prefix = \"t = \", suffix = \" s\"))\n\n\n\n\n\n\n\nFollowing one player\nThe map above answers questions about the level. To ask questions about a player — did they learn the route, did they loop, did they ever leave their corner — you need to follow one of them.\nFirst, all eight routes at once. The line darkens as the match progresses, so you can read direction without playing anything. P03 covers the most ground (268 m). P07 travels almost as far (190 m) without ever leaving a two-metre-wide lane — it shuttles up and down the same corridor for the whole match. P01 and P02 manage 51 m and 35 m between them across three minutes.\n\n\nShow the code\nwalls &lt;- level %&gt;% filter(kind != \"elevated\")\nraised &lt;- level %&gt;% filter(kind == \"elevated\")\n\nggplot() +\n  geom_rect(data = walls, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),\n            fill = \"#2f2e2c\", alpha = 0.9) +\n  geom_rect(data = raised, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),\n            fill = \"#6f6e6a\", alpha = 0.55) +\n  geom_path(data = positions, aes(x, y, colour = t), linewidth = 0.7) +\n  facet_wrap(~player_id, nrow = 2) +\n  scale_colour_gradient(low = \"#cde2fb\", high = \"#104281\",\n                        name = \"Time (s)\", breaks = c(1, 90, 180)) +\n  coord_fixed(xlim = c(0, 60), ylim = c(0, 40), expand = FALSE) +\n  labs(\n    title    = \"Eight routes through the same three minutes\",\n    subtitle = \"Line darkens as the match progresses. Two players never leave the gantry.\",\n    x = NULL, y = NULL\n  ) +\n  theme_tb() +\n  theme(axis.text         = element_blank(),\n        panel.grid.major  = element_blank(),\n        panel.grid.minor  = element_blank(),\n        strip.text        = element_text(face = \"bold\", colour = ink[[\"primary\"]]),\n        legend.position   = \"right\",\n        legend.key.height = unit(0.9, \"lines\"))\n\n\n\n\n\n\n\n\n\nNow one player, animated, with the trail drawn behind them. Change focus_player to any ID from the panel above and re-run the chunk. The orange dots mark every second this player spent holding position, so you can see where they will stop before they get there.\n\n\nShow the code\nfocus_player &lt;- \"P06\"\n\npath &lt;- positions %&gt;% filter(player_id == focus_player) %&gt;% arrange(t)\n\n# For each second, every position up to that second: this is what makes the\n# trail grow rather than jump.\ntrail &lt;- map_dfr(path$t, function(k) path %&gt;% filter(t &lt;= k) %&gt;% mutate(f = k))\n\nplot_ly(height = 560) %&gt;%\n  add_markers(\n    data = path %&gt;% filter(state == \"Holding\"), x = ~x, y = ~y,\n    name = \"Held position\",\n    marker = list(size = 7, color = pal[[\"orange\"]], opacity = 0.7),\n    text = ~paste0(\"holding · t=\", t, \"s\"), hoverinfo = \"text\"\n  ) %&gt;%\n  add_markers(\n    data = path %&gt;% slice(1), x = ~x, y = ~y, name = \"Start\",\n    marker = list(symbol = \"circle-open\", size = 16, color = ink[[\"primary\"]],\n                  line = list(width = 2.5)),\n    hoverinfo = \"text\", text = \"start\"\n  ) %&gt;%\n  add_paths(\n    data = trail, x = ~x, y = ~y, frame = ~f,\n    line = list(color = pal[[\"blue\"]], width = 2.5),\n    opacity = 0.8, showlegend = FALSE, hoverinfo = \"skip\"\n  ) %&gt;%\n  add_markers(\n    data = path, x = ~x, y = ~y, frame = ~t,\n    marker = list(size = 16, color = pal[[\"blue\"]],\n                  line = list(color = \"#fcfcfb\", width = 2.5)),\n    showlegend = FALSE,\n    text = ~paste0(focus_player, \" · t=\", t, \"s · \", state), hoverinfo = \"text\"\n  ) %&gt;%\n  layout(\n    title  = list(text = paste0(\"&lt;b&gt;\", focus_player, \"'s route through the match&lt;/b&gt;\"),\n                  x = 0, font = list(size = 14)),\n    shapes = shapes,\n    xaxis  = list(title = \"x (m)\", range = c(0, 60), constrain = \"domain\"),\n    yaxis  = list(title = \"y (m)\", range = c(0, 40), scaleanchor = \"x\"),\n    legend = list(orientation = \"h\", x = 0, y = 1.02, title = list(text = \"\")),\n    margin = list(t = 80)\n  ) %&gt;%\n  animation_opts(frame = 70, transition = 0, redraw = FALSE) %&gt;%\n  animation_slider(currentvalue = list(prefix = \"t = \", suffix = \" s\"))",
+    "objectID": "notes/describing-what-you-have.html#short-practice-activities",
+    "href": "notes/describing-what-you-have.html#short-practice-activities",
+    "title": "Describing What You Have",
+    "section": "Short Practice Activities",
+    "text": "Short Practice Activities\nEach takes two or three minutes.\n1. Classify each of these as nominal, ordinal, discrete or continuous: kills, quit_reason, cohort, distance_m, visual_style.\n\n\n\n\n\n\nNoteCheck your answer\n\n\n\n\n\nkills discrete; quit_reason nominal; cohort ordinal; distance_m continuous; visual_style ordinal (a 1 to 5 rating), whatever type R gives it.\n\n\n\n2. Describe distance_m in one sentence with centre, spread and size. Does the mean sit above or below the median?\n\n\n\n\n\n\nNoteCheck your answer\n\n\n\n\n\n\nmedian(sessions$distance_m)\n\n[1] 381.5\n\nIQR(sessions$distance_m)\n\n[1] 176.5\n\nmean(sessions$distance_m)\n\n[1] 387.8833\n\n\nMedian distance was 381.5 m (IQR 176.5, n = 120). The mean sits above the median by 6.4 m, which is small against a spread of that size.\n\n\n\n3. Use table() to find the most common number of deaths in a session. Why is table() sensible for deaths but not for distance_m?\n\n\n\n\n\n\nNoteCheck your answer\n\n\n\n\n\n\ntable(sessions$deaths)\n\n\n 0  1  2  3  4  5  6  7 \n 4 18 26 23 31 12  4  2 \n\n\nThe most common count is 4 deaths. Deaths is discrete with only a handful of possible values, so counting each one is informative. 110 of the 120 distance_m values are different, so its table is mostly a list of ones; a continuous variable needs a histogram instead.",
     "crumbs": [
-      "Start here"
+      "Notes",
+      "Describing What You Have"
     ]
   },
   {
-    "objectID": "index.html#what-each-view-cost",
-    "href": "index.html#what-each-view-cost",
-    "title": "Eight Views of a Playtest",
-    "section": "What each view cost",
-    "text": "What each view cost\n\n\n\n\n\n\n\n\n\nView\nChart type\nLines of R\nSkills it needs\n\n\n\n\n1\nInteractive table\n14\nReading data; selecting and renaming columns\n\n\n2\nViolin with boxplot\n14\nDescribing distributions\n\n\n3\nRadar small multiples\n34\nReshaping data; grouped summaries\n\n\n4\nCorrelogram\n35\nRelationships between variables\n\n\n5\nRetention step curve\n27\nBuilding a summary from scratch; annotation\n\n\n6\nDiverging Likert bars\n55\nReshaping; ordering by a computed value\n\n\n7\nFrame-time trace + summary table\n16 + 11\nFiltering; percentiles; rendered tables\n\n\n8\nAnimated position map\n53\nGrouping, counting, interactive output\n\n\n8b\nRoute small multiples\n24\nDrawing paths; faceting by player\n\n\n8b\nAnimated single-player trail\n39\nFiltering to one case; building frames\n\n\n\nNone of this is difficult, and most of the length in Views 3 onwards is labelling and styling rather than analysis. All of it is repeatable: the same code runs unchanged on next week’s build, which is the real reason to write analysis as code rather than clicking through a spreadsheet.\nThe rest of these notes teach you the parts, in order, starting with the question that matters most: what are you actually trying to find out?",
+    "objectID": "notes/describing-what-you-have.html#summary",
+    "href": "notes/describing-what-you-have.html#summary",
+    "title": "Describing What You Have",
+    "section": "Summary",
+    "text": "Summary\n\nThe type of a variable decides which summaries are legal. A 1 to 5 rating is ordinal, and averaging it is an assumption you should know you are making.\nTidy data has one row per observation and one column per variable.\nEvery number describes the sample. Report n every time.\nWhen mean and median disagree, the data is skewed. Default to the median for anything time-like.\nDescribe spread with the IQR for skewed data and the standard deviation for symmetric data. The range is rarely enough.\nLook at the histogram before quoting any average. Two humps mean two groups.",
     "crumbs": [
-      "Start here"
+      "Notes",
+      "Describing What You Have"
+    ]
+  },
+  {
+    "objectID": "notes/describing-what-you-have.html#links-to-relevant-reference-material",
+    "href": "notes/describing-what-you-have.html#links-to-relevant-reference-material",
+    "title": "Describing What You Have",
+    "section": "Links to Relevant Reference Material",
+    "text": "Links to Relevant Reference Material\n\nTen Rules: rule 3 (know what kind of number you are holding), rule 4 (look at the shape before you quote the average), rule 5 (the mean is the wrong summary more often than you think) and rule 8 (small samples lie confidently)\nR and Quarto Reference: describing one variable, describing by group and plots\nLab 01: exploring playtest data, Part B",
+    "crumbs": [
+      "Notes",
+      "Describing What You Have"
+    ]
+  },
+  {
+    "objectID": "notes/describing-what-you-have.html#reflective-questions",
+    "href": "notes/describing-what-you-have.html#reflective-questions",
+    "title": "Describing What You Have",
+    "section": "Reflective Questions",
+    "text": "Reflective Questions\n\nTake a variable from your own project’s telemetry. Which of the four types is it, and what would break if you treated it as the type next door?\nWhy is the median usually the right summary for completion time, but not for something like accuracy percentage?\nYou draw a histogram of level completion times and see two clear humps. List three things that could have caused that, and say how you would tell them apart.\nA teammate reports “average session length is 22 minutes”. What two further numbers would you ask for before letting that into a report?",
+    "crumbs": [
+      "Notes",
+      "Describing What You Have"
     ]
   },
   {
@@ -395,80 +429,321 @@
     ]
   },
   {
-    "objectID": "notes/describing-what-you-have.html",
-    "href": "notes/describing-what-you-have.html",
-    "title": "Describing What You Have",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Eight Views of a Playtest",
     "section": "",
-    "text": "Before comparing anything to anything, you have to be able to say what a single variable looks like. This section is the vocabulary for that, and it is the part students most often skip and most often get caught by.",
+    "text": "First time here? Work through Lab 00 before anything else.",
     "crumbs": [
-      "Notes",
-      "Describing What You Have"
+      "Start here"
     ]
   },
   {
-    "objectID": "notes/describing-what-you-have.html#what-kind-of-number-is-this",
-    "href": "notes/describing-what-you-have.html#what-kind-of-number-is-this",
-    "title": "Describing What You Have",
-    "section": "What Kind of Number Is This?",
-    "text": "What Kind of Number Is This?\nFour types, and the type decides which operations are legal.\nNominal — labels with no order. Character class, platform, quit reason. You can count them. You cannot average them. The mean of Scout and Sentinel does not exist, and if your code produces one, something has gone wrong upstream.\nOrdinal — ordered labels with unknown gaps. Difficulty setting, player experience level, and every agreement scale ever printed. Novice, Regular and Veteran are in an order, but Regular is not “halfway” between the other two in any meaningful sense.\nDiscrete — counts. Deaths, kills, items collected. Whole numbers, and there is no such thing as 2.4 deaths in a single session — though the average number of deaths across many sessions is perfectly meaningful at 2.4.\nContinuous — measurements. Completion time, frame time, distance travelled. Any value in a range, limited only by the precision of your instrument.\nThe awkward case is the rating scale, and it is awkward every time. A 1–5 agreement scale is strictly ordinal: you know Agree is above Neutral, but you do not know that the step from Disagree to Neutral is the same size as the step from Agree to Strongly Agree. In practice, when a scale has five or more points and the responses are reasonably spread, people treat it as numeric and average it. That convention is defensible and universal, and you should still know you are making an assumption. Where it matters — where the whole finding rests on a mean of 3.2 against 3.4 — report the distribution instead.",
+    "objectID": "index.html#ten-questions-r-can-answer",
+    "href": "index.html#ten-questions-r-can-answer",
+    "title": "Eight Views of a Playtest",
+    "section": "Ten questions R can answer",
+    "text": "Ten questions R can answer\nThese are the questions that come up in the week after a playtest. None of them is exotic. All of them are painful to answer with a spreadsheet, and each one is answered below by a single figure and a few dozen lines of R.\n\n\n\nThe question you are actually asking\nAnswered by\n\n\n\n\nI have 120 rows of results and no idea what is in them. Where do I start?\nView 1\n\n\nAll four characters average about the same score. Does that mean they are balanced?\nView 2\n\n\nI designed four classes to play differently. Did they stay different once real people played them?\nView 3\n\n\nI want players to score higher. Which ability is actually worth buffing?\nView 4\n\n\nTesters keep giving up partway through. When do I lose them, and is it the same moment every time?\nView 5\n\n\nThe survey came back with 960 ratings across eight questions. Which complaint do I fix first?\nView 6\n\n\nMy frame-rate counter says 60 FPS. My testers say the game stutters. Who is lying?\nView 7\n\n\nHow can I find where players are loitering, sniping, or being funnelled into a kill zone?\nView 8\n\n\nWhich parts of my level is nobody using?\nView 8\n\n\nHow did one particular player move through the level — did they learn the route, or wander?\nView 8b\n\n\n\nEvery one of these is a question about your own game, asked of data your own engine can already record. The only thing missing is the ability to read it.",
     "crumbs": [
-      "Notes",
-      "Describing What You Have"
+      "Start here"
     ]
   },
   {
-    "objectID": "notes/describing-what-you-have.html#tidy-data-one-row-per-observation",
-    "href": "notes/describing-what-you-have.html#tidy-data-one-row-per-observation",
-    "title": "Describing What You Have",
-    "section": "Tidy Data: One Row Per Observation",
-    "text": "Tidy Data: One Row Per Observation\nData arrives in whatever shape the tool that produced it happened to use. Almost all analysis assumes one particular shape, and it is worth naming.\nA table is tidy when each row is one observation, each column is one variable, and each cell is one value. For a playtest: one row per player per session, one column per thing you recorded.\nThe most common violation is a survey export, where the eight questions become eight columns. That is convenient to read and inconvenient to analyse, because “question” is really a variable and its eight values have been spread across the column headings. Reshaping it into one row per player per question is what makes the whole survey analysable in one operation, and you will do exactly that in Lab 03.",
+    "objectID": "index.html#before-you-read-any-code",
+    "href": "index.html#before-you-read-any-code",
+    "title": "Eight Views of a Playtest",
+    "section": "Before you read any code",
+    "text": "Before you read any code\nThis document is a showcase, not a lesson. Nothing here is examinable and you are not expected to understand the code yet. Its only job is to show you what three weeks of R can do to a pile of raw playtest numbers.\nEvery figure below was produced from 5 CSV files, in chunks of between 11 and 61 lines of code. By the end of these notes you will be able to answer the first seven questions with base R, dplyr and ggplot2, producing plainer, static versions of the plots shown here. The three movement questions in View 8 use position data that stays in this showcase. The polish on this page is the destination, not the syllabus.\n\n\n\n\n\n\nNoteThe data\n\n\n\nTidebreak is a fictional four-player top-down arena, used here so that the example is self-contained. The playtest recorded four things:\n\n\n\n\n\n\n\n\nFile\nOne row per\nHolds\n\n\n\n\ntidebreak_sessions.csv\nplayer, per session\nSix end-of-match ability ratings, eleven match statistics, session length and quit reason, for 120 sessions\n\n\ntidebreak_survey.csv\nplayer, per session\nEight agreement items rated 1 to 5\n\n\ntidebreak_frame_times.csv\nrendered frame\nFrame time in milliseconds, by build and level zone\n\n\ntidebreak_positions.csv\nplayer, per second\nTop-down position for eight players across one 180-second match\n\n\n\nAll four are synthetic, but they behave like the real thing: the numbers are messy, the interesting findings are not the obvious ones, and at least two widely held assumptions about the game turn out to be wrong.\n\n\n\n\nShow the code\nlibrary(tidyverse)\nlibrary(plotly)\nlibrary(DT)\n\nsessions    &lt;- read_csv(\"data/tidebreak_sessions.csv\")\nsurvey      &lt;- read_csv(\"data/tidebreak_survey.csv\")\nframe_times &lt;- read_csv(\"data/tidebreak_frame_times.csv\")\npositions   &lt;- read_csv(\"data/tidebreak_positions.csv\")\nlevel       &lt;- read_csv(\"data/tidebreak_level.csv\")\n\n# A small, fixed palette used by every figure in this document.\npal &lt;- c(blue = \"#2a78d6\", orange = \"#eb6834\", aqua = \"#1baf7a\", yellow = \"#eda100\")\nink &lt;- c(primary = \"#0b0b0b\", secondary = \"#52514e\", grid = \"#e6e5e1\")\n\n# Each archetype keeps the same colour in every figure, so that a colour always\n# means the same thing no matter which chart you are looking at.\narch_pal &lt;- c(Scout = pal[[\"blue\"]],  Sentinel = pal[[\"orange\"]],\n              Engineer = pal[[\"aqua\"]], Duelist = pal[[\"yellow\"]])\n\n# Likewise for the two builds, which appear in Views 5 and 7.\nbuild_pal &lt;- c(A = pal[[\"orange\"]], B = pal[[\"blue\"]])\n\ntheme_tb &lt;- function() {\n  theme_minimal(base_size = 12) +\n    theme(\n      plot.title      = element_text(face = \"bold\", colour = ink[\"primary\"], size = 13),\n      plot.subtitle   = element_text(colour = ink[\"secondary\"], size = 11),\n      axis.title      = element_text(colour = ink[\"secondary\"], size = 10),\n      axis.text       = element_text(colour = ink[\"secondary\"]),\n      panel.grid.minor = element_blank(),\n      panel.grid.major = element_line(colour = ink[\"grid\"], linewidth = 0.3),\n      legend.position = \"none\"\n    )\n}",
     "crumbs": [
-      "Notes",
-      "Describing What You Have"
+      "Start here"
     ]
   },
   {
-    "objectID": "notes/describing-what-you-have.html#centre",
-    "href": "notes/describing-what-you-have.html#centre",
-    "title": "Describing What You Have",
-    "section": "Centre",
-    "text": "Centre\nTwo summaries of “the typical value”, and choosing between them is a real decision, not a formality.\nThe mean adds everything and divides by the count. It uses every value, which is its strength, and it is dragged by extremes, which is its weakness.\nThe median is the middle value when sorted. Half above, half below. It ignores how extreme the extremes are, which is its strength and its weakness.\nWhen they disagree, the data is skewed, and the gap tells you which way. If the mean sits well above the median, a few large values are pulling it up: a long right tail. If it sits below, a group of small values is pulling it down.\nFor game data this is not an edge case, it is the norm. Completion times, session lengths and frame times are all skewed almost by construction — there is a floor on how fast anyone can finish and no ceiling on how slow. Default to the median for anything time-like and reach for the mean only when you have looked at the shape and satisfied yourself it is roughly symmetric.\nWhen you compare the two, compare them relative to the size of the variable. A gap of 40 points on a score in the thousands is nothing; a gap of 3 minutes on a median of 26 is a real skew.",
+    "objectID": "index.html#view-1-the-table-you-can-actually-read",
+    "href": "index.html#view-1-the-table-you-can-actually-read",
+    "title": "Eight Views of a Playtest",
+    "section": "View 1 — The table you can actually read",
+    "text": "View 1 — The table you can actually read\nQuestion: what happened in each session?\nBefore you analyse anything you need to be able to look at your data. A raw CSV in Excel is awkward at 120 rows and unusable at 120,000. A rendered table is searchable and sortable, and it goes straight into a report.\nSort by Score, or type Sentinel into the search box, and you will already see the finding that View 2 makes formal.\n\n\nShow the code\nsessions %&gt;%\n  select(Session = session_id, Player = player_id, Cohort = cohort,\n         Archetype = archetype, Build = build, Score = score,\n         Kills = kills, Deaths = deaths, `Alive (s)` = time_alive_s,\n         Awareness = awareness) %&gt;%\n  datatable(\n    rownames = FALSE,\n    options  = list(pageLength = 8, dom = \"ftip\", scrollX = TRUE),\n    caption  = \"Tidebreak playtest: 120 sessions\"\n  ) %&gt;%\n  formatStyle(\"Score\",\n    background = styleColorBar(range(sessions$score), \"#cde2fb\"),\n    backgroundSize = \"98% 60%\", backgroundRepeat = \"no-repeat\",\n    backgroundPosition = \"center\")",
     "crumbs": [
-      "Notes",
-      "Describing What You Have"
+      "Start here"
     ]
   },
   {
-    "objectID": "notes/describing-what-you-have.html#spread",
-    "href": "notes/describing-what-you-have.html#spread",
-    "title": "Describing What You Have",
-    "section": "Spread",
-    "text": "Spread\nThe centre alone is nearly useless. Two levels with identical average completion times, one where everybody takes four minutes and one where half take one minute and half take seven, are not the same level.\nRange is minimum to maximum. Easy to quote and almost always misleading, since a single unusual value defines it entirely.\nStandard deviation is the typical distance from the mean. It is the right measure for roughly symmetric data and it inherits the mean’s sensitivity to extremes.\nQuartiles split the sorted data into four. The first quartile has a quarter below it, the third has three quarters. The interquartile range — the distance between them — is the width of the middle half of your players, and it is the most robust description of spread you have. For skewed game data, quote the median and the IQR together.\nPercentiles generalise this: the 95th percentile has 95% of values below it. Sections 5 will show you why the 99th percentile of frame time is the single most important number in a performance capture.",
+    "objectID": "index.html#view-2-distributions-not-averages",
+    "href": "index.html#view-2-distributions-not-averages",
+    "title": "Eight Views of a Playtest",
+    "section": "View 2 — Distributions, not averages",
+    "text": "View 2 — Distributions, not averages\nQuestion: which archetype performs best?\nThe tempting answer is to compare four average scores. Do that here and the archetypes look almost identical, which would be a design decision made on a misreading.\nA violin plot draws the whole distribution. Read the Sentinel shape: it is not one hump but two. Sentinel runs either anchor the objective and score well, or collapse in the opening seconds and score badly. There is almost no middle. That is a balance problem an average would have hidden completely.\n\n\nShow the code\nsessions %&gt;%\n  mutate(archetype = fct_reorder(archetype, score, .fun = median)) %&gt;%\n  ggplot(aes(archetype, score, fill = archetype)) +\n  geom_violin(colour = NA, alpha = 0.85, width = 0.9) +\n  geom_boxplot(width = 0.12, fill = \"white\", colour = ink[[\"secondary\"]],\n               outlier.shape = NA, linewidth = 0.4) +\n  scale_fill_manual(values = arch_pal) +\n  scale_y_continuous(labels = scales::comma) +\n  labs(\n    title    = \"Sentinel is bimodal: it either anchors the round or dies in it\",\n    subtitle = \"Score distribution by archetype, 30 sessions each. Box shows median and interquartile range.\",\n    x = NULL, y = \"Score\"\n  ) +\n  theme_tb()",
     "crumbs": [
-      "Notes",
-      "Describing What You Have"
+      "Start here"
     ]
   },
   {
-    "objectID": "notes/describing-what-you-have.html#look-at-the-shape-first",
-    "href": "notes/describing-what-you-have.html#look-at-the-shape-first",
-    "title": "Describing What You Have",
-    "section": "Look at the Shape First",
-    "text": "Look at the Shape First\nEvery summary statistic throws information away. That is what a summary is for. The risk is that it throws away the finding.\nA histogram shows you the whole distribution: where the bulk sits, whether it is symmetric, whether there is a second hump, whether there are outliers. Draw one before quoting any average. It costs one line.\nThe number of bins changes what you see, sometimes dramatically. Too few and a second hump disappears; too many and noise looks like structure. Try several. That a chart changes with its settings is not a flaw to hide — it is the first evidence that a chart is an argument rather than a fact, and you are responsible for the argument you make.\nA boxplot compresses the same information into median, quartiles and outliers. It is less informative than a histogram for one variable and much better for comparing several groups side by side, which is what Section 4 is about.\nTwo humps are always worth chasing. A distribution with two peaks usually means two populations have been mixed: players who found the key and players who did not, sessions that completed and sessions that crashed. The average of a bimodal distribution describes nobody at all — it names a value that sits in the valley between the two groups, where the fewest players actually are.",
+    "objectID": "index.html#view-3-six-numbers-as-a-shape",
+    "href": "index.html#view-3-six-numbers-as-a-shape",
+    "title": "Eight Views of a Playtest",
+    "section": "View 3 — Six numbers as a shape",
+    "text": "View 3 — Six numbers as a shape\nQuestion: are the four archetypes actually playing differently?\nEach session ends with six ability ratings on a 0–100 scale. Comparing four archetypes across six measures means twenty-four numbers, which no one can hold in their head. Drawn as a radar, each archetype becomes a shape you can recognise at a glance, and the grey outline behind each one is the all-player average for reference.\nThe shapes are distinct and they are roughly the shapes the design intended. That is the result you want from this chart: confirmation that the archetypes are not quietly converging on the same playstyle.\n\n\nShow the code\nmetrics &lt;- c(\"accuracy\", \"mobility\", \"survivability\",\n             \"objective_control\", \"support\", \"awareness\")\n\npretty &lt;- c(accuracy = \"Accuracy\", mobility = \"Mobility\",\n            survivability = \"Survival\", objective_control = \"Objective\",\n            support = \"Support\", awareness = \"Awareness\")\n\nlong &lt;- sessions %&gt;%\n  select(archetype, all_of(metrics)) %&gt;%\n  pivot_longer(-archetype, names_to = \"metric\", values_to = \"value\") %&gt;%\n  mutate(metric = factor(pretty[metric], levels = unname(pretty)))\n\nby_arch &lt;- long %&gt;% group_by(archetype, metric) %&gt;% summarise(value = mean(value))\noverall &lt;- long %&gt;% group_by(metric) %&gt;% summarise(value = mean(value))\n\nggplot() +\n  geom_polygon(data = overall, aes(metric, value, group = 1),\n               fill = NA, colour = ink[[\"grid\"]], linewidth = 0.8) +\n  geom_polygon(data = by_arch,\n               aes(metric, value, group = archetype, fill = archetype, colour = archetype),\n               alpha = 0.35, linewidth = 0.9) +\n  geom_point(data = by_arch, aes(metric, value, colour = archetype), size = 1.8) +\n  coord_polar(clip = \"off\") +\n  facet_wrap(~archetype, nrow = 1) +\n  scale_fill_manual(values = arch_pal) +\n  scale_colour_manual(values = arch_pal) +\n  scale_y_continuous(limits = c(0, 100), breaks = c(25, 50, 75)) +\n  labs(\n    title    = \"Four archetypes, four distinct ability profiles\",\n    subtitle = \"Mean end-of-match rating per ability. Grey outline is the all-player average.\",\n    x = NULL, y = NULL\n  ) +\n  theme_tb() +\n  theme(axis.text.y   = element_blank(),\n        axis.text.x   = element_text(size = 7),\n        strip.text    = element_text(face = \"bold\", colour = ink[[\"primary\"]]),\n        panel.spacing = unit(1.6, \"lines\"),\n        plot.margin   = margin(10, 20, 10, 20))",
     "crumbs": [
-      "Notes",
-      "Describing What You Have"
+      "Start here"
     ]
   },
   {
-    "objectID": "notes/describing-what-you-have.html#reflective-questions",
-    "href": "notes/describing-what-you-have.html#reflective-questions",
-    "title": "Describing What You Have",
+    "objectID": "index.html#view-4-what-actually-drives-score",
+    "href": "index.html#view-4-what-actually-drives-score",
+    "title": "Eight Views of a Playtest",
+    "section": "View 4 — What actually drives score",
+    "text": "View 4 — What actually drives score\nQuestion: which abilities and behaviours move the scoreboard?\nA correlogram puts every pair of variables in one picture. Blue means the two rise together, red means one rises as the other falls, and pale means no relationship at all.\nThree things to read off it:\n\nAwareness is the strongest positive correlate of score. Map knowledge beats mechanical skill in this build.\nShots fired is essentially uncorrelated with score. Players who shoot more do not win more, which contradicts what the team assumed.\nMobility and survivability pull against each other, which is the intended trade-off working as designed.\n\n\n\nShow the code\nvars &lt;- c(\"accuracy\", \"mobility\", \"survivability\", \"objective_control\",\n          \"support\", \"awareness\", \"shots_fired\", \"distance_m\",\n          \"kills\", \"deaths\", \"objectives\", \"score\")\n\nnice &lt;- c(accuracy = \"Accuracy\", mobility = \"Mobility\", survivability = \"Survival\",\n          objective_control = \"Objective ctrl\", support = \"Support\",\n          awareness = \"Awareness\", shots_fired = \"Shots fired\",\n          distance_m = \"Distance\", kills = \"Kills\", deaths = \"Deaths\",\n          objectives = \"Objectives\", score = \"Score\")\n\ncm &lt;- cor(sessions[vars])\nord &lt;- hclust(as.dist(1 - cm))$order\nlv  &lt;- nice[vars[ord]]\n\ncm_long &lt;- as.data.frame(as.table(cm)) %&gt;%\n  setNames(c(\"a\", \"b\", \"r\")) %&gt;%\n  mutate(a = factor(nice[as.character(a)], levels = lv),\n         b = factor(nice[as.character(b)], levels = lv)) %&gt;%\n  filter(as.integer(a) &lt; as.integer(b))   # lower triangle only; the diagonal is always 1\n\nggplot(cm_long, aes(a, b, fill = r)) +\n  geom_tile(colour = \"white\", linewidth = 1.2) +\n  geom_text(aes(label = sprintf(\"%.2f\", r),\n                colour = abs(r) &gt; 0.55), size = 2.9) +\n  scale_fill_gradient2(low = \"#e34948\", mid = \"#f0efec\", high = \"#2a78d6\",\n                       midpoint = 0, limits = c(-1, 1), name = \"r\") +\n  scale_colour_manual(values = c(`TRUE` = \"white\", `FALSE` = ink[[\"secondary\"]]),\n                      guide = \"none\") +\n  coord_fixed() +\n  labs(\n    title    = \"Awareness drives score; shots fired does not\",\n    subtitle = \"Pearson correlation between every pair of measures, 120 sessions.\",\n    x = NULL, y = NULL\n  ) +\n  theme_tb() +\n  theme(axis.text.x       = element_text(angle = 45, hjust = 1),\n        legend.position   = \"right\",\n        panel.grid.major  = element_blank(),\n        panel.grid.minor  = element_blank())",
+    "crumbs": [
+      "Start here"
+    ]
+  },
+  {
+    "objectID": "index.html#view-5-when-people-stop-playing",
+    "href": "index.html#view-5-when-people-stop-playing",
+    "title": "Eight Views of a Playtest",
+    "section": "View 5 — When people stop playing",
+    "text": "View 5 — When people stop playing\nQuestion: we changed how the game explains its objective. Did it keep anyone?\nA retention curve shows what fraction of participants were still playing at each minute of the test. It is the shape that matters, not the endpoint: a smooth decay means people drifted away, a cliff means something specific pushed them out.\nBuild A has a cliff. Between minutes 11 and 13 it drops from 88% to 68%, and 15 of the 17 people who left in that window are logged as frustration quits. Build B, which explains its objective differently, is still at 90% at minute 13 and loses five people to frustration across the whole test against Build A’s twenty.\nNow look at what a summary table would have told you: median session length is 23.2 minutes for Build A and 27.1 for Build B. That reads as a modest improvement. The curve shows something else — one specific, fixable moment where a fifth of the Build A testers gave up.\n\n\nShow the code\nminutes &lt;- seq(0, 32, by = 0.25)\n\nretention &lt;- map_dfr(c(\"A\", \"B\"), function(b) {\n  lengths &lt;- sessions %&gt;% filter(build == b) %&gt;% pull(session_minutes)\n  tibble(build = b, minute = minutes,\n         pct = map_dbl(minutes, ~ 100 * mean(lengths &gt;= .x)))\n})\n\nends &lt;- retention %&gt;% group_by(build) %&gt;% slice_max(minute, n = 1)\n\nggplot(retention, aes(minute, pct, colour = build)) +\n  annotate(\"rect\", xmin = 11, xmax = 13, ymin = 0, ymax = 100,\n           fill = ink[[\"grid\"]], alpha = 0.55) +\n  annotate(\"text\", x = 13.4, y = 24, hjust = 0, size = 3.2,\n           colour = ink[[\"secondary\"]],\n           label = \"88% to 68% in two minutes,\\nalmost all frustration quits\") +\n  geom_step(linewidth = 1.1, direction = \"hv\") +\n  geom_text(data = ends, aes(label = paste0(\"Build \", build)),\n            hjust = 0, nudge_x = 0.6, size = 3.6, fontface = \"bold\",\n            show.legend = FALSE) +\n  scale_colour_manual(values = build_pal) +\n  scale_x_continuous(limits = c(0, 37), breaks = seq(0, 30, 5),\n                     labels = function(x) paste0(x, \" min\")) +\n  scale_y_continuous(limits = c(0, 100), labels = function(y) paste0(y, \"%\")) +\n  labs(\n    title    = \"Build A loses people at a cliff; Build B does not\",\n    subtitle = \"Percentage of participants still playing, by minute of the test session.\",\n    x = NULL, y = \"Still playing\"\n  ) +\n  theme_tb()",
+    "crumbs": [
+      "Start here"
+    ]
+  },
+  {
+    "objectID": "index.html#view-6-what-players-said-ranked-by-how-badly-it-went",
+    "href": "index.html#view-6-what-players-said-ranked-by-how-badly-it-went",
+    "title": "Eight Views of a Playtest",
+    "section": "View 6 — What players said, ranked by how badly it went",
+    "text": "View 6 — What players said, ranked by how badly it went\nQuestion: the survey has eight questions and 120 responses. Which one should we act on first?\nEight averages tell you almost nothing, because a mean of 3.0 can mean everyone was indifferent or that half loved it and half hated it. A diverging bar chart splits each item at the neutral response: disagreement runs left, agreement runs right, and the items sort by the net.\nThe result is uncomfortable in the way real survey results usually are. The art is the best-rated thing in the game by a distance. The worst-rated item is whether players ever knew what they were supposed to be doing — the same thing that drives the cliff in View 5. People praise the visuals and quit over the design.\n\n\nShow the code\nitem_label &lt;- c(\n  objective_clear     = \"I always knew what my objective was\",\n  death_understood    = \"I understood why I died\",\n  difficulty_fair     = \"The difficulty felt fair\",\n  level_navigable     = \"The level was easy to navigate\",\n  would_play_again    = \"I would play this again\",\n  match_length        = \"The match length felt right\",\n  controls_responsive = \"The controls felt responsive\",\n  visual_style        = \"The visual style is appealing\"\n)\n\nresp_label &lt;- c(\"Strongly disagree\", \"Disagree\", \"Neutral\", \"Agree\", \"Strongly agree\")\n\nprops &lt;- survey %&gt;%\n  pivot_longer(-session_id, names_to = \"item\", values_to = \"resp\") %&gt;%\n  count(item, resp) %&gt;%\n  complete(item, resp = 1:5, fill = list(n = 0)) %&gt;%\n  group_by(item) %&gt;% mutate(pct = 100 * n / sum(n)) %&gt;% ungroup()\n\n# Net agreement decides the order; the neutral block is split so the bars\n# pivot on a true zero rather than on the left edge.\nranking &lt;- props %&gt;%\n  group_by(item) %&gt;%\n  summarise(net = sum(pct[resp &gt;= 4]) - sum(pct[resp &lt;= 2])) %&gt;%\n  arrange(net)\n\nitem_levels &lt;- unname(item_label[ranking$item])\n\nas_bars &lt;- function(d, sign) {\n  d %&gt;%\n    mutate(signed = sign * if_else(resp == 3, pct / 2, pct),\n           item   = factor(unname(item_label[item]), levels = item_levels),\n           resp   = factor(resp_label[resp], levels = resp_label))\n}\n\n# The two sides stack in opposite directions, so that the strongest opinion\n# always sits furthest from the centre line.\nbars_neg &lt;- props %&gt;% filter(resp &lt;= 3) %&gt;% as_bars(-1)\nbars_pos &lt;- props %&gt;% filter(resp &gt;= 3) %&gt;% as_bars(+1)\n\nranking &lt;- ranking %&gt;%\n  mutate(item = factor(unname(item_label[item]), levels = item_levels))\n\nggplot(mapping = aes(signed, item, fill = resp)) +\n  geom_col(data = bars_neg, width = 0.72, position = position_stack()) +\n  geom_col(data = bars_pos, width = 0.72, position = position_stack(reverse = TRUE)) +\n  geom_vline(xintercept = 0, colour = \"#fcfcfb\", linewidth = 0.9) +\n  geom_text(data = ranking, aes(x = 106, y = item, label = sprintf(\"%+.0f\", net)),\n            inherit.aes = FALSE, size = 3.3, fontface = \"bold\",\n            colour = ink[[\"secondary\"]]) +\n  scale_fill_manual(values = c(\"Strongly disagree\" = \"#e34948\",\n                               \"Disagree\"          = \"#f2a9a8\",\n                               \"Neutral\"           = \"#d9d8d4\",\n                               \"Agree\"             = \"#9ec5f4\",\n                               \"Strongly agree\"    = \"#2a78d6\")) +\n  # coord_cartesian zooms; scale limits would DROP the segments that fall\n  # outside them, silently truncating the longest bars.\n  scale_x_continuous(breaks = seq(-60, 90, 30),\n                     labels = function(x) paste0(abs(x), \"%\")) +\n  coord_cartesian(xlim = c(-68, 112)) +\n  labs(\n    title    = \"They love the art and cannot tell what the game wants\",\n    subtitle = \"Share of 120 responses. Bars pivot on neutral; the number is net agreement.\",\n    x = NULL, y = NULL, fill = NULL\n  ) +\n  theme_tb() +\n  theme(legend.position = \"top\",\n        legend.text     = element_text(size = 9),\n        panel.grid.major.y = element_blank())",
+    "crumbs": [
+      "Start here"
+    ]
+  },
+  {
+    "objectID": "index.html#view-7-the-frame-rate-counter-is-lying-to-you",
+    "href": "index.html#view-7-the-frame-rate-counter-is-lying-to-you",
+    "title": "Eight Views of a Playtest",
+    "section": "View 7 — The frame-rate counter is lying to you",
+    "text": "View 7 — The frame-rate counter is lying to you\nQuestion: both builds average about 59 FPS. Testers say Build B stutters. Who is right?\nBoth are. Average frame rate is a mean, and a mean is exactly the wrong summary for a quantity where the rare bad values are the entire user experience. Build B renders almost every frame slightly faster than Build A. It also renders one frame in every twenty-five — about twice a second — in 35 to 55 ms instead of 17, and only in one zone of the level: the corridor that View 8 identifies as the choke point.\nThe trace shows it. The table shows why the FPS readout missed it: the two builds are separated by 0.05 ms at the mean and by 20 ms at the 99th percentile.\n\n\nShow the code\nggplot(frame_times %&gt;% filter(zone == \"Corridor\", frame &lt;= 400),\n       aes(frame, ms, colour = build)) +\n  geom_hline(yintercept = 1000 / 60, linetype = \"22\",\n             colour = ink[[\"secondary\"]], linewidth = 0.4) +\n  geom_line(linewidth = 0.45) +\n  facet_wrap(~build, ncol = 1, labeller = labeller(build = function(b) paste(\"Build\", b))) +\n  scale_colour_manual(values = build_pal) +\n  scale_y_continuous(limits = c(0, 60), breaks = c(1000/60, 30, 45, 60),\n                     labels = c(\"16.7\\n(60 FPS)\", \"30\", \"45\", \"60\")) +\n  labs(\n    title    = \"Identical average, one of them unplayable\",\n    subtitle = \"Frame time in the Corridor zone, first 400 frames. Dashed line is the 60 FPS budget.\",\n    x = \"Frame\", y = \"Frame time (ms)\"\n  ) +\n  theme_tb() +\n  theme(strip.text = element_text(face = \"bold\", colour = ink[[\"primary\"]]))\n\n\n\n\n\n\n\n\n\n\n\nShow the code\nframe_times %&gt;%\n  group_by(Build = build) %&gt;%\n  summarise(\n    `Mean FPS`     = round(1000 / mean(ms), 1),\n    `Mean (ms)`    = round(mean(ms), 2),\n    `Median (ms)`  = round(median(ms), 1),\n    `95th (ms)`    = round(quantile(ms, 0.95), 1),\n    `99th (ms)`    = round(quantile(ms, 0.99), 1),\n    `Worst (ms)`   = round(max(ms), 1)\n  ) %&gt;%\n  knitr::kable(caption = \"Every column agrees the builds are the same until the last two.\")\n\n\n\nEvery column agrees the builds are the same until the last two.\n\n\n\n\n\n\n\n\n\n\n\nBuild\nMean FPS\nMean (ms)\nMedian (ms)\n95th (ms)\n99th (ms)\nWorst (ms)\n\n\n\n\nA\n58.8\n17.00\n17.0\n18.8\n19.5\n20.7\n\n\nB\n59.0\n16.95\n16.6\n18.4\n39.4\n54.2",
+    "crumbs": [
+      "Start here"
+    ]
+  },
+  {
+    "objectID": "index.html#view-8-where-players-actually-stand",
+    "href": "index.html#view-8-where-players-actually-stand",
+    "title": "Eight Views of a Playtest",
+    "section": "View 8 — Where players actually stand",
+    "text": "View 8 — Where players actually stand\nQuestion: where are the choke points, the camping spots and the dead space?\nThis is the figure that changes level layouts. The blue field is total time spent per square metre across the whole match. The moving dots are the eight players, one frame per second, coloured by whether they are moving, loitering or holding position. Dark blocks are cover; the block in the north-east is the raised gantry.\nPress play, or drag the slider.\nThree readings, all of them actionable:\n\nThe gap between the central core and the east block carries almost all lateral traffic, and 14 of the 20 deaths in this match happened inside it. That is a choke point.\nTwo players spend the entire match holding the north-east gantry. Long dwell, no movement, high kill share: a sniper perch.\nThe west corner is never visited by anyone. That is floor space the level is paying for and not using.\n\n\n\nShow the code\n# Time spent per 2m x 2m cell, for the background field.\ngx_seq &lt;- seq(1, 59, 2)\ngy_seq &lt;- seq(1, 39, 2)\n\nfield &lt;- positions %&gt;%\n  mutate(gx = floor(x / 2) * 2 + 1, gy = floor(y / 2) * 2 + 1) %&gt;%\n  count(gx, gy) %&gt;%\n  complete(gx = gx_seq, gy = gy_seq, fill = list(n = 0)) %&gt;%\n  arrange(gy, gx)\n\nz &lt;- matrix(field$n, nrow = length(gy_seq), ncol = length(gx_seq), byrow = TRUE)\n\n# Level geometry drawn as rectangles behind the data.\nshapes &lt;- pmap(level, function(block, xmin, xmax, ymin, ymax, kind) {\n  list(type = \"rect\", x0 = xmin, x1 = xmax, y0 = ymin, y1 = ymax,\n       fillcolor = if (kind == \"elevated\") \"#6f6e6a\" else \"#2f2e2c\",\n       # The gantry is walkable, so it stays translucent and the dwell field\n       # underneath it still reads.\n       opacity = if (kind == \"elevated\") 0.35 else 0.92,\n       line = list(width = 0), layer = \"above\")\n})\n\n# The animated layer starts at the first second where all three states occur, so\n# that the legend is complete from the first frame.\nfirst_full &lt;- positions %&gt;%\n  group_by(t) %&gt;% summarise(k = n_distinct(state)) %&gt;%\n  filter(k == 3) %&gt;% slice_min(t) %&gt;% pull(t)\n\ndeaths &lt;- positions %&gt;% filter(event == \"death\")\n\nplot_ly(height = 560) %&gt;%\n  add_heatmap(\n    x = gx_seq, y = gy_seq, z = z, zmin = 0, zmax = 60,\n    colorscale = list(c(0, \"#fcfcfb\"), c(0.25, \"#cde2fb\"),\n                      c(0.6, \"#5598e7\"), c(1, \"#104281\")),\n    showscale = TRUE, hoverinfo = \"z\",\n    colorbar = list(title = \"Seconds\\nspent\", len = 0.55, thickness = 12,\n                    y = 0.72, ticksuffix = \"  \")\n  ) %&gt;%\n  add_markers(\n    data = deaths, x = ~x, y = ~y, name = \"Death\",\n    marker = list(symbol = \"x\", size = 11, color = \"#e34948\",\n                  line = list(color = \"#fcfcfb\", width = 1)),\n    text = ~paste0(\"death · \", player_id, \" · t=\", t, \"s\"), hoverinfo = \"text\"\n  ) %&gt;%\n  add_markers(\n    data = positions %&gt;% filter(t &gt;= first_full),\n    x = ~x, y = ~y, frame = ~t, color = ~state,\n    colors = c(Holding = pal[[\"orange\"]], Loitering = pal[[\"aqua\"]],\n               Moving = pal[[\"blue\"]]),\n    marker = list(size = 13, line = list(color = \"#fcfcfb\", width = 2)),\n    text = ~paste0(player_id, \" · t=\", t, \"s · \", state),\n    hoverinfo = \"text\"\n  ) %&gt;%\n  layout(\n    title  = list(text = \"&lt;b&gt;One corridor carries the traffic and most of the deaths&lt;/b&gt;\",\n                  x = 0, font = list(size = 14)),\n    shapes = shapes,\n    xaxis  = list(title = \"x (m)\", range = c(0, 60), constrain = \"domain\"),\n    yaxis  = list(title = \"y (m)\", range = c(0, 40), scaleanchor = \"x\"),\n    legend = list(orientation = \"h\", x = 0, y = 1.02, title = list(text = \"\")),\n    margin = list(t = 80)\n  ) %&gt;%\n  animation_opts(frame = 90, transition = 45, redraw = FALSE) %&gt;%\n  animation_slider(currentvalue = list(prefix = \"t = \", suffix = \" s\"))\n\n\n\n\n\n\n\nFollowing one player\nThe map above answers questions about the level. To ask questions about a player — did they learn the route, did they loop, did they ever leave their corner — you need to follow one of them.\nFirst, all eight routes at once. The line darkens as the match progresses, so you can read direction without playing anything. P03 covers the most ground (268 m). P07 travels almost as far (190 m) without ever leaving a two-metre-wide lane — it shuttles up and down the same corridor for the whole match. P01 and P02 manage 51 m and 35 m between them across three minutes.\n\n\nShow the code\nwalls &lt;- level %&gt;% filter(kind != \"elevated\")\nraised &lt;- level %&gt;% filter(kind == \"elevated\")\n\nggplot() +\n  geom_rect(data = walls, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),\n            fill = \"#2f2e2c\", alpha = 0.9) +\n  geom_rect(data = raised, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),\n            fill = \"#6f6e6a\", alpha = 0.55) +\n  geom_path(data = positions, aes(x, y, colour = t), linewidth = 0.7) +\n  facet_wrap(~player_id, nrow = 2) +\n  scale_colour_gradient(low = \"#cde2fb\", high = \"#104281\",\n                        name = \"Time (s)\", breaks = c(1, 90, 180)) +\n  coord_fixed(xlim = c(0, 60), ylim = c(0, 40), expand = FALSE) +\n  labs(\n    title    = \"Eight routes through the same three minutes\",\n    subtitle = \"Line darkens as the match progresses. Two players never leave the gantry.\",\n    x = NULL, y = NULL\n  ) +\n  theme_tb() +\n  theme(axis.text         = element_blank(),\n        panel.grid.major  = element_blank(),\n        panel.grid.minor  = element_blank(),\n        strip.text        = element_text(face = \"bold\", colour = ink[[\"primary\"]]),\n        legend.position   = \"right\",\n        legend.key.height = unit(0.9, \"lines\"))\n\n\n\n\n\n\n\n\n\nNow one player, animated, with the trail drawn behind them. Change focus_player to any ID from the panel above and re-run the chunk. The orange dots mark every second this player spent holding position, so you can see where they will stop before they get there.\n\n\nShow the code\nfocus_player &lt;- \"P06\"\n\npath &lt;- positions %&gt;% filter(player_id == focus_player) %&gt;% arrange(t)\n\n# For each second, every position up to that second: this is what makes the\n# trail grow rather than jump.\ntrail &lt;- map_dfr(path$t, function(k) path %&gt;% filter(t &lt;= k) %&gt;% mutate(f = k))\n\nplot_ly(height = 560) %&gt;%\n  add_markers(\n    data = path %&gt;% filter(state == \"Holding\"), x = ~x, y = ~y,\n    name = \"Held position\",\n    marker = list(size = 7, color = pal[[\"orange\"]], opacity = 0.7),\n    text = ~paste0(\"holding · t=\", t, \"s\"), hoverinfo = \"text\"\n  ) %&gt;%\n  add_markers(\n    data = path %&gt;% slice(1), x = ~x, y = ~y, name = \"Start\",\n    marker = list(symbol = \"circle-open\", size = 16, color = ink[[\"primary\"]],\n                  line = list(width = 2.5)),\n    hoverinfo = \"text\", text = \"start\"\n  ) %&gt;%\n  add_paths(\n    data = trail, x = ~x, y = ~y, frame = ~f,\n    line = list(color = pal[[\"blue\"]], width = 2.5),\n    opacity = 0.8, showlegend = FALSE, hoverinfo = \"skip\"\n  ) %&gt;%\n  add_markers(\n    data = path, x = ~x, y = ~y, frame = ~t,\n    marker = list(size = 16, color = pal[[\"blue\"]],\n                  line = list(color = \"#fcfcfb\", width = 2.5)),\n    showlegend = FALSE,\n    text = ~paste0(focus_player, \" · t=\", t, \"s · \", state), hoverinfo = \"text\"\n  ) %&gt;%\n  layout(\n    title  = list(text = paste0(\"&lt;b&gt;\", focus_player, \"'s route through the match&lt;/b&gt;\"),\n                  x = 0, font = list(size = 14)),\n    shapes = shapes,\n    xaxis  = list(title = \"x (m)\", range = c(0, 60), constrain = \"domain\"),\n    yaxis  = list(title = \"y (m)\", range = c(0, 40), scaleanchor = \"x\"),\n    legend = list(orientation = \"h\", x = 0, y = 1.02, title = list(text = \"\")),\n    margin = list(t = 80)\n  ) %&gt;%\n  animation_opts(frame = 70, transition = 0, redraw = FALSE) %&gt;%\n  animation_slider(currentvalue = list(prefix = \"t = \", suffix = \" s\"))",
+    "crumbs": [
+      "Start here"
+    ]
+  },
+  {
+    "objectID": "index.html#what-each-view-cost",
+    "href": "index.html#what-each-view-cost",
+    "title": "Eight Views of a Playtest",
+    "section": "What each view cost",
+    "text": "What each view cost\n\n\n\n\n\n\n\n\n\nView\nChart type\nLines of R\nSkills it needs\n\n\n\n\n1\nInteractive table\n14\nReading data; selecting and renaming columns\n\n\n2\nViolin with boxplot\n14\nDescribing distributions\n\n\n3\nRadar small multiples\n34\nReshaping data; grouped summaries\n\n\n4\nCorrelogram\n35\nRelationships between variables\n\n\n5\nRetention step curve\n27\nBuilding a summary from scratch; annotation\n\n\n6\nDiverging Likert bars\n55\nReshaping; ordering by a computed value\n\n\n7\nFrame-time trace + summary table\n16 + 11\nFiltering; percentiles; rendered tables\n\n\n8\nAnimated position map\n53\nGrouping, counting, interactive output\n\n\n8b\nRoute small multiples\n24\nDrawing paths; faceting by player\n\n\n8b\nAnimated single-player trail\n39\nFiltering to one case; building frames\n\n\n\nNone of this is difficult, and most of the length in Views 3 onwards is labelling and styling rather than analysis. All of it is repeatable: the same code runs unchanged on next week’s build, which is the real reason to write analysis as code rather than clicking through a spreadsheet.\nThe rest of these notes teach you the parts, in order, starting with the question that matters most: what are you actually trying to find out?",
+    "crumbs": [
+      "Start here"
+    ]
+  },
+  {
+    "objectID": "labs/setting-up.html",
+    "href": "labs/setting-up.html",
+    "title": "Lab 00 — Setting Up",
+    "section": "",
+    "text": "Before any of the analysis labs will run, you need three things on your machine and — the part that catches nearly everyone — your terminal needs to be able to find them.\nThis lab is not analysis. It is plumbing. Work through it in order and do not skip the checkpoints: each one tells you whether the previous step actually worked, which is much cheaper than discovering it in the middle of Lab 01.\nBudget about forty minutes, most of which is waiting for downloads.\n\n\n\n\n\n\n\n\nTool\nWhat it does\nDo you need it?\n\n\n\n\nR\nThe language that does the analysis\nYes\n\n\nQuarto\nTurns a document containing R code into a web page\nYes\n\n\nVS Code\nThe editor you write in\nYes\n\n\nRStudio\nAn alternative editor, built specifically for R\nOptional\n\n\n\n\n\n\n\n\n\nNoteIf you would rather use RStudio\n\n\n\nRStudio bundles Quarto and needs less setup than VS Code. If you already have it and are happy in it, install R (Step 1), skip Steps 3 and 4, and go straight to the checkpoints. Everything in the analysis labs works identically. This sheet uses VS Code because that is what the module demonstrates.",
+    "crumbs": [
+      "Labs",
+      "Lab 00 — Setting Up"
+    ]
+  },
+  {
+    "objectID": "labs/setting-up.html#your-path-may-not-include-r",
+    "href": "labs/setting-up.html#your-path-may-not-include-r",
+    "title": "Lab 00 — Setting Up",
+    "section": "Your PATH may not include R",
+    "text": "Your PATH may not include R\nOpen a terminal in VS Code with Ctrl+` and run:\nRscript --version\nIf that reports a version, skip to the next heading. If it says not recognized, find your R installation and add it:\nGet-ChildItem \"C:\\Program Files\\R\"\nTake the folder name it reports — something like R-4.6.0 — and substitute it below:\n[Environment]::SetEnvironmentVariable(\"Path\", $env:Path + \";C:\\Program Files\\R\\R-4.6.0\\bin\", \"User\")",
+    "crumbs": [
+      "Labs",
+      "Lab 00 — Setting Up"
+    ]
+  },
+  {
+    "objectID": "labs/setting-up.html#your-terminal-is-holding-a-stale-copy-of-path",
+    "href": "labs/setting-up.html#your-terminal-is-holding-a-stale-copy-of-path",
+    "title": "Lab 00 — Setting Up",
+    "section": "Your terminal is holding a stale copy of PATH",
+    "text": "Your terminal is holding a stale copy of PATH\nA terminal keeps the environment it started with, and VS Code hands every new terminal a cached copy. So after installing anything, a brand new terminal panel will still not see it.\nTo refresh the terminal you are in right now:\n$env:Path = [Environment]::GetEnvironmentVariable(\"Path\",\"Machine\") + \";\" + [Environment]::GetEnvironmentVariable(\"Path\",\"User\")\nTo fix it permanently, close VS Code completely — every window, not Reload Window — and reopen it.\n\n\n\n\n\n\nNotemacOS and Linux\n\n\n\nBoth installers put R and Quarto on your PATH without help. If a command is not found, close the terminal and open a new one, and if that fails, restart VS Code.",
+    "crumbs": [
+      "Labs",
+      "Lab 00 — Setting Up"
+    ]
+  },
+  {
+    "objectID": "notes/distributions-and-variation.html",
+    "href": "notes/distributions-and-variation.html",
+    "title": "Distributions and Variation",
+    "section": "",
+    "text": "Week 1, second cycle, for everyone, before Part B of Lab 01. It moves on from a single typical value to the whole spread of players: how much they differ, what shape that difference takes, and which values sit outside it. The worked example is the one to remember: two builds with the same frame rate, one of which stutters.",
+    "crumbs": [
+      "Notes",
+      "Distributions and Variation"
+    ]
+  },
+  {
+    "objectID": "notes/distributions-and-variation.html#learning-outcomes",
+    "href": "notes/distributions-and-variation.html#learning-outcomes",
+    "title": "Distributions and Variation",
+    "section": "Learning Outcomes",
+    "text": "Learning Outcomes\nBy the end of these notes you can:\n\nexplain why an average on its own cannot describe a playtest;\nread a standard deviation as the typical distance of a player from the mean;\ndescribe a distribution by its centre, spread, skew and outliers;\nsay whether an outlier is an error, an extreme player or the finding itself;\nread the mean, median, standard deviation and high percentiles together and say what each adds;\ndraw hist(), boxplot(), barplot() and plot() in base R and say what each one is for.",
+    "crumbs": [
+      "Notes",
+      "Distributions and Variation"
+    ]
+  },
+  {
+    "objectID": "notes/distributions-and-variation.html#why-this-matters-for-playtesting",
+    "href": "notes/distributions-and-variation.html#why-this-matters-for-playtesting",
+    "title": "Distributions and Variation",
+    "section": "Why This Matters for Playtesting",
+    "text": "Why This Matters for Playtesting\nEvery design question is really a question about players, plural, and players differ. A level that takes eight minutes on average can be a level everyone finishes in eight minutes, or a level half the testers finish in four and the other half abandon. Those are different games with different fixes, and the average cannot tell them apart.\nThe players you design for are rarely the average player. The ones who quit, the ones who get stuck, the ones whose machine stutters: they live in the edges of the distribution, and the edges are exactly what a mean averages away.\nVariation is information, not noise. When two builds differ in how spread out their players are, that difference is often the finding. A build that tightens the spread has made the experience more consistent, even if the average has not moved.",
+    "crumbs": [
+      "Notes",
+      "Distributions and Variation"
+    ]
+  },
+  {
+    "objectID": "notes/distributions-and-variation.html#variation-between-players",
+    "href": "notes/distributions-and-variation.html#variation-between-players",
+    "title": "Distributions and Variation",
+    "section": "Variation Between Players",
+    "text": "Variation Between Players\nThe variation in a variable is how much its values differ from one another. Some of it is the game: a harder route produces more deaths. Some of it is the player: skill, experience and patience vary before anyone touches your build. You cannot remove the second kind, so you have to measure it.\nThe standard deviation is the typical distance of a value from the mean. A small standard deviation means players cluster tightly around the average; a large one means the average is a poor guide to any individual. It is in the same units as the data, so a standard deviation of 3 ms on a frame time is directly comparable to the 16.7 ms a 60 FPS frame is allowed.\nStandard deviation belongs to the mean. It measures distance from the mean, so it inherits the mean’s weakness: a few extreme values inflate it. For skewed data, the interquartile range from the previous notes is the better description of spread.",
+    "crumbs": [
+      "Notes",
+      "Distributions and Variation"
+    ]
+  },
+  {
+    "objectID": "notes/distributions-and-variation.html#distributions-and-skew",
+    "href": "notes/distributions-and-variation.html#distributions-and-skew",
+    "title": "Distributions and Variation",
+    "section": "Distributions and Skew",
+    "text": "Distributions and Skew\nA distribution is the full pattern of values: which ones occur, and how often. A histogram draws it. Every summary statistic is an attempt to describe a distribution in one number, and every one of them fails for some distribution.\nSkew is a distribution leaning to one side. A right skew has a long tail of large values: most frames are quick, a few are very slow. A left skew has a long tail of small values: most players stay for the full session, a few leave early. The mean is pulled towards the tail; the median is not. That is why the gap between them tells you which way the data leans.\nGame data is rarely symmetric. Times have a floor and no ceiling. Match lengths have a ceiling set by the timer. Ratings bunch against the ends of the scale. Expect skew and check for it, rather than assuming the bell shape from school statistics.",
+    "crumbs": [
+      "Notes",
+      "Distributions and Variation"
+    ]
+  },
+  {
+    "objectID": "notes/distributions-and-variation.html#outliers",
+    "href": "notes/distributions-and-variation.html#outliers",
+    "title": "Distributions and Variation",
+    "section": "Outliers",
+    "text": "Outliers\nAn outlier is a value far from the rest. The boxplot’s convention is any point more than one and a half box-widths beyond the edge of the box, and R draws those points individually. That rule is a prompt to look, not a verdict.\nAn outlier is one of three things, and the response to each is different:\n\n\n\n\n\n\n\n\nThe outlier is\nExample\nWhat you do\n\n\n\n\nAn error\nA session length of −3 minutes; a rating of 7 on a 1–5 scale\nFix it or remove it, and record that you did\n\n\nAn extreme but ordinary player\nOne tester who never died\nKeep it; report the median rather than the mean\n\n\nThe finding\nA cluster of games that collapse early\nKeep it and investigate it; it is why you ran the test\n\n\n\nNever delete an outlier because it is inconvenient. Every row you drop is a decision with a consequence (rule 6), and the value most tempting to drop is often the one the playtest was run to find (rule 9).",
+    "crumbs": [
+      "Notes",
+      "Distributions and Variation"
+    ]
+  },
+  {
+    "objectID": "notes/distributions-and-variation.html#reading-several-summaries-together",
+    "href": "notes/distributions-and-variation.html#reading-several-summaries-together",
+    "title": "Distributions and Variation",
+    "section": "Reading Several Summaries Together",
+    "text": "Reading Several Summaries Together\nNo single statistic describes a distribution, but a small set of them, read together, usually does.\n\n\n\n\n\n\n\n\nSummary\nWhat it tells you\nWhat it misses\n\n\n\n\nMean\nThe total spread evenly across players\nSkew, clusters, tails\n\n\nMedian\nThe middle player\nHow extreme the extremes are\n\n\nStandard deviation\nTypical distance from the mean\nWhich direction the spread goes\n\n\nIQR\nWidth of the middle half\nEverything outside the middle half\n\n\n95th or 99th percentile\nHow bad the worst few per cent get\nThe typical case\n\n\n\nWhere the summaries disagree, look at the picture. Mean and median apart means skew. A large standard deviation with a small IQR means a few extreme values. A normal median with a bad 99th percentile means a rare problem that the average will never show. Each disagreement is a pointer to a specific shape, and the histogram confirms which one (rule 4).",
+    "crumbs": [
+      "Notes",
+      "Distributions and Variation"
+    ]
+  },
+  {
+    "objectID": "notes/distributions-and-variation.html#worked-examples",
+    "href": "notes/distributions-and-variation.html#worked-examples",
+    "title": "Distributions and Variation",
+    "section": "Worked Examples",
+    "text": "Worked Examples\nWhich build runs better? The Tidebreak team captured 4500 frames from each build, split across 3 level zones. The frame-rate counter reports Build A at 58.8 FPS and Build B at 59 FPS. By the number everyone quotes, Build B is marginally the faster build.\nThe median agrees: 16.99 ms per frame for Build A, 16.63 ms for Build B. So does the 95th percentile: 18.8 ms against 18.4 ms. Three summaries, one verdict.\nThe 99th percentile disagrees. Build A’s is 19.5 ms; Build B’s is 39.4 ms, 2.0 times as long. The standard deviation says the same thing more quietly: 1.05 ms for Build A, 3.4 ms for Build B.\nCount the frames slower than 30 FPS (33.3 ms). Build A has 0. Build B has 60, every one of them in the Corridor zone, and exactly 25 frames apart: at 60 FPS, a hitch 2.4 times a second for as long as the player is in the corridor.\n\ncorridor_a &lt;- frames$ms[frames$build == \"A\" & frames$zone == \"Corridor\"]\n\nplot(corridor_b[1:200], type = \"l\", col = \"firebrick\",\n     ylim = c(10, 65),\n     main = \"Corridor frame times, first 200 frames\",\n     xlab = \"Frame\", ylab = \"Frame time (ms)\")\nlines(corridor_a[1:200], col = \"grey40\")\nabline(h = 1000 / 60, lty = 2)\nlegend(\"top\", legend = c(\"Build A\", \"Build B\"), horiz = TRUE,\n       col = c(\"grey40\", \"firebrick\"), lty = 1, bty = \"n\")\n\n\n\n\n\n\n\n\nWhy the mean cannot see it. The slow frames are 1.3% of Build B’s total. Spread across every frame of the capture, they barely move the mean, and Build B’s faster frames elsewhere more than make up for them. The 95th percentile sits below the problem because the problem is rarer than one frame in twenty. Only a summary aimed at the worst one per cent can see it, which is why the 99th percentile is the standard figure in performance capture. The mean is not approximately wrong here. It is structurally incapable of showing the thing players experience.",
+    "crumbs": [
+      "Notes",
+      "Distributions and Variation"
+    ]
+  },
+  {
+    "objectID": "notes/distributions-and-variation.html#r-demonstrations",
+    "href": "notes/distributions-and-variation.html#r-demonstrations",
+    "title": "Distributions and Variation",
+    "section": "R Demonstrations",
+    "text": "R Demonstrations\nBase R first, then the tidyverse equivalent for the grouped summary.\n\nlibrary(readr)\nlibrary(dplyr)\n\nsessions &lt;- read_csv(\"data/tidebreak_sessions.csv\", show_col_types = FALSE)\nframes   &lt;- read_csv(\"data/tidebreak_frame_times.csv\", show_col_types = FALSE)\n\n\nhist(sessions$session_minutes, breaks = 20,\n     main = \"Session length\", xlab = \"Minutes\",\n     col = \"grey85\", border = \"white\")\n\n\n\n\n\n\n\n\nhist() draws the distribution of one numeric variable. Look for the bulk, the tails, and any second hump.\n\nboxplot(session_minutes ~ build, data = sessions,\n        main = \"Session length by build\", ylab = \"Minutes\", col = \"grey85\")\n\n\n\n\n\n\n\ntapply(sessions$session_minutes, sessions$build, sd)\n\n       A        B \n8.301448 6.942605 \n\ntapply(sessions$session_minutes, sessions$build, IQR)\n\n    A     B \n16.25 10.95 \n\n\nboxplot() with y ~ group puts one box per group on the same axis, which is the quickest way to compare distributions. Build A’s box is wider: its IQR is 16.3 minutes against 10.9 for Build B. 88% of Build A sessions were still going at minute 11, and 68% at minute 13. The spread is where Build A loses its players.\n\nbarplot(table(sessions$quit_reason),\n        main = \"How sessions ended\", ylab = \"Sessions\", col = \"grey85\")\n\n\n\n\n\n\n\n\nbarplot() draws counts of a categorical variable. Give it the output of table(), not the raw column.\n\nplot(sessions$deaths, sessions$score,\n     main = \"Deaths against score\", xlab = \"Deaths\", ylab = \"Score\",\n     pch = 19, col = \"grey40\")\n\n\n\n\n\n\n\n\nplot() with two numeric variables draws a scatterplot: one point per session. Read it for direction and for scatter. How strongly two variables are related is Week 3’s subject.\n\nquantile(frames$ms[frames$build == \"B\"], c(0.5, 0.95, 0.99))\n\n    50%     95%     99% \n16.6300 18.4300 39.3708 \n\n\nquantile() with a vector of proportions returns any percentiles you ask for. For performance data, always ask for the 99th.\n\nframes %&gt;%\n  group_by(build) %&gt;%\n  summarise(mean_ms   = mean(ms),\n            median_ms = median(ms),\n            sd_ms     = sd(ms),\n            p99_ms    = quantile(ms, 0.99),\n            fps       = 1000 / mean(ms))\n\n# A tibble: 2 × 6\n  build mean_ms median_ms sd_ms p99_ms   fps\n  &lt;chr&gt;   &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;\n1 A        17.0      17.0  1.05   19.5  58.8\n2 B        16.9      16.6  3.40   39.4  59.0\n\n\ngroup_by() splits the data and summarise() computes one row of summaries per group. This is the several-summaries-together table from the worked example in six lines, and it is the base R tapply() repeated five times.",
+    "crumbs": [
+      "Notes",
+      "Distributions and Variation"
+    ]
+  },
+  {
+    "objectID": "notes/distributions-and-variation.html#interpretation-guidance",
+    "href": "notes/distributions-and-variation.html#interpretation-guidance",
+    "title": "Distributions and Variation",
+    "section": "Interpretation Guidance",
+    "text": "Interpretation Guidance\nWhat the data shows. Build A and Build B have near-identical mean frame times. Build B has 60 frames slower than 30 FPS, all in the Corridor, and Build A has 0.\nWhat the analysis suggests. Something in Build B’s Corridor costs a frame at a fixed interval. The regular spacing points at a periodic job, such as streaming, garbage collection or a timed effect, rather than at scene complexity.\nWhat can legitimately be concluded. Build B introduced a hitch confined to the Corridor, and a report that quotes average FPS alone would have shipped it. The cause is not established by frame times; that needs a profiler.\nQuote the tail with the centre. For anything where the worst case is what players remember, such as frame time, load time or matchmaking wait, report the median and a high percentile together. “Median 16.6 ms, 99th percentile 39 ms” is a performance report. “59 FPS” is a slogan.",
+    "crumbs": [
+      "Notes",
+      "Distributions and Variation"
+    ]
+  },
+  {
+    "objectID": "notes/distributions-and-variation.html#common-mistakes",
+    "href": "notes/distributions-and-variation.html#common-mistakes",
+    "title": "Distributions and Variation",
+    "section": "Common Mistakes",
+    "text": "Common Mistakes\nReporting average FPS as the performance result. It is the number the engine shows and the number least able to show a hitch.\nComparing groups by their means alone. Two builds with the same mean can be different games (rule 7). Draw the boxplots side by side.\nDeleting outliers to clean the chart. Find out which of the three kinds each one is first. The Sentinel’s low scores in Describing What You Have are the finding, not the noise.\nQuoting a standard deviation for skewed data. It measures distance from the mean, and on skewed data the mean is in the wrong place. Use the IQR.\nStopping at the 95th percentile. A problem affecting one frame in a hundred is invisible at the 95th. Match the percentile to how rare the problem could be.\nReading a scatterplot as proof. A downward cloud of points shows that two things move together in this sample. It does not say which one causes the other.",
+    "crumbs": [
+      "Notes",
+      "Distributions and Variation"
+    ]
+  },
+  {
+    "objectID": "notes/distributions-and-variation.html#short-practice-activities",
+    "href": "notes/distributions-and-variation.html#short-practice-activities",
+    "title": "Distributions and Variation",
+    "section": "Short Practice Activities",
+    "text": "Short Practice Activities\nEach takes two or three minutes.\n1. Compute the 99th percentile of frame time for each zone in Build B. Which zone is responsible?\n\n\n\n\n\n\nNoteCheck your answer\n\n\n\n\n\n\nframes_b &lt;- frames[frames$build == \"B\", ]\ntapply(frames_b$ms, frames_b$zone, quantile, 0.99)\n\n  Atrium Corridor   Gantry \n 18.9300  48.5451  19.1502 \n\n\nThe Corridor, at 48.5 ms. The other two zones are at most 19.2 ms. Splitting a summary by where it happened turns “Build B stutters” into “Build B stutters in one place”, which is a ticket someone can fix.\n\n\n\n2. Redraw the quit-reason bar chart with one bar per build side by side. What does it add to the single bar chart?\n\n\n\n\n\n\nNoteCheck your answer\n\n\n\n\n\n\nbarplot(table(sessions$build, sessions$quit_reason),\n        beside = TRUE, legend.text = TRUE,\n        main = \"How sessions ended, by build\", ylab = \"Sessions\")\n\n\n\n\n\n\n\n\n20 Build A sessions ended in frustration against 5 in Build B. The single chart showed how often players left frustrated; the split shows which build they left.\n\n\n\n3. Using tapply(), find the median score for each number of deaths. Does the pattern in the scatterplot hold up?\n\n\n\n\n\n\nNoteCheck your answer\n\n\n\n\n\n\ntapply(sessions$score, sessions$deaths, median)\n\n     0      1      2      3      4      5      6      7 \n1627.0 1659.0 1496.0 1572.0 1370.0 1222.5  924.0  804.5 \n\n\nBroadly, yes: sessions with no deaths have a median score of 1627, and sessions with 7 deaths have 804.5. Check how many sessions sit behind each median with table(sessions$deaths) before trusting the ends of that list (rule 8).",
+    "crumbs": [
+      "Notes",
+      "Distributions and Variation"
+    ]
+  },
+  {
+    "objectID": "notes/distributions-and-variation.html#summary",
+    "href": "notes/distributions-and-variation.html#summary",
+    "title": "Distributions and Variation",
+    "section": "Summary",
+    "text": "Summary\n\nAn average describes a group; it does not describe any player in it.\nThe standard deviation is the typical distance from the mean. Use the IQR when the data is skewed.\nSkew pulls the mean towards the tail. Game data is rarely symmetric.\nAn outlier is an error, an extreme player or the finding. Work out which before doing anything to it.\nRead several summaries together, and where they disagree, draw the picture.\nFor performance data, quote a high percentile. Both builds run at about 59 FPS, and only one of them stutters.",
+    "crumbs": [
+      "Notes",
+      "Distributions and Variation"
+    ]
+  },
+  {
+    "objectID": "notes/distributions-and-variation.html#links-to-relevant-reference-material",
+    "href": "notes/distributions-and-variation.html#links-to-relevant-reference-material",
+    "title": "Distributions and Variation",
+    "section": "Links to Relevant Reference Material",
+    "text": "Links to Relevant Reference Material\n\nTen Rules: rule 4 (look at the shape before you quote the average), rule 7 (compare distributions, not averages) and rule 9 (sometimes the rare value is the whole story)\nDescribing What You Have: centre, spread and the mean against the median\nR and Quarto Reference: describing one variable, describing by group and plots\nLab 01: exploring playtest data, Part B",
+    "crumbs": [
+      "Notes",
+      "Distributions and Variation"
+    ]
+  },
+  {
+    "objectID": "notes/distributions-and-variation.html#reflective-questions",
+    "href": "notes/distributions-and-variation.html#reflective-questions",
+    "title": "Distributions and Variation",
     "section": "Reflective Questions",
-    "text": "Reflective Questions\n\nTake a variable from your own project’s telemetry. Which of the four types is it, and what would break if you treated it as the type next door?\nWhy is the median usually the right summary for completion time, but not for something like accuracy percentage?\nYou draw a histogram of level completion times and see two clear humps. List three things that could have caused that, and say how you would tell them apart.\nA teammate reports “average session length is 22 minutes”. What two further numbers would you ask for before letting that into a report?",
+    "text": "Reflective Questions\n\nA producer asks for “one number” to show the build’s performance has improved. Which number do you give, and what do you say about the numbers you left out?\nBuild A’s session lengths are more spread out than Build B’s. Is a narrower spread always better for a game? Give a case where it would not be.\nYou find three sessions with a score of zero. What would you check before deciding they are errors, and what would change your mind?\nThe Corridor hitch affects 1.3% of Build B’s frames. At what point does a rare problem stop being worth fixing, and who should decide?",
     "crumbs": [
       "Notes",
-      "Describing What You Have"
+      "Distributions and Variation"
     ]
   },
   {
@@ -476,7 +751,29 @@
     "href": "notes/why-measure.html",
     "title": "Why Developers Measure Anything",
     "section": "",
-    "text": "Every team makes decisions about their game constantly. Most of those decisions are made from memory, taste and the loudest voice in the room, and most of the time that is fine — taste is why anyone plays your game rather than a spreadsheet.\nMeasurement earns its place in the cases where taste reliably fails. There are three of them, and they recur in every project.\nYou cannot see your own game any more. You have played your level five hundred times. You know where the key is. You cannot un-know it, and no amount of care will let you experience your own tutorial as a stranger. This is the single most common cause of a game that the team finds obvious and the player finds impenetrable.\nYou cannot feel a rare event. A stutter that happens once every two seconds occupies less than one per cent of frames. Your average frame rate will not show it. Your players will talk about nothing else.\nYou cannot remember twenty playtests. After a session you remember the two people who struggled most and the last person you watched. You do not remember the distribution, and you will confidently reconstruct one that never existed.",
+    "text": "The first notes page of the strand, for everyone, before Lab 01. It sets out when measurement is worth the effort, where playtest data comes from, and how to turn a designer’s question into something you can record. The only code is in the R Demonstrations section near the end.",
+    "crumbs": [
+      "Notes",
+      "Why Developers Measure Anything"
+    ]
+  },
+  {
+    "objectID": "notes/why-measure.html#learning-outcomes",
+    "href": "notes/why-measure.html#learning-outcomes",
+    "title": "Why Developers Measure Anything",
+    "section": "Learning Outcomes",
+    "text": "Learning Outcomes\nBy the end of these notes you can:\n\nname the three cases where a team’s judgement of its own game reliably fails;\ndistinguish telemetry, performance capture and asking people, and say what each can and cannot tell you;\nrewrite a vague design question as a measure you could record for a single player;\nwrite down, before collecting anything, the result that would change your mind;\nload a playtest CSV into R and take a first look at it with read_csv(), glimpse() and summary().",
+    "crumbs": [
+      "Notes",
+      "Why Developers Measure Anything"
+    ]
+  },
+  {
+    "objectID": "notes/why-measure.html#why-this-matters-for-playtesting",
+    "href": "notes/why-measure.html#why-this-matters-for-playtesting",
+    "title": "Why Developers Measure Anything",
+    "section": "Why This Matters for Playtesting",
+    "text": "Why This Matters for Playtesting\nEvery team makes decisions about their game constantly. Most of those decisions are made from memory, taste and the loudest voice in the room, and most of the time that is fine — taste is why anyone plays your game rather than a spreadsheet.\nMeasurement earns its place in the cases where taste reliably fails. There are three of them, and they recur in every project.\nYou cannot see your own game any more. You have played your level five hundred times. You know where the key is. You cannot un-know it, and no amount of care will let you experience your own tutorial as a stranger. This is the single most common cause of a game that the team finds obvious and the player finds impenetrable.\nYou cannot feel a rare event. A stutter that happens once every two seconds occupies less than one per cent of frames. Your average frame rate will not show it. Your players will talk about nothing else.\nYou cannot remember twenty playtests. After a session you remember the two people who struggled most and the last person you watched. You do not remember the distribution, and you will confidently reconstruct one that never existed.",
     "crumbs": [
       "Notes",
       "Why Developers Measure Anything"
@@ -510,6 +807,83 @@
     "title": "Why Developers Measure Anything",
     "section": "Deciding in Advance",
     "text": "Deciding in Advance\nBefore you collect anything, write down what result would change your mind. “If more than a third of testers never find the second key, I will add a light cue.”\nThis costs nothing and protects you from the most comfortable mistake in the discipline: running the test, getting an ambiguous result, and finding in it whatever you already believed. If the threshold is written down beforehand, the data gets to answer. If it is not, you will answer and attribute it to the data.",
+    "crumbs": [
+      "Notes",
+      "Why Developers Measure Anything"
+    ]
+  },
+  {
+    "objectID": "notes/why-measure.html#worked-examples",
+    "href": "notes/why-measure.html#worked-examples",
+    "title": "Why Developers Measure Anything",
+    "section": "Worked Examples",
+    "text": "Worked Examples\nThe question as asked. The Tidebreak team ran 120 playtest sessions, 60 on Build A and 60 on Build B. The designer’s question is “is Build A worse?”, which cannot be answered as asked: worse at what, for whom, by how much?\nThe question as measured. Two measures bear on it, one from each end of the three sources:\n\n\n\n\n\n\n\n\nSource\nMeasure\nRecorded per player as\n\n\n\n\nTelemetry\nDid the session end in a frustration quit?\nquit_reason is Frustrated\n\n\nAsking people\n“I always knew what my objective was”\nA rating from 1 to 5\n\n\n\nThe threshold, written first. Before anyone opens the file, the team writes: “If more than a quarter of the sessions on either build end in a frustration quit, that build does not ship.”\nThe result. 20 of 60 Build A sessions ended in a frustration quit (33%), against 5 of 60 on Build B (8%). Build A crosses the line; Build B does not. Nobody has to argue about it, because the argument happened before the data arrived.\nThe second source. Of the 8 survey items, the objective item is the lowest rated, with a mean of 2.61 on the 1 to 5 scale. Telemetry says what happened: players on Build A left in frustration. The survey offers a candidate for why: players did not know what they were meant to be doing. Neither source alone would have pointed a designer at the objective marker.",
+    "crumbs": [
+      "Notes",
+      "Why Developers Measure Anything"
+    ]
+  },
+  {
+    "objectID": "notes/why-measure.html#r-demonstrations",
+    "href": "notes/why-measure.html#r-demonstrations",
+    "title": "Why Developers Measure Anything",
+    "section": "R Demonstrations",
+    "text": "R Demonstrations\nEverything below runs as written, provided the data files sit in the data/ folder of your project as set up in Lab 00.\n\nlibrary(readr)\nlibrary(dplyr)\n\nsessions &lt;- read_csv(\"data/tidebreak_sessions.csv\", show_col_types = FALSE)\nsurvey   &lt;- read_csv(\"data/tidebreak_survey.csv\", show_col_types = FALSE)\n\nread_csv() reads a file into a tibble, R’s table of rows and columns. The path is relative to the project folder, which is why it starts data/.\n\nglimpse(sessions)\n\nRows: 120\nColumns: 20\n$ session_id        &lt;chr&gt; \"S001\", \"S002\", \"S003\", \"S004\", \"S005\", \"S006\", \"S00…\n$ player_id         &lt;chr&gt; \"P01\", \"P02\", \"P03\", \"P04\", \"P05\", \"P06\", \"P07\", \"P0…\n$ cohort            &lt;chr&gt; \"Regular\", \"Veteran\", \"Regular\", \"Novice\", \"Veteran\"…\n$ archetype         &lt;chr&gt; \"Scout\", \"Scout\", \"Scout\", \"Scout\", \"Scout\", \"Scout\"…\n$ build             &lt;chr&gt; \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A…\n$ accuracy          &lt;dbl&gt; 55, 54, 48, 35, 67, 51, 57, 42, 51, 47, 56, 40, 60, …\n$ mobility          &lt;dbl&gt; 84, 91, 89, 80, 97, 90, 95, 73, 86, 86, 84, 83, 92, …\n$ survivability     &lt;dbl&gt; 48, 52, 42, 35, 56, 41, 45, 30, 35, 40, 49, 27, 46, …\n$ objective_control &lt;dbl&gt; 39, 66, 43, 47, 55, 45, 53, 39, 51, 49, 52, 35, 52, …\n$ support           &lt;dbl&gt; 52, 46, 52, 28, 38, 56, 47, 46, 34, 51, 55, 40, 53, …\n$ awareness         &lt;dbl&gt; 77, 91, 74, 74, 95, 87, 83, 67, 79, 82, 88, 67, 88, …\n$ score             &lt;dbl&gt; 1370, 1795, 1690, 1544, 2019, 1614, 1652, 1331, 1632…\n$ kills             &lt;dbl&gt; 7, 5, 5, 7, 12, 7, 6, 7, 7, 10, 9, 5, 10, 10, 5, 8, …\n$ deaths            &lt;dbl&gt; 4, 2, 2, 4, 3, 5, 4, 4, 3, 4, 3, 5, 5, 5, 5, 4, 4, 2…\n$ objectives        &lt;dbl&gt; 0, 2, 4, 2, 4, 4, 3, 2, 3, 3, 4, 1, 1, 1, 2, 4, 1, 2…\n$ shots_fired       &lt;dbl&gt; 148, 140, 190, 92, 143, 149, 143, 126, 138, 137, 118…\n$ time_alive_s      &lt;dbl&gt; 98, 105, 115, 80, 121, 115, 118, 99, 103, 71, 143, 7…\n$ distance_m        &lt;dbl&gt; 571, 520, 533, 349, 542, 566, 572, 308, 560, 451, 40…\n$ session_minutes   &lt;dbl&gt; 12.9, 24.6, 12.5, 18.8, 18.7, 25.3, 11.5, 27.0, 14.4…\n$ quit_reason       &lt;chr&gt; \"Frustrated\", \"Lost interest\", \"Frustrated\", \"Lost i…\n\n\nglimpse() prints one line per column: its name, its type and its first few values. &lt;chr&gt; is text and &lt;dbl&gt; is a number. This is the first check on any new file: does every column have the type you expected? Here cohort is text, which is correct, but R has no idea that Novice, Regular and Veteran come in an order. That knowledge is yours to supply (rule 3).\n\nsummary(survey)\n\n     session_id  controls_responsive objective_clear difficulty_fair\n Length   :120   Min.   :2.000       Min.   :1.000   Min.   :1      \n N.unique :120   1st Qu.:4.000       1st Qu.:2.000   1st Qu.:2      \n N.blank  :  0   Median :4.000       Median :3.000   Median :3      \n Min.nchar:  4   Mean   :4.142       Mean   :2.608   Mean   :3      \n Max.nchar:  4   3rd Qu.:5.000       3rd Qu.:3.000   3rd Qu.:4      \n                 Max.   :5.000       Max.   :5.000   Max.   :5      \n level_navigable death_understood  visual_style   would_play_again\n Min.   :1.000   Min.   :1.000    Min.   :3.000   Min.   :1.00    \n 1st Qu.:3.000   1st Qu.:2.000    1st Qu.:4.000   1st Qu.:3.00    \n Median :3.000   Median :3.000    Median :5.000   Median :4.00    \n Mean   :3.217   Mean   :2.858    Mean   :4.458   Mean   :3.45    \n 3rd Qu.:4.000   3rd Qu.:3.000    3rd Qu.:5.000   3rd Qu.:4.00    \n Max.   :5.000   Max.   :5.000    Max.   :5.000   Max.   :5.00    \n  match_length  \n Min.   :1.000  \n 1st Qu.:4.000  \n Median :4.000  \n Mean   :4.025  \n 3rd Qu.:5.000  \n Max.   :5.000  \n\n\nsummary() gives the minimum, quartiles, median, mean and maximum of every numeric column. Read down the Mean rows and the weakest survey item stands out without any further code.\n\nsum(sessions$build == \"A\" & sessions$quit_reason == \"Frustrated\")\n\n[1] 20\n\nsum(sessions$build == \"B\" & sessions$quit_reason == \"Frustrated\")\n\n[1] 5\n\n\nA condition such as sessions$build == \"A\" produces one TRUE or FALSE per row, and sum() counts the TRUEs. Combining two conditions with & counts the rows where both hold. This is how every number in the worked example was produced.",
+    "crumbs": [
+      "Notes",
+      "Why Developers Measure Anything"
+    ]
+  },
+  {
+    "objectID": "notes/why-measure.html#interpretation-guidance",
+    "href": "notes/why-measure.html#interpretation-guidance",
+    "title": "Why Developers Measure Anything",
+    "section": "Interpretation Guidance",
+    "text": "Interpretation Guidance\nEvery finding is read at three levels, and the discipline is keeping them apart.\nWhat the data shows. 20 of 60 Build A sessions ended in a frustration quit, against 5 of 60 on Build B. This is a count. It is not in dispute.\nWhat the analysis suggests. Something in Build A frustrates players that Build B avoided, and the survey’s weakest item points at objective clarity as a candidate.\nWhat can legitimately be concluded. Build A fails the threshold the team set in advance. That is all. The survey figure is averaged across both builds, so on its own it cannot say that the unclear objective belongs to Build A. Linking the two is a hypothesis for the next test, not a finding.\nTelemetry reports behaviour and surveys report belief. When they agree, you have a lead. When they disagree, you have the most valuable finding in the playtest, and the disagreement itself is what goes in the report.",
+    "crumbs": [
+      "Notes",
+      "Why Developers Measure Anything"
+    ]
+  },
+  {
+    "objectID": "notes/why-measure.html#common-mistakes",
+    "href": "notes/why-measure.html#common-mistakes",
+    "title": "Why Developers Measure Anything",
+    "section": "Common Mistakes",
+    "text": "Common Mistakes\nCollecting first, asking later. Logging everything and hoping a question emerges produces large files and no decisions. Write the question down first (rule 2).\nTrusting one source. A survey on its own tells you what players believe; a log on its own tells you what they did. Treat either alone as half the evidence.\nSetting the threshold after seeing the result. A threshold chosen after the data has been seen is always met by exactly the right margin. If it was not written down beforehand, it is not a threshold (rule 1).\nLogging without identifiers. A death event with no session or player ID cannot be joined to anything, and a survey response with no session ID cannot be joined to the telemetry from the same match.\nReading glimpse() and moving on. The types it prints are R’s guess. A 1 to 5 rating arrives as &lt;dbl&gt;, and R will average it without complaint. Whether it should be averaged is a decision R cannot make for you.",
+    "crumbs": [
+      "Notes",
+      "Why Developers Measure Anything"
+    ]
+  },
+  {
+    "objectID": "notes/why-measure.html#short-practice-activities",
+    "href": "notes/why-measure.html#short-practice-activities",
+    "title": "Why Developers Measure Anything",
+    "section": "Short Practice Activities",
+    "text": "Short Practice Activities\nEach takes two or three minutes.\n1. Run glimpse(survey). How many survey items are there, and what type has R given them?\n\n\n\n\n\n\nNoteCheck your answer\n\n\n\n\n\nThere are 8 items after session_id, and every one is &lt;dbl&gt;. R treats them as ordinary numbers; they are ordinal ratings, and the difference matters as soon as you average them.\n\n\n\n2. Count the sessions that ended with quit_reason equal to \"Technical fault\", then write the threshold that would make you delay a release over it.\n\n\n\n\n\n\nNoteCheck your answer\n\n\n\n\n\n\nsum(sessions$quit_reason == \"Technical fault\")\n\n[1] 5\n\n\nAny threshold is defensible if it was written first and names a number: “if more than one session in twenty ends in a technical fault, we do not release”. “If it seems like a lot” is not a threshold.\n\n\n\n3. Rewrite “is the corridor too dangerous?” as one telemetry measure and one survey measure, each recordable for a single player.\n\n\n\n\n\n\nNoteCheck your answer\n\n\n\n\n\nTelemetry: deaths in the corridor per session. Asking people: agreement with “I understood why I died”. Either alone is weaker than both together: players who die there often and do not understand why describe a different problem from players who die there often and accept it.",
+    "crumbs": [
+      "Notes",
+      "Why Developers Measure Anything"
+    ]
+  },
+  {
+    "objectID": "notes/why-measure.html#summary",
+    "href": "notes/why-measure.html#summary",
+    "title": "Why Developers Measure Anything",
+    "section": "Summary",
+    "text": "Summary\n\nMeasurement earns its place where taste fails: you cannot see your own game, feel a rare event, or remember twenty playtests.\nTelemetry says what happened, performance capture says how the machine coped, and asking people says what players believe. The disagreements are the findings.\nA question is measurable when you can say how you would record it for one player.\nWrite the threshold that would change your mind before you look.\nread_csv(), glimpse() and summary() are the first three things you run on any new file.",
+    "crumbs": [
+      "Notes",
+      "Why Developers Measure Anything"
+    ]
+  },
+  {
+    "objectID": "notes/why-measure.html#links-to-relevant-reference-material",
+    "href": "notes/why-measure.html#links-to-relevant-reference-material",
+    "title": "Why Developers Measure Anything",
+    "section": "Links to Relevant Reference Material",
+    "text": "Links to Relevant Reference Material\n\nTen Rules: rule 1 (decide what would change your mind) and rule 2 (a number without a question is decoration)\nR and Quarto Reference: getting data in\nLab 00: setting up and Lab 01: exploring playtest data, Part B",
     "crumbs": [
       "Notes",
       "Why Developers Measure Anything"
