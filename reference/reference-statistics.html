@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>R and Quarto Reference – Playtest Analytics</title>
+<title>Statistics Reference – Playtest Analytics</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -36,7 +36,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../reference/reference-statistics.html" rel="prev">
+<link href="../reference/r-quarto-reference.html" rel="next">
+<link href="../labs/reading-data.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -87,7 +88,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/reference-statistics.html">Reference</a></li><li class="breadcrumb-item"><a href="../reference/r-quarto-reference.html">R and Quarto Reference</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/reference-statistics.html">Reference</a></li><li class="breadcrumb-item"><a href="../reference/reference-statistics.html">Statistics Reference</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -187,13 +188,13 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../reference/reference-statistics.html" class="sidebar-item-text sidebar-link">
+  <a href="../reference/reference-statistics.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Statistics Reference</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../reference/r-quarto-reference.html" class="sidebar-item-text sidebar-link active">
+  <a href="../reference/r-quarto-reference.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">R and Quarto Reference</span></a>
   </div>
 </li>
@@ -209,23 +210,23 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#getting-data-in" id="toc-getting-data-in" class="nav-link active" data-scroll-target="#getting-data-in">Getting data in</a></li>
-  <li><a href="#getting-at-parts-of-a-data-frame" id="toc-getting-at-parts-of-a-data-frame" class="nav-link" data-scroll-target="#getting-at-parts-of-a-data-frame">Getting at parts of a data frame</a></li>
-  <li><a href="#describing-one-variable" id="toc-describing-one-variable" class="nav-link" data-scroll-target="#describing-one-variable">Describing one variable</a></li>
-  <li><a href="#describing-by-group" id="toc-describing-by-group" class="nav-link" data-scroll-target="#describing-by-group">Describing by group</a></li>
-  <li><a href="#plots" id="toc-plots" class="nav-link" data-scroll-target="#plots">Plots</a></li>
-  <li><a href="#quarto" id="toc-quarto" class="nav-link" data-scroll-target="#quarto">Quarto</a></li>
-  <li><a href="#errors-you-will-meet" id="toc-errors-you-will-meet" class="nav-link" data-scroll-target="#errors-you-will-meet">Errors you will meet</a></li>
+  <li><a href="#describing-data" id="toc-describing-data" class="nav-link active" data-scroll-target="#describing-data">Describing data</a></li>
+  <li><a href="#centre-and-spread" id="toc-centre-and-spread" class="nav-link" data-scroll-target="#centre-and-spread">Centre and spread</a></li>
+  <li><a href="#shape" id="toc-shape" class="nav-link" data-scroll-target="#shape">Shape</a></li>
+  <li><a href="#from-sample-to-population" id="toc-from-sample-to-population" class="nav-link" data-scroll-target="#from-sample-to-population">From sample to population</a></li>
+  <li><a href="#testing-a-difference" id="toc-testing-a-difference" class="nav-link" data-scroll-target="#testing-a-difference">Testing a difference</a></li>
+  <li><a href="#relationships" id="toc-relationships" class="nav-link" data-scroll-target="#relationships">Relationships</a></li>
+  <li><a href="#which-tool-for-which-question" id="toc-which-tool-for-which-question" class="nav-link" data-scroll-target="#which-tool-for-which-question">Which tool for which question</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/reference-statistics.html">Reference</a></li><li class="breadcrumb-item"><a href="../reference/r-quarto-reference.html">R and Quarto Reference</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/reference-statistics.html">Reference</a></li><li class="breadcrumb-item"><a href="../reference/reference-statistics.html">Statistics Reference</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">R and Quarto Reference</h1>
-<p class="subtitle lead">One page to keep open while you work</p>
+<h1 class="title">Statistics Reference</h1>
+<p class="subtitle lead">Every term in the strand, in plain English</p>
 </div>
 
 
@@ -243,268 +244,367 @@ ul.task-list li input[type="checkbox"] {
 
 
 <blockquote class="blockquote">
-<p>A lookup sheet, not a tutorial. Everything here appears in the labs; this page exists so you are not scrolling back through three weeks of notes to remember an argument name.</p>
+<p>A lookup sheet, not a tutorial. Each term has a plain-English meaning, a <em>Tidebreak</em> example and the mistake people make with it. Every number on this page is computed from the playtest data when the site is built. The notes teach these ideas; this page is for checking one quickly during a lab.</p>
 </blockquote>
 <hr>
-<section id="getting-data-in" class="level2">
-<h2 class="anchored" data-anchor-id="getting-data-in">Getting data in</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Task</th>
-<th style="text-align: left;">Code</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Load a package</td>
-<td style="text-align: left;"><code>library(readr)</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Read a CSV</td>
-<td style="text-align: left;"><code>d &lt;- read_csv("data/file.csv", show_col_types = FALSE)</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Check it loaded</td>
-<td style="text-align: left;"><code>nrow(d)</code>, <code>dim(d)</code>, <code>names(d)</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Look at structure and types</td>
-<td style="text-align: left;"><code>str(d)</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">First / last rows</td>
-<td style="text-align: left;"><code>head(d, 5)</code>, <code>tail(d, 5)</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="getting-at-parts-of-a-data-frame" class="level2">
-<h2 class="anchored" data-anchor-id="getting-at-parts-of-a-data-frame">Getting at parts of a data frame</h2>
+<section id="describing-data" class="level2">
+<h2 class="anchored" data-anchor-id="describing-data">Describing data</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
-<th style="text-align: left;">Task</th>
-<th style="text-align: left;">Code</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">One column as a vector</td>
-<td style="text-align: left;"><code>d$score</code> or <code>d[["score"]]</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Several columns</td>
-<td style="text-align: left;"><code>d[, c("score", "deaths")]</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Rows meeting a condition</td>
-<td style="text-align: left;"><code>d[d$score &gt; 1500, ]</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Rows and columns at once</td>
-<td style="text-align: left;"><code>d[d$build == "A", c("score", "deaths")]</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="describing-one-variable" class="level2">
-<h2 class="anchored" data-anchor-id="describing-one-variable">Describing one variable</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Task</th>
-<th style="text-align: left;">Code</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Everything at once</td>
-<td style="text-align: left;"><code>summary(x)</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Centre</td>
-<td style="text-align: left;"><code>mean(x)</code>, <code>median(x)</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Spread</td>
-<td style="text-align: left;"><code>sd(x)</code>, <code>range(x)</code>, <code>IQR(x)</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Quartiles</td>
-<td style="text-align: left;"><code>quantile(x)</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">A specific percentile</td>
-<td style="text-align: left;"><code>quantile(x, 0.99)</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Count a category</td>
-<td style="text-align: left;"><code>table(d$cohort)</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Cross-tabulate two</td>
-<td style="text-align: left;"><code>table(d$build, d$quit_reason)</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Ignore missing values</td>
-<td style="text-align: left;">add <code>na.rm = TRUE</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="describing-by-group" class="level2">
-<h2 class="anchored" data-anchor-id="describing-by-group">Describing by group</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Task</th>
-<th style="text-align: left;">Code</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">One summary per group</td>
-<td style="text-align: left;"><code>tapply(d$score, d$cohort, median)</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Several columns at once</td>
-<td style="text-align: left;"><code>aggregate(score ~ cohort, data = d, FUN = median)</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="plots" class="level2">
-<h2 class="anchored" data-anchor-id="plots">Plots</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Task</th>
-<th style="text-align: left;">Code</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Distribution of one variable</td>
-<td style="text-align: left;"><code>hist(x, breaks = 20)</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Compare groups</td>
-<td style="text-align: left;"><code>boxplot(score ~ cohort, data = d)</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Two variables against each other</td>
-<td style="text-align: left;"><code>plot(d$mobility, d$distance_m)</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">A series over time</td>
-<td style="text-align: left;"><code>plot(x, y, type = "l")</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">A reference line</td>
-<td style="text-align: left;"><code>abline(h = 16.7, lty = 2)</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Counts as bars</td>
-<td style="text-align: left;"><code>barplot(table(d$quit_reason))</code></td>
-</tr>
-</tbody>
-</table>
-<p>Useful arguments for all of them: <code>main =</code> (title), <code>xlab =</code> / <code>ylab =</code> (axis labels), <code>col =</code> (fill colour).</p>
-</section>
-<section id="quarto" class="level2">
-<h2 class="anchored" data-anchor-id="quarto">Quarto</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Task</th>
-<th style="text-align: left;">Code</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Start a code chunk</td>
-<td style="text-align: left;"><code>```{r}</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Hide the code, keep the output</td>
-<td style="text-align: left;"><code>#| echo: false</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Show the code, skip running it</td>
-<td style="text-align: left;"><code>#| eval: false</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Name a chunk</td>
-<td style="text-align: left;"><code>#| label: my-chunk</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Set figure size</td>
-<td style="text-align: left;"><code>#| fig-width: 7</code></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">A number inside a sentence</td>
-<td style="text-align: left;"><code>`r round(mean(d$score))`</code></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Render</td>
-<td style="text-align: left;"><code>quarto render report.qmd</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="errors-you-will-meet" class="level2">
-<h2 class="anchored" data-anchor-id="errors-you-will-meet">Errors you will meet</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Message</th>
+<th style="text-align: left;">Term</th>
 <th style="text-align: left;">What it means</th>
+<th style="text-align: left;"><em>Tidebreak</em> example</th>
+<th style="text-align: left;">The common mistake</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;"><code>could not find function "..."</code></td>
-<td style="text-align: left;">Missing <code>library()</code> call, or a typo in the name</td>
+<td style="text-align: left;"><strong>Observation</strong></td>
+<td style="text-align: left;">One unit you measured. Read it as: one row.</td>
+<td style="text-align: left;">One player in one session: 120 observations in <code>tidebreak_sessions.csv</code>.</td>
+<td style="text-align: left;">Mixing units in one table, such as session rows and per-player totals side by side.</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><code>object '...' not found</code></td>
-<td style="text-align: left;">The variable does not exist yet, or R was restarted</td>
+<td style="text-align: left;"><strong>Variable</strong></td>
+<td style="text-align: left;">One thing recorded about every observation. Read it as: one column.</td>
+<td style="text-align: left;"><code>session_minutes</code>, <code>cohort</code>, <code>deaths</code>: 20 variables in all.</td>
+<td style="text-align: left;">Spreading one variable across several columns, as a survey export does with its questions.</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;"><code>$ operator is invalid for atomic vectors</code></td>
-<td style="text-align: left;">You used <code>$</code> on a vector, not a data frame</td>
+<td style="text-align: left;"><strong>Categorical</strong></td>
+<td style="text-align: left;">Values are labels. <strong>Nominal</strong> labels have no order; <strong>ordinal</strong> labels do, with unknown gaps.</td>
+<td style="text-align: left;"><code>quit_reason</code> is nominal, with 4 categories. <code>cohort</code> is ordinal: Novice, Regular, Veteran.</td>
+<td style="text-align: left;">Averaging a category because it was coded as 1, 2, 3.</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><code>undefined columns selected</code></td>
-<td style="text-align: left;">A column name is misspelled or wrongly capitalised</td>
+<td style="text-align: left;"><strong>Numerical</strong></td>
+<td style="text-align: left;">Values are quantities, so arithmetic on them means something.</td>
+<td style="text-align: left;"><code>score</code>, <code>deaths</code>, <code>session_minutes</code>.</td>
+<td style="text-align: left;">Treating an ID or a 1–5 rating as a plain number without thinking about it.</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;"><code>argument "x" is missing, with no default</code></td>
-<td style="text-align: left;">A function was called with no argument</td>
+<td style="text-align: left;"><strong>Discrete</strong></td>
+<td style="text-align: left;">Numerical values that are counts: whole numbers only.</td>
+<td style="text-align: left;"><code>deaths</code> runs from 0 to 7.</td>
+<td style="text-align: left;">Drawing a histogram with more bars than there are possible values, which leaves gaps that look like a pattern.</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Console shows <code>+</code> not <code>&gt;</code></td>
-<td style="text-align: left;">R is waiting for you to close a bracket or quote. Press <strong>Esc</strong></td>
+<td style="text-align: left;"><strong>Continuous</strong></td>
+<td style="text-align: left;">Numerical values that can fall anywhere in a range.</td>
+<td style="text-align: left;"><code>session_minutes</code>, <code>frames$ms</code>.</td>
+<td style="text-align: left;">Tabulating it with <code>table()</code>; almost every value is unique. Use a histogram.</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;"><code>NA</code> where you expected a number</td>
-<td style="text-align: left;">Missing values. Decide what to do about them, then use <code>na.rm = TRUE</code></td>
+<td style="text-align: left;"><strong>Sample</strong></td>
+<td style="text-align: left;">The observations you actually have.</td>
+<td style="text-align: left;">120 sessions from 30 players.</td>
+<td style="text-align: left;">Forgetting to report how many (<a href="../notes/ten-rules.html">rule 8</a>).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Population</strong></td>
+<td style="text-align: left;">Everyone the conclusion is meant to apply to. You never measure it.</td>
+<td style="text-align: left;">Everyone who will play <em>Tidebreak</em> after launch.</td>
+<td style="text-align: left;">Assuming the sample looks like the population. A studio’s Discord is not its audience.</td>
 </tr>
 </tbody>
 </table>
+<hr>
+</section>
+<section id="centre-and-spread" class="level2">
+<h2 class="anchored" data-anchor-id="centre-and-spread">Centre and spread</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Term</th>
+<th style="text-align: left;">What it means</th>
+<th style="text-align: left;"><em>Tidebreak</em> example</th>
+<th style="text-align: left;">The common mistake</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Mean</strong></td>
+<td style="text-align: left;">The total divided by the count. Read it as: the value if everyone were equal.</td>
+<td style="text-align: left;">Mean session length 22.8 minutes.</td>
+<td style="text-align: left;">Quoting it for skewed data, where a few extreme values drag it away from most players.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Median</strong></td>
+<td style="text-align: left;">The middle value when sorted. Half above, half below.</td>
+<td style="text-align: left;">Median session length 26.1 minutes.</td>
+<td style="text-align: left;">Assuming it is always better. It ignores how extreme the extremes are, which is sometimes the point.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Minimum / maximum</strong></td>
+<td style="text-align: left;">The smallest and largest values.</td>
+<td style="text-align: left;">Session length from 7.7 to 32 minutes.</td>
+<td style="text-align: left;">Skipping them. They are the fastest way to spot an impossible value.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Range</strong></td>
+<td style="text-align: left;">Maximum minus minimum.</td>
+<td style="text-align: left;">24.3 minutes for session length.</td>
+<td style="text-align: left;">Using it as the measure of spread. One unusual player sets it.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Standard deviation</strong></td>
+<td style="text-align: left;">The typical distance of a value from the mean.</td>
+<td style="text-align: left;">Frame time: 1.05 ms in Build A, 3.40 ms in Build B.</td>
+<td style="text-align: left;">Quoting it for skewed data. It inherits every weakness of the mean.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Interquartile range (IQR)</strong></td>
+<td style="text-align: left;">The width of the middle half of the data.</td>
+<td style="text-align: left;">13.8 minutes for session length.</td>
+<td style="text-align: left;">Forgetting it exists. For skewed data, quote the median and IQR together.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Percentile</strong></td>
+<td style="text-align: left;">The value with that percentage of the data below it.</td>
+<td style="text-align: left;">99th percentile frame time: 19.5 ms in Build A, 39.4 ms in Build B.</td>
+<td style="text-align: left;">Stopping at the 95th, which cannot see a problem rarer than one case in twenty.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="shape" class="level2">
+<h2 class="anchored" data-anchor-id="shape">Shape</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Term</th>
+<th style="text-align: left;">What it means</th>
+<th style="text-align: left;"><em>Tidebreak</em> example</th>
+<th style="text-align: left;">The common mistake</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Distribution</strong></td>
+<td style="text-align: left;">The full pattern of values: which occur and how often. A histogram draws it.</td>
+<td style="text-align: left;">Sentinel score has two humps: games that anchor the round and games that collapse early.</td>
+<td style="text-align: left;">Summarising a two-humped distribution with one average, which describes neither group (<a href="../notes/ten-rules.html">rule 4</a>).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Skew</strong></td>
+<td style="text-align: left;">A distribution with a long tail on one side. The mean is pulled towards the tail.</td>
+<td style="text-align: left;">Session length is left-skewed: mean 22.8 below median 26.1, pulled down by early quits.</td>
+<td style="text-align: left;">Reading the gap between mean and median without comparing it to the size of the variable.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Outlier</strong></td>
+<td style="text-align: left;">A value far from the rest. A boxplot draws each one as a point.</td>
+<td style="text-align: left;">The boxplot of <code>score</code> flags 7 low values, all of them Sentinel games.</td>
+<td style="text-align: left;">Deleting it. An outlier is an error, an extreme player or the finding; find out which first (<a href="../notes/ten-rules.html">rule 6</a>).</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="from-sample-to-population" class="level2">
+<h2 class="anchored" data-anchor-id="from-sample-to-population">From sample to population</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Term</th>
+<th style="text-align: left;">What it means</th>
+<th style="text-align: left;"><em>Tidebreak</em> example</th>
+<th style="text-align: left;">The common mistake</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Sampling variability</strong></td>
+<td style="text-align: left;">A different sample gives different numbers, even from the same population.</td>
+<td style="text-align: left;">Split the sessions into four batches of 30 in file order: mean scores 1550, 1313, 1462, 1390.</td>
+<td style="text-align: left;">Treating one playtest’s numbers as fixed facts about the game.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Confidence interval</strong></td>
+<td style="text-align: left;">A range of plausible values for the population, given the sample. Wider means less certain.</td>
+<td style="text-align: left;">Build B sessions ran between 0.2 and 5.7 minutes longer than Build A (95% interval).</td>
+<td style="text-align: left;">Reading “95%” as the chance this particular interval is right. It describes how often the method captures the true value.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="testing-a-difference" class="level2">
+<h2 class="anchored" data-anchor-id="testing-a-difference">Testing a difference</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Term</th>
+<th style="text-align: left;">What it means</th>
+<th style="text-align: left;"><em>Tidebreak</em> example</th>
+<th style="text-align: left;">The common mistake</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Null hypothesis</strong></td>
+<td style="text-align: left;">The claim that there is no difference, which the test tries to find evidence against.</td>
+<td style="text-align: left;">Build A and Build B have the same mean session length.</td>
+<td style="text-align: left;">Believing the test can prove it. Failing to find a difference is not showing there is none.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Alternative hypothesis</strong></td>
+<td style="text-align: left;">The claim that there is a difference.</td>
+<td style="text-align: left;">Mean session length differs between the builds.</td>
+<td style="text-align: left;">Choosing a one-sided direction after seeing which way the data went.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>p-value</strong></td>
+<td style="text-align: left;">How surprising the data would be if the null hypothesis were true. Small means surprising.</td>
+<td style="text-align: left;">Session length by build: p = 0.037.</td>
+<td style="text-align: left;">Reading it as the probability that the null hypothesis is true. It is not.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Statistical significance</strong></td>
+<td style="text-align: left;">A p-value below a threshold set in advance, conventionally 0.05.</td>
+<td style="text-align: left;">Session length differs (p = 0.037); score does not (p = 0.822).</td>
+<td style="text-align: left;">Treating “significant” as “important”. It means “unlikely to be chance alone”, nothing more.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Practical significance</strong></td>
+<td style="text-align: left;">Whether a difference is big enough to change a design decision.</td>
+<td style="text-align: left;">In the Atrium, Build B’s frames are 0.42 ms faster (p &lt; 0.001): highly significant and imperceptible to any player.</td>
+<td style="text-align: left;">Reporting a tiny, significant difference as a win. Always give the size of the difference too.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Independent-samples t-test</strong></td>
+<td style="text-align: left;">Compares two group means when different people are in each group. <code>t.test(y ~ group)</code></td>
+<td style="text-align: left;"><code>t.test(session_minutes ~ build)</code>: every player saw only one build.</td>
+<td style="text-align: left;">Ignoring that each player contributed 4 sessions, so the sessions are not fully independent of one another.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Paired t-test</strong></td>
+<td style="text-align: left;">Compares two measurements taken on the same people. <code>t.test(x, y, paired = TRUE)</code></td>
+<td style="text-align: left;">Not possible on this playtest: 0 of 30 players played both builds.</td>
+<td style="text-align: left;">Running a paired test on unpaired data, or an independent test when the same players did both.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="relationships" class="level2">
+<h2 class="anchored" data-anchor-id="relationships">Relationships</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Term</th>
+<th style="text-align: left;">What it means</th>
+<th style="text-align: left;"><em>Tidebreak</em> example</th>
+<th style="text-align: left;">The common mistake</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Correlation</strong></td>
+<td style="text-align: left;">How closely two numerical variables move together, from −1 (opposite) through 0 (unrelated) to +1 (together).</td>
+<td style="text-align: left;">Awareness and score: 0.59, the strongest of the ability ratings. Shots fired and score: 0.05. Mobility and survivability: -0.66, a trade-off.</td>
+<td style="text-align: left;">Calling a correlation “strong” without context. Whether 0.3 matters depends on the question.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Confounding variable</strong></td>
+<td style="text-align: left;">A third variable that drives both of the variables you are comparing.</td>
+<td style="text-align: left;">Veterans average 75.6 awareness against 57.3 for Novices, and a median score of 1664 against 1281. Experience could be driving both.</td>
+<td style="text-align: left;">Reporting a relationship without asking what else differs between the players at each end of it.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Correlation versus causation</strong></td>
+<td style="text-align: left;">Two things moving together does not show that one causes the other.</td>
+<td style="text-align: left;">Buffing awareness would not necessarily raise score; the players with high awareness may simply be better players.</td>
+<td style="text-align: left;">Turning “is associated with” into “causes” between the analysis and the design meeting.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="which-tool-for-which-question" class="level2">
+<h2 class="anchored" data-anchor-id="which-tool-for-which-question">Which tool for which question</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">The question</th>
+<th style="text-align: left;">Look at</th>
+<th style="text-align: left;">Summarise with</th>
+<th style="text-align: left;">Test with</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">What was a typical session like?</td>
+<td style="text-align: left;">Histogram</td>
+<td style="text-align: left;">Median and IQR</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">How bad does the worst case get?</td>
+<td style="text-align: left;">Histogram or trace</td>
+<td style="text-align: left;">95th and 99th percentiles</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Do two builds differ, with different players on each?</td>
+<td style="text-align: left;">Side-by-side boxplots</td>
+<td style="text-align: left;">Medians, IQRs, difference in means</td>
+<td style="text-align: left;">Independent-samples t-test</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Do two builds differ, with the same players on both?</td>
+<td style="text-align: left;">Each player’s difference</td>
+<td style="text-align: left;">Mean difference</td>
+<td style="text-align: left;">Paired t-test</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Do two numerical variables move together?</td>
+<td style="text-align: left;">Scatterplot</td>
+<td style="text-align: left;">Correlation</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Is a difference worth acting on?</td>
+<td style="text-align: left;">The size of the difference and its confidence interval</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">No test answers this; it is a design judgement</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p>See also: <a href="../notes/ten-rules.html">Ten Rules</a>, <a href="../reference/r-quarto-reference.html">R and Quarto Reference</a>.</p>
 
 
 </section>
@@ -912,11 +1012,14 @@ ul.task-list li input[type="checkbox"] {
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../reference/reference-statistics.html" class="pagination-link" aria-label="Statistics Reference">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Statistics Reference</span>
+      <a href="../labs/reading-data.html" class="pagination-link" aria-label="Lab 01 — Reading Data">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Lab 01 — Reading Data</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="../reference/r-quarto-reference.html" class="pagination-link" aria-label="R and Quarto Reference">
+        <span class="nav-page-text">R and Quarto Reference</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->
