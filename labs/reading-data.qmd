@@ -12,9 +12,10 @@ The work is deliberately unglamorous. Before you can find anything interesting i
 a playtest you have to be able to **load the data, look at it, and describe it**
 without making a fool of yourself. That is what this sheet trains.
 
-Everything here uses **base R** — the functions that ship with the language. You
-will meet the tidyverse in Lab 02. Learning base R first means you will understand
-what the tidyverse is doing for you rather than treating it as magic.
+Everything here uses **base R** — the functions that ship with the language —
+except the last exercise of Part B, which gives you a first look at the tidyverse
+you will use in Lab 02. Learning base R first means you will understand what the
+tidyverse is doing for you rather than treating it as magic.
 
 | Function | What it does |
 | :- | :- |
@@ -27,6 +28,8 @@ what the tidyverse is doing for you rather than treating it as magic.
 | `quantile()`, `IQR()` | Describe the spread and the tails |
 | `table()` | Count a categorical variable |
 | `hist()`, `boxplot()` | See the shape of a variable |
+| `tapply()` | Apply a summary to a variable, one group at a time |
+| `group_by()`, `summarise()`, `|>` | The tidyverse version of `tapply()`, first seen in Exercise 13 |
 
 # Learning outcomes
 
@@ -395,6 +398,51 @@ it again in every modelling function R has.
 Which one, and why is "larger spread" a more useful observation here than "lower
 average"?
 
+## Exercise 13 — The same question, two ways `[Apply]`
+
+Every summary on this sheet is base R. Lab 02 uses the tidyverse, which does the
+same work with different syntax. This is your first look at it.
+
+Find the median `session_minutes` for each build twice: once with `tapply()`, and
+once with `group_by()` and `summarise()` from the `dplyr` package, joined with the
+pipe `|>`. In the second version, also count the sessions in each build with `n()`.
+
+The pipe passes what is on its left in as the first argument of what is on its
+right: `sessions |> group_by(build)` means `group_by(sessions, build)`.
+
+If `library(dplyr)` says there is no package called `dplyr`, run
+`install.packages("dplyr")` once in the Console, then try again.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex13
+tapply(sessions$session_minutes, sessions$build, median)
+```
+
+```{r}
+#| label: ex13b
+library(dplyr)
+
+sessions |>
+  group_by(build) |>
+  summarise(sessions       = n(),
+            median_minutes = median(session_minutes))
+```
+
+The medians match because both do the same three things: split `session_minutes`
+by build, apply `median()` to each piece, and combine the results. `tapply()`
+returns a named vector; `summarise()` returns a table with one row per build and
+room for as many more columns as you ask for. The tibble shows
+`r round(median(sessions$session_minutes[sessions$build == "A"]), 1)` where
+`tapply()` shows `r median(sessions$session_minutes[sessions$build == "A"])`
+only because tibbles print three significant figures; the stored value is the same.
+:::
+
+**Write 2 sentences:** which of the two outputs would you put in a report for the
+design lead, and why? What would you have to add to each version to report the IQR
+as well?
+
 ---
 
 # Challenge — Which cohort is the game actually built for? `[Decide]`
@@ -517,7 +565,7 @@ nrow(raw)
 telling you. `trim_ws = FALSE` switches that off so you see the file as it really
 is — the way Excel, a database import or your own C# parser would see it.
 
-## Exercise 13 — Rows exported twice `[Do]`
+## Exercise 14 — Rows exported twice `[Do]`
 
 The raw file has `r nrow(raw)` rows, but only `r nrow(sessions)` sessions were
 played. Count the repeated rows, look at them, and make a copy of the data called
@@ -526,7 +574,7 @@ played. Count the repeated rows, look at them, and make a copy of the data calle
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex13
+#| label: ex14
 sum(duplicated(raw))
 raw[duplicated(raw), 1:5]
 
@@ -541,7 +589,7 @@ nrow(clean)
 **Write 2 sentences:** name one result from Part B that a duplicated row would
 change, and one that it could not change.
 
-## Exercise 14 — Categories that should match `[Apply]`
+## Exercise 15 — Categories that should match `[Apply]`
 
 Count the values of `cohort` in `clean`. There should be three. Fix the column
 with `trimws()` and `tolower()` so that there are, then count again.
@@ -549,7 +597,7 @@ with `trimws()` and `tolower()` so that there are, then count again.
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex14
+#| label: ex15
 table(clean$cohort)
 
 clean$cohort <- tolower(trimws(clean$cohort))
@@ -565,14 +613,14 @@ labels end up in lower case, which does not matter; consistency does.
 **Write 2 sentences:** why is this problem invisible if the only thing you run on
 the data is `summary(clean)`?
 
-## Exercise 15 — Find the gaps `[Do]`
+## Exercise 16 — Find the gaps `[Do]`
 
 Count the missing values in `deaths`, then in every column at once.
 
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex15
+#| label: ex16
 sum(is.na(clean$deaths))
 
 colSums(is.na(clean))
@@ -585,7 +633,7 @@ data, and `colSums()` counts the TRUEs in each column.
 **Write 1 sentence:** why does `clean$deaths == NA` not find the missing values?
 Exercise 03 has the answer.
 
-## Exercise 16 — Who is missing? `[Apply]`
+## Exercise 17 — Who is missing? `[Apply]`
 
 Count how many rows of `clean` are complete. Then, for the rows that are *not*
 complete, cross-tabulate `build` against `quit_reason`.
@@ -593,7 +641,7 @@ complete, cross-tabulate `build` against `quit_reason`.
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex16
+#| label: ex17
 sum(complete.cases(clean))
 
 incomplete <- clean[!complete.cases(clean), ]
@@ -607,7 +655,7 @@ selects the rows with at least one gap.
 **Write 2 sentences:** are the missing values scattered at random, or do they have
 a pattern? What does the pattern suggest about why they are missing?
 
-## Exercise 17 — Drop the incomplete rows? `[Decide]`
+## Exercise 18 — Drop the incomplete rows? `[Decide]`
 
 A teammate suggests starting every analysis with
 `clean <- clean[complete.cases(clean), ]` "so the NAs never cause trouble". You are
@@ -617,7 +665,7 @@ suggestion?
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex17
+#| label: ex18
 kept <- clean[complete.cases(clean), ]
 
 all_rows      <- table(clean$build[clean$quit_reason == "Frustrated"])
@@ -637,7 +685,7 @@ with the game.
 
 **What makes it defensible.** The missing column is `session_minutes`, which this
 comparison does not use, and a row only needs dropping from an analysis that needs
-the value it is missing. Exercise 16 also showed the gaps are not random: every
+the value it is missing. Exercise 17 also showed the gaps are not random: every
 missing session length belongs to a Build A frustration quit, exactly the sessions
 this comparison is about, so dropping them removes evidence, not noise. The gaps
 are themselves a finding — Build A sometimes fails to log session length when a
