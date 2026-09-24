@@ -3,9 +3,37 @@ title: "Describing What You Have"
 subtitle: "Variable types, tidy data, centre, spread and shape"
 ---
 
+> Week 1, for everyone, before Part B of Lab 01. This is the vocabulary for
+> describing a single variable: what kind of number it is, where its centre sits,
+> how spread out it is and what shape it has. Every later page assumes it.
+
+---
+
+## Learning Outcomes
+
+By the end of these notes you can:
+
+- classify a variable as nominal, ordinal, discrete or continuous, and say which
+  operations that allows;
+- recognise a tidy table and name the most common way data fails to be one;
+- say what a sample is, and why every number you compute describes the sample
+  rather than your audience;
+- choose between mean and median, and read the gap between them as evidence of
+  skew;
+- describe spread with the standard deviation, quartiles and IQR, and say why the
+  range is rarely enough;
+- draw a histogram and a boxplot in base R and say what each shows that a summary
+  hides.
+
+---
+
+## Why This Matters for Playtesting
+
 Before comparing anything to anything, you have to be able to say what a single
 variable looks like. This section is the vocabulary for that, and it is the part
 students most often skip and most often get caught by.
+
+---
 
 ## What Kind of Number Is This?
 
@@ -36,6 +64,8 @@ it. That convention is defensible and universal, and you should still know you a
 making an assumption. Where it matters — where the whole finding rests on a mean
 of 3.2 against 3.4 — report the distribution instead.
 
+---
+
 ## Tidy Data: One Row Per Observation
 
 Data arrives in whatever shape the tool that produced it happened to use. Almost
@@ -51,6 +81,35 @@ eight columns. That is convenient to read and inconvenient to analyse, because
 column headings. Reshaping it into one row per player *per question* is what makes
 the whole survey analysable in one operation, and you will do exactly that in
 Lab 03.
+
+---
+
+## Sample and Population
+
+```{r}
+#| label: data
+#| include: false
+library(readr)
+sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+survey   <- read_csv("data/tidebreak_survey.csv", show_col_types = FALSE)
+```
+
+The `r nrow(sessions)` *Tidebreak* sessions come from
+`r length(unique(sessions$player_id))` players who happened to attend this
+playtest. They are a **sample**. The **population** is everybody you are making
+the game for, and you never get to measure it.
+
+**Every number describes the sample.** The question you care about is always about
+the population: not "did these players struggle?" but "will players struggle?".
+Bring in a different group next week and every figure on this page moves. How far
+it can move is the subject of Week 2; until then, report how many people a number
+came from every time you quote it ([rule 8](ten-rules.qmd)).
+
+**Who is in the sample matters as much as how many.** A playtest recruited from the
+studio's own Discord samples the game's most committed fans, not its audience. No
+amount of analysis afterwards corrects for who walked in the door.
+
+---
 
 ## Centre
 
@@ -77,6 +136,8 @@ When you compare the two, compare them relative to the size of the variable. A g
 of 40 points on a score in the thousands is nothing; a gap of 3 minutes on a median
 of 26 is a real skew.
 
+---
+
 ## Spread
 
 The centre alone is nearly useless. Two levels with identical average completion
@@ -97,8 +158,11 @@ robust description of spread you have. For skewed game data, quote the median an
 the IQR together.
 
 **Percentiles** generalise this: the 95th percentile has 95% of values below it.
-Sections 5 will show you why the 99th percentile of frame time is the single most
+[Distributions and Variation](distributions-and-variation.qmd) will show you why
+the 99th percentile of frame time is the single most
 important number in a performance capture.
+
+---
 
 ## Look at the Shape First
 
@@ -124,6 +188,255 @@ two populations have been mixed: players who found the key and players who did
 not, sessions that completed and sessions that crashed. The average of a bimodal
 distribution describes nobody at all — it names a value that sits in the valley
 between the two groups, where the fewest players actually are.
+
+---
+
+## Worked Examples
+
+```{r}
+#| label: worked-sentinel
+#| include: false
+arch_mean   <- tapply(sessions$score, sessions$archetype, mean)
+arch_median <- tapply(sessions$score, sessions$archetype, median)
+arch_sd     <- tapply(sessions$score, sessions$archetype, sd)
+stopifnot(names(which.min(arch_mean)) == "Sentinel",
+          names(which.max(arch_sd))   == "Sentinel")
+
+rank_word  <- c("highest", "second-highest", "third-highest", "lowest")
+sen_median <- rank_word[rank(-arch_median)[["Sentinel"]]]
+
+sentinel <- sessions$score[sessions$archetype == "Sentinel"]
+others   <- arch_sd[names(arch_sd) != "Sentinel"]
+
+obj_low <- sum(survey$objective_clear <= 2)
+obj_top  <- sum(survey$objective_clear == 5)
+```
+
+**Is the Sentinel underpowered?** Sort the four archetypes by mean score and the
+Sentinel comes last, at `r round(arch_mean[["Sentinel"]])` points. A balance pass
+built on that number buffs the Sentinel.
+
+Sort by median instead and the Sentinel is the `r sen_median`, at
+`r round(arch_median[["Sentinel"]])`. The mean and the median disagree by
+`r round(arch_median[["Sentinel"]] - arch_mean[["Sentinel"]])` points, and the
+standard deviation is `r round(arch_sd[["Sentinel"]])` against
+`r round(min(others))` to `r round(max(others))` for the other three. Something is
+dragging the mean down without moving the middle.
+
+```{r}
+#| label: worked-sentinel-hist
+hist(sentinel,
+     breaks = 12,
+     main   = "Sentinel score, one bar per band",
+     xlab   = "Score",
+     col    = "grey85",
+     border = "white")
+```
+
+The histogram answers it. `r sum(sentinel < 700)` of the `r length(sentinel)`
+Sentinel sessions scored under 700 and sit in a clump of their own at the far left,
+`r min(sentinel[sentinel >= 700]) - max(sentinel[sentinel < 700])` points below the
+next-lowest Sentinel game. The Sentinel either anchors the round or collapses early.
+It is not underpowered; it is inconsistent. A flat buff raises the scores of the
+players already doing well, and the design question becomes what the collapsing
+games have in common ([rule 4](ten-rules.qmd)).
+
+**How clear was the objective?** The survey item "I always knew what my objective
+was" averages `r round(mean(survey$objective_clear), 2)` on a 1 to 5 scale. That is
+a mean of an ordinal rating, and the distribution says more:
+
+```{r}
+#| label: worked-objective
+table(survey$objective_clear)
+```
+
+`r obj_low` of `r nrow(survey)` players chose 1 or 2, and `r obj_top` chose 5.
+"`r round(100 * obj_low / nrow(survey))`% of players disagreed that they always
+knew their objective" is a sentence a designer acts on. "Mean
+`r round(mean(survey$objective_clear), 2)`" is not ([rule 3](ten-rules.qmd)).
+
+---
+
+## R Demonstrations
+
+All base R. The variable here is `time_alive_s`, seconds survived in the match.
+
+```{r}
+#| label: demo-centre-spread
+summary(sessions$time_alive_s)
+sd(sessions$time_alive_s)
+IQR(sessions$time_alive_s)
+quantile(sessions$time_alive_s, c(0.1, 0.9))
+```
+
+`summary()` gives centre and quartiles in one call; `sd()` and `IQR()` give the two
+measures of spread; `quantile()` with a vector of proportions gives any percentiles
+you ask for, here the 10th and 90th.
+
+```{r}
+#| label: demo-hist
+hist(sessions$time_alive_s,
+     breaks = 15,
+     main   = "Time alive per session",
+     xlab   = "Seconds",
+     col    = "grey85",
+     border = "white")
+```
+
+`breaks` sets roughly how many bars. Change it and look again before believing any
+shape.
+
+```{r}
+#| label: demo-table
+table(sessions$cohort)
+```
+
+`table()` counts a categorical variable. It is the only summary a nominal variable
+has.
+
+```{r}
+#| label: demo-by-group
+tapply(sessions$time_alive_s, sessions$cohort, median)
+boxplot(time_alive_s ~ cohort,
+        data = sessions,
+        main = "Time alive by cohort",
+        ylab = "Seconds",
+        col  = "grey85")
+```
+
+`tapply()` applies one function to one variable, split by a group. The boxplot
+shows the same split as a picture: the thick line is the median, the box is the
+middle half, and the whiskers and points show the rest.
+
+---
+
+## Interpretation Guidance
+
+**A description has four parts: centre, spread, shape and size.** One sentence can
+hold all four:
+
+> Median time alive was `r median(sessions$time_alive_s)` seconds (IQR
+> `r IQR(sessions$time_alive_s)`, n = `r nrow(sessions)`). The mean sits
+> `r round(abs(mean(sessions$time_alive_s) - median(sessions$time_alive_s)), 1)`
+> seconds from the median, so the centre is not being pulled by a tail.
+> `r sum(sessions$time_alive_s == max(sessions$time_alive_s))` sessions sit at
+> exactly `r max(sessions$time_alive_s)` seconds, the full match: those players
+> never died, and the tallest bar on the right is a ceiling, not a peak.
+
+**Pick the summary to fit the shape, and say why.** Median and IQR for anything
+skewed or with outliers; mean and standard deviation only when the histogram is
+roughly symmetric.
+
+**Keep what the data shows apart from what it suggests.** "The Sentinel's scores
+fall into two groups" is what the data shows. "Some Sentinel players do not know
+how to play the role" is a suggestion, and it needs a different kind of evidence
+before it becomes a conclusion.
+
+---
+
+## Common Mistakes
+
+**Averaging a label.** `mean(sessions$cohort)` returns `NA` with a warning, which
+is R protecting you. Code the cohorts as 1, 2 and 3 and R will average them
+happily, and the answer will mean nothing.
+
+**Trusting R's idea of the type.** R stores `cohort` as text and every survey item
+as a number. Neither is wrong, but neither tells R that cohorts come in an order or
+that a rating is ordinal. The type R prints is where your checking starts
+([rule 3](ten-rules.qmd)).
+
+**Quoting a mean without looking.** The Sentinel's mean is a correct calculation
+that describes no Sentinel game. Draw the histogram first
+([rule 4](ten-rules.qmd)).
+
+**Quoting the range as the spread.** One extreme player sets the range on their
+own. Quote the IQR.
+
+**Trusting one bin setting.** A histogram drawn once is one argument among several
+the data could make. Redraw it with fewer and more bars.
+
+**Leaving out n.** "Players rated it 2.6" means nothing without "out of how many"
+([rule 8](ten-rules.qmd)).
+
+---
+
+## Short Practice Activities
+
+Each takes two or three minutes.
+
+**1.** Classify each of these as nominal, ordinal, discrete or continuous: `kills`,
+`quit_reason`, `cohort`, `distance_m`, `visual_style`.
+
+::: {.callout-note collapse="true" title="Check your answer"}
+`kills` discrete; `quit_reason` nominal; `cohort` ordinal; `distance_m`
+continuous; `visual_style` ordinal (a 1 to 5 rating), whatever type R gives it.
+:::
+
+**2.** Describe `distance_m` in one sentence with centre, spread and size. Does the
+mean sit above or below the median?
+
+::: {.callout-note collapse="true" title="Check your answer"}
+
+```{r}
+#| label: practice-distance
+median(sessions$distance_m)
+IQR(sessions$distance_m)
+mean(sessions$distance_m)
+```
+
+Median distance was `r median(sessions$distance_m)` m (IQR
+`r IQR(sessions$distance_m)`, n = `r nrow(sessions)`). The mean sits
+`r if (mean(sessions$distance_m) > median(sessions$distance_m)) "above" else "below"`
+the median by
+`r round(abs(mean(sessions$distance_m) - median(sessions$distance_m)), 1)` m, which
+is small against a spread of that size.
+:::
+
+**3.** Use `table()` to find the most common number of deaths in a session. Why is
+`table()` sensible for `deaths` but not for `distance_m`?
+
+::: {.callout-note collapse="true" title="Check your answer"}
+
+```{r}
+#| label: practice-deaths
+table(sessions$deaths)
+```
+
+The most common count is `r names(which.max(table(sessions$deaths)))` deaths. Deaths
+is discrete with only a handful of possible values, so counting each one is
+informative. `r length(unique(sessions$distance_m))` of the `r nrow(sessions)`
+`distance_m` values are different, so its table is mostly a list of ones; a
+continuous variable needs a histogram instead.
+:::
+
+---
+
+## Summary
+
+- The type of a variable decides which summaries are legal. A 1 to 5 rating is
+  ordinal, and averaging it is an assumption you should know you are making.
+- Tidy data has one row per observation and one column per variable.
+- Every number describes the sample. Report n every time.
+- When mean and median disagree, the data is skewed. Default to the median for
+  anything time-like.
+- Describe spread with the IQR for skewed data and the standard deviation for
+  symmetric data. The range is rarely enough.
+- Look at the histogram before quoting any average. Two humps mean two groups.
+
+---
+
+## Links to Relevant Reference Material
+
+- [Ten Rules](ten-rules.qmd): rule 3 (know what kind of number you are holding),
+  rule 4 (look at the shape before you quote the average), rule 5 (the mean is the
+  wrong summary more often than you think) and rule 8 (small samples lie
+  confidently)
+- [R and Quarto Reference: describing one variable](../reference/r-quarto-reference.qmd#describing-one-variable),
+  [describing by group](../reference/r-quarto-reference.qmd#describing-by-group)
+  and [plots](../reference/r-quarto-reference.qmd#plots)
+- [Lab 01: exploring playtest data](../labs/reading-data.qmd), Part B
+
+---
 
 ## Reflective Questions
 

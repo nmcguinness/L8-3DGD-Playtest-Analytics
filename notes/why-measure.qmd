@@ -3,6 +3,30 @@ title: "Why Developers Measure Anything"
 subtitle: "And what is actually worth measuring"
 ---
 
+> The first notes page of the strand, for everyone, before Lab 01. It sets out when
+> measurement is worth the effort, where playtest data comes from, and how to turn
+> a designer's question into something you can record. The only code is in the R
+> Demonstrations section near the end.
+
+---
+
+## Learning Outcomes
+
+By the end of these notes you can:
+
+- name the three cases where a team's judgement of its own game reliably fails;
+- distinguish telemetry, performance capture and asking people, and say what each
+  can and cannot tell you;
+- rewrite a vague design question as a measure you could record for a single
+  player;
+- write down, before collecting anything, the result that would change your mind;
+- load a playtest CSV into R and take a first look at it with `read_csv()`,
+  `glimpse()` and `summary()`.
+
+---
+
+## Why This Matters for Playtesting
+
 Every team makes decisions about their game constantly. Most of those decisions
 are made from memory, taste and the loudest voice in the room, and most of the
 time that is fine — taste is why anyone plays your game rather than a spreadsheet.
@@ -23,6 +47,8 @@ it. Your players will talk about nothing else.
 **You cannot remember twenty playtests.** After a session you remember the two
 people who struggled most and the last person you watched. You do not remember the
 distribution, and you will confidently reconstruct one that never existed.
+
+---
 
 ## The Three Sources
 
@@ -52,6 +78,8 @@ players say the level is fine and the heat map shows nobody finds the side route
 players say the game runs smoothly and the frame log shows a hitch every two
 seconds. A team with only one source never finds these.
 
+---
+
 ## Turning a Vague Question into a Measurable One
 
 The question a designer asks is almost never answerable as asked.
@@ -73,6 +101,8 @@ that they can disagree. This is not a failure of the method. A tutorial that
 everybody completes and nobody learns from is a real and common outcome, and only
 two measures together can find it.
 
+---
+
 ## Deciding in Advance
 
 Before you collect anything, write down what result would change your mind. "If
@@ -82,6 +112,218 @@ This costs nothing and protects you from the most comfortable mistake in the
 discipline: running the test, getting an ambiguous result, and finding in it
 whatever you already believed. If the threshold is written down beforehand, the
 data gets to answer. If it is not, you will answer and attribute it to the data.
+
+---
+
+## Worked Examples
+
+```{r}
+#| label: worked-example-data
+#| include: false
+library(readr)
+sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+survey   <- read_csv("data/tidebreak_survey.csv", show_col_types = FALSE)
+
+n_a    <- sum(sessions$build == "A")
+n_b    <- sum(sessions$build == "B")
+frus_a <- sum(sessions$build == "A" & sessions$quit_reason == "Frustrated")
+frus_b <- sum(sessions$build == "B" & sessions$quit_reason == "Frustrated")
+pct    <- function(k, n) paste0(round(100 * k / n), "%")
+
+item_means <- sort(colMeans(survey[, -1]))
+stopifnot(names(item_means)[1] == "objective_clear")
+```
+
+**The question as asked.** The *Tidebreak* team ran `r nrow(sessions)` playtest
+sessions, `r n_a` on Build A and `r n_b` on Build B. The designer's question is
+"is Build A worse?", which cannot be answered as asked: worse at what, for whom,
+by how much?
+
+**The question as measured.** Two measures bear on it, one from each end of the
+three sources:
+
+| Source | Measure | Recorded per player as |
+| :- | :- | :- |
+| Telemetry | Did the session end in a frustration quit? | `quit_reason` is `Frustrated` |
+| Asking people | "I always knew what my objective was" | A rating from 1 to 5 |
+
+**The threshold, written first.** Before anyone opens the file, the team writes:
+*"If more than a quarter of the sessions on either build end in a frustration
+quit, that build does not ship."*
+
+**The result.** `r frus_a` of `r n_a` Build A sessions ended in a frustration quit
+(`r pct(frus_a, n_a)`), against `r frus_b` of `r n_b` on Build B
+(`r pct(frus_b, n_b)`). Build A crosses the line; Build B does not. Nobody has to
+argue about it, because the argument happened before the data arrived.
+
+**The second source.** Of the `r ncol(survey) - 1` survey items, the objective item
+is the lowest rated, with a mean of `r round(item_means[["objective_clear"]], 2)`
+on the 1 to 5 scale. Telemetry says *what* happened: players on Build A left in
+frustration. The survey offers a candidate for *why*: players did not know what
+they were meant to be doing. Neither source alone would have pointed a designer at
+the objective marker.
+
+---
+
+## R Demonstrations
+
+Everything below runs as written, provided the data files sit in the `data/`
+folder of your project as set up in [Lab 00](../labs/setting-up.qmd).
+
+```{r}
+#| label: demo-load
+library(readr)
+library(dplyr)
+
+sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+survey   <- read_csv("data/tidebreak_survey.csv", show_col_types = FALSE)
+```
+
+`read_csv()` reads a file into a **tibble**, R's table of rows and columns. The
+path is relative to the project folder, which is why it starts `data/`.
+
+```{r}
+#| label: demo-glimpse
+glimpse(sessions)
+```
+
+`glimpse()` prints one line per column: its name, its type and its first few
+values. `<chr>` is text and `<dbl>` is a number. This is the first check on any
+new file: does every column have the type you expected? Here `cohort` is text,
+which is correct, but R has no idea that Novice, Regular and Veteran come in an
+order. That knowledge is yours to supply ([rule 3](ten-rules.qmd)).
+
+```{r}
+#| label: demo-summary
+summary(survey)
+```
+
+`summary()` gives the minimum, quartiles, median, mean and maximum of every
+numeric column. Read down the `Mean` rows and the weakest survey item stands out
+without any further code.
+
+```{r}
+#| label: demo-count
+sum(sessions$build == "A" & sessions$quit_reason == "Frustrated")
+sum(sessions$build == "B" & sessions$quit_reason == "Frustrated")
+```
+
+A condition such as `sessions$build == "A"` produces one `TRUE` or `FALSE` per row,
+and `sum()` counts the `TRUE`s. Combining two conditions with `&` counts the rows
+where both hold. This is how every number in the worked example was produced.
+
+---
+
+## Interpretation Guidance
+
+Every finding is read at three levels, and the discipline is keeping them apart.
+
+**What the data shows.** `r frus_a` of `r n_a` Build A sessions ended in a
+frustration quit, against `r frus_b` of `r n_b` on Build B. This is a count. It is
+not in dispute.
+
+**What the analysis suggests.** Something in Build A frustrates players that Build
+B avoided, and the survey's weakest item points at objective clarity as a
+candidate.
+
+**What can legitimately be concluded.** Build A fails the threshold the team set
+in advance. That is all. The survey figure is averaged across both builds, so on
+its own it cannot say that the unclear objective belongs to Build A. Linking the
+two is a hypothesis for the next test, not a finding.
+
+Telemetry reports behaviour and surveys report belief. When they agree, you have a
+lead. When they disagree, you have the most valuable finding in the playtest, and
+the disagreement itself is what goes in the report.
+
+---
+
+## Common Mistakes
+
+**Collecting first, asking later.** Logging everything and hoping a question
+emerges produces large files and no decisions. Write the question down first
+([rule 2](ten-rules.qmd)).
+
+**Trusting one source.** A survey on its own tells you what players believe; a log
+on its own tells you what they did. Treat either alone as half the evidence.
+
+**Setting the threshold after seeing the result.** A threshold chosen after the
+data has been seen is always met by exactly the right margin. If it was not written
+down beforehand, it is not a threshold ([rule 1](ten-rules.qmd)).
+
+**Logging without identifiers.** A death event with no session or player ID cannot
+be joined to anything, and a survey response with no session ID cannot be joined
+to the telemetry from the same match.
+
+**Reading `glimpse()` and moving on.** The types it prints are R's guess. A 1 to 5
+rating arrives as `<dbl>`, and R will average it without complaint. Whether it
+should be averaged is a decision R cannot make for you.
+
+---
+
+## Short Practice Activities
+
+Each takes two or three minutes.
+
+**1.** Run `glimpse(survey)`. How many survey items are there, and what type has R
+given them?
+
+::: {.callout-note collapse="true" title="Check your answer"}
+There are `r ncol(survey) - 1` items after `session_id`, and every one is `<dbl>`.
+R treats them as ordinary numbers; they are ordinal ratings, and the difference
+matters as soon as you average them.
+:::
+
+**2.** Count the sessions that ended with `quit_reason` equal to
+`"Technical fault"`, then write the threshold that would make you delay a release
+over it.
+
+::: {.callout-note collapse="true" title="Check your answer"}
+
+```{r}
+#| label: practice-fault
+sum(sessions$quit_reason == "Technical fault")
+```
+
+Any threshold is defensible if it was written first and names a number: "if more
+than one session in twenty ends in a technical fault, we do not release". "If it
+seems like a lot" is not a threshold.
+:::
+
+**3.** Rewrite "is the corridor too dangerous?" as one telemetry measure and one
+survey measure, each recordable for a single player.
+
+::: {.callout-note collapse="true" title="Check your answer"}
+Telemetry: deaths in the corridor per session. Asking people: agreement with "I
+understood why I died". Either alone is weaker than both together: players who die
+there often *and* do not understand why describe a different problem from players
+who die there often and accept it.
+:::
+
+---
+
+## Summary
+
+- Measurement earns its place where taste fails: you cannot see your own game, feel
+  a rare event, or remember twenty playtests.
+- Telemetry says what happened, performance capture says how the machine coped,
+  and asking people says what players believe. The disagreements are the findings.
+- A question is measurable when you can say how you would record it for one
+  player.
+- Write the threshold that would change your mind before you look.
+- `read_csv()`, `glimpse()` and `summary()` are the first three things you run on
+  any new file.
+
+---
+
+## Links to Relevant Reference Material
+
+- [Ten Rules](ten-rules.qmd): rule 1 (decide what would change your mind) and
+  rule 2 (a number without a question is decoration)
+- [R and Quarto Reference: getting data in](../reference/r-quarto-reference.qmd#getting-data-in)
+- [Lab 00: setting up](../labs/setting-up.qmd) and
+  [Lab 01: exploring playtest data](../labs/reading-data.qmd), Part B
+
+---
 
 ## Reflective Questions
 
