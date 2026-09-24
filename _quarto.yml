@@ -34,6 +34,7 @@ website:
           - notes/ten-rules.qmd
           - notes/why-measure.qmd
           - notes/describing-what-you-have.qmd
+          - notes/distributions-and-variation.qmd
       - section: "Labs"
         contents:
           - labs/setting-up.qmd
