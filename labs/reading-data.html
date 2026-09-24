@@ -285,6 +285,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#exercise-12-split-a-numeric-variable-by-a-group-apply" id="toc-exercise-12-split-a-numeric-variable-by-a-group-apply" class="nav-link" data-scroll-target="#exercise-12-split-a-numeric-variable-by-a-group-apply">Exercise 12 — Split a numeric variable by a group <code>[Apply]</code></a></li>
   </ul></li>
   <li><a href="#challenge-which-cohort-is-the-game-actually-built-for-decide" id="toc-challenge-which-cohort-is-the-game-actually-built-for-decide" class="nav-link" data-scroll-target="#challenge-which-cohort-is-the-game-actually-built-for-decide">Challenge — Which cohort is the game actually built for? <code>[Decide]</code></a></li>
+  <li><a href="#extension-cleaning-a-raw-export" id="toc-extension-cleaning-a-raw-export" class="nav-link" data-scroll-target="#extension-cleaning-a-raw-export">Extension — Cleaning a raw export</a>
+  <ul class="collapse">
+  <li><a href="#exercise-13-rows-exported-twice-do" id="toc-exercise-13-rows-exported-twice-do" class="nav-link" data-scroll-target="#exercise-13-rows-exported-twice-do">Exercise 13 — Rows exported twice <code>[Do]</code></a></li>
+  <li><a href="#exercise-14-categories-that-should-match-apply" id="toc-exercise-14-categories-that-should-match-apply" class="nav-link" data-scroll-target="#exercise-14-categories-that-should-match-apply">Exercise 14 — Categories that should match <code>[Apply]</code></a></li>
+  <li><a href="#exercise-15-find-the-gaps-do" id="toc-exercise-15-find-the-gaps-do" class="nav-link" data-scroll-target="#exercise-15-find-the-gaps-do">Exercise 15 — Find the gaps <code>[Do]</code></a></li>
+  <li><a href="#exercise-16-who-is-missing-apply" id="toc-exercise-16-who-is-missing-apply" class="nav-link" data-scroll-target="#exercise-16-who-is-missing-apply">Exercise 16 — Who is missing? <code>[Apply]</code></a></li>
+  <li><a href="#exercise-17-drop-the-incomplete-rows-decide" id="toc-exercise-17-drop-the-incomplete-rows-decide" class="nav-link" data-scroll-target="#exercise-17-drop-the-incomplete-rows-decide">Exercise 17 — Drop the incomplete rows? <code>[Decide]</code></a></li>
+  </ul></li>
   <li><a href="#appendix-mini-dataset-for-part-a" id="toc-appendix-mini-dataset-for-part-a" class="nav-link" data-scroll-target="#appendix-mini-dataset-for-part-a">Appendix — Mini dataset for Part A</a></li>
   <li><a href="#appendix-common-first-week-errors" id="toc-appendix-common-first-week-errors" class="nav-link" data-scroll-target="#appendix-common-first-week-errors">Appendix — Common first-week errors</a></li>
   </ul>
@@ -619,7 +627,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(sessions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 120  20</code></pre>
+<pre><code>[1] 120  26</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(sessions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -629,21 +637,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 [10] "support"           "awareness"         "score"            
 [13] "kills"             "deaths"            "objectives"       
 [16] "shots_fired"       "time_alive_s"      "distance_m"       
-[19] "session_minutes"   "quit_reason"      </code></pre>
+[19] "session_minutes"   "quit_reason"       "wrong_turns"      
+[22] "items_collected"   "completed"         "difficulty"       
+[25] "enjoyment"         "comment"          </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sessions, <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 4 × 20
+<pre><code># A tibble: 4 × 26
   session_id player_id cohort  archetype build accuracy mobility survivability
   &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;    &lt;dbl&gt;    &lt;dbl&gt;         &lt;dbl&gt;
 1 S001       P01       Regular Scout     A           55       84            48
 2 S002       P02       Veteran Scout     B           54       91            52
 3 S003       P03       Regular Scout     A           48       89            42
 4 S004       P04       Novice  Scout     B           35       80            35
-# ℹ 12 more variables: objective_control &lt;dbl&gt;, support &lt;dbl&gt;, awareness &lt;dbl&gt;,
+# ℹ 18 more variables: objective_control &lt;dbl&gt;, support &lt;dbl&gt;, awareness &lt;dbl&gt;,
 #   score &lt;dbl&gt;, kills &lt;dbl&gt;, deaths &lt;dbl&gt;, objectives &lt;dbl&gt;,
 #   shots_fired &lt;dbl&gt;, time_alive_s &lt;dbl&gt;, distance_m &lt;dbl&gt;,
-#   session_minutes &lt;dbl&gt;, quit_reason &lt;chr&gt;</code></pre>
+#   session_minutes &lt;dbl&gt;, quit_reason &lt;chr&gt;, wrong_turns &lt;dbl&gt;,
+#   items_collected &lt;dbl&gt;, completed &lt;lgl&gt;, difficulty &lt;dbl&gt;, enjoyment &lt;dbl&gt;,
+#   comment &lt;chr&gt;</code></pre>
 </div>
 </div>
 <p><code>str(sessions)</code> gives you dimensions, names and types all at once, and is usually the first thing to run on unfamiliar data.</p>
@@ -1098,11 +1110,263 @@ $Veteran
 </ul>
 <hr>
 </section>
+<section id="extension-cleaning-a-raw-export" class="level1">
+<h1>Extension — Cleaning a raw export</h1>
+<p>For anyone who finishes the Challenge with time to spare, or as practice at home. Allow about 25 minutes.</p>
+<p>The <code>sessions</code> file you have used all lab has already been cleaned. This section hands you the export it was cleaned <em>from</em>: <code>data/tidebreak_sessions_raw.csv</code>, the same sessions before anyone checked them. Nothing in it throws an error. Every problem in it quietly changes an answer.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Function</th>
+<th style="text-align: left;">What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>duplicated()</code></td>
+<td style="text-align: left;">TRUE for any row that repeats an earlier row</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>trimws()</code></td>
+<td style="text-align: left;">Strips spaces from the start and end of text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>tolower()</code></td>
+<td style="text-align: left;">Converts text to lower case</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>is.na()</code></td>
+<td style="text-align: left;">TRUE wherever a value is missing</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>complete.cases()</code></td>
+<td style="text-align: left;">TRUE for each row with no missing value in any column</td>
+</tr>
+</tbody>
+</table>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_sessions_raw.csv"</span>,</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">trim_ws =</span> <span class="cn">FALSE</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(raw)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 124</code></pre>
+</div>
+</div>
+<p><code>read_csv()</code> normally strips spaces from the edges of every text value without telling you. <code>trim_ws = FALSE</code> switches that off so you see the file as it really is — the way Excel, a database import or your own C# parser would see it.</p>
+<section id="exercise-13-rows-exported-twice-do" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-13-rows-exported-twice-do">Exercise 13 — Rows exported twice <code>[Do]</code></h2>
+<p>The raw file has 124 rows, but only 120 sessions were played. Count the repeated rows, look at them, and make a copy of the data called <code>clean</code> without them.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">duplicated</span>(raw))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>raw[<span class="fu">duplicated</span>(raw), <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 5
+  session_id player_id cohort  archetype build
+  &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;
+1 S046       P16       Veteran Sentinel  B    
+2 S053       P23       Regular Sentinel  A    
+3 S057       P27       Veteran Sentinel  A    
+4 S103       P13       Regular Duelist   A    </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a>clean <span class="ot">&lt;-</span> raw[<span class="sc">!</span><span class="fu">duplicated</span>(raw), ]</span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(clean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 120</code></pre>
+</div>
+</div>
+<p><code>duplicated()</code> marks the second and later copies of a row, never the first, so <code>!duplicated(raw)</code> keeps exactly one of each.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> name one result from Part B that a duplicated row would change, and one that it could not change.</p>
+</section>
+<section id="exercise-14-categories-that-should-match-apply" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-14-categories-that-should-match-apply">Exercise 14 — Categories that should match <code>[Apply]</code></h2>
+<p>Count the values of <code>cohort</code> in <code>clean</code>. There should be three. Fix the column with <code>trimws()</code> and <code>tolower()</code> so that there are, then count again.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(clean<span class="sc">$</span>cohort)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  Novice  Regular  Veteran   Novice  Novice   regular  Regular  REGULAR 
+       1        1        1       30        2        1       45        3 
+Regular   veteran  Veteran  VETERAN Veteran  
+       3        3       27        1        2 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a>clean<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">trimws</span>(clean<span class="sc">$</span>cohort))</span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(clean<span class="sc">$</span>cohort)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ novice regular veteran 
+     33      53      34 </code></pre>
+</div>
+</div>
+<p><code>trimws()</code> removes the spaces that make <code>"Novice "</code> a different value from <code>"Novice"</code>, and <code>tolower()</code> makes <code>"REGULAR"</code> and <code>"regular"</code> the same word. The labels end up in lower case, which does not matter; consistency does.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> why is this problem invisible if the only thing you run on the data is <code>summary(clean)</code>?</p>
+</section>
+<section id="exercise-15-find-the-gaps-do" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-15-find-the-gaps-do">Exercise 15 — Find the gaps <code>[Do]</code></h2>
+<p>Count the missing values in <code>deaths</code>, then in every column at once.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(clean<span class="sc">$</span>deaths))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(clean))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       session_id         player_id            cohort         archetype 
+                0                 0                 0                 0 
+            build          accuracy          mobility     survivability 
+                0                 0                 0                 0 
+objective_control           support         awareness             score 
+                0                 0                 0                 0 
+            kills            deaths        objectives       shots_fired 
+                0                 3                 0                 0 
+     time_alive_s        distance_m   session_minutes       quit_reason 
+                0                 0                 8                 0 
+      wrong_turns   items_collected         completed        difficulty 
+                0                 0                 0                 0 
+        enjoyment           comment 
+                0                 0 </code></pre>
+</div>
+</div>
+<p><code>is.na()</code> on a whole data frame gives a TRUE/FALSE table the same shape as the data, and <code>colSums()</code> counts the TRUEs in each column.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 1 sentence:</strong> why does <code>clean$deaths == NA</code> not find the missing values? Exercise 03 has the answer.</p>
+</section>
+<section id="exercise-16-who-is-missing-apply" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-16-who-is-missing-apply">Exercise 16 — Who is missing? <code>[Apply]</code></h2>
+<p>Count how many rows of <code>clean</code> are complete. Then, for the rows that are <em>not</em> complete, cross-tabulate <code>build</code> against <code>quit_reason</code>.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">complete.cases</span>(clean))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 109</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>incomplete <span class="ot">&lt;-</span> clean[<span class="sc">!</span><span class="fu">complete.cases</span>(clean), ]</span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(incomplete<span class="sc">$</span>build, incomplete<span class="sc">$</span>quit_reason)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   
+    Completed test Frustrated Lost interest
+  A              2          8             0
+  B              0          0             1</code></pre>
+</div>
+</div>
+<p><code>complete.cases()</code> gives one TRUE/FALSE per row, so putting <code>!</code> in front of it selects the rows with at least one gap.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> are the missing values scattered at random, or do they have a pattern? What does the pattern suggest about why they are missing?</p>
+</section>
+<section id="exercise-17-drop-the-incomplete-rows-decide" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-17-drop-the-incomplete-rows-decide">Exercise 17 — Drop the incomplete rows? <code>[Decide]</code></h2>
+<p>A teammate suggests starting every analysis with <code>clean &lt;- clean[complete.cases(clean), ]</code> “so the NAs never cause trouble”. You are about to compare frustration quits between the two builds. Do you accept the suggestion?</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>kept <span class="ot">&lt;-</span> clean[<span class="fu">complete.cases</span>(clean), ]</span>
+<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-3"><a href="#cb95-3" aria-hidden="true" tabindex="-1"></a>all_rows      <span class="ot">&lt;-</span> <span class="fu">table</span>(clean<span class="sc">$</span>build[clean<span class="sc">$</span>quit_reason <span class="sc">==</span> <span class="st">"Frustrated"</span>])</span>
+<span id="cb95-4"><a href="#cb95-4" aria-hidden="true" tabindex="-1"></a>complete_only <span class="ot">&lt;-</span> <span class="fu">table</span>(kept<span class="sc">$</span>build[kept<span class="sc">$</span>quit_reason <span class="sc">==</span> <span class="st">"Frustrated"</span>])</span>
+<span id="cb95-5"><a href="#cb95-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-6"><a href="#cb95-6" aria-hidden="true" tabindex="-1"></a>all_rows</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ A  B 
+20  5 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a>complete_only</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ A  B 
+12  5 </code></pre>
+</div>
+</div>
+<p><strong>One defensible answer: no.</strong> Keeping every row, Build A has 20 frustration quits against Build B’s 5. After the filter it has 12 against 5. The filter removed 8 frustration quits from Build A and 0 from Build B, and the headline difference between the builds shrank for a reason that has nothing to do with the game.</p>
+<p><strong>What makes it defensible.</strong> The missing column is <code>session_minutes</code>, which this comparison does not use, and a row only needs dropping from an analysis that needs the value it is missing. Exercise 16 also showed the gaps are not random: every missing session length belongs to a Build A frustration quit, exactly the sessions this comparison is about, so dropping them removes evidence, not noise. The gaps are themselves a finding — Build A sometimes fails to log session length when a player rage-quits, and that is a bug report.</p>
+<p><strong>What would make it indefensible.</strong> Applying the filter, reporting the smaller gap, and never checking what the removed rows had in common.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 3 sentences:</strong> describe one analysis where dropping incomplete rows is the right call and one where it is not. What is the question you ask to tell them apart?</p>
+<hr>
+</section>
+</section>
 <section id="appendix-mini-dataset-for-part-a" class="level1">
 <h1>Appendix — Mini dataset for Part A</h1>
 <p>If the CSV files are not available, use this in place of <code>sessions</code>.</p>
 <div class="callout callout-style-default callout-note callout-titled" title="Show the mini dataset">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1111,24 +1375,24 @@ $Veteran
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div id="callout-20" class="callout-20-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>mini_sessions <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">player_id       =</span> <span class="fu">c</span>(<span class="st">"P01"</span>, <span class="st">"P02"</span>, <span class="st">"P03"</span>, <span class="st">"P04"</span>, <span class="st">"P05"</span>, <span class="st">"P06"</span>, <span class="st">"P07"</span>, <span class="st">"P08"</span>),</span>
-<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">cohort          =</span> <span class="fu">c</span>(<span class="st">"Novice"</span>, <span class="st">"Veteran"</span>, <span class="st">"Regular"</span>, <span class="st">"Novice"</span>,</span>
-<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"Regular"</span>, <span class="st">"Veteran"</span>, <span class="st">"Regular"</span>, <span class="st">"Novice"</span>),</span>
-<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">build           =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"A"</span>, <span class="st">"B"</span>),</span>
-<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">score           =</span> <span class="fu">c</span>(<span class="dv">1370</span>, <span class="dv">1795</span>, <span class="dv">1690</span>, <span class="dv">1544</span>, <span class="dv">2019</span>, <span class="dv">1614</span>, <span class="dv">1652</span>, <span class="dv">1331</span>),</span>
-<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">kills           =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">7</span>, <span class="dv">12</span>, <span class="dv">7</span>, <span class="dv">6</span>, <span class="dv">7</span>),</span>
-<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">deaths          =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">4</span>, <span class="cn">NA</span>),</span>
-<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">session_minutes =</span> <span class="fu">c</span>(<span class="fl">12.9</span>, <span class="fl">24.6</span>, <span class="fl">12.5</span>, <span class="fl">18.8</span>, <span class="fl">18.7</span>, <span class="fl">29.4</span>, <span class="fl">11.2</span>, <span class="fl">27.0</span>),</span>
-<span id="cb75-10"><a href="#cb75-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">quit_reason     =</span> <span class="fu">c</span>(<span class="st">"Frustrated"</span>, <span class="st">"Lost interest"</span>, <span class="st">"Frustrated"</span>,</span>
-<span id="cb75-11"><a href="#cb75-11" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"Completed test"</span>, <span class="st">"Completed test"</span>, <span class="st">"Completed test"</span>,</span>
-<span id="cb75-12"><a href="#cb75-12" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"Frustrated"</span>, <span class="st">"Technical fault"</span>)</span>
-<span id="cb75-13"><a href="#cb75-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb75-14"><a href="#cb75-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb75-15"><a href="#cb75-15" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(mini_sessions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>mini_sessions <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">player_id       =</span> <span class="fu">c</span>(<span class="st">"P01"</span>, <span class="st">"P02"</span>, <span class="st">"P03"</span>, <span class="st">"P04"</span>, <span class="st">"P05"</span>, <span class="st">"P06"</span>, <span class="st">"P07"</span>, <span class="st">"P08"</span>),</span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">cohort          =</span> <span class="fu">c</span>(<span class="st">"Novice"</span>, <span class="st">"Veteran"</span>, <span class="st">"Regular"</span>, <span class="st">"Novice"</span>,</span>
+<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"Regular"</span>, <span class="st">"Veteran"</span>, <span class="st">"Regular"</span>, <span class="st">"Novice"</span>),</span>
+<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">build           =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"A"</span>, <span class="st">"B"</span>),</span>
+<span id="cb99-6"><a href="#cb99-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">score           =</span> <span class="fu">c</span>(<span class="dv">1370</span>, <span class="dv">1795</span>, <span class="dv">1690</span>, <span class="dv">1544</span>, <span class="dv">2019</span>, <span class="dv">1614</span>, <span class="dv">1652</span>, <span class="dv">1331</span>),</span>
+<span id="cb99-7"><a href="#cb99-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">kills           =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">7</span>, <span class="dv">12</span>, <span class="dv">7</span>, <span class="dv">6</span>, <span class="dv">7</span>),</span>
+<span id="cb99-8"><a href="#cb99-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">deaths          =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">4</span>, <span class="cn">NA</span>),</span>
+<span id="cb99-9"><a href="#cb99-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">session_minutes =</span> <span class="fu">c</span>(<span class="fl">12.9</span>, <span class="fl">24.6</span>, <span class="fl">12.5</span>, <span class="fl">18.8</span>, <span class="fl">18.7</span>, <span class="fl">29.4</span>, <span class="fl">11.2</span>, <span class="fl">27.0</span>),</span>
+<span id="cb99-10"><a href="#cb99-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">quit_reason     =</span> <span class="fu">c</span>(<span class="st">"Frustrated"</span>, <span class="st">"Lost interest"</span>, <span class="st">"Frustrated"</span>,</span>
+<span id="cb99-11"><a href="#cb99-11" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"Completed test"</span>, <span class="st">"Completed test"</span>, <span class="st">"Completed test"</span>,</span>
+<span id="cb99-12"><a href="#cb99-12" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"Frustrated"</span>, <span class="st">"Technical fault"</span>)</span>
+<span id="cb99-13"><a href="#cb99-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb99-14"><a href="#cb99-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-15"><a href="#cb99-15" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(mini_sessions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -1137,7 +1401,7 @@ $Veteran
 <section id="appendix-common-first-week-errors" class="level1">
 <h1>Appendix — Common first-week errors</h1>
 <div class="callout callout-style-default callout-warning callout-titled" title="Show the error guide">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1146,7 +1410,7 @@ $Veteran
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div id="callout-21" class="callout-21-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <table class="caption-top table">
 <colgroup>
