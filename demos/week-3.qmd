@@ -1,0 +1,72 @@
+---
+title: "Week 3 Demo"
+subtitle: "Building figures and reporting, live"
+---
+
+> The lecturer's script for the two 15-minute demo slots in Week 3. Every chunk
+> runs and shows its output. Step through it top to bottom; the bold headings are
+> the places to pause. `ggplot2` from here on.
+
+---
+
+## Demo 1 — A figure, one layer at a time
+
+**Step 1. Data and mapping, no geometry**
+
+```{r}
+#| label: d1-empty
+library(readr)
+library(dplyr)
+library(ggplot2)
+
+sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+
+# Data plus mapping gives axes and nothing else: no geometry, no marks.
+ggplot(sessions, aes(x = wrong_turns))
+```
+
+**Step 2. Add a geometry**
+
+```{r}
+#| label: d1-geom
+# + adds a layer. binwidth = 1 because wrong turns are whole numbers.
+ggplot(sessions, aes(x = wrong_turns)) +
+  geom_histogram(binwidth = 1)
+```
+
+**Pause here.** Ask: this is correct. Why does it not answer "did Build B help"?
+
+**Step 3. Map a group, and watch it mislead**
+
+```{r}
+#| label: d1-fill
+# fill = build inside aes() is a MAPPING: colour follows the data, legend appears.
+# But histograms stack by default, so Build A floats on top of Build B.
+ggplot(sessions, aes(x = wrong_turns, fill = build)) +
+  geom_histogram(binwidth = 1)
+```
+
+**Step 4. Facet instead, and label it for a reader**
+
+```{r}
+#| label: d1-facet
+#| fig-height: 5
+# One panel per build, stacked so the x axes line up.
+# fill = "grey60" OUTSIDE aes() is SETTING: fixed colour, no legend needed.
+ggplot(sessions, aes(x = wrong_turns)) +
+  geom_histogram(binwidth = 1, fill = "grey60", colour = "white") +
+  facet_wrap(~ build, ncol = 1) +
+  labs(title = "Wrong turns per session, by build",
+       x = "Wrong turns", y = "Sessions")
+```
+
+**Pause here.** Ask: Build B is lower. What else is different about its shape?
+
+**Step 5. The mapping bug, on purpose**
+
+```{r}
+#| label: d1-bug
+# "blue" inside aes() is treated as data: salmon points, and a legend saying "blue".
+ggplot(sessions, aes(x = awareness, y = score)) +
+  geom_point(aes(colour = "blue"))
+```

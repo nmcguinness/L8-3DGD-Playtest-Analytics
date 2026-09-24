@@ -1,0 +1,17 @@
+{
+  "hash": "875dbff1eee9a178c5f26898449af958",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Week 3 Demo\"\nsubtitle: \"Building figures and reporting, live\"\n---\n\n> The lecturer's script for the two 15-minute demo slots in Week 3. Every chunk\n> runs and shows its output. Step through it top to bottom; the bold headings are\n> the places to pause. `ggplot2` from here on.\n\n---\n\n## Demo 1 — A figure, one layer at a time\n\n**Step 1. Data and mapping, no geometry**\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(readr)\nlibrary(dplyr)\nlibrary(ggplot2)\n\nsessions <- read_csv(\"data/tidebreak_sessions.csv\", show_col_types = FALSE)\n\n# Data plus mapping gives axes and nothing else: no geometry, no marks.\nggplot(sessions, aes(x = wrong_turns))\n```\n\n::: {.cell-output-display}\n![](week-3_files/figure-html/d1-empty-1.png){width=768}\n:::\n:::\n\n\n**Step 2. Add a geometry**\n\n\n::: {.cell}\n\n```{.r .cell-code}\n# + adds a layer. binwidth = 1 because wrong turns are whole numbers.\nggplot(sessions, aes(x = wrong_turns)) +\n  geom_histogram(binwidth = 1)\n```\n\n::: {.cell-output-display}\n![](week-3_files/figure-html/d1-geom-1.png){width=768}\n:::\n:::\n\n\n**Pause here.** Ask: this is correct. Why does it not answer \"did Build B help\"?\n\n**Step 3. Map a group, and watch it mislead**\n\n\n::: {.cell}\n\n```{.r .cell-code}\n# fill = build inside aes() is a MAPPING: colour follows the data, legend appears.\n# But histograms stack by default, so Build A floats on top of Build B.\nggplot(sessions, aes(x = wrong_turns, fill = build)) +\n  geom_histogram(binwidth = 1)\n```\n\n::: {.cell-output-display}\n![](week-3_files/figure-html/d1-fill-1.png){width=768}\n:::\n:::\n\n\n**Step 4. Facet instead, and label it for a reader**\n\n\n::: {.cell}\n\n```{.r .cell-code}\n# One panel per build, stacked so the x axes line up.\n# fill = \"grey60\" OUTSIDE aes() is SETTING: fixed colour, no legend needed.\nggplot(sessions, aes(x = wrong_turns)) +\n  geom_histogram(binwidth = 1, fill = \"grey60\", colour = \"white\") +\n  facet_wrap(~ build, ncol = 1) +\n  labs(title = \"Wrong turns per session, by build\",\n       x = \"Wrong turns\", y = \"Sessions\")\n```\n\n::: {.cell-output-display}\n![](week-3_files/figure-html/d1-facet-1.png){width=768}\n:::\n:::\n\n\n**Pause here.** Ask: Build B is lower. What else is different about its shape?\n\n**Step 5. The mapping bug, on purpose**\n\n\n::: {.cell}\n\n```{.r .cell-code}\n# \"blue\" inside aes() is treated as data: salmon points, and a legend saying \"blue\".\nggplot(sessions, aes(x = awareness, y = score)) +\n  geom_point(aes(colour = \"blue\"))\n```\n\n::: {.cell-output-display}\n![](week-3_files/figure-html/d1-bug-1.png){width=768}\n:::\n:::\n\n",
+    "supporting": [
+      "week-3_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

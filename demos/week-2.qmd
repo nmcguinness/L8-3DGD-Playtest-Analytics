@@ -1,81 +1,123 @@
 ---
 title: "Week 2 Demo"
-subtitle: "Building figures and comparing builds, live"
+subtitle: "Cleaning, the six verbs and comparing builds, live"
 ---
 
 > The lecturer's script for the two 15-minute demo slots in Week 2. Every chunk
 > runs and shows its output. Step through it top to bottom; the bold headings are
-> the places to pause. `ggplot2` from here on.
+> the places to pause. Base R plotting only this week.
 
 ---
 
-## Demo 1 — A figure, one layer at a time
+## Demo 1 — Cleaning is analysis
 
-**Step 1. Data and mapping, no geometry**
+**Step 1. Read the export as delivered**
 
 ```{r}
-#| label: d1-empty
+#| label: d1-read
 library(readr)
 library(dplyr)
-library(ggplot2)
 
-sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
-
-# Data plus mapping gives axes and nothing else: no geometry, no marks.
-ggplot(sessions, aes(x = wrong_turns))
+# trim_ws = FALSE: see the stray spaces Excel would see. read_csv hides them.
+raw <- read_csv("data/tidebreak_sessions_raw.csv",
+                trim_ws = FALSE, show_col_types = FALSE)
+nrow(raw)   # 120 sessions were played
 ```
 
-**Step 2. Add a geometry**
+**Step 2. Rows exported twice**
 
 ```{r}
-#| label: d1-geom
-# + adds a layer. binwidth = 1 because wrong turns are whole numbers.
-ggplot(sessions, aes(x = wrong_turns)) +
-  geom_histogram(binwidth = 1)
+#| label: d1-dupes
+sum(duplicated(raw))             # rows repeating every column
+sum(duplicated(raw$session_id))  # rows repeating the key: same count, so all exact
+
+clean <- raw[!duplicated(raw), ] # keep the first copy of each
+nrow(clean)
 ```
 
-**Pause here.** Ask: this is correct. Why does it not answer "did Build B help"?
-
-**Step 3. Map a group, and watch it mislead**
+**Step 3. Labels that should match**
 
 ```{r}
-#| label: d1-fill
-# fill = build inside aes() is a MAPPING: colour follows the data, legend appears.
-# But histograms stack by default, so Build A floats on top of Build B.
-ggplot(sessions, aes(x = wrong_turns, fill = build)) +
-  geom_histogram(binwidth = 1)
+#| label: d1-labels
+table(clean$cohort)   # spaces and capitals make extra "cohorts"
+
+clean$cohort <- tolower(trimws(clean$cohort))
+table(clean$cohort)   # always check the fix with table()
 ```
 
-**Step 4. Facet instead, and label it for a reader**
+**Step 4. Where the gaps are**
 
 ```{r}
-#| label: d1-facet
-#| fig-height: 5
-# One panel per build, stacked so the x axes line up.
-# fill = "grey60" OUTSIDE aes() is SETTING: fixed colour, no legend needed.
-ggplot(sessions, aes(x = wrong_turns)) +
-  geom_histogram(binwidth = 1, fill = "grey60", colour = "white") +
-  facet_wrap(~ build, ncol = 1) +
-  labs(title = "Wrong turns per session, by build",
-       x = "Wrong turns", y = "Sessions")
+#| label: d1-gaps
+na_counts <- colSums(is.na(clean))
+na_counts[na_counts > 0]
+
+# Split the gaps by something that might explain them.
+table(build = clean$build, quit = clean$quit_reason,
+      missing = is.na(clean$session_minutes))["A", , ]
 ```
 
-**Pause here.** Ask: Build B is lower. What else is different about its shape?
+**Pause here.** Ask: every blank session length is a Build A frustration quit.
+Noise, or a finding?
 
-**Step 5. The mapping bug, on purpose**
+**Step 5. The one-line fix that removes the finding**
 
 ```{r}
-#| label: d1-bug
-# "blue" inside aes() is treated as data: salmon points, and a legend saying "blue".
-ggplot(sessions, aes(x = awareness, y = score)) +
-  geom_point(aes(colour = "blue"))
+#| label: d1-complete
+kept <- clean[complete.cases(clean), ]   # "just drop the NAs"
+nrow(kept)
+
+table(clean$build[clean$quit_reason == "Frustrated"])  # before
+table(kept$build[kept$quit_reason == "Frustrated"])    # after
 ```
+
+**Pause here.** Ask: nothing warned us. What goes in the cleaning log?
+
+**Step 6. The six verbs, read as a sentence**
+
+```{r}
+#| label: d1-verbs
+# The pipe passes the left-hand result in as the first argument on the right.
+clean |>
+  filter(build == "A", quit_reason == "Frustrated") |>
+  mutate(logged = !is.na(session_minutes)) |>
+  select(session_id, cohort, session_minutes, logged) |>
+  arrange(session_minutes) |>
+  head(4)
+```
+
+**Step 7. Same question, base R then tidyverse**
+
+```{r}
+#| label: d1-same
+# Split wrong_turns by build, apply mean, combine: split-apply-combine.
+tapply(clean$wrong_turns, clean$build, mean)
+
+clean |>
+  group_by(build) |>
+  summarise(n = n(), mean_wrong = mean(wrong_turns))
+```
+
+**Finish here.** `tapply()` does it in one call. `group_by()` + `summarise()` does
+the same thing in two named steps, and takes a second statistic for one more
+argument.
 
 ---
 
 ## Demo 2 — Is the difference real, and does it matter?
 
-**Step 6. Another playtest, another answer**
+**Step 8. Look before you test**
+
+```{r}
+#| label: d2-look
+# The complete export: same sessions, logging fault fixed.
+sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+
+boxplot(wrong_turns ~ build, data = sessions,
+        main = "Wrong turns by build", ylab = "Wrong turns", col = "grey85")
+```
+
+**Step 9. Another playtest, another answer**
 
 ```{r}
 #| label: d2-resample
@@ -90,7 +132,7 @@ replicate(5, {
 
 **Pause here.** Ask: same builds, five answers. Which one is "the" difference?
 
-**Step 7. The t-test: size, interval, p-value**
+**Step 10. The t-test: size, interval, p-value**
 
 ```{r}
 #| label: d2-ttest
@@ -102,7 +144,7 @@ result$conf.int  # read this first: how big could the difference plausibly be?
 result$p.value   # then this: could a gap this big be chance alone?
 ```
 
-**Step 8. Same players, both builds**
+**Step 11. Same players, both builds**
 
 ```{r}
 #| label: d2-paired
@@ -115,7 +157,7 @@ t.test(paired$wrong_turns_a, paired$wrong_turns_b, paired = TRUE)$conf.int
 t.test(paired$wrong_turns_a, paired$wrong_turns_b)$conf.int
 ```
 
-**Step 9. Significant is not the same as important**
+**Step 12. Significant is not the same as important**
 
 ```{r}
 #| label: d2-difficulty
