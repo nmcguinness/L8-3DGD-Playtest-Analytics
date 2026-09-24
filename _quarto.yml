@@ -36,6 +36,7 @@ website:
           - notes/why-measure.qmd
           - notes/describing-what-you-have.qmd
           - notes/distributions-and-variation.qmd
+          - notes/cleaning-and-transforming.qmd
           - notes/visualising-with-ggplot2.qmd
           - notes/comparing-conditions.qmd
       - section: "Labs"
