@@ -1,0 +1,508 @@
+---
+title: "ggplot2 Reference"
+subtitle: "Structure, geometries, aesthetics and the errors you will meet"
+---
+
+> A lookup sheet, not a tutorial. [Visualising with ggplot2](../notes/visualising-with-ggplot2.qmd)
+> teaches the ideas; this page is for finding an argument name or a fix quickly
+> during a lab. Every example draws *Tidebreak* data and runs when the site is
+> built.
+
+The later sections, **Polishing a figure** and **Towards the showcase**, go
+beyond the syllabus. They are here for when you want your own figures to look like
+the ones on the [showcase](../index.qmd) page.
+
+```{r}
+#| label: setup
+#| include: false
+library(readr)
+library(ggplot2)
+sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+```
+
+---
+
+## The structure
+
+Every figure has the same shape. Only the first two lines are required.
+
+```r
+ggplot(data, aes(x = ..., y = ..., colour = ...)) +   # data and mapping
+  geom_...() +                                        # geometry
+  facet_wrap(~ ...) +                                 # optional: one panel per group
+  labs(title = "...", x = "...", y = "...")           # optional: labels
+```
+
+| Part | Job | Written as |
+| :- | :- | :- |
+| **Data** | The data frame, one row per observation | First argument to `ggplot()` |
+| **Mapping** | Which column drives which visual property | `aes(x = ..., y = ...)` |
+| **Geometry** | The kind of mark drawn | `geom_histogram()`, `geom_point()`, ... |
+| **Facets** | Split into small panels by a group | `facet_wrap(~ build)` |
+| **Labels** | Title, axis and legend text | `labs(...)` |
+
+Pieces are joined with `+`, and the `+` goes at the **end** of a line, never the
+start of the next.
+
+---
+
+## Which geometry
+
+| Geometry | Mapping it needs | Shows | Base R equivalent |
+| :- | :- | :- | :- |
+| `geom_histogram()` | `x` numeric | Shape of one numeric variable | `hist()` |
+| `geom_bar()` | `x` categorical | Count of each category | `barplot(table())` |
+| `geom_boxplot()` | `x` categorical, `y` numeric | A numeric variable compared across groups | `boxplot(y ~ x)` |
+| `geom_point()` | `x` and `y` numeric | Two numeric variables together | `plot(x, y)` |
+| `geom_smooth()` | `x` and `y` numeric | The trend through a scatterplot | `abline(lm(y ~ x))` |
+
+---
+
+## Geometry examples
+
+### `geom_histogram()`
+
+```{r}
+#| label: ex-histogram
+#| fig-height: 3
+ggplot(sessions, aes(x = score)) +
+  geom_histogram(binwidth = 100, fill = "grey60", colour = "white")
+```
+
+Set `binwidth` in the units of the variable. Without it, `ggplot2` picks 30 bins
+and prints a message telling you to choose.
+
+### `geom_bar()`
+
+```{r}
+#| label: ex-bar
+#| fig-height: 3
+ggplot(sessions, aes(x = quit_reason, fill = build)) +
+  geom_bar(position = "dodge")
+```
+
+Give `geom_bar()` the raw column; it counts for you. `position = "dodge"` puts
+groups side by side instead of stacking them.
+
+### `geom_boxplot()`
+
+```{r}
+#| label: ex-boxplot
+#| fig-height: 3
+ggplot(sessions, aes(x = build, y = wrong_turns)) +
+  geom_boxplot(fill = "grey85")
+```
+
+Group on `x`, numeric on `y`. Swap them to draw the boxes horizontally.
+
+### `geom_point()`
+
+```{r}
+#| label: ex-point
+#| fig-height: 3
+ggplot(sessions, aes(x = awareness, y = score, colour = cohort)) +
+  geom_point()
+```
+
+Add `alpha = 0.5` to `geom_point()` when points overlap, so dense areas show
+darker.
+
+### `geom_smooth()`
+
+```{r}
+#| label: ex-smooth
+#| fig-height: 3
+ggplot(sessions, aes(x = awareness, y = score)) +
+  geom_point(colour = "grey50") +
+  geom_smooth(method = "lm")
+```
+
+`method = "lm"` draws a straight line. The grey band shows how uncertain the line
+is; `se = FALSE` removes it. Without `method`, you get a curve that follows every
+wobble in the data.
+
+---
+
+## Aesthetics
+
+| Aesthetic | Controls | Map it to | Example |
+| :- | :- | :- | :- |
+| `x`, `y` | Position | Any variable | `aes(x = build, y = score)` |
+| `colour` | Points, lines, and the outline of areas | A group, or a numeric for a gradient | `aes(colour = cohort)` |
+| `fill` | The inside of bars, boxes and bins | A group | `aes(fill = build)` |
+| `group` | Which rows belong together, without changing colour | A group | `aes(group = player_id)` |
+| `alpha` | Transparency, 0 to 1 | Usually set, not mapped | `geom_point(alpha = 0.5)` |
+
+### Mapping versus setting
+
+| | Where | Result |
+| :- | :- | :- |
+| **Mapped** | Inside `aes()`: `aes(fill = build)` | Changes with the data; adds a legend |
+| **Set** | Outside `aes()`: `geom_bar(fill = "grey60")` | Fixed for every mark; no legend |
+
+---
+
+## Grouping
+
+| Method | Code | Makes it easy to |
+| :- | :- | :- |
+| Colour | `aes(colour = build)` | Compare groups at each x value, for points and lines |
+| Fill | `aes(fill = build)` | Compare groups at each x value, for bars and boxes |
+| Facets | `facet_wrap(~ build)` | Compare the whole shape of each group |
+
+A grouping aesthetic in `ggplot()` applies to every layer, so each group gets its
+own trend line:
+
+```{r}
+#| label: ex-group-smooth
+#| fig-height: 3
+ggplot(sessions, aes(x = awareness, y = score, colour = build)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+---
+
+## Labels and titles
+
+| Argument to `labs()` | Sets |
+| :- | :- |
+| `title =` | The title above the plot |
+| `subtitle =` | A second line under the title |
+| `x =`, `y =` | Axis labels. `x = NULL` removes one |
+| `colour =`, `fill =` | The legend title for that aesthetic |
+| `caption =` | Small text under the plot, such as the data source or n |
+
+```{r}
+#| label: ex-labs
+#| fig-height: 3
+ggplot(sessions, aes(x = build, y = wrong_turns)) +
+  geom_boxplot(fill = "grey85") +
+  labs(title = "Wrong turns per session, by build",
+       subtitle = "Build B added signposting",
+       x = "Build", y = "Wrong turns",
+       caption = paste(nrow(sessions), "sessions"))
+```
+
+---
+
+## Faceting
+
+| Code | Result |
+| :- | :- |
+| `facet_wrap(~ build)` | One panel per build, side by side |
+| `facet_wrap(~ build, ncol = 1)` | Panels stacked, so x axes line up |
+| `facet_grid(cohort ~ build)` | A grid: cohorts down, builds across |
+| `facet_wrap(~ build, scales = "free_y")` | Each panel gets its own y axis. Say so on the figure |
+
+```{r}
+#| label: ex-facet-grid
+#| fig-height: 5
+ggplot(sessions, aes(x = wrong_turns)) +
+  geom_histogram(binwidth = 1, fill = "grey60") +
+  facet_grid(cohort ~ build)
+```
+
+---
+
+## Useful arguments
+
+| Argument | Belongs to | Does |
+| :- | :- | :- |
+| `binwidth = 1` | `geom_histogram()` | Width of each bin, in the variable's units |
+| `position = "dodge"` | `geom_bar()` | Groups side by side, not stacked |
+| `alpha = 0.5` | Any geometry | Half transparent |
+| `method = "lm"` | `geom_smooth()` | Straight trend line |
+| `se = FALSE` | `geom_smooth()` | Removes the uncertainty band |
+| `fill = "grey60"`, `colour = "white"` | Any geometry | Sets a fixed colour |
+
+---
+
+## Polishing a figure
+
+The difference between a correct plot and a figure someone wants to read is mostly
+in these few tools.
+
+| Tool | Code | Use it to |
+| :- | :- | :- |
+| A cleaner theme | `theme_minimal()` | Drop the grey background |
+| Tweak one theme element | `theme(legend.position = "none")`, `theme(panel.grid.minor = element_blank())` | Remove anything the reader does not need |
+| Your own colours | `scale_fill_manual(values = c(A = "#eb6834", B = "#2a78d6"))` | Make one colour mean one thing in every figure |
+| Number formatting | `scale_y_continuous(labels = scales::comma)` | Print 1,500 rather than 1500 |
+| Your own axis labels | `scale_y_continuous(labels = function(y) paste0(y, "%"))` | Add units to tick labels |
+| Order categories by value | `aes(x = reorder(archetype, score, FUN = median))` | Sort groups by what matters, not alphabetically |
+| A shaded region | `annotate("rect", xmin = 11, xmax = 13, ymin = 0, ymax = 100, fill = "grey90")` | Point the reader at the part that matters |
+| A note on the plot | `annotate("text", x = 14, y = 20, label = "...")` | Explain it where the reader is looking |
+| A reference line | `geom_hline(yintercept = 1000 / 60, linetype = "dashed")` | Show a budget, a target or zero |
+| Equal x and y scales | `coord_fixed()` | Maps and square grids |
+| A title that states the finding | `labs(title = "Build A loses players at minute 11")` | Tell the reader what to see, not what was plotted |
+
+**Define your palette and theme once.** Every figure in a report should use the
+same colour for the same thing. Write them once at the top of the document and
+reuse them:
+
+```{r}
+#| label: house-style
+build_pal <- c(A = "#eb6834", B = "#2a78d6")
+arch_pal  <- c(Scout = "#2a78d6", Sentinel = "#eb6834",
+               Engineer = "#1baf7a", Duelist = "#eda100")
+
+theme_tidebreak <- function() {
+  theme_minimal(base_size = 12) +
+    theme(plot.title       = element_text(face = "bold"),
+          panel.grid.minor = element_blank(),
+          legend.position  = "none")
+}
+```
+
+`theme_tidebreak()` is then added to any figure like a built-in theme, and a
+later `theme(...)` can still override one part of it.
+
+---
+
+## Towards the showcase
+
+Each recipe below is a simpler, static version of a figure from the
+[showcase](../index.qmd), using only the tools on this page. Each one adds one or
+two ideas to what came before.
+
+```{r}
+#| label: recipe-data
+sessions  <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+frames    <- read_csv("data/tidebreak_frame_times.csv", show_col_types = FALSE)
+positions <- read_csv("data/tidebreak_positions.csv", show_col_types = FALSE)
+level     <- read_csv("data/tidebreak_level.csv", show_col_types = FALSE)
+```
+
+```{r}
+#| label: recipe-guards
+#| include: false
+# The recipe titles state findings; these checks stop them going stale.
+arch_iqr <- tapply(sessions$score, sessions$archetype, IQR)
+score_r  <- cor(sessions[c("awareness", "shots_fired")], sessions$score)[, 1]
+still    <- function(b, m) mean(sessions$session_minutes[sessions$build == b] >= m)
+slow     <- frames[frames$ms > 1000 / 30, ]
+stopifnot(names(which.max(arch_iqr)) == "Sentinel",
+          score_r[["awareness"]] > 0.5, abs(score_r[["shots_fired"]]) < 0.1,
+          still("A", 11) - still("A", 13) > still("B", 11) - still("B", 13),
+          all(slow$build == "B"), all(slow$zone == "Corridor"))
+```
+
+### Layered distributions ([View 2](../index.qmd#view-2-distributions-not-averages))
+
+```{r}
+#| label: recipe-violin
+ggplot(sessions, aes(x = reorder(archetype, score, FUN = median),
+                     y = score, fill = archetype)) +
+  geom_violin(colour = NA, alpha = 0.8) +
+  geom_boxplot(width = 0.12, fill = "white", outlier.shape = NA) +
+  scale_fill_manual(values = arch_pal) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(title = "Sentinel either anchors the round or collapses",
+       x = NULL, y = "Score") +
+  theme_tidebreak()
+```
+
+**New here:** two geometries on one mapping. `geom_violin()` draws the full shape,
+including Sentinel's two humps; the thin boxplot on top gives the median and
+quartiles. `outlier.shape = NA` stops the boxplot repeating points the violin
+already shows.
+
+### A retention curve ([View 5](../index.qmd#view-5-when-people-stop-playing))
+
+```{r}
+#| label: recipe-retention
+# For every quarter-minute, the percentage of each build's players still playing.
+retention <- expand.grid(minute = seq(0, 33, by = 0.25), build = c("A", "B"))
+retention$pct <- mapply(
+  function(m, b) 100 * mean(sessions$session_minutes[sessions$build == b] >= m),
+  retention$minute, retention$build)
+
+ggplot(retention, aes(x = minute, y = pct, colour = build)) +
+  annotate("rect", xmin = 11, xmax = 13, ymin = 0, ymax = 100, fill = "grey90") +
+  geom_step(linewidth = 1) +
+  scale_colour_manual(values = build_pal) +
+  scale_y_continuous(limits = c(0, 100), labels = function(y) paste0(y, "%")) +
+  labs(title = "Build A loses players between minutes 11 and 13",
+       x = "Minute", y = "Still playing", colour = "Build") +
+  theme_tidebreak() +
+  theme(legend.position = "top")
+```
+
+**New here:** building the data the figure needs before drawing it, then
+`geom_step()` for a quantity that only changes when someone leaves. The shaded
+`annotate()` layer is drawn first so the lines sit on top of it.
+
+### A correlation heatmap ([View 4](../index.qmd#view-4-what-actually-drives-score))
+
+```{r}
+#| label: recipe-heatmap
+#| fig-height: 5
+vars <- c("accuracy", "mobility", "survivability", "objective_control",
+          "support", "awareness", "shots_fired", "score")
+
+cm_long <- as.data.frame(as.table(cor(sessions[vars])))
+names(cm_long) <- c("a", "b", "r")
+
+ggplot(cm_long, aes(x = a, y = b, fill = r)) +
+  geom_tile(colour = "white") +
+  geom_text(aes(label = sprintf("%.2f", r)), size = 3) +
+  scale_fill_gradient2(low = "#e34948", mid = "white", high = "#2a78d6",
+                       limits = c(-1, 1)) +
+  coord_fixed() +
+  labs(title = "Awareness moves with score; shots fired does not",
+       x = NULL, y = NULL) +
+  theme_tidebreak() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "right")
+```
+
+**New here:** reshaping a matrix into one row per cell with `as.table()`, then
+`geom_tile()` with the value mapped to `fill`. `scale_fill_gradient2()` gives a
+diverging scale with white at zero, so the colour says the direction and the
+depth says the strength. Every value appears twice, mirrored across the diagonal;
+the showcase version filters to one triangle and orders the rows so related
+measures sit together.
+
+### A trace with a budget line ([View 7](../index.qmd#view-7-the-frame-rate-counter-is-lying-to-you))
+
+```{r}
+#| label: recipe-trace
+#| fig-height: 4
+corridor <- frames[frames$zone == "Corridor" & frames$frame <= 300, ]
+
+ggplot(corridor, aes(x = frame, y = ms, colour = build)) +
+  geom_hline(yintercept = 1000 / 60, linetype = "dashed") +
+  geom_line() +
+  facet_wrap(~ build, ncol = 1, labeller = label_both) +
+  scale_colour_manual(values = build_pal) +
+  labs(title = "Same average frame rate; one build hitches",
+       subtitle = "Corridor zone. Dashed line: the 60 FPS budget (16.7 ms).",
+       x = "Frame", y = "Frame time (ms)") +
+  theme_tidebreak()
+```
+
+**New here:** `geom_line()` for a sequence, and a reference line that turns "high"
+into "over budget". `labeller = label_both` writes "build: A" on each panel
+instead of a bare "A".
+
+### A level heat map ([View 8](../index.qmd#view-8-where-players-actually-stand))
+
+```{r}
+#| label: recipe-heatmap-level
+#| fig-height: 5
+deaths <- positions[positions$event == "death", ]
+walls  <- level[level$kind != "elevated", ]
+raised <- level[level$kind == "elevated", ]
+
+ggplot() +
+  geom_bin_2d(data = positions, aes(x = x, y = y), binwidth = 2) +
+  geom_rect(data = walls, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+            fill = "grey20") +
+  geom_rect(data = raised, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+            fill = "grey40", alpha = 0.4) +
+  geom_point(data = deaths, aes(x = x, y = y),
+             shape = 4, size = 3, stroke = 1.2, colour = "#e34948") +
+  scale_fill_gradient(low = "#cde2fb", high = "#104281", name = "Seconds") +
+  coord_fixed(xlim = c(0, 60), ylim = c(0, 40), expand = FALSE) +
+  labs(title = "Where players spend their time, and where they die",
+       subtitle = "Crosses mark deaths. The translucent block is the walkable gantry.",
+       x = NULL, y = NULL) +
+  theme_tidebreak() +
+  theme(legend.position = "right")
+```
+
+**New here:** several data frames in one figure. Leave the data out of
+`ggplot()` and give each layer its own: positions for the heat, the level for the
+walls, deaths for the crosses. `geom_bin_2d()` counts the seconds spent in each
+2 m square, and `coord_fixed()` keeps a metre the same length in both directions.
+The showcase version animates the players with `plotly`; this is the static core
+of it.
+
+### Routes as small multiples ([View 8](../index.qmd#view-8-where-players-actually-stand))
+
+```{r}
+#| label: recipe-routes
+#| fig-height: 3.4
+ggplot() +
+  geom_rect(data = walls, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+            fill = "grey20") +
+  geom_rect(data = raised, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+            fill = "grey40", alpha = 0.4) +
+  geom_path(data = positions, aes(x = x, y = y, colour = t)) +
+  facet_wrap(~ player_id, nrow = 2) +
+  scale_colour_gradient(low = "#cde2fb", high = "#104281", name = "Second") +
+  coord_fixed(xlim = c(0, 60), ylim = c(0, 40), expand = FALSE) +
+  labs(title = "Eight routes through the same match", x = NULL, y = NULL) +
+  theme_tidebreak() +
+  theme(axis.text = element_blank(), legend.position = "right")
+```
+
+**New here:** `geom_path()` joins points in the order they occur, where
+`geom_line()` would join them in order of `x`. Mapping time to `colour` shows the
+direction of travel without animation, and faceting by player turns one tangle
+into eight readable routes.
+
+---
+
+## Building a figure by pointing: esquisse
+
+[esquisse](https://dreamrs.github.io/esquisse/) is a package that lets you build a
+`ggplot2` figure by dragging columns onto x, y, colour, fill and facet, and then
+shows you the code that draws it. It is a good way to try several mappings quickly,
+and to learn what code produces what picture.
+
+```r
+install.packages("esquisse")    # once
+
+library(esquisse)
+esquisser(sessions)                         # opens the builder on your data
+esquisser(sessions, viewer = "browser")     # force it into a web browser
+```
+
+Run it from the R console, not inside a Quarto chunk: it is an interactive tool
+for you to click in, not code for a report to run. In RStudio it opens in a dialog and also
+appears in the **Addins** menu as *'ggplot2' builder*. Outside RStudio, including
+the R terminal in VS Code, it opens in your web browser.
+
+**Use it to explore, then keep the code.** esquisse is for finding the figure. The
+figure in your report is the code it generates, pasted into a chunk, with the
+labels, palette and title from this page added by hand. A figure that only exists
+as clicks cannot be re-run when the data changes, and cannot be checked by anyone
+else.
+
+---
+
+## Common errors
+
+### Messages R prints
+
+| Message | What it means | Fix |
+| :- | :- | :- |
+| `could not find function "ggplot"` | The package is not loaded | `library(ggplot2)` |
+| ``Cannot use `+` with a single argument`` | A line starts with `+` | Move the `+` to the end of the line above |
+| ``mapping must be created by `aes()` `` | Layers joined with a pipe, `%>%`, instead of `+` | Join `ggplot2` layers with `+` |
+| `object 'build' not found` | A column name used outside `aes()` | Put it inside: `aes(colour = build)` |
+| `object 'Score' not found` | Misspelled or wrongly capitalised column | Check with `names(sessions)` |
+| ``stat_bin() requires a continuous x aesthetic`` | A histogram of a categorical column | Use `geom_bar()` |
+| ``stat_count() must only have an x or y aesthetic`` | `geom_bar()` given both `x` and `y` | Drop `y`, or use a boxplot to show a numeric by group |
+| ``stat_bin() using `bins = 30` `` | Not an error: a reminder | Set `binwidth` |
+
+### Mistakes that give no error
+
+| Mistake | What you see | Fix |
+| :- | :- | :- |
+| **Mapping instead of setting** | `geom_point(aes(colour = "blue"))` draws salmon points and a legend reading "blue" | Fixed colours go outside `aes()` |
+| **Wrong variable type** | `aes(colour = difficulty)` on a 1–7 rating draws a gradient, not seven groups | `aes(colour = factor(difficulty))` |
+| **Inappropriate plot choice** | A bar per group showing only its average hides the spread and any outliers ([rule 7](../notes/ten-rules.qmd)) | A boxplot, or a faceted histogram |
+| **Stacking groups you meant to compare** | Only the bottom group starts at zero, so the others cannot be read | `position = "dodge"`, or facet |
+| **Overusing colour** | Every group coloured "for consistency" on a chart that is not about groups | Set one colour; map colour only when it carries information |
+| **Misleading axes** | A bar chart with the y axis cut off above zero makes small differences look large. Free facet scales make different panels look alike | Bars start at zero. Keep facet scales shared unless stated on the figure |
+| **Default labels** | `session_minutes` on an axis | `labs(x = "Minutes played")` |
+
+---
+
+See also: [Visualising with ggplot2](../notes/visualising-with-ggplot2.qmd),
+[Ten Rules](../notes/ten-rules.qmd),
+[R and Quarto Reference](r-quarto-reference.qmd),
+[Statistics Reference](reference-statistics.qmd).

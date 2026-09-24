@@ -36,17 +36,22 @@ website:
           - notes/why-measure.qmd
           - notes/describing-what-you-have.qmd
           - notes/distributions-and-variation.qmd
+          - notes/visualising-with-ggplot2.qmd
+          - notes/comparing-conditions.qmd
       - section: "Labs"
         contents:
           - labs/setting-up.qmd
           - labs/reading-data.qmd
+          - labs/comparing-builds.qmd
       - section: "Reference"
         contents:
           - reference/reference-statistics.qmd
           - reference/r-quarto-reference.qmd
+          - reference/reference-ggplot2.qmd
       - section: "Demos"
         contents:
           - demos/week-1.qmd
+          - demos/week-2.qmd
   page-footer:
     center: "COMP I8015 · 3D Game Development · Dundalk Institute of Technology"
 

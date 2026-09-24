@@ -100,11 +100,11 @@ find your R installation and add it:
 Get-ChildItem "C:\Program Files\R"
 ```
 
-Take the folder name it reports — something like `R-4.4.1` — and substitute it
+Take the folder name it reports — something like `R-4.6.0` — and substitute it
 below:
 
 ```powershell
-[Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\R\R-4.4.1\bin", "User")
+[Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\R\R-4.6.0\bin", "User")
 ```
 
 ## Your terminal is holding a stale copy of PATH

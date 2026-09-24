@@ -487,6 +487,172 @@ and the conclusion does not follow from it.
 
 ---
 
+# Extension — Cleaning a raw export
+
+For anyone who finishes the Challenge with time to spare, or as practice at home.
+Allow about 25 minutes.
+
+The `sessions` file you have used all lab has already been cleaned. This section
+hands you the export it was cleaned *from*: `data/tidebreak_sessions_raw.csv`, the
+same sessions before anyone checked them. Nothing in it throws an error. Every
+problem in it quietly changes an answer.
+
+| Function | What it does |
+| :- | :- |
+| `duplicated()` | TRUE for any row that repeats an earlier row |
+| `trimws()` | Strips spaces from the start and end of text |
+| `tolower()` | Converts text to lower case |
+| `is.na()` | TRUE wherever a value is missing |
+| `complete.cases()` | TRUE for each row with no missing value in any column |
+
+```{r}
+#| label: ext-setup
+raw <- read_csv("data/tidebreak_sessions_raw.csv",
+                trim_ws = FALSE, show_col_types = FALSE)
+
+nrow(raw)
+```
+
+`read_csv()` normally strips spaces from the edges of every text value without
+telling you. `trim_ws = FALSE` switches that off so you see the file as it really
+is — the way Excel, a database import or your own C# parser would see it.
+
+## Exercise 13 — Rows exported twice `[Do]`
+
+The raw file has `r nrow(raw)` rows, but only `r nrow(sessions)` sessions were
+played. Count the repeated rows, look at them, and make a copy of the data called
+`clean` without them.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex13
+sum(duplicated(raw))
+raw[duplicated(raw), 1:5]
+
+clean <- raw[!duplicated(raw), ]
+nrow(clean)
+```
+
+`duplicated()` marks the second and later copies of a row, never the first, so
+`!duplicated(raw)` keeps exactly one of each.
+:::
+
+**Write 2 sentences:** name one result from Part B that a duplicated row would
+change, and one that it could not change.
+
+## Exercise 14 — Categories that should match `[Apply]`
+
+Count the values of `cohort` in `clean`. There should be three. Fix the column
+with `trimws()` and `tolower()` so that there are, then count again.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex14
+table(clean$cohort)
+
+clean$cohort <- tolower(trimws(clean$cohort))
+
+table(clean$cohort)
+```
+
+`trimws()` removes the spaces that make `"Novice "` a different value from
+`"Novice"`, and `tolower()` makes `"REGULAR"` and `"regular"` the same word. The
+labels end up in lower case, which does not matter; consistency does.
+:::
+
+**Write 2 sentences:** why is this problem invisible if the only thing you run on
+the data is `summary(clean)`?
+
+## Exercise 15 — Find the gaps `[Do]`
+
+Count the missing values in `deaths`, then in every column at once.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex15
+sum(is.na(clean$deaths))
+
+colSums(is.na(clean))
+```
+
+`is.na()` on a whole data frame gives a TRUE/FALSE table the same shape as the
+data, and `colSums()` counts the TRUEs in each column.
+:::
+
+**Write 1 sentence:** why does `clean$deaths == NA` not find the missing values?
+Exercise 03 has the answer.
+
+## Exercise 16 — Who is missing? `[Apply]`
+
+Count how many rows of `clean` are complete. Then, for the rows that are *not*
+complete, cross-tabulate `build` against `quit_reason`.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex16
+sum(complete.cases(clean))
+
+incomplete <- clean[!complete.cases(clean), ]
+table(incomplete$build, incomplete$quit_reason)
+```
+
+`complete.cases()` gives one TRUE/FALSE per row, so putting `!` in front of it
+selects the rows with at least one gap.
+:::
+
+**Write 2 sentences:** are the missing values scattered at random, or do they have
+a pattern? What does the pattern suggest about why they are missing?
+
+## Exercise 17 — Drop the incomplete rows? `[Decide]`
+
+A teammate suggests starting every analysis with
+`clean <- clean[complete.cases(clean), ]` "so the NAs never cause trouble". You are
+about to compare frustration quits between the two builds. Do you accept the
+suggestion?
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex17
+kept <- clean[complete.cases(clean), ]
+
+all_rows      <- table(clean$build[clean$quit_reason == "Frustrated"])
+complete_only <- table(kept$build[kept$quit_reason == "Frustrated"])
+
+all_rows
+complete_only
+```
+
+**One defensible answer: no.** Keeping every row, Build A has
+`r all_rows[["A"]]` frustration quits against Build B's `r all_rows[["B"]]`. After
+the filter it has `r complete_only[["A"]]` against `r complete_only[["B"]]`. The
+filter removed `r all_rows[["A"]] - complete_only[["A"]]` frustration quits from
+Build A and `r all_rows[["B"]] - complete_only[["B"]]` from Build B, and the
+headline difference between the builds shrank for a reason that has nothing to do
+with the game.
+
+**What makes it defensible.** The missing column is `session_minutes`, which this
+comparison does not use, and a row only needs dropping from an analysis that needs
+the value it is missing. Exercise 16 also showed the gaps are not random: every
+missing session length belongs to a Build A frustration quit, exactly the sessions
+this comparison is about, so dropping them removes evidence, not noise. The gaps
+are themselves a finding — Build A sometimes fails to log session length when a
+player rage-quits, and that is a bug report.
+
+**What would make it indefensible.** Applying the filter, reporting the smaller
+gap, and never checking what the removed rows had in common.
+:::
+
+**Write 3 sentences:** describe one analysis where dropping incomplete rows is the
+right call and one where it is not. What is the question you ask to tell them
+apart?
+
+---
+
 # Appendix — Mini dataset for Part A
 
 If the CSV files are not available, use this in place of `sessions`.

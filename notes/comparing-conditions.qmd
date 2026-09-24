@@ -1,0 +1,639 @@
+---
+title: "Comparing Playtest Conditions"
+subtitle: "Is the difference real, and does it matter?"
+---
+
+> Week 2, second cycle, for everyone, before Part B of Lab 02. It takes the
+> question every A/B playtest ends with, "is Build B better?", and splits it into
+> the two questions it actually contains: would the difference hold up with other
+> players, and is it big enough to act on? The worked example is the one to
+> remember: two results that are both statistically significant, one of which you
+> should act on and one of which you should not.
+
+```{r}
+#| label: setup
+#| include: false
+library(readr)
+library(ggplot2)
+
+sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+paired   <- read_csv("data/tidebreak_paired.csv", show_col_types = FALSE)
+frames   <- read_csv("data/tidebreak_frame_times.csv", show_col_types = FALSE)
+
+p_fmt  <- function(p) if (p < 0.001) "p < 0.001" else paste("p =", round(p, 3))
+ci_fmt <- function(ci, d = 1) paste(round(ci[1], d), "to", round(ci[2], d))
+
+tt_wt   <- t.test(wrong_turns ~ build, data = sessions)
+gap_wt  <- unname(tt_wt$estimate[1] - tt_wt$estimate[2])
+
+tt_diff <- t.test(difficulty ~ build, data = sessions)
+gap_dif <- unname(tt_diff$estimate[2] - tt_diff$estimate[1])
+ci_dif  <- -rev(tt_diff$conf.int)
+tt_dth  <- t.test(deaths ~ build, data = sessions)
+
+tt_enj  <- t.test(enjoyment ~ build, data = sessions)
+
+tt_pair <- t.test(paired$wrong_turns_a, paired$wrong_turns_b, paired = TRUE)
+tt_unp  <- t.test(paired$wrong_turns_a, paired$wrong_turns_b)
+d_pair  <- paired$wrong_turns_a - paired$wrong_turns_b
+
+atrium  <- frames[frames$zone == "Atrium", ]
+tt_atr  <- t.test(ms ~ build, data = atrium)
+gap_atr <- unname(tt_atr$estimate[1] - tt_atr$estimate[2])
+
+per_player <- aggregate(wrong_turns ~ player_id + build, data = sessions, FUN = mean)
+tt_player  <- t.test(wrong_turns ~ build, data = per_player)
+
+n_players <- length(unique(sessions$player_id))
+n_per     <- unique(as.vector(table(sessions$player_id)))
+
+wt_out <- tapply(sessions$wrong_turns, sessions$build,
+                 function(x) length(boxplot.stats(x)$out))
+
+stopifnot(tt_wt$p.value < 0.001, tt_wt$conf.int[1] > 0,
+          tt_diff$p.value < 0.05, gap_dif > 0, gap_dif < 0.5, ci_dif[1] < 0.1,
+          tt_dth$p.value > 0.5,
+          tt_enj$p.value > 0.5, max(abs(tt_enj$conf.int)) < 0.5,
+          tt_pair$p.value < 0.001,
+          diff(tt_pair$conf.int) < diff(tt_unp$conf.int),
+          tt_atr$p.value < 0.001, abs(gap_atr) < 0.5,
+          tt_player$p.value < 0.001,
+          isTRUE(all.equal(unname(diff(rev(tt_player$estimate))), gap_wt)),
+          length(n_per) == 1,
+          all(boxplot.stats(sessions$wrong_turns[sessions$build == "A"])$out <
+                median(sessions$wrong_turns[sessions$build == "A"])))
+```
+
+---
+
+## Learning Outcomes
+
+By the end of these notes you can:
+
+- explain why a second group of players would give a different result, and why
+  that matters before you act on any difference;
+- report an observed difference with its confidence interval, and read the
+  interval as a range of plausible sizes;
+- state what a p-value is, and what it is not;
+- tell statistical significance apart from practical significance, with a
+  *Tidebreak* example of each;
+- choose between an independent-samples and a paired t-test from how the playtest
+  was designed;
+- check the assumptions of a t-test at a practical level, including with a Q-Q
+  plot;
+- work through **visualise → describe → estimate difference → confidence interval
+  → statistical test → interpret** in that order.
+
+---
+
+## Why This Matters for Playtesting
+
+Every build comparison ends with a difference. Build B's players took fewer wrong
+turns, or scored more, or quit less. The difference is always there, because two
+groups of people never produce identical numbers. The question is never "is there
+a difference?" but **"is this difference telling me something about the build, or
+only about the players who happened to turn up?"**
+
+**A playtest is a sample.** The `r n_players` people who played *Tidebreak* stand
+in for everyone who will play it after launch. Run the test again next week with
+different players and every number would move. Before you rebuild a level on the
+strength of a difference, you need to know whether that difference would survive
+a second playtest.
+
+**And a real difference can still be worthless.** With enough data, a change too
+small for any player to notice becomes statistically detectable. A result can be
+certain and irrelevant at the same time. Deciding whether it matters is a design
+judgement, and no test makes it for you.
+
+---
+
+## The Workflow
+
+Comparing two conditions always follows the same six steps, in this order:
+
+> **visualise → describe → estimate difference → confidence interval → statistical
+> test → interpret**
+
+| Step | Question | Tool |
+| :- | :- | :- |
+| Visualise | What do the two distributions look like? | Side-by-side boxplots or faceted histograms |
+| Describe | Where is each centre, how wide is each spread? | Medians, means, IQRs, standard deviations |
+| Estimate difference | How far apart are the groups in this sample? | Difference in means |
+| Confidence interval | How far apart could they plausibly be, for players in general? | `t.test()` |
+| Statistical test | Could a gap this size be chance alone? | `t.test()` |
+| Interpret | Is it real, is it big enough, and what do we do? | Judgement |
+
+**The test comes fifth, not first.** A p-value with no picture and no size
+attached cannot be interpreted. If the boxplots show a gap nobody would care
+about, no p-value changes that ([rule 7](ten-rules.qmd)).
+
+---
+
+## Sampling Variability
+
+**Sampling variability** is the fact that a different sample gives different
+numbers, even when nothing about the game has changed. Some of the difference
+between two groups is the build. Some of it is which players ended up in which
+group: a few more veterans in one, a bad night's sleep in the other.
+
+```{r}
+#| label: sampling-variability
+#| include: false
+set.seed(2026)
+resampled <- replicate(6, {
+  a <- sample(sessions$wrong_turns[sessions$build == "A"], 15)
+  b <- sample(sessions$wrong_turns[sessions$build == "B"], 15)
+  mean(a) - mean(b)
+})
+```
+
+To see it, pretend the *Tidebreak* team could only afford 15 sessions per build,
+and draw six such playtests at random from the sessions they actually have. The
+difference in mean wrong turns comes out as
+`r paste(sprintf("%.1f", resampled), collapse = ", ")`. Same builds, same kind of
+player, six different answers.
+
+**Smaller samples swing further.** The fewer players you test, the more one
+unusual player moves the result ([rule 8](ten-rules.qmd)). The statistics in the
+rest of these notes exist to put a size on that swing.
+
+---
+
+## Estimates and Confidence Intervals
+
+The **observed difference** is the gap between the groups in your sample: Build
+A's mean minus Build B's. It is your best single guess at the true difference, and
+it is almost certainly not exactly right.
+
+A **confidence interval** is a range of plausible values for the true difference,
+given the sample. A 95% confidence interval is built by a method that captures the
+true value in 95% of the playtests you could have run.
+
+**Read the interval as a range of sizes.** "Build B's players took
+`r ci_fmt(tt_wt$conf.int)` fewer wrong turns" tells a designer both that the effect
+is real and how big it might be. An interval that runs from almost nothing to something large says the
+direction is clear and the size is not.
+
+**Width is information.** A narrow interval means the sample pins the difference
+down. A wide one means more players are needed before the size can be trusted.
+More players, or less variation between them, narrows it.
+
+**If the interval includes zero, "no difference" is still plausible.** That is the
+link between confidence intervals and the test that follows.
+
+---
+
+## Hypothesis Testing
+
+A hypothesis test asks one narrow question: if the builds really made no
+difference, how surprising would this data be?
+
+The **null hypothesis** is the claim of no difference: Build A and Build B produce
+the same mean number of wrong turns. The **alternative hypothesis** is that they
+do not. The test looks for evidence against the null.
+
+The **p-value** is the probability of seeing a difference at least as large as the
+one observed, *if the null hypothesis were true*. A small p-value means the data
+would be surprising in a world where the builds did not differ.
+
+::: {.callout-important}
+**A p-value is not the probability that the null hypothesis is true.**
+
+It is calculated by *assuming* the null is true, so it cannot also measure how
+likely the null is. p = 0.03 does not mean "a 3% chance the builds are the same".
+It means "if the builds were the same, a gap this large would turn up about 3% of
+the time".
+:::
+
+**Statistical significance** means the p-value fell below a threshold chosen
+before looking, conventionally 0.05. It means "unlikely to be chance alone" and
+nothing more. Choose the threshold in advance for the same reason you decide what
+would change your mind before looking at the data ([rule 1](ten-rules.qmd)).
+
+**Not significant does not mean no difference.** A large p-value means this sample
+could not rule out chance. That can be because there is no difference, or because
+there were too few players to see one. The confidence interval tells you which.
+
+---
+
+## Statistical and Practical Significance
+
+**Practical significance** is whether a difference is large enough to change a
+design decision. Statistical significance cannot tell you this, because it depends
+on how much data you have as well as on how big the difference is.
+
+The *Tidebreak* frame-time capture has `r nrow(atrium)` frames from the Atrium
+zone. In the Atrium, Build B's frames are `r sprintf("%.2f", abs(gap_atr))` ms
+faster than Build A's, `r p_fmt(tt_atr$p.value)`. That is about as statistically
+significant as a result gets, and a player would need to perceive a difference of
+less than half a millisecond per frame to notice it. Nobody should schedule work
+around it.
+
+| | Practically small | Practically large |
+| :- | :- | :- |
+| **Statistically significant** | Real but not worth acting on | Act on it |
+| **Not significant** | Nothing to see, if the interval is narrow | Test more players: the sample was too small to tell |
+
+**Always report the size of the difference.** "Significant" alone hides which row
+of that table you are in.
+
+---
+
+## Two Designs: Independent and Paired
+
+How the playtest was run decides which test you use.
+
+**Independent samples.** Different players test each build. That is how the
+*Tidebreak* sessions file was collected: `r n_players` players, each of whom played
+only one build. The comparison is between two separate groups of people, so
+differences between the people are mixed in with differences between the builds.
+Use the **independent-samples t-test**:
+
+```r
+t.test(wrong_turns ~ build, data = sessions)
+```
+
+**Paired.** The same players test both builds. `tidebreak_paired.csv` records a
+second study in which `r nrow(paired)` players each played both builds. Each player
+is compared with themselves, so their skill cancels out. Use the **paired
+t-test**:
+
+```r
+t.test(paired$wrong_turns_a, paired$wrong_turns_b, paired = TRUE)
+```
+
+**Player ability is the biggest source of variation in most playtests.** A
+confident player takes few wrong turns in any build; a lost one takes many in any
+build. In the paired data, a player's wrong turns in Build A and in Build B have a
+correlation of `r round(cor(paired$wrong_turns_a, paired$wrong_turns_b), 2)`: the
+same people do well or badly in both. The paired design removes that variation,
+which is why it can detect a difference with far fewer players.
+
+**Paired designs bring their own problems.** A player who plays both builds plays
+the second one with more experience (**learning effects**), in a fixed position
+(**order effects**) and more tired (**fatigue effects**). If everyone plays Build A
+first, some of Build B's improvement is just practice. The fix is to give half the
+players Build A first and half Build B first. `tidebreak_paired.csv` does not record
+which build each player played first, so this study cannot rule it out.
+
+---
+
+## Assumptions, Practically
+
+A t-test is reliable when these hold closely enough. None needs a formal test; each
+needs a look.
+
+| Assumption | What it means | How to check | *Tidebreak* |
+| :- | :- | :- | :- |
+| **Independence** | One observation does not influence another | Think about how the data was collected | Each player contributed `r n_per` sessions, so the `r nrow(sessions)` sessions are really `r n_players` players |
+| **No strong outliers** | No few values dominate the means | Boxplots | `r sum(wt_out)` flagged wrong-turn counts across `r nrow(sessions)` sessions |
+| **Approximate normality** | Each group roughly bell-shaped | A Q-Q plot | Close enough; counts are whole numbers, which shows as steps |
+| **Appropriate design** | Independent test for separate groups, paired test for the same people | How the playtest was run | Sessions: independent. Paired file: paired |
+
+**With a few dozen players per group, the normality assumption matters least.** The
+t-test tolerates moderate departures. Strong outliers and a mismatched design
+matter far more, and no amount of data fixes the wrong design.
+
+**The independence problem has a simple check.** Average each player's four
+sessions into one value, then compare players rather than sessions. If the
+conclusion survives, the repeated sessions were not driving it. The R
+Demonstrations below do exactly that.
+
+---
+
+## Worked Examples
+
+**Did the signposting reduce wrong turns?** The six steps, in order.
+
+*Visualise.*
+
+```{r}
+#| label: worked-visualise
+#| fig-height: 3
+ggplot(sessions, aes(x = build, y = wrong_turns)) +
+  geom_boxplot(fill = "grey85") +
+  labs(title = "Wrong turns per session, by build", x = "Build", y = "Wrong turns")
+```
+
+Build B's box sits lower and is taller. The boxplot flags `r wt_out[["A"]]`
+outlying sessions in Build A and `r wt_out[["B"]]` in Build B, too few to dominate
+either mean.
+
+*Describe.* Build A's median is
+`r median(sessions$wrong_turns[sessions$build == "A"])` wrong turns and Build B's
+is `r median(sessions$wrong_turns[sessions$build == "B"])`. Build B's spread is
+wider: an IQR of `r IQR(sessions$wrong_turns[sessions$build == "B"])` against
+`r IQR(sessions$wrong_turns[sessions$build == "A"])`.
+
+*Estimate the difference.* Build A's players averaged
+`r round(tt_wt$estimate[[1]], 1)` wrong turns and Build B's
+`r round(tt_wt$estimate[[2]], 1)`: a difference of `r round(gap_wt, 1)`.
+
+*Confidence interval.* The 95% interval for the difference runs from
+`r ci_fmt(tt_wt$conf.int)` wrong turns. It is nowhere near zero.
+
+*Test.* `r p_fmt(tt_wt$p.value)`. If the builds made no difference, a gap this
+size would almost never occur.
+
+*Interpret.* The signposting reduced wrong turns, and the smallest plausible
+reduction, `r round(tt_wt$conf.int[1], 1)` per session, is still large enough for a
+player to feel. This is a result to act on: keep the signposting.
+
+**Was Build B harder?** The same six steps on the 1–7 difficulty rating give a
+second significant result. Build B was rated `r round(gap_dif, 2)` points harder,
+`r p_fmt(tt_diff$p.value)`, with a confidence interval from
+`r ci_fmt(ci_dif, 2)` points.
+
+Three things say not to act on it. The size is small: under half a point on a
+seven-point scale. The interval's lower end, `r round(ci_dif[1], 2)`, is a
+difference no player would report. And the play data does not back it up: deaths
+did not differ between the builds (`r p_fmt(tt_dth$p.value)`). Statistically
+significant, practically marginal, and unsupported by what players actually did.
+Note it, and check it in the next playtest.
+
+---
+
+## R Demonstrations
+
+```{r}
+#| label: demo-load
+library(readr)
+library(ggplot2)
+
+sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+paired   <- read_csv("data/tidebreak_paired.csv", show_col_types = FALSE)
+```
+
+```{r}
+#| label: demo-describe
+tapply(sessions$wrong_turns, sessions$build, mean)
+tapply(sessions$wrong_turns, sessions$build, sd)
+```
+
+Describe before testing. These are the numbers the test will compare.
+
+```{r}
+#| label: demo-ttest
+result <- t.test(wrong_turns ~ build, data = sessions)
+result
+```
+
+`t.test(y ~ group)` is the independent-samples t-test. R runs the Welch version by
+default, which does not assume the two builds have the same spread, and that is the
+right default. Read three lines of the output: the **sample estimates** (the two
+means), the **95 percent confidence interval** (for Build A minus Build B) and the
+**p-value**.
+
+```{r}
+#| label: demo-ttest-parts
+result$estimate
+result$conf.int
+result$p.value
+```
+
+`$` pulls single parts out of the result, which is how you get numbers into a
+sentence with inline R instead of copying them by hand.
+
+```{r}
+#| label: demo-paired
+t.test(paired$wrong_turns_a, paired$wrong_turns_b, paired = TRUE)
+```
+
+`paired = TRUE` compares each player's two values. The estimate is the **mean
+difference**: on average, a player took `r round(tt_pair$estimate, 1)` fewer wrong
+turns in Build B than in Build A.
+
+```{r}
+#| label: demo-paired-wrong
+t.test(paired$wrong_turns_a, paired$wrong_turns_b)
+```
+
+The same data tested as if the players were different people. The estimate is the
+same, but the interval is `r round(diff(tt_unp$conf.int), 1)` wrong turns wide
+against `r round(diff(tt_pair$conf.int), 1)` for the paired test. Ignoring the
+pairing throws away what the design bought you.
+
+```{r}
+#| label: demo-paired-plot
+#| fig-height: 3
+paired$improvement <- paired$wrong_turns_a - paired$wrong_turns_b
+
+ggplot(paired, aes(x = improvement)) +
+  geom_histogram(binwidth = 1, fill = "grey60", colour = "white") +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  labs(title = "Wrong turns saved per player, Build A minus Build B",
+       x = "Improvement (wrong turns)", y = "Players")
+```
+
+For paired data, draw the differences. `r sum(d_pair > 0)` of `r length(d_pair)`
+players took fewer wrong turns in Build B, `r sum(d_pair == 0)` took the same
+number and `r sum(d_pair < 0)` took more. `geom_vline()` marks zero, the line
+between better and worse.
+
+```{r}
+#| label: demo-qq
+#| fig-height: 3
+ggplot(sessions, aes(sample = wrong_turns)) +
+  stat_qq() +
+  stat_qq_line() +
+  facet_wrap(~ build)
+```
+
+A **Q-Q plot** places each value against where it would sit if the data were
+perfectly normal. Points close to the line mean close to normal. Here both builds
+follow it through the middle, in horizontal steps because wrong turns are whole
+numbers. Build A's lowest few points drop away below the line: those are the
+`r wt_out[["A"]]` sessions its boxplot flagged, players who barely got lost at all.
+A handful of points bending off at one end is close enough for a t-test with
+`r min(table(sessions$build))` sessions per build. A whole curve bending away from
+the line would not be.
+
+```{r}
+#| label: demo-per-player
+per_player <- aggregate(wrong_turns ~ player_id + build,
+                        data = sessions, FUN = mean)
+nrow(per_player)
+t.test(wrong_turns ~ build, data = per_player)
+```
+
+The independence check. `aggregate()` averages each player's sessions into one
+row, leaving `r nrow(per_player)` players instead of `r nrow(sessions)` sessions.
+The difference is the same and the interval is a little wider, from
+`r ci_fmt(tt_player$conf.int)`, because there are fewer independent observations.
+The conclusion survives.
+
+---
+
+## Interpretation Guidance
+
+**What the data shows.** In this playtest, Build B's players averaged
+`r round(gap_wt, 1)` fewer wrong turns per session than Build A's (95% CI
+`r ci_fmt(tt_wt$conf.int)`, `r p_fmt(tt_wt$p.value)`). In a separate study where
+`r nrow(paired)` players played both builds, they took
+`r round(tt_pair$estimate, 1)` fewer in Build B (95% CI
+`r ci_fmt(tt_pair$conf.int)`).
+
+**What the analysis suggests.** The signposting helps players find their way, and
+by enough to matter. Two different designs, with different players, point the same
+way.
+
+**What can legitimately be concluded.** The reduction is very unlikely to be
+chance, and even its smallest plausible size is a noticeable improvement. The
+paired study cannot separate the signposting from practice, because play order was
+not recorded; the independent study does not have that problem, which is why the
+two together are stronger than either alone.
+
+**Write the result as a sentence a designer can use.** Lead with the size, give
+the interval, then the p-value:
+
+> Build B's players took `r round(gap_wt, 1)` fewer wrong turns per session on
+> average (95% CI `r ci_fmt(tt_wt$conf.int)`, `r p_fmt(tt_wt$p.value)`).
+
+"The result was significant" is not a finding. It names no size and no action
+([rule 10](ten-rules.qmd)).
+
+---
+
+## Common Mistakes
+
+**Reading the p-value as the chance the null is true.** It is the chance of data
+this extreme *if* the null is true. The two are different, and only the first one
+is what R reports.
+
+**Reading "not significant" as "no difference".** It means this sample could not
+tell. Check the confidence interval: narrow and around zero is evidence of no
+meaningful difference; wide is a sample too small to say.
+
+**Reading "significant" as "important".** The Atrium frame times are among the
+most significant results in the whole playtest and among the least important.
+
+**Testing before looking.** A t-test on data you have not drawn can hide outliers,
+skew or two groups mixed together. Visualise first, every time.
+
+**Using the independent test on paired data.** It ignores what the pairing bought
+you and gives an interval far wider than the data supports. Match the test to the
+design.
+
+**Testing every column and reporting what came up.** At a 0.05 threshold, roughly
+one test in twenty on builds that do not differ will come up significant anyway.
+Decide which comparisons answer your question before you run any of them.
+
+**Counting sessions as players.** Four sessions from one player are not four
+independent players. Check that the result survives when each player counts once.
+
+---
+
+## Short Practice Activities
+
+Each takes two or three minutes.
+
+**1.** Did the signposting cost enjoyment? Run the t-test on `enjoyment` by build
+and use the confidence interval, not only the p-value, to answer.
+
+::: {.callout-note collapse="true" title="Check your answer"}
+
+```{r}
+#| label: practice-enjoyment
+t.test(enjoyment ~ build, data = sessions)
+```
+
+The p-value is `r round(tt_enj$p.value, 2)`, so there is no evidence of a
+difference. The interval says more: it runs from `r ci_fmt(tt_enj$conf.int, 2)`
+points on a seven-point scale, so any true difference is smaller than half a
+point either way. That is evidence the signposting did not cost enjoyment, which
+is a stronger statement than "not significant".
+:::
+
+**2.** Run the paired data through both the paired and the unpaired t-test. Why is
+the paired interval narrower?
+
+::: {.callout-note collapse="true" title="Check your answer"}
+
+```{r}
+#| label: practice-paired
+t.test(paired$wrong_turns_a, paired$wrong_turns_b, paired = TRUE)$conf.int
+t.test(paired$wrong_turns_a, paired$wrong_turns_b)$conf.int
+cor(paired$wrong_turns_a, paired$wrong_turns_b)
+```
+
+Players who take many wrong turns in one build take many in the other: the
+correlation is `r round(cor(paired$wrong_turns_a, paired$wrong_turns_b), 2)`. The
+paired test compares each player with themselves, so that player-to-player
+variation drops out. The unpaired test leaves it in and has to allow for it.
+:::
+
+**3.** Build B's sessions were longer on average. Run the test on
+`session_minutes`. Is the difference statistically significant? Is it practically
+significant?
+
+::: {.callout-note collapse="true" title="Check your answer"}
+
+```{r}
+#| label: practice-minutes
+t.test(session_minutes ~ build, data = sessions)
+```
+
+```{r}
+#| label: practice-minutes-numbers
+#| include: false
+tt_min <- t.test(session_minutes ~ build, data = sessions)
+ci_min <- -rev(tt_min$conf.int)
+```
+
+Statistically, yes: `r p_fmt(tt_min$p.value)`. Practically, it is hard to say. The
+interval says Build B's sessions were `r ci_fmt(ci_min)` minutes longer:
+anywhere from `r round(ci_min[1] * 60)` seconds to `r round(ci_min[2], 1)`
+minutes. The direction is clear and the size
+is not, which is a case for a larger playtest rather than a decision.
+:::
+
+---
+
+## Summary
+
+- A playtest is a sample. Another group of players would give different numbers,
+  so every difference needs a measure of how far it could swing.
+- Work in order: visualise, describe, estimate the difference, compute the
+  confidence interval, test, interpret.
+- A confidence interval gives a range of plausible sizes. Report it with every
+  difference.
+- A p-value is how surprising the data would be if there were no difference. It is
+  not the probability that there is no difference.
+- Statistically significant means unlikely to be chance. Practically significant
+  means big enough to act on. You need both.
+- Different players on each build: independent-samples t-test. The same players on
+  both: paired t-test, with the play order varied.
+- The signposting reduced wrong turns by `r round(gap_wt, 1)` per session, and the
+  smallest plausible reduction is still worth having.
+
+---
+
+## Links to Relevant Reference Material
+
+- [Ten Rules](ten-rules.qmd): rule 1 (decide what would change your mind before you
+  look), rule 7 (compare distributions, not averages), rule 8 (small samples lie
+  confidently) and rule 10 (a finding that does not name an action is not
+  finished)
+- [Statistics Reference: from sample to population](../reference/reference-statistics.qmd#from-sample-to-population)
+  and [testing a difference](../reference/reference-statistics.qmd#testing-a-difference)
+- [Visualising with ggplot2](visualising-with-ggplot2.qmd): the boxplots and
+  faceted histograms that come before every test
+- [ggplot2 Reference](../reference/reference-ggplot2.qmd)
+
+---
+
+## Reflective Questions
+
+- Build B's difficulty rating was significantly higher, but deaths did not change.
+  What would you need to see in the next playtest to take the difficulty result
+  seriously?
+- A colleague says the paired study proves the signposting works because its
+  p-value is smaller. What is wrong with that argument, and what does the paired
+  study add that the sessions data does not?
+- You can afford 30 testers for the next build comparison. Would you run them as
+  two independent groups of 15 or as one paired group of 30? What would you have to
+  control in the paired design?
+- A producer asks, "is it significant?". What do you tell them instead, and why is
+  that a more useful answer?
+
+---
