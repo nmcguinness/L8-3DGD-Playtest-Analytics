@@ -913,39 +913,6 @@
     ]
   },
   {
-    "objectID": "demos/week-1.html",
-    "href": "demos/week-1.html",
-    "title": "Week 1 Demo",
-    "section": "",
-    "text": "The lecturer’s script for the two 15-minute demo slots in Week 1. Every chunk runs and shows its output. Step through it top to bottom; the bold headings are the places to pause. Base R plotting only this week.",
-    "crumbs": [
-      "Demos",
-      "Week 1 Demo"
-    ]
-  },
-  {
-    "objectID": "demos/week-1.html#demo-1-from-values-to-a-data-frame",
-    "href": "demos/week-1.html#demo-1-from-values-to-a-data-frame",
-    "title": "Week 1 Demo",
-    "section": "Demo 1 — From values to a data frame",
-    "text": "Demo 1 — From values to a data frame\nStep 1. A vector is a column\n\n# Five players' deaths, typed in by hand. c() combines values into a vector.\ndeaths &lt;- c(2, 0, 5, 3, 1)\n\ndeaths          # print it\n\n[1] 2 0 5 3 1\n\nlength(deaths)  # how many players\n\n[1] 5\n\ndeaths[3]       # the third player: square brackets pick by position\n\n[1] 5\n\ndeaths &gt; 2      # a condition gives one TRUE/FALSE per player\n\n[1] FALSE FALSE  TRUE  TRUE FALSE\n\nsum(deaths &gt; 2) # TRUE counts as 1, so this is a count, not a total\n\n[1] 2\n\n\nStep 2. A missing value poisons the arithmetic\n\n# The fourth player's log was lost. NA means \"not recorded\", not zero.\ndeaths &lt;- c(2, 0, 5, NA, 1)\n\nmean(deaths)               # NA: R will not guess\n\n[1] NA\n\nmean(deaths, na.rm = TRUE) # say out loud what you are leaving out\n\n[1] 2\n\n\nStep 3. Read the real file\n\nlibrary(readr)\nlibrary(dplyr)\n\n# The path is relative to the project folder.\nsessions &lt;- read_csv(\"data/tidebreak_sessions.csv\", show_col_types = FALSE)\n\nStep 4. Look before you touch\n\nglimpse(sessions)          # every column: name, type, first values\n\nRows: 120\nColumns: 26\n$ session_id        &lt;chr&gt; \"S001\", \"S002\", \"S003\", \"S004\", \"S005\", \"S006\", \"S00…\n$ player_id         &lt;chr&gt; \"P01\", \"P02\", \"P03\", \"P04\", \"P05\", \"P06\", \"P07\", \"P0…\n$ cohort            &lt;chr&gt; \"Regular\", \"Veteran\", \"Regular\", \"Novice\", \"Veteran\"…\n$ archetype         &lt;chr&gt; \"Scout\", \"Scout\", \"Scout\", \"Scout\", \"Scout\", \"Scout\"…\n$ build             &lt;chr&gt; \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A…\n$ accuracy          &lt;dbl&gt; 55, 54, 48, 35, 67, 51, 57, 42, 51, 47, 56, 40, 60, …\n$ mobility          &lt;dbl&gt; 84, 91, 89, 80, 97, 90, 95, 73, 86, 86, 84, 83, 92, …\n$ survivability     &lt;dbl&gt; 48, 52, 42, 35, 56, 41, 45, 30, 35, 40, 49, 27, 46, …\n$ objective_control &lt;dbl&gt; 39, 66, 43, 47, 55, 45, 53, 39, 51, 49, 52, 35, 52, …\n$ support           &lt;dbl&gt; 52, 46, 52, 28, 38, 56, 47, 46, 34, 51, 55, 40, 53, …\n$ awareness         &lt;dbl&gt; 77, 91, 74, 74, 95, 87, 83, 67, 79, 82, 88, 67, 88, …\n$ score             &lt;dbl&gt; 1370, 1795, 1690, 1544, 2019, 1614, 1652, 1331, 1632…\n$ kills             &lt;dbl&gt; 7, 5, 5, 7, 12, 7, 6, 7, 7, 10, 9, 5, 10, 10, 5, 8, …\n$ deaths            &lt;dbl&gt; 4, 2, 2, 4, 3, 5, 4, 4, 3, 4, 3, 5, 5, 5, 5, 4, 4, 2…\n$ objectives        &lt;dbl&gt; 0, 2, 4, 2, 4, 4, 3, 2, 3, 3, 4, 1, 1, 1, 2, 4, 1, 2…\n$ shots_fired       &lt;dbl&gt; 148, 140, 190, 92, 143, 149, 143, 126, 138, 137, 118…\n$ time_alive_s      &lt;dbl&gt; 98, 105, 115, 80, 121, 115, 118, 99, 103, 71, 143, 7…\n$ distance_m        &lt;dbl&gt; 571, 520, 533, 349, 542, 566, 572, 308, 560, 451, 40…\n$ session_minutes   &lt;dbl&gt; 12.9, 24.6, 12.5, 18.8, 18.7, 25.3, 11.5, 27.0, 14.4…\n$ quit_reason       &lt;chr&gt; \"Frustrated\", \"Lost interest\", \"Frustrated\", \"Lost i…\n$ wrong_turns       &lt;dbl&gt; 8, 4, 9, 7, 10, 9, 9, 2, 11, 2, 3, 7, 5, 6, 8, 2, 8,…\n$ items_collected   &lt;dbl&gt; 3, 5, 2, 3, 4, 0, 5, 6, 7, 5, 2, 6, 3, 0, 0, 6, 3, 7…\n$ completed         &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, FAL…\n$ difficulty        &lt;dbl&gt; 4, 4, 3, 3, 3, 5, 4, 5, 4, 5, 3, 6, 5, 5, 6, 5, 4, 4…\n$ enjoyment         &lt;dbl&gt; 2, 5, 6, 4, 3, 3, 4, 3, 4, 3, 5, 3, 4, 4, 3, 4, 3, 3…\n$ comment           &lt;chr&gt; \"Could not tell where I was meant to go.\", \"The sign…\n\nsummary(sessions$deaths)   # $ pulls out one column as a vector\n\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n  0.000   2.000   3.000   3.008   4.000   7.000 \n\n\nPause here. Ask the room: which columns are text, and is cohort just text?",
-    "crumbs": [
-      "Demos",
-      "Week 1 Demo"
-    ]
-  },
-  {
-    "objectID": "demos/week-1.html#demo-2-describing-then-looking",
-    "href": "demos/week-1.html#demo-2-describing-then-looking",
-    "title": "Week 1 Demo",
-    "section": "Demo 2 — Describing, then looking",
-    "text": "Demo 2 — Describing, then looking\nStep 5. Centre and spread\n\nkills &lt;- sessions$kills\n\nmean(kills)\n\n[1] 6.875\n\nmedian(kills)\n\n[1] 7\n\nsd(kills)                     # typical distance from the mean\n\n[1] 2.171482\n\nIQR(kills)                    # width of the middle half\n\n[1] 3\n\nquantile(kills, c(0.1, 0.9))  # any percentiles you ask for\n\n10% 90% \n  4  10 \n\n\nStep 6. The shape, the groups, the counts\n\nhist(sessions$time_alive_s, breaks = 15,\n     main = \"Seconds alive\", xlab = \"Seconds\", col = \"grey85\")\n\n\n\n\n\n\n\nboxplot(session_minutes ~ build, data = sessions,\n        main = \"Session length by build\", ylab = \"Minutes\", col = \"grey85\")\n\n\n\n\n\n\n\nbarplot(table(sessions$quit_reason),\n        main = \"How sessions ended\", col = \"grey85\")\n\n\n\n\n\n\n\nplot(sessions$deaths, sessions$score, pch = 19,\n     main = \"Deaths against score\", xlab = \"Deaths\", ylab = \"Score\")\n\n\n\n\n\n\n\n\nPause here. Ask: which build loses players, and which plot told you?\nStep 7. The frame-rate trap\n\nframes &lt;- read_csv(\"data/tidebreak_frame_times.csv\", show_col_types = FALSE)\n\n# Base R: one summary per build, one call per summary.\ntapply(frames$ms, frames$build, mean)\n\n       A        B \n16.99925 16.94679 \n\ntapply(frames$ms, frames$build, quantile, 0.99)\n\n      A       B \n19.4800 39.3708 \n\n# Tidyverse: every summary per build in one table.\nframes %&gt;%\n  group_by(build) %&gt;%\n  summarise(fps    = 1000 / mean(ms),\n            median = median(ms),\n            p99    = quantile(ms, 0.99))\n\n# A tibble: 2 × 4\n  build   fps median   p99\n  &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;\n1 A      58.8   17.0  19.5\n2 B      59.0   16.6  39.4\n\n\nFinish here. Same frame rate, one build stutters. The mean could never have shown it.",
-    "crumbs": [
-      "Demos",
-      "Week 1 Demo"
-    ]
-  },
-  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Eight Views of a Playtest",
@@ -1063,6 +1030,204 @@
     "text": "What each view cost\n\n\n\n\n\n\n\n\n\nView\nChart type\nLines of R\nSkills it needs\n\n\n\n\n1\nInteractive table\n14\nReading data; selecting and renaming columns\n\n\n2\nViolin with boxplot\n14\nDescribing distributions\n\n\n3\nRadar small multiples\n34\nReshaping data; grouped summaries\n\n\n4\nCorrelogram\n35\nRelationships between variables\n\n\n5\nRetention step curve\n27\nBuilding a summary from scratch; annotation\n\n\n6\nDiverging Likert bars\n55\nReshaping; ordering by a computed value\n\n\n7\nFrame-time trace + summary table\n16 + 11\nFiltering; percentiles; rendered tables\n\n\n8\nAnimated position map\n53\nGrouping, counting, interactive output\n\n\n8b\nRoute small multiples\n24\nDrawing paths; faceting by player\n\n\n8b\nAnimated single-player trail\n39\nFiltering to one case; building frames\n\n\n\nNone of this is difficult, and most of the length in Views 3 onwards is labelling and styling rather than analysis. All of it is repeatable: the same code runs unchanged on next week’s build, which is the real reason to write analysis as code rather than clicking through a spreadsheet.\nThe rest of these notes teach you the parts, in order, starting with the question that matters most: what are you actually trying to find out?",
     "crumbs": [
       "Start here"
+    ]
+  },
+  {
+    "objectID": "demos/week-1.html",
+    "href": "demos/week-1.html",
+    "title": "Week 1 Demo",
+    "section": "",
+    "text": "The lecturer’s script for the two 15-minute demo slots in Week 1. Every chunk runs and shows its output. Step through it top to bottom; the bold headings are the places to pause. Base R plotting only this week.",
+    "crumbs": [
+      "Demos",
+      "Week 1 Demo"
+    ]
+  },
+  {
+    "objectID": "demos/week-1.html#demo-1-from-values-to-a-data-frame",
+    "href": "demos/week-1.html#demo-1-from-values-to-a-data-frame",
+    "title": "Week 1 Demo",
+    "section": "Demo 1 — From values to a data frame",
+    "text": "Demo 1 — From values to a data frame\nStep 1. A vector is a column\n\n# Five players' deaths, typed in by hand. c() combines values into a vector.\ndeaths &lt;- c(2, 0, 5, 3, 1)\n\ndeaths          # print it\n\n[1] 2 0 5 3 1\n\nlength(deaths)  # how many players\n\n[1] 5\n\ndeaths[3]       # the third player: square brackets pick by position\n\n[1] 5\n\ndeaths &gt; 2      # a condition gives one TRUE/FALSE per player\n\n[1] FALSE FALSE  TRUE  TRUE FALSE\n\nsum(deaths &gt; 2) # TRUE counts as 1, so this is a count, not a total\n\n[1] 2\n\n\nStep 2. A missing value poisons the arithmetic\n\n# The fourth player's log was lost. NA means \"not recorded\", not zero.\ndeaths &lt;- c(2, 0, 5, NA, 1)\n\nmean(deaths)               # NA: R will not guess\n\n[1] NA\n\nmean(deaths, na.rm = TRUE) # say out loud what you are leaving out\n\n[1] 2\n\n\nStep 3. Read the real file\n\nlibrary(readr)\nlibrary(dplyr)\n\n# The path is relative to the project folder.\nsessions &lt;- read_csv(\"data/tidebreak_sessions.csv\", show_col_types = FALSE)\n\nStep 4. Look before you touch\n\nglimpse(sessions)          # every column: name, type, first values\n\nRows: 120\nColumns: 26\n$ session_id        &lt;chr&gt; \"S001\", \"S002\", \"S003\", \"S004\", \"S005\", \"S006\", \"S00…\n$ player_id         &lt;chr&gt; \"P01\", \"P02\", \"P03\", \"P04\", \"P05\", \"P06\", \"P07\", \"P0…\n$ cohort            &lt;chr&gt; \"Regular\", \"Veteran\", \"Regular\", \"Novice\", \"Veteran\"…\n$ archetype         &lt;chr&gt; \"Scout\", \"Scout\", \"Scout\", \"Scout\", \"Scout\", \"Scout\"…\n$ build             &lt;chr&gt; \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A\", \"B\", \"A…\n$ accuracy          &lt;dbl&gt; 55, 54, 48, 35, 67, 51, 57, 42, 51, 47, 56, 40, 60, …\n$ mobility          &lt;dbl&gt; 84, 91, 89, 80, 97, 90, 95, 73, 86, 86, 84, 83, 92, …\n$ survivability     &lt;dbl&gt; 48, 52, 42, 35, 56, 41, 45, 30, 35, 40, 49, 27, 46, …\n$ objective_control &lt;dbl&gt; 39, 66, 43, 47, 55, 45, 53, 39, 51, 49, 52, 35, 52, …\n$ support           &lt;dbl&gt; 52, 46, 52, 28, 38, 56, 47, 46, 34, 51, 55, 40, 53, …\n$ awareness         &lt;dbl&gt; 77, 91, 74, 74, 95, 87, 83, 67, 79, 82, 88, 67, 88, …\n$ score             &lt;dbl&gt; 1370, 1795, 1690, 1544, 2019, 1614, 1652, 1331, 1632…\n$ kills             &lt;dbl&gt; 7, 5, 5, 7, 12, 7, 6, 7, 7, 10, 9, 5, 10, 10, 5, 8, …\n$ deaths            &lt;dbl&gt; 4, 2, 2, 4, 3, 5, 4, 4, 3, 4, 3, 5, 5, 5, 5, 4, 4, 2…\n$ objectives        &lt;dbl&gt; 0, 2, 4, 2, 4, 4, 3, 2, 3, 3, 4, 1, 1, 1, 2, 4, 1, 2…\n$ shots_fired       &lt;dbl&gt; 148, 140, 190, 92, 143, 149, 143, 126, 138, 137, 118…\n$ time_alive_s      &lt;dbl&gt; 98, 105, 115, 80, 121, 115, 118, 99, 103, 71, 143, 7…\n$ distance_m        &lt;dbl&gt; 571, 520, 533, 349, 542, 566, 572, 308, 560, 451, 40…\n$ session_minutes   &lt;dbl&gt; 12.9, 24.6, 12.5, 18.8, 18.7, 25.3, 11.5, 27.0, 14.4…\n$ quit_reason       &lt;chr&gt; \"Frustrated\", \"Lost interest\", \"Frustrated\", \"Lost i…\n$ wrong_turns       &lt;dbl&gt; 8, 4, 9, 7, 10, 9, 9, 2, 11, 2, 3, 7, 5, 6, 8, 2, 8,…\n$ items_collected   &lt;dbl&gt; 3, 5, 2, 3, 4, 0, 5, 6, 7, 5, 2, 6, 3, 0, 0, 6, 3, 7…\n$ completed         &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, FAL…\n$ difficulty        &lt;dbl&gt; 4, 4, 3, 3, 3, 5, 4, 5, 4, 5, 3, 6, 5, 5, 6, 5, 4, 4…\n$ enjoyment         &lt;dbl&gt; 2, 5, 6, 4, 3, 3, 4, 3, 4, 3, 5, 3, 4, 4, 3, 4, 3, 3…\n$ comment           &lt;chr&gt; \"Could not tell where I was meant to go.\", \"The sign…\n\nsummary(sessions$deaths)   # $ pulls out one column as a vector\n\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n  0.000   2.000   3.000   3.008   4.000   7.000 \n\n\nPause here. Ask the room: which columns are text, and is cohort just text?",
+    "crumbs": [
+      "Demos",
+      "Week 1 Demo"
+    ]
+  },
+  {
+    "objectID": "demos/week-1.html#demo-2-describing-then-looking",
+    "href": "demos/week-1.html#demo-2-describing-then-looking",
+    "title": "Week 1 Demo",
+    "section": "Demo 2 — Describing, then looking",
+    "text": "Demo 2 — Describing, then looking\nStep 5. Centre and spread\n\nkills &lt;- sessions$kills\n\nmean(kills)\n\n[1] 6.875\n\nmedian(kills)\n\n[1] 7\n\nsd(kills)                     # typical distance from the mean\n\n[1] 2.171482\n\nIQR(kills)                    # width of the middle half\n\n[1] 3\n\nquantile(kills, c(0.1, 0.9))  # any percentiles you ask for\n\n10% 90% \n  4  10 \n\n\nStep 6. The shape, the groups, the counts\n\nhist(sessions$time_alive_s, breaks = 15,\n     main = \"Seconds alive\", xlab = \"Seconds\", col = \"grey85\")\n\n\n\n\n\n\n\nboxplot(session_minutes ~ build, data = sessions,\n        main = \"Session length by build\", ylab = \"Minutes\", col = \"grey85\")\n\n\n\n\n\n\n\nbarplot(table(sessions$quit_reason),\n        main = \"How sessions ended\", col = \"grey85\")\n\n\n\n\n\n\n\nplot(sessions$deaths, sessions$score, pch = 19,\n     main = \"Deaths against score\", xlab = \"Deaths\", ylab = \"Score\")\n\n\n\n\n\n\n\n\nPause here. Ask: which build loses players, and which plot told you?\nStep 7. The frame-rate trap\n\nframes &lt;- read_csv(\"data/tidebreak_frame_times.csv\", show_col_types = FALSE)\n\n# Base R: one summary per build, one call per summary.\ntapply(frames$ms, frames$build, mean)\n\n       A        B \n16.99925 16.94679 \n\ntapply(frames$ms, frames$build, quantile, 0.99)\n\n      A       B \n19.4800 39.3708 \n\n# Tidyverse: every summary per build in one table.\nframes %&gt;%\n  group_by(build) %&gt;%\n  summarise(fps    = 1000 / mean(ms),\n            median = median(ms),\n            p99    = quantile(ms, 0.99))\n\n# A tibble: 2 × 4\n  build   fps median   p99\n  &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;\n1 A      58.8   17.0  19.5\n2 B      59.0   16.6  39.4\n\n\nFinish here. Same frame rate, one build stutters. The mean could never have shown it.",
+    "crumbs": [
+      "Demos",
+      "Week 1 Demo"
+    ]
+  },
+  {
+    "objectID": "demos/week-2.html",
+    "href": "demos/week-2.html",
+    "title": "Week 2 Demo",
+    "section": "",
+    "text": "The lecturer’s script for the two 15-minute demo slots in Week 2. Every chunk runs and shows its output. Step through it top to bottom; the bold headings are the places to pause. ggplot2 from here on.",
+    "crumbs": [
+      "Demos",
+      "Week 2 Demo"
+    ]
+  },
+  {
+    "objectID": "demos/week-2.html#demo-1-a-figure-one-layer-at-a-time",
+    "href": "demos/week-2.html#demo-1-a-figure-one-layer-at-a-time",
+    "title": "Week 2 Demo",
+    "section": "Demo 1 — A figure, one layer at a time",
+    "text": "Demo 1 — A figure, one layer at a time\nStep 1. Data and mapping, no geometry\n\nlibrary(readr)\nlibrary(dplyr)\nlibrary(ggplot2)\n\nsessions &lt;- read_csv(\"data/tidebreak_sessions.csv\", show_col_types = FALSE)\n\n# Data plus mapping gives axes and nothing else: no geometry, no marks.\nggplot(sessions, aes(x = wrong_turns))\n\n\n\n\n\n\n\n\nStep 2. Add a geometry\n\n# + adds a layer. binwidth = 1 because wrong turns are whole numbers.\nggplot(sessions, aes(x = wrong_turns)) +\n  geom_histogram(binwidth = 1)\n\n\n\n\n\n\n\n\nPause here. Ask: this is correct. Why does it not answer “did Build B help”?\nStep 3. Map a group, and watch it mislead\n\n# fill = build inside aes() is a MAPPING: colour follows the data, legend appears.\n# But histograms stack by default, so Build A floats on top of Build B.\nggplot(sessions, aes(x = wrong_turns, fill = build)) +\n  geom_histogram(binwidth = 1)\n\n\n\n\n\n\n\n\nStep 4. Facet instead, and label it for a reader\n\n# One panel per build, stacked so the x axes line up.\n# fill = \"grey60\" OUTSIDE aes() is SETTING: fixed colour, no legend needed.\nggplot(sessions, aes(x = wrong_turns)) +\n  geom_histogram(binwidth = 1, fill = \"grey60\", colour = \"white\") +\n  facet_wrap(~ build, ncol = 1) +\n  labs(title = \"Wrong turns per session, by build\",\n       x = \"Wrong turns\", y = \"Sessions\")\n\n\n\n\n\n\n\n\nPause here. Ask: Build B is lower. What else is different about its shape?\nStep 5. The mapping bug, on purpose\n\n# \"blue\" inside aes() is treated as data: salmon points, and a legend saying \"blue\".\nggplot(sessions, aes(x = awareness, y = score)) +\n  geom_point(aes(colour = \"blue\"))",
+    "crumbs": [
+      "Demos",
+      "Week 2 Demo"
+    ]
+  },
+  {
+    "objectID": "demos/week-2.html#demo-2-is-the-difference-real-and-does-it-matter",
+    "href": "demos/week-2.html#demo-2-is-the-difference-real-and-does-it-matter",
+    "title": "Week 2 Demo",
+    "section": "Demo 2 — Is the difference real, and does it matter?",
+    "text": "Demo 2 — Is the difference real, and does it matter?\nStep 6. Another playtest, another answer\n\n# Pretend we could only afford 15 sessions per build. Draw five such playtests.\nset.seed(8015)\nreplicate(5, {\n  a &lt;- sample(sessions$wrong_turns[sessions$build == \"A\"], 15)\n  b &lt;- sample(sessions$wrong_turns[sessions$build == \"B\"], 15)\n  mean(a) - mean(b)  # the difference this playtest would have reported\n})\n\n[1] 4.066667 3.733333 3.866667 3.466667 5.200000\n\n\nPause here. Ask: same builds, five answers. Which one is “the” difference?\nStep 7. The t-test: size, interval, p-value\n\n# Different players on each build, so the independent-samples test.\nresult &lt;- t.test(wrong_turns ~ build, data = sessions)\nresult\n\n\n    Welch Two Sample t-test\n\ndata:  wrong_turns by build\nt = 7.3208, df = 116.07, p-value = 3.492e-11\nalternative hypothesis: true difference in means between group A and group B is not equal to 0\n95 percent confidence interval:\n 2.480141 4.319859\nsample estimates:\nmean in group A mean in group B \n       8.916667        5.516667 \n\nresult$conf.int  # read this first: how big could the difference plausibly be?\n\n[1] 2.480141 4.319859\nattr(,\"conf.level\")\n[1] 0.95\n\nresult$p.value   # then this: could a gap this big be chance alone?\n\n[1] 3.491687e-11\n\n\nStep 8. Same players, both builds\n\npaired &lt;- read_csv(\"data/tidebreak_paired.csv\", show_col_types = FALSE)\n\n# Paired: each player compared with themselves, so player skill cancels out.\nt.test(paired$wrong_turns_a, paired$wrong_turns_b, paired = TRUE)$conf.int\n\n[1] 1.838014 3.695319\nattr(,\"conf.level\")\n[1] 0.95\n\n# Same data, wrongly treated as two separate groups: a much wider interval.\nt.test(paired$wrong_turns_a, paired$wrong_turns_b)$conf.int\n\n[1] 1.180570 4.352763\nattr(,\"conf.level\")\n[1] 0.95\n\n\nStep 9. Significant is not the same as important\n\n# Build B was rated harder, and the result is significant...\nharder &lt;- t.test(difficulty ~ build, data = sessions)\nharder\n\n\n    Welch Two Sample t-test\n\ndata:  difficulty by build\nt = -2.175, df = 117.47, p-value = 0.03163\nalternative hypothesis: true difference in means between group A and group B is not equal to 0\n95 percent confidence interval:\n -0.7960481 -0.0372852\nsample estimates:\nmean in group A mean in group B \n       3.916667        4.333333 \n\n# ...but the players did not actually die more.\nt.test(deaths ~ build, data = sessions)$p.value\n\n[1] 0.6793394\n\n\nFinish here. Wrong turns: a big, certain difference worth acting on. Difficulty: a significant difference of 0.42 points on a seven-point scale, with nothing in the play data behind it. Same test, opposite decisions. The number that decides is the size, not the p-value.",
+    "crumbs": [
+      "Demos",
+      "Week 2 Demo"
+    ]
+  },
+  {
+    "objectID": "labs/comparing-builds.html",
+    "href": "labs/comparing-builds.html",
+    "title": "Lab 02 — Comparing Builds",
+    "section": "",
+    "text": "Build B added lighting and signage to guide players through Tidebreak. This lab asks the question the team built it to answer:\n\nDoes improved environmental guidance help players navigate the level?\n\nPart A rebuilds your Week 1 base R plots in ggplot2, then goes further than base R comfortably can. Part B puts a size, an interval and a p-value on the differences, and asks the question no function answers: does this difference matter?\n\n\n\n\n\n\n\nFunction\nWhat it does\n\n\n\n\nggplot(), aes()\nStart a figure: the data and the mapping\n\n\ngeom_histogram(), geom_bar(), geom_boxplot()\nDraw it\n\n\nfacet_wrap()\nOne panel per group\n\n\nlabs()\nTitle and axis labels\n\n\ngroup_by(), summarise()\nOne row of summaries per group\n\n\nt.test()\nIndependent-samples and paired t-tests, with confidence intervals\n\n\naggregate()\nCollapse several rows per player into one",
+    "crumbs": [
+      "Labs",
+      "Lab 02 — Comparing Builds"
+    ]
+  },
+  {
+    "objectID": "labs/comparing-builds.html#exercise-01-a-histogram-rebuilt-do",
+    "href": "labs/comparing-builds.html#exercise-01-a-histogram-rebuilt-do",
+    "title": "Lab 02 — Comparing Builds",
+    "section": "Exercise 01 — A histogram, rebuilt [Do]",
+    "text": "Exercise 01 — A histogram, rebuilt [Do]\nRedraw Lab 01’s histogram of score in ggplot2, with bins 100 points wide.\n\n\n\n\n\n\nTipSolution\n\n\n\n\n\n\nggplot(sessions, aes(x = score)) +\n  geom_histogram(binwidth = 100)\n\n\n\n\n\n\n\n\nbinwidth is in the units of the variable, so 100 means each bar covers 100 points of score.\n\n\n\nWrite 1 sentence: point to the data, the mapping and the geometry in your code.",
+    "crumbs": [
+      "Labs",
+      "Lab 02 — Comparing Builds"
+    ]
+  },
+  {
+    "objectID": "labs/comparing-builds.html#exercise-02-a-boxplot-rebuilt-do",
+    "href": "labs/comparing-builds.html#exercise-02-a-boxplot-rebuilt-do",
+    "title": "Lab 02 — Comparing Builds",
+    "section": "Exercise 02 — A boxplot, rebuilt [Do]",
+    "text": "Exercise 02 — A boxplot, rebuilt [Do]\nRedraw Lab 01’s boxplot of score by archetype in ggplot2.\n\n\n\n\n\n\nTipSolution\n\n\n\n\n\n\nggplot(sessions, aes(x = archetype, y = score)) +\n  geom_boxplot()\n\n\n\n\n\n\n\n\nThe base R formula score ~ archetype becomes a mapping: the group on x, the numeric variable on y.\n\n\n\nWrite 1 sentence: what did base R make you type that ggplot2 did not, or the other way round?",
+    "crumbs": [
+      "Labs",
+      "Lab 02 — Comparing Builds"
+    ]
+  },
+  {
+    "objectID": "labs/comparing-builds.html#exercise-03-quit-reasons-by-build-for-a-reader-apply",
+    "href": "labs/comparing-builds.html#exercise-03-quit-reasons-by-build-for-a-reader-apply",
+    "title": "Lab 02 — Comparing Builds",
+    "section": "Exercise 03 — Quit reasons, by build, for a reader [Apply]",
+    "text": "Exercise 03 — Quit reasons, by build, for a reader [Apply]\nDraw the count of each quit_reason, with the two builds side by side in different colours. Give it a title, drop the redundant x-axis label, and label the y axis and the legend properly.\n\n\n\n\n\n\nTipSolution\n\n\n\n\n\n\nggplot(sessions, aes(x = quit_reason, fill = build)) +\n  geom_bar(position = \"dodge\") +\n  labs(title = \"How sessions ended, by build\",\n       x = NULL, y = \"Sessions\", fill = \"Build\")\n\n\n\n\n\n\n\n\nfill = build is mapped, so it changes with the data and earns a legend. position = \"dodge\" stops the bars stacking, so each build’s bar starts at zero and the two can be compared directly.\n\n\n\nWrite 2 sentences: remove position = \"dodge\" and look again. Which comparison does the stacked version make harder, and why?",
+    "crumbs": [
+      "Labs",
+      "Lab 02 — Comparing Builds"
+    ]
+  },
+  {
+    "objectID": "labs/comparing-builds.html#exercise-04-where-build-a-loses-players-apply",
+    "href": "labs/comparing-builds.html#exercise-04-where-build-a-loses-players-apply",
+    "title": "Lab 02 — Comparing Builds",
+    "section": "Exercise 04 — Where Build A loses players [Apply]",
+    "text": "Exercise 04 — Where Build A loses players [Apply]\nDraw a histogram of session_minutes with one panel per build, stacked so the x axes line up, with bins one minute wide. Where does Build A lose players that Build B keeps?\n\n\n\n\n\n\nTipSolution\n\n\n\n\n\n\nggplot(sessions, aes(x = session_minutes)) +\n  geom_histogram(binwidth = 1, fill = \"grey60\", colour = \"white\") +\n  facet_wrap(~ build, ncol = 1) +\n  labs(title = \"Session length, by build\", x = \"Minutes played\", y = \"Sessions\")\n\n\n\n\n\n\n\n\nfacet_wrap(~ build, ncol = 1) is the line base R has no short equivalent for. The fill is set, not mapped, because the panel labels already say which build is which.\n\n\n\nWrite 2 sentences: describe where Build A’s extra early exits happen, and connect them to one bar in Exercise 03.\n\n\n\n\n\n\nNoteCheck your answer\n\n\n\n\n\nBuild A has a cluster of sessions ending between minutes 11 and 13: 11 of them, against 4 in Build B. They line up with the Frustrated bar in Exercise 03, where Build A has 20 sessions to Build B’s 5.",
+    "crumbs": [
+      "Labs",
+      "Lab 02 — Comparing Builds"
+    ]
+  },
+  {
+    "objectID": "labs/comparing-builds.html#exercise-05-one-figure-for-the-level-designer-decide",
+    "href": "labs/comparing-builds.html#exercise-05-one-figure-for-the-level-designer-decide",
+    "title": "Lab 02 — Comparing Builds",
+    "section": "Exercise 05 — One figure for the level designer [Decide]",
+    "text": "Exercise 05 — One figure for the level designer [Decide]\nThe level designer wants one figure that answers: did the signposting reduce wrong turns? Draw at least two candidates for wrong_turns by build, pick one, and justify it.\n\n\n\n\n\n\nTipSolution\n\n\n\n\n\n\nggplot(sessions, aes(x = wrong_turns)) +\n  geom_histogram(binwidth = 1, fill = \"grey60\", colour = \"white\") +\n  facet_wrap(~ build, ncol = 1) +\n  labs(title = \"Wrong turns per session, by build\",\n       x = \"Wrong turns\", y = \"Sessions\")\n\n\n\n\n\n\n\n\n\nggplot(sessions, aes(x = wrong_turns, fill = build)) +\n  geom_histogram(binwidth = 1)\n\n\n\n\n\n\n\n\nOne defensible answer: the faceted histogram. The shared x axis makes the shift obvious at a glance, and it shows something a boxplot flattens: Build B is wider as well as lower, so the signposting helped most players and some hardly at all. A side-by-side boxplot is also defensible for a reader who is used to them.\nWhat makes it defensible. The figure makes the comparison the question asks about the easiest thing on the page to see, and hides nothing the designer would want to know.\nWhat would make it indefensible. The stacked histogram: Build A’s bars sit on top of Build B’s, so Build A’s shape cannot be read. Or a bar chart of the two means, which throws away the spread entirely.\n\n\n\nWrite 2 sentences: what does your chosen figure show that the two means alone would hide?",
+    "crumbs": [
+      "Labs",
+      "Lab 02 — Comparing Builds"
+    ]
+  },
+  {
+    "objectID": "labs/comparing-builds.html#exercise-06-describe-before-you-test-do",
+    "href": "labs/comparing-builds.html#exercise-06-describe-before-you-test-do",
+    "title": "Lab 02 — Comparing Builds",
+    "section": "Exercise 06 — Describe before you test [Do]",
+    "text": "Exercise 06 — Describe before you test [Do]\nUsing group_by() and summarise(), produce one row per build with the number of sessions and the mean, median, standard deviation and IQR of wrong_turns.\n\n\n\n\n\n\nTipSolution\n\n\n\n\n\n\nsessions %&gt;%\n  group_by(build) %&gt;%\n  summarise(n      = n(),\n            mean   = mean(wrong_turns),\n            median = median(wrong_turns),\n            sd     = sd(wrong_turns),\n            iqr    = IQR(wrong_turns))\n\n# A tibble: 2 × 6\n  build     n  mean median    sd   iqr\n  &lt;chr&gt; &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 A        60  8.92      9  2.37  2   \n2 B        60  5.52      5  2.70  4.25\n\n\nn() counts the rows in each group. Always report it: a difference means little without the number of players behind it.\n\n\n\nWrite 1 sentence: Build B’s standard deviation is larger than Build A’s. What does that mean for a player?",
+    "crumbs": [
+      "Labs",
+      "Lab 02 — Comparing Builds"
+    ]
+  },
+  {
+    "objectID": "labs/comparing-builds.html#exercise-07-the-independent-samples-t-test-do",
+    "href": "labs/comparing-builds.html#exercise-07-the-independent-samples-t-test-do",
+    "title": "Lab 02 — Comparing Builds",
+    "section": "Exercise 07 — The independent-samples t-test [Do]",
+    "text": "Exercise 07 — The independent-samples t-test [Do]\nRun the t-test comparing wrong_turns between builds. Store the result, then pull out the two means, the confidence interval and the p-value separately.\n\n\n\n\n\n\nTipSolution\n\n\n\n\n\n\nresult &lt;- t.test(wrong_turns ~ build, data = sessions)\nresult\n\n\n    Welch Two Sample t-test\n\ndata:  wrong_turns by build\nt = 7.3208, df = 116.07, p-value = 3.492e-11\nalternative hypothesis: true difference in means between group A and group B is not equal to 0\n95 percent confidence interval:\n 2.480141 4.319859\nsample estimates:\nmean in group A mean in group B \n       8.916667        5.516667 \n\nresult$estimate\n\nmean in group A mean in group B \n       8.916667        5.516667 \n\nresult$conf.int\n\n[1] 2.480141 4.319859\nattr(,\"conf.level\")\n[1] 0.95\n\nresult$p.value\n\n[1] 3.491687e-11\n\n\nEach player played one build only, so this is the independent-samples test. Pulling out the parts with $ is how you get the numbers into a sentence with inline R rather than by copying.\n\n\n\nWrite 2 sentences: is the confidence interval for Build A minus Build B, or Build B minus Build A? How can you tell from the output?",
+    "crumbs": [
+      "Labs",
+      "Lab 02 — Comparing Builds"
+    ]
+  },
+  {
+    "objectID": "labs/comparing-builds.html#exercise-08-the-same-players-both-builds-apply",
+    "href": "labs/comparing-builds.html#exercise-08-the-same-players-both-builds-apply",
+    "title": "Lab 02 — Comparing Builds",
+    "section": "Exercise 08 — The same players, both builds [Apply]",
+    "text": "Exercise 08 — The same players, both builds [Apply]\npaired records 30 players who each played both builds. Run the paired t-test on wrong_turns_a and wrong_turns_b, then run the unpaired test on the same two columns. Compare the widths of the two confidence intervals.\n\n\n\n\n\n\nTipSolution\n\n\n\n\n\n\npaired_test   &lt;- t.test(paired$wrong_turns_a, paired$wrong_turns_b, paired = TRUE)\nunpaired_test &lt;- t.test(paired$wrong_turns_a, paired$wrong_turns_b)\n\npaired_test$conf.int\n\n[1] 1.838014 3.695319\nattr(,\"conf.level\")\n[1] 0.95\n\nunpaired_test$conf.int\n\n[1] 1.180570 4.352763\nattr(,\"conf.level\")\n[1] 0.95\n\ndiff(paired_test$conf.int)\n\n[1] 1.857305\n\ndiff(unpaired_test$conf.int)\n\n[1] 3.172193\n\n\nSame estimate, but the paired interval is 1.9 wrong turns wide against 3.2. The paired test compares each player with themselves, so differences in player skill cancel out.\n\n\n\nWrite 2 sentences: the paired file does not record which build each player played first. Why does that matter, and what would you change about the next paired study?",
+    "crumbs": [
+      "Labs",
+      "Lab 02 — Comparing Builds"
+    ]
+  },
+  {
+    "objectID": "labs/comparing-builds.html#exercise-09-no-difference-or-cannot-tell-apply",
+    "href": "labs/comparing-builds.html#exercise-09-no-difference-or-cannot-tell-apply",
+    "title": "Lab 02 — Comparing Builds",
+    "section": "Exercise 09 — No difference, or cannot tell? [Apply]",
+    "text": "Exercise 09 — No difference, or cannot tell? [Apply]\nRun the t-test on enjoyment by build and on items_collected by build. Neither is significant. For which one can you say there is no meaningful difference, and for which can you only say we cannot tell?\n\n\n\n\n\n\nTipSolution\n\n\n\n\n\n\nenjoy &lt;- t.test(enjoyment ~ build, data = sessions)\nitems &lt;- t.test(items_collected ~ build, data = sessions)\n\nenjoy$conf.int\n\n[1] -0.3483742  0.3483742\nattr(,\"conf.level\")\n[1] 0.95\n\nitems$conf.int\n\n[1] -1.0061446  0.3394779\nattr(,\"conf.level\")\n[1] 0.95\n\ntapply(sessions$items_collected, sessions$build, mean)\n\n       A        B \n4.016667 4.350000 \n\n\nRead each interval against the size of the variable. Enjoyment’s interval runs from -0.35 to 0.35 on a seven-point scale: whatever the true difference is, it is too small to matter. That is no meaningful difference. The items interval runs from -1.01 to 0.34 items, when a typical player collects about 4. Build B’s players could be collecting up to 1.0 more items each, or up to 0.3 fewer. That is cannot tell.\n\n\n\nWrite 2 sentences: why is “not significant” a weaker statement than “the confidence interval is narrow and sits around zero”?",
+    "crumbs": [
+      "Labs",
+      "Lab 02 — Comparing Builds"
+    ]
+  },
+  {
+    "objectID": "labs/comparing-builds.html#exercise-10-players-play-longer-in-build-b-decide",
+    "href": "labs/comparing-builds.html#exercise-10-players-play-longer-in-build-b-decide",
+    "title": "Lab 02 — Comparing Builds",
+    "section": "Exercise 10 — “Players play longer in Build B” [Decide]",
+    "text": "Exercise 10 — “Players play longer in Build B” [Decide]\nt.test(session_minutes ~ build) gives p = 0.037, and Build B’s sessions are about 3 minutes longer on average. The producer wants to put “players play 3 minutes longer in Build B” in the pitch. Do you let them? Test before you decide: compare session length between the builds for players who did not quit in frustration.\n\n\n\n\n\n\nTipSolution\n\n\n\n\n\n\nnot_frustrated &lt;- sessions[sessions$quit_reason != \"Frustrated\", ]\nt.test(session_minutes ~ build, data = not_frustrated)\n\n\n    Welch Two Sample t-test\n\ndata:  session_minutes by build\nt = 0.63783, df = 88.126, p-value = 0.5252\nalternative hypothesis: true difference in means between group A and group B is not equal to 0\n95 percent confidence interval:\n -1.564143  3.042780\nsample estimates:\nmean in group A mean in group B \n       26.19750        25.45818 \n\nfrustrated &lt;- sessions[sessions$quit_reason == \"Frustrated\", ]\ntapply(frustrated$session_minutes, frustrated$build, median)\n\n   A    B \n11.7 11.7 \n\n\nOne defensible answer: no, because the claim describes the wrong thing. Among players who did not quit in frustration, Build A averaged 26.2 minutes and Build B 25.5 (p = 0.53). Frustration quits end at a median of about 11.7 minutes in both builds. Build B does not make anyone play longer. It makes fewer people quit early, and that pulls its average up. The honest pitch line is “fewer players quit in frustration”, which is also the stronger claim.\nWhat makes it defensible. It checks what is driving the difference before describing it, and it replaces the claim with one the data supports.\nWhat would make it indefensible. Approving the line because the p-value is below 0.05. The difference is real; the explanation attached to it is not.\n\n\n\nWrite 3 sentences: a significant difference in a mean can come from every player shifting a little or from a few players shifting a lot. How do you tell which, and why does it change the design conclusion?",
+    "crumbs": [
+      "Labs",
+      "Lab 02 — Comparing Builds"
+    ]
+  },
+  {
+    "objectID": "labs/comparing-builds.html#exercise-11-which-number-goes-in-the-report-decide",
+    "href": "labs/comparing-builds.html#exercise-11-which-number-goes-in-the-report-decide",
+    "title": "Lab 02 — Comparing Builds",
+    "section": "Exercise 11 — Which number goes in the report? [Decide]",
+    "text": "Exercise 11 — Which number goes in the report? [Decide]\nYou have three estimates of how much the signposting reduced wrong turns: the session-level test from Exercise 07, the paired study from Exercise 08, and a player-level test that averages each player’s 4 sessions first. Run the player-level test, then decide which result leads the report.\n\n\n\n\n\n\nTipSolution\n\n\n\n\n\n\nper_player &lt;- aggregate(wrong_turns ~ player_id + build, data = sessions, FUN = mean)\nplayer_test &lt;- t.test(wrong_turns ~ build, data = per_player)\n\nplayer_test$conf.int\n\n[1] 2.361153 4.438847\nattr(,\"conf.level\")\n[1] 0.95\n\nresult$conf.int\n\n[1] 2.480141 4.319859\nattr(,\"conf.level\")\n[1] 0.95\n\npaired_test$conf.int\n\n[1] 1.838014 3.695319\nattr(,\"conf.level\")\n[1] 0.95\n\n\nOne defensible answer: lead with the player-level result, and cite the paired study as support. The session-level test treats 120 sessions as independent when they come from 30 players, so its interval is narrower than the data justifies. The player-level interval, 2.4 to 4.4 wrong turns, is honest about that. The paired study, a different design with different players, points the same way, which is worth more than any single p-value.\nWhat makes it defensible. It picks the analysis whose assumptions match how the data was collected, and it uses the other two as corroboration rather than choosing between them.\nWhat would make it indefensible. Picking whichever result has the smallest p-value or the largest effect. That is choosing the answer, not the analysis.\n\n\n\nWrite 2 sentences: why is agreement between two differently designed studies stronger evidence than a very small p-value from one?",
+    "crumbs": [
+      "Labs",
+      "Lab 02 — Comparing Builds"
     ]
   },
   {

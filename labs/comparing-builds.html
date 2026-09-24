@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Lab 02 — Comparing Builds – Playtest Analytics</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../reference/reference-statistics.html" rel="next">
+<link href="../labs/reading-data.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-640402775883e0dc5b71a44650c95e06.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/setting-up.html">Labs</a></li><li class="breadcrumb-item"><a href="../labs/comparing-builds.html">Lab 02 — Comparing Builds</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Playtest Analytics</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Start here</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Notes</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/ten-rules.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ten Rules for Reading Playtest Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/why-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Why Developers Measure Anything</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/describing-what-you-have.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Describing What You Have</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/distributions-and-variation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Distributions and Variation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/visualising-with-ggplot2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Visualising with ggplot2</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/comparing-conditions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Comparing Playtest Conditions</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Labs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/setting-up.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 00 — Setting Up</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/reading-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 01 — Reading Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/comparing-builds.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Lab 02 — Comparing Builds</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Reference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/reference-statistics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Statistics Reference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/r-quarto-reference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R and Quarto Reference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/reference-ggplot2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ggplot2 Reference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Demos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/week-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 1 Demo</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/week-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 2 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#learning-outcomes" id="toc-learning-outcomes" class="nav-link" data-scroll-target="#learning-outcomes">Learning outcomes</a></li>
+  <li><a href="#ground-rules" id="toc-ground-rules" class="nav-link" data-scroll-target="#ground-rules">Ground rules</a></li>
+  <li><a href="#setup-run-this-first" id="toc-setup-run-this-first" class="nav-link" data-scroll-target="#setup-run-this-first">Setup (run this first)</a></li>
+  <li><a href="#part-a-figures-with-ggplot2" id="toc-part-a-figures-with-ggplot2" class="nav-link" data-scroll-target="#part-a-figures-with-ggplot2">Part A — Figures with ggplot2</a>
+  <ul class="collapse">
+  <li><a href="#exercise-01-a-histogram-rebuilt-do" id="toc-exercise-01-a-histogram-rebuilt-do" class="nav-link" data-scroll-target="#exercise-01-a-histogram-rebuilt-do">Exercise 01 — A histogram, rebuilt <code>[Do]</code></a></li>
+  <li><a href="#exercise-02-a-boxplot-rebuilt-do" id="toc-exercise-02-a-boxplot-rebuilt-do" class="nav-link" data-scroll-target="#exercise-02-a-boxplot-rebuilt-do">Exercise 02 — A boxplot, rebuilt <code>[Do]</code></a></li>
+  <li><a href="#exercise-03-quit-reasons-by-build-for-a-reader-apply" id="toc-exercise-03-quit-reasons-by-build-for-a-reader-apply" class="nav-link" data-scroll-target="#exercise-03-quit-reasons-by-build-for-a-reader-apply">Exercise 03 — Quit reasons, by build, for a reader <code>[Apply]</code></a></li>
+  <li><a href="#exercise-04-where-build-a-loses-players-apply" id="toc-exercise-04-where-build-a-loses-players-apply" class="nav-link" data-scroll-target="#exercise-04-where-build-a-loses-players-apply">Exercise 04 — Where Build A loses players <code>[Apply]</code></a></li>
+  <li><a href="#exercise-05-one-figure-for-the-level-designer-decide" id="toc-exercise-05-one-figure-for-the-level-designer-decide" class="nav-link" data-scroll-target="#exercise-05-one-figure-for-the-level-designer-decide">Exercise 05 — One figure for the level designer <code>[Decide]</code></a></li>
+  </ul></li>
+  <li><a href="#part-b-is-the-difference-real-and-does-it-matter" id="toc-part-b-is-the-difference-real-and-does-it-matter" class="nav-link" data-scroll-target="#part-b-is-the-difference-real-and-does-it-matter">Part B — Is the difference real, and does it matter?</a>
+  <ul class="collapse">
+  <li><a href="#exercise-06-describe-before-you-test-do" id="toc-exercise-06-describe-before-you-test-do" class="nav-link" data-scroll-target="#exercise-06-describe-before-you-test-do">Exercise 06 — Describe before you test <code>[Do]</code></a></li>
+  <li><a href="#exercise-07-the-independent-samples-t-test-do" id="toc-exercise-07-the-independent-samples-t-test-do" class="nav-link" data-scroll-target="#exercise-07-the-independent-samples-t-test-do">Exercise 07 — The independent-samples t-test <code>[Do]</code></a></li>
+  <li><a href="#exercise-08-the-same-players-both-builds-apply" id="toc-exercise-08-the-same-players-both-builds-apply" class="nav-link" data-scroll-target="#exercise-08-the-same-players-both-builds-apply">Exercise 08 — The same players, both builds <code>[Apply]</code></a></li>
+  <li><a href="#exercise-09-no-difference-or-cannot-tell-apply" id="toc-exercise-09-no-difference-or-cannot-tell-apply" class="nav-link" data-scroll-target="#exercise-09-no-difference-or-cannot-tell-apply">Exercise 09 — No difference, or cannot tell? <code>[Apply]</code></a></li>
+  <li><a href="#exercise-10-players-play-longer-in-build-b-decide" id="toc-exercise-10-players-play-longer-in-build-b-decide" class="nav-link" data-scroll-target="#exercise-10-players-play-longer-in-build-b-decide">Exercise 10 — “Players play longer in Build B” <code>[Decide]</code></a></li>
+  <li><a href="#exercise-11-which-number-goes-in-the-report-decide" id="toc-exercise-11-which-number-goes-in-the-report-decide" class="nav-link" data-scroll-target="#exercise-11-which-number-goes-in-the-report-decide">Exercise 11 — Which number goes in the report? <code>[Decide]</code></a></li>
+  </ul></li>
+  <li><a href="#challenge-build-b-was-meant-to-be-an-improvement.-was-it-decide" id="toc-challenge-build-b-was-meant-to-be-an-improvement.-was-it-decide" class="nav-link" data-scroll-target="#challenge-build-b-was-meant-to-be-an-improvement.-was-it-decide">Challenge — Build B was meant to be an improvement. Was it? <code>[Decide]</code></a></li>
+  <li><a href="#appendix-reading-t.test-output" id="toc-appendix-reading-t.test-output" class="nav-link" data-scroll-target="#appendix-reading-t.test-output">Appendix — Reading <code>t.test()</code> output</a></li>
+  <li><a href="#appendix-common-errors" id="toc-appendix-common-errors" class="nav-link" data-scroll-target="#appendix-common-errors">Appendix — Common errors</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/setting-up.html">Labs</a></li><li class="breadcrumb-item"><a href="../labs/comparing-builds.html">Lab 02 — Comparing Builds</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Lab 02 — Comparing Builds</h1>
+<p class="subtitle lead">ggplot2 figures, t-tests, and whether a difference matters</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>Build B added lighting and signage to guide players through <em>Tidebreak</em>. This lab asks the question the team built it to answer:</p>
+<blockquote class="blockquote">
+<p><strong>Does improved environmental guidance help players navigate the level?</strong></p>
+</blockquote>
+<p>Part A rebuilds your Week 1 base R plots in <code>ggplot2</code>, then goes further than base R comfortably can. Part B puts a size, an interval and a p-value on the differences, and asks the question no function answers: does this difference matter?</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Function</th>
+<th style="text-align: left;">What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>ggplot()</code>, <code>aes()</code></td>
+<td style="text-align: left;">Start a figure: the data and the mapping</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>geom_histogram()</code>, <code>geom_bar()</code>, <code>geom_boxplot()</code></td>
+<td style="text-align: left;">Draw it</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>facet_wrap()</code></td>
+<td style="text-align: left;">One panel per group</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>labs()</code></td>
+<td style="text-align: left;">Title and axis labels</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>group_by()</code>, <code>summarise()</code></td>
+<td style="text-align: left;">One row of summaries per group</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>t.test()</code></td>
+<td style="text-align: left;">Independent-samples and paired t-tests, with confidence intervals</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>aggregate()</code></td>
+<td style="text-align: left;">Collapse several rows per player into one</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="learning-outcomes" class="level1">
+<h1>Learning outcomes</h1>
+<p>By the end of this lab you can:</p>
+<ul>
+<li>build histograms, bar charts and boxplots in <code>ggplot2</code>, split by group with <code>fill</code> or facets, and label them for a reader;</li>
+<li>choose the figure that makes a comparison easiest to see, and defend the choice;</li>
+<li>run an independent-samples and a paired t-test, and pull the estimate, interval and p-value out of the result;</li>
+<li>tell “no meaningful difference” apart from “cannot tell” using a confidence interval;</li>
+<li>decide whether a statistically significant difference justifies a design change.</li>
+</ul>
+</section>
+<section id="ground-rules" class="level1">
+<h1>Ground rules</h1>
+<ul>
+<li>Draw before you test. Every Part B exercise assumes you have looked at the data first.</li>
+<li>Type the code. Open the solution <strong>after</strong> your attempt, even when your attempt worked.</li>
+<li>Every exercise ends with a short written answer. Write it. The Challenge is assessed on the writing, not the code.</li>
+<li>When you report a difference, give its size and its interval, not only the p-value.</li>
+</ul>
+</section>
+<section id="setup-run-this-first" class="level1">
+<h1>Setup (run this first)</h1>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>sessions <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_sessions.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>paired   <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_paired.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>frames   <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_frame_times.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(sessions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 120</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(paired)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 30</code></pre>
+</div>
+</div>
+<p><code>sessions</code> has one row per player per session, with each player on one build only. <code>paired</code> is a separate study in which every player played both builds.</p>
+<hr>
+</section>
+<section id="part-a-figures-with-ggplot2" class="level1">
+<h1>Part A — Figures with ggplot2</h1>
+<section id="exercise-01-a-histogram-rebuilt-do" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-01-a-histogram-rebuilt-do">Exercise 01 — A histogram, rebuilt <code>[Do]</code></h2>
+<p>Redraw Lab 01’s histogram of <code>score</code> in <code>ggplot2</code>, with bins 100 points wide.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> score)) <span class="sc">+</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">100</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="comparing-builds_files/figure-html/ex01-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><code>binwidth</code> is in the units of the variable, so 100 means each bar covers 100 points of score.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 1 sentence:</strong> point to the data, the mapping and the geometry in your code.</p>
+</section>
+<section id="exercise-02-a-boxplot-rebuilt-do" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-02-a-boxplot-rebuilt-do">Exercise 02 — A boxplot, rebuilt <code>[Do]</code></h2>
+<p>Redraw Lab 01’s boxplot of <code>score</code> by <code>archetype</code> in <code>ggplot2</code>.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> archetype, <span class="at">y =</span> score)) <span class="sc">+</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="comparing-builds_files/figure-html/ex02-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The base R formula <code>score ~ archetype</code> becomes a mapping: the group on <code>x</code>, the numeric variable on <code>y</code>.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 1 sentence:</strong> what did base R make you type that <code>ggplot2</code> did not, or the other way round?</p>
+</section>
+<section id="exercise-03-quit-reasons-by-build-for-a-reader-apply" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-03-quit-reasons-by-build-for-a-reader-apply">Exercise 03 — Quit reasons, by build, for a reader <code>[Apply]</code></h2>
+<p>Draw the count of each <code>quit_reason</code>, with the two builds side by side in different colours. Give it a title, drop the redundant x-axis label, and label the y axis and the legend properly.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> quit_reason, <span class="at">fill =</span> build)) <span class="sc">+</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"dodge"</span>) <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"How sessions ended, by build"</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Sessions"</span>, <span class="at">fill =</span> <span class="st">"Build"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="comparing-builds_files/figure-html/ex03-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><code>fill = build</code> is <strong>mapped</strong>, so it changes with the data and earns a legend. <code>position = "dodge"</code> stops the bars stacking, so each build’s bar starts at zero and the two can be compared directly.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> remove <code>position = "dodge"</code> and look again. Which comparison does the stacked version make harder, and why?</p>
+</section>
+<section id="exercise-04-where-build-a-loses-players-apply" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-04-where-build-a-loses-players-apply">Exercise 04 — Where Build A loses players <code>[Apply]</code></h2>
+<p>Draw a histogram of <code>session_minutes</code> with one panel per build, stacked so the x axes line up, with bins one minute wide. Where does Build A lose players that Build B keeps?</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> session_minutes)) <span class="sc">+</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">"grey60"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> build, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Session length, by build"</span>, <span class="at">x =</span> <span class="st">"Minutes played"</span>, <span class="at">y =</span> <span class="st">"Sessions"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="comparing-builds_files/figure-html/ex04-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><code>facet_wrap(~ build, ncol = 1)</code> is the line base R has no short equivalent for. The fill is <strong>set</strong>, not mapped, because the panel labels already say which build is which.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> describe where Build A’s extra early exits happen, and connect them to one bar in Exercise 03.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Check your answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Check your answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Build A has a cluster of sessions ending between minutes 11 and 13: 11 of them, against 4 in Build B. They line up with the Frustrated bar in Exercise 03, where Build A has 20 sessions to Build B’s 5.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-05-one-figure-for-the-level-designer-decide" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-05-one-figure-for-the-level-designer-decide">Exercise 05 — One figure for the level designer <code>[Decide]</code></h2>
+<p>The level designer wants one figure that answers: <em>did the signposting reduce wrong turns?</em> Draw at least two candidates for <code>wrong_turns</code> by build, pick one, and justify it.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> wrong_turns)) <span class="sc">+</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">"grey60"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> build, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Wrong turns per session, by build"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Wrong turns"</span>, <span class="at">y =</span> <span class="st">"Sessions"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="comparing-builds_files/figure-html/ex05-facet-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> wrong_turns, <span class="at">fill =</span> build)) <span class="sc">+</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="comparing-builds_files/figure-html/ex05-stacked-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>One defensible answer: the faceted histogram.</strong> The shared x axis makes the shift obvious at a glance, and it shows something a boxplot flattens: Build B is wider as well as lower, so the signposting helped most players and some hardly at all. A side-by-side boxplot is also defensible for a reader who is used to them.</p>
+<p><strong>What makes it defensible.</strong> The figure makes the comparison the question asks about the easiest thing on the page to see, and hides nothing the designer would want to know.</p>
+<p><strong>What would make it indefensible.</strong> The stacked histogram: Build A’s bars sit on top of Build B’s, so Build A’s shape cannot be read. Or a bar chart of the two means, which throws away the spread entirely.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> what does your chosen figure show that the two means alone would hide?</p>
+<hr>
+</section>
+</section>
+<section id="part-b-is-the-difference-real-and-does-it-matter" class="level1">
+<h1>Part B — Is the difference real, and does it matter?</h1>
+<section id="exercise-06-describe-before-you-test-do" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-06-describe-before-you-test-do">Exercise 06 — Describe before you test <code>[Do]</code></h2>
+<p>Using <code>group_by()</code> and <code>summarise()</code>, produce one row per build with the number of sessions and the mean, median, standard deviation and IQR of <code>wrong_turns</code>.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>sessions <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(build) <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n      =</span> <span class="fu">n</span>(),</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean   =</span> <span class="fu">mean</span>(wrong_turns),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">median =</span> <span class="fu">median</span>(wrong_turns),</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd     =</span> <span class="fu">sd</span>(wrong_turns),</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">iqr    =</span> <span class="fu">IQR</span>(wrong_turns))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 6
+  build     n  mean median    sd   iqr
+  &lt;chr&gt; &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 A        60  8.92      9  2.37  2   
+2 B        60  5.52      5  2.70  4.25</code></pre>
+</div>
+</div>
+<p><code>n()</code> counts the rows in each group. Always report it: a difference means little without the number of players behind it.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 1 sentence:</strong> Build B’s standard deviation is larger than Build A’s. What does that mean for a player?</p>
+</section>
+<section id="exercise-07-the-independent-samples-t-test-do" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-07-the-independent-samples-t-test-do">Exercise 07 — The independent-samples t-test <code>[Do]</code></h2>
+<p>Run the t-test comparing <code>wrong_turns</code> between builds. Store the result, then pull out the two means, the confidence interval and the p-value separately.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">t.test</span>(wrong_turns <span class="sc">~</span> build, <span class="at">data =</span> sessions)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>result</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  wrong_turns by build
+t = 7.3208, df = 116.07, p-value = 3.492e-11
+alternative hypothesis: true difference in means between group A and group B is not equal to 0
+95 percent confidence interval:
+ 2.480141 4.319859
+sample estimates:
+mean in group A mean in group B 
+       8.916667        5.516667 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>result<span class="sc">$</span>estimate</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>mean in group A mean in group B 
+       8.916667        5.516667 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>result<span class="sc">$</span>conf.int</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.480141 4.319859
+attr(,"conf.level")
+[1] 0.95</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>result<span class="sc">$</span>p.value</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.491687e-11</code></pre>
+</div>
+</div>
+<p>Each player played one build only, so this is the independent-samples test. Pulling out the parts with <code>$</code> is how you get the numbers into a sentence with inline R rather than by copying.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> is the confidence interval for Build A minus Build B, or Build B minus Build A? How can you tell from the output?</p>
+</section>
+<section id="exercise-08-the-same-players-both-builds-apply" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-08-the-same-players-both-builds-apply">Exercise 08 — The same players, both builds <code>[Apply]</code></h2>
+<p><code>paired</code> records 30 players who each played both builds. Run the paired t-test on <code>wrong_turns_a</code> and <code>wrong_turns_b</code>, then run the unpaired test on the same two columns. Compare the widths of the two confidence intervals.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>paired_test   <span class="ot">&lt;-</span> <span class="fu">t.test</span>(paired<span class="sc">$</span>wrong_turns_a, paired<span class="sc">$</span>wrong_turns_b, <span class="at">paired =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>unpaired_test <span class="ot">&lt;-</span> <span class="fu">t.test</span>(paired<span class="sc">$</span>wrong_turns_a, paired<span class="sc">$</span>wrong_turns_b)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>paired_test<span class="sc">$</span>conf.int</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.838014 3.695319
+attr(,"conf.level")
+[1] 0.95</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>unpaired_test<span class="sc">$</span>conf.int</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.180570 4.352763
+attr(,"conf.level")
+[1] 0.95</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">diff</span>(paired_test<span class="sc">$</span>conf.int)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.857305</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">diff</span>(unpaired_test<span class="sc">$</span>conf.int)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.172193</code></pre>
+</div>
+</div>
+<p>Same estimate, but the paired interval is 1.9 wrong turns wide against 3.2. The paired test compares each player with themselves, so differences in player skill cancel out.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> the paired file does not record which build each player played first. Why does that matter, and what would you change about the next paired study?</p>
+</section>
+<section id="exercise-09-no-difference-or-cannot-tell-apply" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-09-no-difference-or-cannot-tell-apply">Exercise 09 — No difference, or cannot tell? <code>[Apply]</code></h2>
+<p>Run the t-test on <code>enjoyment</code> by build and on <code>items_collected</code> by build. Neither is significant. For which one can you say there is <strong>no meaningful difference</strong>, and for which can you only say <strong>we cannot tell</strong>?</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>enjoy <span class="ot">&lt;-</span> <span class="fu">t.test</span>(enjoyment <span class="sc">~</span> build, <span class="at">data =</span> sessions)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>items <span class="ot">&lt;-</span> <span class="fu">t.test</span>(items_collected <span class="sc">~</span> build, <span class="at">data =</span> sessions)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>enjoy<span class="sc">$</span>conf.int</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -0.3483742  0.3483742
+attr(,"conf.level")
+[1] 0.95</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>items<span class="sc">$</span>conf.int</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -1.0061446  0.3394779
+attr(,"conf.level")
+[1] 0.95</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tapply</span>(sessions<span class="sc">$</span>items_collected, sessions<span class="sc">$</span>build, mean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       A        B 
+4.016667 4.350000 </code></pre>
+</div>
+</div>
+<p>Read each interval against the size of the variable. Enjoyment’s interval runs from -0.35 to 0.35 on a seven-point scale: whatever the true difference is, it is too small to matter. That is <strong>no meaningful difference</strong>. The items interval runs from -1.01 to 0.34 items, when a typical player collects about 4. Build B’s players could be collecting up to 1.0 more items each, or up to 0.3 fewer. That is <strong>cannot tell</strong>.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> why is “not significant” a weaker statement than “the confidence interval is narrow and sits around zero”?</p>
+</section>
+<section id="exercise-10-players-play-longer-in-build-b-decide" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-10-players-play-longer-in-build-b-decide">Exercise 10 — “Players play longer in Build B” <code>[Decide]</code></h2>
+<p><code>t.test(session_minutes ~ build)</code> gives p = 0.037, and Build B’s sessions are about 3 minutes longer on average. The producer wants to put “players play 3 minutes longer in Build B” in the pitch. Do you let them? Test before you decide: compare session length between the builds for players who did <strong>not</strong> quit in frustration.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>not_frustrated <span class="ot">&lt;-</span> sessions[sessions<span class="sc">$</span>quit_reason <span class="sc">!=</span> <span class="st">"Frustrated"</span>, ]</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(session_minutes <span class="sc">~</span> build, <span class="at">data =</span> not_frustrated)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  session_minutes by build
+t = 0.63783, df = 88.126, p-value = 0.5252
+alternative hypothesis: true difference in means between group A and group B is not equal to 0
+95 percent confidence interval:
+ -1.564143  3.042780
+sample estimates:
+mean in group A mean in group B 
+       26.19750        25.45818 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>frustrated <span class="ot">&lt;-</span> sessions[sessions<span class="sc">$</span>quit_reason <span class="sc">==</span> <span class="st">"Frustrated"</span>, ]</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tapply</span>(frustrated<span class="sc">$</span>session_minutes, frustrated<span class="sc">$</span>build, median)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   A    B 
+11.7 11.7 </code></pre>
+</div>
+</div>
+<p><strong>One defensible answer: no, because the claim describes the wrong thing.</strong> Among players who did not quit in frustration, Build A averaged 26.2 minutes and Build B 25.5 (p = 0.53). Frustration quits end at a median of about 11.7 minutes in both builds. Build B does not make anyone play longer. It makes fewer people quit early, and that pulls its average up. The honest pitch line is “fewer players quit in frustration”, which is also the stronger claim.</p>
+<p><strong>What makes it defensible.</strong> It checks what is driving the difference before describing it, and it replaces the claim with one the data supports.</p>
+<p><strong>What would make it indefensible.</strong> Approving the line because the p-value is below 0.05. The difference is real; the explanation attached to it is not.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 3 sentences:</strong> a significant difference in a mean can come from every player shifting a little or from a few players shifting a lot. How do you tell which, and why does it change the design conclusion?</p>
+</section>
+<section id="exercise-11-which-number-goes-in-the-report-decide" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-11-which-number-goes-in-the-report-decide">Exercise 11 — Which number goes in the report? <code>[Decide]</code></h2>
+<p>You have three estimates of how much the signposting reduced wrong turns: the session-level test from Exercise 07, the paired study from Exercise 08, and a player-level test that averages each player’s 4 sessions first. Run the player-level test, then decide which result leads the report.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>per_player <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(wrong_turns <span class="sc">~</span> player_id <span class="sc">+</span> build, <span class="at">data =</span> sessions, <span class="at">FUN =</span> mean)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>player_test <span class="ot">&lt;-</span> <span class="fu">t.test</span>(wrong_turns <span class="sc">~</span> build, <span class="at">data =</span> per_player)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>player_test<span class="sc">$</span>conf.int</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.361153 4.438847
+attr(,"conf.level")
+[1] 0.95</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>result<span class="sc">$</span>conf.int</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.480141 4.319859
+attr(,"conf.level")
+[1] 0.95</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>paired_test<span class="sc">$</span>conf.int</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.838014 3.695319
+attr(,"conf.level")
+[1] 0.95</code></pre>
+</div>
+</div>
+<p><strong>One defensible answer: lead with the player-level result, and cite the paired study as support.</strong> The session-level test treats 120 sessions as independent when they come from 30 players, so its interval is narrower than the data justifies. The player-level interval, 2.4 to 4.4 wrong turns, is honest about that. The paired study, a different design with different players, points the same way, which is worth more than any single p-value.</p>
+<p><strong>What makes it defensible.</strong> It picks the analysis whose assumptions match how the data was collected, and it uses the other two as corroboration rather than choosing between them.</p>
+<p><strong>What would make it indefensible.</strong> Picking whichever result has the smallest p-value or the largest effect. That is choosing the answer, not the analysis.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> why is agreement between two differently designed studies stronger evidence than a very small p-value from one?</p>
+<hr>
+</section>
+</section>
+<section id="challenge-build-b-was-meant-to-be-an-improvement.-was-it-decide" class="level1">
+<h1>Challenge — Build B was meant to be an improvement. Was it? <code>[Decide]</code></h1>
+<p>The producer asks one question before approving Build B for the next milestone: <strong>was it an improvement?</strong></p>
+<p>Build the evidence you would take into that meeting. Use more than one measure, and keep four kinds of evidence separate: what the figures show, what the descriptive statistics say, what the tests say, and whether each difference is big enough to matter. <code>frames</code> is loaded in the Setup block.</p>
+<div class="callout callout-style-default callout-important callout-titled" title="One defensible answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>One defensible answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Navigation: the question Build B was built to answer</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(wrong_turns <span class="sc">~</span> build, <span class="at">data =</span> sessions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  wrong_turns by build
+t = 7.3208, df = 116.07, p-value = 3.492e-11
+alternative hypothesis: true difference in means between group A and group B is not equal to 0
+95 percent confidence interval:
+ 2.480141 4.319859
+sample estimates:
+mean in group A mean in group B 
+       8.916667        5.516667 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Did players stay and finish?</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sessions<span class="sc">$</span>build, sessions<span class="sc">$</span>quit_reason)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   
+    Completed test Frustrated Lost interest Technical fault
+  A             31         20             7               2
+  B             38          5            14               3</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tapply</span>(sessions<span class="sc">$</span>completed, sessions<span class="sc">$</span>build, mean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        A         B 
+0.5333333 0.8833333 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Did anything get worse?</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(enjoyment <span class="sc">~</span> build, <span class="at">data =</span> sessions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  enjoyment by build
+t = 0, df = 113.42, p-value = 1
+alternative hypothesis: true difference in means between group A and group B is not equal to 0
+95 percent confidence interval:
+ -0.3483742  0.3483742
+sample estimates:
+mean in group A mean in group B 
+       3.933333        3.933333 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(score <span class="sc">~</span> build, <span class="at">data =</span> sessions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  score by build
+t = 0.22558, df = 117.76, p-value = 0.8219
+alternative hypothesis: true difference in means between group A and group B is not equal to 0
+95 percent confidence interval:
+ -102.6797  129.0797
+sample estimates:
+mean in group A mean in group B 
+       1435.367        1422.167 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Performance, which nobody asked about</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>frames <span class="sc">%&gt;%</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(build) <span class="sc">%&gt;%</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">fps =</span> <span class="dv">1000</span> <span class="sc">/</span> <span class="fu">mean</span>(ms), <span class="at">p99 =</span> <span class="fu">quantile</span>(ms, <span class="fl">0.99</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 3
+  build   fps   p99
+  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 A      58.8  19.5
+2 B      59.0  39.4</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(frames, <span class="fu">aes</span>(<span class="at">x =</span> ms)) <span class="sc">+</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">"grey60"</span>) <span class="sc">+</span></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(build <span class="sc">~</span> zone) <span class="sc">+</span></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Frame times by build and zone"</span>, <span class="at">x =</span> <span class="st">"Frame time (ms)"</span>, <span class="at">y =</span> <span class="st">"Frames"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="comparing-builds_files/figure-html/challenge-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Measure</th>
+<th style="text-align: left;">Visual</th>
+<th style="text-align: left;">Descriptive</th>
+<th style="text-align: left;">Statistical</th>
+<th style="text-align: left;">Practical</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Wrong turns</td>
+<td style="text-align: left;">Build B’s histogram sits clearly to the left</td>
+<td style="text-align: left;">Mean 8.9 in A, 5.5 in B</td>
+<td style="text-align: left;">95% CI 2.5 to 4.3 fewer, p &lt; 0.001</td>
+<td style="text-align: left;">Large: players get lost far less</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Frustration quits</td>
+<td style="text-align: left;">Build A’s bar is far taller</td>
+<td style="text-align: left;">20 in A, 5 in B</td>
+<td style="text-align: left;">Not tested this week</td>
+<td style="text-align: left;">Large: the main way Build A lost players</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Completed the test</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">53% in A, 88% in B</td>
+<td style="text-align: left;">Not tested this week</td>
+<td style="text-align: left;">Large</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Enjoyment</td>
+<td style="text-align: left;">Panels look alike</td>
+<td style="text-align: left;">Means 3.9 and 3.9</td>
+<td style="text-align: left;">95% CI -0.35 to 0.35, p = 1</td>
+<td style="text-align: left;">No cost to enjoyment</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Score</td>
+<td style="text-align: left;">Boxes overlap</td>
+<td style="text-align: left;">Means 1435 and 1422</td>
+<td style="text-align: left;">p = 0.82</td>
+<td style="text-align: left;">No change</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Frame time</td>
+<td style="text-align: left;">A scatter of tiny bars far to the right in Build B’s Corridor panel, and nowhere else. Easy to miss, even on the right figure</td>
+<td style="text-align: left;">Both about 59 FPS; 99th percentile 19.5 ms in A, 39.4 ms in B</td>
+<td style="text-align: left;">Not a comparison of means</td>
+<td style="text-align: left;">Every one of the 60 frames slower than 30 FPS is Build B, in the Corridor</td>
+</tr>
+</tbody>
+</table>
+<p><strong>So the defensible answer is: yes for navigation, and not yet for release.</strong> The signposting did what it was built to do. Players got lost less, fewer quit in frustration, more finished, and none of it cost enjoyment or score. But Build B also introduced a hitch in the Corridor that the frame-rate average cannot see. Keep the signposting; fix the hitch before Build B goes forward.</p>
+<p><strong>What would make it indefensible.</strong> Answering from wrong turns alone, because that is the measure the build was designed to move. Or quoting average FPS as proof that performance was unchanged. Both answers are supported by a real number, and both miss what a player would actually experience.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 4 sentences</strong>, using <strong>What → Pattern → Meaning → Action</strong>:</p>
+<ul>
+<li><strong>What</strong> did you measure?</li>
+<li><strong>Pattern</strong> — what does the evidence show, across more than one measure?</li>
+<li><strong>Meaning</strong> — what does that mean for the build?</li>
+<li><strong>Action</strong> — what exactly do you recommend to the producer?</li>
+</ul>
+<hr>
+</section>
+<section id="appendix-reading-t.test-output" class="level1">
+<h1>Appendix — Reading <code>t.test()</code> output</h1>
+<div class="callout callout-style-default callout-note callout-titled" title="Show the annotated output">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Show the annotated output
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(wrong_turns <span class="sc">~</span> build, <span class="at">data =</span> sessions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  wrong_turns by build
+t = 7.3208, df = 116.07, p-value = 3.492e-11
+alternative hypothesis: true difference in means between group A and group B is not equal to 0
+95 percent confidence interval:
+ 2.480141 4.319859
+sample estimates:
+mean in group A mean in group B 
+       8.916667        5.516667 </code></pre>
+</div>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Line</th>
+<th style="text-align: left;">What it tells you</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>Welch Two Sample t-test</code></td>
+<td style="text-align: left;">The independent-samples test, not assuming equal spreads. The right default</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>t = ..., df = ...</code></td>
+<td style="text-align: left;">The test statistic and its degrees of freedom. Report them if asked; do not interpret them</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>p-value = ...</code></td>
+<td style="text-align: left;">How surprising the data would be if the builds did not differ. <code>e-11</code> means “times 10 to the minus 11”: tiny</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>alternative hypothesis: ...</code></td>
+<td style="text-align: left;">Names the direction: the difference is <em>group A minus group B</em></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>95 percent confidence interval</code></td>
+<td style="text-align: left;">The plausible range for the difference, A minus B</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>sample estimates</code></td>
+<td style="text-align: left;">The two group means</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="appendix-common-errors" class="level1">
+<h1>Appendix — Common errors</h1>
+<div class="callout callout-style-default callout-warning callout-titled" title="Show the error guide">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Show the error guide
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Message</th>
+<th style="text-align: left;">What it usually means</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>could not find function "ggplot"</code></td>
+<td style="text-align: left;">You have not run <code>library(ggplot2)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>Cannot use `+` with a single argument</code></td>
+<td style="text-align: left;">A line starts with <code>+</code>. Move it to the end of the line above</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>object 'build' not found</code></td>
+<td style="text-align: left;">A column name used outside <code>aes()</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>stat_bin() requires a continuous x aesthetic</code></td>
+<td style="text-align: left;">A histogram of a categorical column. Use <code>geom_bar()</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>grouping factor must have exactly 2 levels</code></td>
+<td style="text-align: left;"><code>t.test(y ~ group)</code> needs exactly two groups. Filter to two first</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>not enough 'x' observations</code></td>
+<td style="text-align: left;">A group is empty, usually a misspelled level such as <code>"a"</code> for <code>"A"</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>could not find function "%&gt;%"</code></td>
+<td style="text-align: left;">You have not run <code>library(dplyr)</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../labs/reading-data.html" class="pagination-link" aria-label="Lab 01 — Reading Data">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Lab 01 — Reading Data</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../reference/reference-statistics.html" class="pagination-link" aria-label="Statistics Reference">
+        <span class="nav-page-text">Statistics Reference</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>COMP I8015 · 3D Game Development · Dundalk Institute of Technology</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
