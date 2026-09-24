@@ -1,0 +1,143 @@
+---
+title: "Statistics Reference"
+subtitle: "Every term in the strand, in plain English"
+---
+
+> A lookup sheet, not a tutorial. Each term has a plain-English meaning, a
+> *Tidebreak* example and the mistake people make with it. Every number on this
+> page is computed from the playtest data when the site is built. The notes teach
+> these ideas; this page is for checking one quickly during a lab.
+
+```{r}
+#| label: setup
+#| include: false
+library(readr)
+sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+frames   <- read_csv("data/tidebreak_frame_times.csv", show_col_types = FALSE)
+
+p_fmt <- function(p) if (p < 0.001) "p < 0.001" else paste("p =", round(p, 3))
+
+mins <- sessions$session_minutes
+a_ms <- frames$ms[frames$build == "A"]
+b_ms <- frames$ms[frames$build == "B"]
+
+score_out <- boxplot.stats(sessions$score)$out
+stopifnot(all(sessions$archetype[sessions$score %in% score_out] == "Sentinel"))
+
+batch       <- ceiling(seq_len(nrow(sessions)) / 30)
+batch_means <- round(tapply(sessions$score, batch, mean))
+
+tt_mins  <- t.test(session_minutes ~ build, data = sessions)
+tt_score <- t.test(score ~ build, data = sessions)
+tt_atr   <- t.test(ms ~ build, data = frames[frames$zone == "Atrium", ])
+ci_b     <- -rev(tt_mins$conf.int)
+atr_gap  <- diff(rev(tt_atr$estimate))
+stopifnot(tt_mins$p.value < 0.05, tt_score$p.value > 0.05,
+          tt_atr$p.value < 0.001, ci_b[1] > 0)
+
+per_player  <- table(sessions$player_id, sessions$build)
+both_builds <- sum(per_player[, "A"] > 0 & per_player[, "B"] > 0)
+n_per       <- unique(as.vector(table(sessions$player_id)))
+stopifnot(both_builds == 0, length(n_per) == 1)
+
+abilities <- c("accuracy", "mobility", "survivability", "objective_control",
+               "support", "awareness", "shots_fired")
+cors <- cor(sessions[, abilities], sessions$score)[, 1]
+stopifnot(names(which.max(cors)) == "awareness", abs(cors[["shots_fired"]]) < 0.1)
+mob_surv <- cor(sessions$mobility, sessions$survivability)
+stopifnot(mob_surv < 0)
+
+aw_cohort    <- round(tapply(sessions$awareness, sessions$cohort, mean), 1)
+score_cohort <- round(tapply(sessions$score, sessions$cohort, median))
+stopifnot(aw_cohort[["Veteran"]] > aw_cohort[["Novice"]],
+          score_cohort[["Veteran"]] > score_cohort[["Novice"]])
+```
+
+---
+
+## Describing data
+
+| Term | What it means | *Tidebreak* example | The common mistake |
+| :- | :- | :- | :- |
+| **Observation** | One unit you measured. Read it as: one row. | One player in one session: `r nrow(sessions)` observations in `tidebreak_sessions.csv`. | Mixing units in one table, such as session rows and per-player totals side by side. |
+| **Variable** | One thing recorded about every observation. Read it as: one column. | `session_minutes`, `cohort`, `deaths`: `r ncol(sessions)` variables in all. | Spreading one variable across several columns, as a survey export does with its questions. |
+| **Categorical** | Values are labels. **Nominal** labels have no order; **ordinal** labels do, with unknown gaps. | `quit_reason` is nominal, with `r length(unique(sessions$quit_reason))` categories. `cohort` is ordinal: Novice, Regular, Veteran. | Averaging a category because it was coded as 1, 2, 3. |
+| **Numerical** | Values are quantities, so arithmetic on them means something. | `score`, `deaths`, `session_minutes`. | Treating an ID or a 1–5 rating as a plain number without thinking about it. |
+| **Discrete** | Numerical values that are counts: whole numbers only. | `deaths` runs from `r min(sessions$deaths)` to `r max(sessions$deaths)`. | Drawing a histogram with more bars than there are possible values, which leaves gaps that look like a pattern. |
+| **Continuous** | Numerical values that can fall anywhere in a range. | `session_minutes`, `frames$ms`. | Tabulating it with `table()`; almost every value is unique. Use a histogram. |
+| **Sample** | The observations you actually have. | `r nrow(sessions)` sessions from `r length(unique(sessions$player_id))` players. | Forgetting to report how many ([rule 8](../notes/ten-rules.qmd)). |
+| **Population** | Everyone the conclusion is meant to apply to. You never measure it. | Everyone who will play *Tidebreak* after launch. | Assuming the sample looks like the population. A studio's Discord is not its audience. |
+
+---
+
+## Centre and spread
+
+| Term | What it means | *Tidebreak* example | The common mistake |
+| :- | :- | :- | :- |
+| **Mean** | The total divided by the count. Read it as: the value if everyone were equal. | Mean session length `r round(mean(mins), 1)` minutes. | Quoting it for skewed data, where a few extreme values drag it away from most players. |
+| **Median** | The middle value when sorted. Half above, half below. | Median session length `r round(median(mins), 1)` minutes. | Assuming it is always better. It ignores how extreme the extremes are, which is sometimes the point. |
+| **Minimum / maximum** | The smallest and largest values. | Session length from `r min(mins)` to `r max(mins)` minutes. | Skipping them. They are the fastest way to spot an impossible value. |
+| **Range** | Maximum minus minimum. | `r round(max(mins) - min(mins), 1)` minutes for session length. | Using it as the measure of spread. One unusual player sets it. |
+| **Standard deviation** | The typical distance of a value from the mean. | Frame time: `r sprintf("%.2f", sd(a_ms))` ms in Build A, `r sprintf("%.2f", sd(b_ms))` ms in Build B. | Quoting it for skewed data. It inherits every weakness of the mean. |
+| **Interquartile range (IQR)** | The width of the middle half of the data. | `r round(IQR(mins), 1)` minutes for session length. | Forgetting it exists. For skewed data, quote the median and IQR together. |
+| **Percentile** | The value with that percentage of the data below it. | 99th percentile frame time: `r round(quantile(a_ms, 0.99), 1)` ms in Build A, `r round(quantile(b_ms, 0.99), 1)` ms in Build B. | Stopping at the 95th, which cannot see a problem rarer than one case in twenty. |
+
+---
+
+## Shape
+
+| Term | What it means | *Tidebreak* example | The common mistake |
+| :- | :- | :- | :- |
+| **Distribution** | The full pattern of values: which occur and how often. A histogram draws it. | Sentinel score has two humps: games that anchor the round and games that collapse early. | Summarising a two-humped distribution with one average, which describes neither group ([rule 4](../notes/ten-rules.qmd)). |
+| **Skew** | A distribution with a long tail on one side. The mean is pulled towards the tail. | Session length is left-skewed: mean `r round(mean(mins), 1)` below median `r round(median(mins), 1)`, pulled down by early quits. | Reading the gap between mean and median without comparing it to the size of the variable. |
+| **Outlier** | A value far from the rest. A boxplot draws each one as a point. | The boxplot of `score` flags `r length(score_out)` low values, all of them Sentinel games. | Deleting it. An outlier is an error, an extreme player or the finding; find out which first ([rule 6](../notes/ten-rules.qmd)). |
+
+---
+
+## From sample to population
+
+| Term | What it means | *Tidebreak* example | The common mistake |
+| :- | :- | :- | :- |
+| **Sampling variability** | A different sample gives different numbers, even from the same population. | Split the sessions into four batches of 30 in file order: mean scores `r paste(batch_means, collapse = ", ")`. | Treating one playtest's numbers as fixed facts about the game. |
+| **Confidence interval** | A range of plausible values for the population, given the sample. Wider means less certain. | Build B sessions ran between `r round(ci_b[1], 1)` and `r round(ci_b[2], 1)` minutes longer than Build A (95% interval). | Reading "95%" as the chance this particular interval is right. It describes how often the method captures the true value. |
+
+---
+
+## Testing a difference
+
+| Term | What it means | *Tidebreak* example | The common mistake |
+| :- | :- | :- | :- |
+| **Null hypothesis** | The claim that there is no difference, which the test tries to find evidence against. | Build A and Build B have the same mean session length. | Believing the test can prove it. Failing to find a difference is not showing there is none. |
+| **Alternative hypothesis** | The claim that there is a difference. | Mean session length differs between the builds. | Choosing a one-sided direction after seeing which way the data went. |
+| **p-value** | How surprising the data would be if the null hypothesis were true. Small means surprising. | Session length by build: `r p_fmt(tt_mins$p.value)`. | Reading it as the probability that the null hypothesis is true. It is not. |
+| **Statistical significance** | A p-value below a threshold set in advance, conventionally 0.05. | Session length differs (`r p_fmt(tt_mins$p.value)`); score does not (`r p_fmt(tt_score$p.value)`). | Treating "significant" as "important". It means "unlikely to be chance alone", nothing more. |
+| **Practical significance** | Whether a difference is big enough to change a design decision. | In the Atrium, Build B's frames are `r round(atr_gap, 2)` ms faster (`r p_fmt(tt_atr$p.value)`): highly significant and imperceptible to any player. | Reporting a tiny, significant difference as a win. Always give the size of the difference too. |
+| **Independent-samples t-test** | Compares two group means when different people are in each group. `t.test(y ~ group)` | `t.test(session_minutes ~ build)`: every player saw only one build. | Ignoring that each player contributed `r n_per` sessions, so the sessions are not fully independent of one another. |
+| **Paired t-test** | Compares two measurements taken on the same people. `t.test(x, y, paired = TRUE)` | Not possible on this playtest: `r both_builds` of `r length(unique(sessions$player_id))` players played both builds. | Running a paired test on unpaired data, or an independent test when the same players did both. |
+
+---
+
+## Relationships
+
+| Term | What it means | *Tidebreak* example | The common mistake |
+| :- | :- | :- | :- |
+| **Correlation** | How closely two numerical variables move together, from −1 (opposite) through 0 (unrelated) to +1 (together). | Awareness and score: `r round(cors[["awareness"]], 2)`, the strongest of the ability ratings. Shots fired and score: `r round(cors[["shots_fired"]], 2)`. Mobility and survivability: `r round(mob_surv, 2)`, a trade-off. | Calling a correlation "strong" without context. Whether 0.3 matters depends on the question. |
+| **Confounding variable** | A third variable that drives both of the variables you are comparing. | Veterans average `r aw_cohort[["Veteran"]]` awareness against `r aw_cohort[["Novice"]]` for Novices, and a median score of `r score_cohort[["Veteran"]]` against `r score_cohort[["Novice"]]`. Experience could be driving both. | Reporting a relationship without asking what else differs between the players at each end of it. |
+| **Correlation versus causation** | Two things moving together does not show that one causes the other. | Buffing awareness would not necessarily raise score; the players with high awareness may simply be better players. | Turning "is associated with" into "causes" between the analysis and the design meeting. |
+
+---
+
+## Which tool for which question
+
+| The question | Look at | Summarise with | Test with |
+| :- | :- | :- | :- |
+| What was a typical session like? | Histogram | Median and IQR | — |
+| How bad does the worst case get? | Histogram or trace | 95th and 99th percentiles | — |
+| Do two builds differ, with different players on each? | Side-by-side boxplots | Medians, IQRs, difference in means | Independent-samples t-test |
+| Do two builds differ, with the same players on both? | Each player's difference | Mean difference | Paired t-test |
+| Do two numerical variables move together? | Scatterplot | Correlation | — |
+| Is a difference worth acting on? | The size of the difference and its confidence interval | — | No test answers this; it is a design judgement |
+
+---
+
+See also: [Ten Rules](../notes/ten-rules.qmd), [R and Quarto Reference](r-quarto-reference.qmd).
