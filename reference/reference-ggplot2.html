@@ -300,6 +300,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#labels-and-titles" id="toc-labels-and-titles" class="nav-link" data-scroll-target="#labels-and-titles">Labels and titles</a></li>
   <li><a href="#faceting" id="toc-faceting" class="nav-link" data-scroll-target="#faceting">Faceting</a></li>
   <li><a href="#useful-arguments" id="toc-useful-arguments" class="nav-link" data-scroll-target="#useful-arguments">Useful arguments</a></li>
+  <li><a href="#polishing-a-figure" id="toc-polishing-a-figure" class="nav-link" data-scroll-target="#polishing-a-figure">Polishing a figure</a></li>
+  <li><a href="#towards-the-showcase" id="toc-towards-the-showcase" class="nav-link" data-scroll-target="#towards-the-showcase">Towards the showcase</a></li>
+  <li><a href="#building-a-figure-by-pointing-esquisse" id="toc-building-a-figure-by-pointing-esquisse" class="nav-link" data-scroll-target="#building-a-figure-by-pointing-esquisse">Building a figure by pointing: esquisse</a></li>
   <li><a href="#common-errors" id="toc-common-errors" class="nav-link" data-scroll-target="#common-errors">Common errors</a></li>
   </ul>
 </nav>
@@ -330,6 +333,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <blockquote class="blockquote">
 <p>A lookup sheet, not a tutorial. <a href="../notes/visualising-with-ggplot2.html">Visualising with ggplot2</a> teaches the ideas; this page is for finding an argument name or a fix quickly during a lab. Every example draws <em>Tidebreak</em> data and runs when the site is built.</p>
 </blockquote>
+<p>The later sections, <strong>Polishing a figure</strong> and <strong>Towards the showcase</strong>, go beyond the syllabus. They are here for when you want your own figures to look like the ones on the <a href="../index.html">showcase</a> page.</p>
 <hr>
 <section id="the-structure" class="level2">
 <h2 class="anchored" data-anchor-id="the-structure">The structure</h2>
@@ -790,6 +794,280 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 </tbody>
 </table>
+<hr>
+</section>
+<section id="polishing-a-figure" class="level2">
+<h2 class="anchored" data-anchor-id="polishing-a-figure">Polishing a figure</h2>
+<p>The difference between a correct plot and a figure someone wants to read is mostly in these few tools.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Tool</th>
+<th style="text-align: left;">Code</th>
+<th style="text-align: left;">Use it to</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A cleaner theme</td>
+<td style="text-align: left;"><code>theme_minimal()</code></td>
+<td style="text-align: left;">Drop the grey background</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tweak one theme element</td>
+<td style="text-align: left;"><code>theme(legend.position = "none")</code>, <code>theme(panel.grid.minor = element_blank())</code></td>
+<td style="text-align: left;">Remove anything the reader does not need</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Your own colours</td>
+<td style="text-align: left;"><code>scale_fill_manual(values = c(A = "#eb6834", B = "#2a78d6"))</code></td>
+<td style="text-align: left;">Make one colour mean one thing in every figure</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number formatting</td>
+<td style="text-align: left;"><code>scale_y_continuous(labels = scales::comma)</code></td>
+<td style="text-align: left;">Print 1,500 rather than 1500</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Your own axis labels</td>
+<td style="text-align: left;"><code>scale_y_continuous(labels = function(y) paste0(y, "%"))</code></td>
+<td style="text-align: left;">Add units to tick labels</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Order categories by value</td>
+<td style="text-align: left;"><code>aes(x = reorder(archetype, score, FUN = median))</code></td>
+<td style="text-align: left;">Sort groups by what matters, not alphabetically</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A shaded region</td>
+<td style="text-align: left;"><code>annotate("rect", xmin = 11, xmax = 13, ymin = 0, ymax = 100, fill = "grey90")</code></td>
+<td style="text-align: left;">Point the reader at the part that matters</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A note on the plot</td>
+<td style="text-align: left;"><code>annotate("text", x = 14, y = 20, label = "...")</code></td>
+<td style="text-align: left;">Explain it where the reader is looking</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A reference line</td>
+<td style="text-align: left;"><code>geom_hline(yintercept = 1000 / 60, linetype = "dashed")</code></td>
+<td style="text-align: left;">Show a budget, a target or zero</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Equal x and y scales</td>
+<td style="text-align: left;"><code>coord_fixed()</code></td>
+<td style="text-align: left;">Maps and square grids</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A title that states the finding</td>
+<td style="text-align: left;"><code>labs(title = "Build A loses players at minute 11")</code></td>
+<td style="text-align: left;">Tell the reader what to see, not what was plotted</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Define your palette and theme once.</strong> Every figure in a report should use the same colour for the same thing. Write them once at the top of the document and reuse them:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>build_pal <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">A =</span> <span class="st">"#eb6834"</span>, <span class="at">B =</span> <span class="st">"#2a78d6"</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>arch_pal  <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">Scout =</span> <span class="st">"#2a78d6"</span>, <span class="at">Sentinel =</span> <span class="st">"#eb6834"</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">Engineer =</span> <span class="st">"#1baf7a"</span>, <span class="at">Duelist =</span> <span class="st">"#eda100"</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>theme_tidebreak <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">plot.title       =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.position  =</span> <span class="st">"none"</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>theme_tidebreak()</code> is then added to any figure like a built-in theme, and a later <code>theme(...)</code> can still override one part of it.</p>
+<hr>
+</section>
+<section id="towards-the-showcase" class="level2">
+<h2 class="anchored" data-anchor-id="towards-the-showcase">Towards the showcase</h2>
+<p>Each recipe below is a simpler, static version of a figure from the <a href="../index.html">showcase</a>, using only the tools on this page. Each one adds one or two ideas to what came before.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>sessions  <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_sessions.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>frames    <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_frame_times.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>positions <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_positions.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>level     <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_level.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="layered-distributions-view-2" class="level3">
+<h3 class="anchored" data-anchor-id="layered-distributions-view-2">Layered distributions (<a href="../index.html#view-2-distributions-not-averages">View 2</a>)</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(archetype, score, <span class="at">FUN =</span> median),</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">y =</span> score, <span class="at">fill =</span> archetype)) <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="at">colour =</span> <span class="cn">NA</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">width =</span> <span class="fl">0.12</span>, <span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">outlier.shape =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> arch_pal) <span class="sc">+</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>comma) <span class="sc">+</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Sentinel either anchors the round or collapses"</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Score"</span>) <span class="sc">+</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_tidebreak</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="reference-ggplot2_files/figure-html/recipe-violin-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>New here:</strong> two geometries on one mapping. <code>geom_violin()</code> draws the full shape, including Sentinel’s two humps; the thin boxplot on top gives the median and quartiles. <code>outlier.shape = NA</code> stops the boxplot repeating points the violin already shows.</p>
+</section>
+<section id="a-retention-curve-view-5" class="level3">
+<h3 class="anchored" data-anchor-id="a-retention-curve-view-5">A retention curve (<a href="../index.html#view-5-when-people-stop-playing">View 5</a>)</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># For every quarter-minute, the percentage of each build's players still playing.</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>retention <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">minute =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">33</span>, <span class="at">by =</span> <span class="fl">0.25</span>), <span class="at">build =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>))</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>retention<span class="sc">$</span>pct <span class="ot">&lt;-</span> <span class="fu">mapply</span>(</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(m, b) <span class="dv">100</span> <span class="sc">*</span> <span class="fu">mean</span>(sessions<span class="sc">$</span>session_minutes[sessions<span class="sc">$</span>build <span class="sc">==</span> b] <span class="sc">&gt;=</span> m),</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  retention<span class="sc">$</span>minute, retention<span class="sc">$</span>build)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(retention, <span class="fu">aes</span>(<span class="at">x =</span> minute, <span class="at">y =</span> pct, <span class="at">colour =</span> build)) <span class="sc">+</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> <span class="dv">11</span>, <span class="at">xmax =</span> <span class="dv">13</span>, <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> <span class="dv">100</span>, <span class="at">fill =</span> <span class="st">"grey90"</span>) <span class="sc">+</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_step</span>(<span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> build_pal) <span class="sc">+</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">100</span>), <span class="at">labels =</span> <span class="cf">function</span>(y) <span class="fu">paste0</span>(y, <span class="st">"%"</span>)) <span class="sc">+</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Build A loses players between minutes 11 and 13"</span>,</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Minute"</span>, <span class="at">y =</span> <span class="st">"Still playing"</span>, <span class="at">colour =</span> <span class="st">"Build"</span>) <span class="sc">+</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_tidebreak</span>() <span class="sc">+</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="reference-ggplot2_files/figure-html/recipe-retention-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>New here:</strong> building the data the figure needs before drawing it, then <code>geom_step()</code> for a quantity that only changes when someone leaves. The shaded <code>annotate()</code> layer is drawn first so the lines sit on top of it.</p>
+</section>
+<section id="a-correlation-heatmap-view-4" class="level3">
+<h3 class="anchored" data-anchor-id="a-correlation-heatmap-view-4">A correlation heatmap (<a href="../index.html#view-4-what-actually-drives-score">View 4</a>)</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"accuracy"</span>, <span class="st">"mobility"</span>, <span class="st">"survivability"</span>, <span class="st">"objective_control"</span>,</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">"support"</span>, <span class="st">"awareness"</span>, <span class="st">"shots_fired"</span>, <span class="st">"score"</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>cm_long <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">as.table</span>(<span class="fu">cor</span>(sessions[vars])))</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cm_long) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"r"</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cm_long, <span class="fu">aes</span>(<span class="at">x =</span> a, <span class="at">y =</span> b, <span class="at">fill =</span> r)) <span class="sc">+</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">sprintf</span>(<span class="st">"%.2f"</span>, r)), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"#e34948"</span>, <span class="at">mid =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="st">"#2a78d6"</span>,</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>                       <span class="at">limits =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Awareness moves with score; shots fired does not"</span>,</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_tidebreak</span>() <span class="sc">+</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"right"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="reference-ggplot2_files/figure-html/recipe-heatmap-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>New here:</strong> reshaping a matrix into one row per cell with <code>as.table()</code>, then <code>geom_tile()</code> with the value mapped to <code>fill</code>. <code>scale_fill_gradient2()</code> gives a diverging scale with white at zero, so the colour says the direction and the depth says the strength. Every value appears twice, mirrored across the diagonal; the showcase version filters to one triangle and orders the rows so related measures sit together.</p>
+</section>
+<section id="a-trace-with-a-budget-line-view-7" class="level3">
+<h3 class="anchored" data-anchor-id="a-trace-with-a-budget-line-view-7">A trace with a budget line (<a href="../index.html#view-7-the-frame-rate-counter-is-lying-to-you">View 7</a>)</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>corridor <span class="ot">&lt;-</span> frames[frames<span class="sc">$</span>zone <span class="sc">==</span> <span class="st">"Corridor"</span> <span class="sc">&amp;</span> frames<span class="sc">$</span>frame <span class="sc">&lt;=</span> <span class="dv">300</span>, ]</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(corridor, <span class="fu">aes</span>(<span class="at">x =</span> frame, <span class="at">y =</span> ms, <span class="at">colour =</span> build)) <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">1000</span> <span class="sc">/</span> <span class="dv">60</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> build, <span class="at">ncol =</span> <span class="dv">1</span>, <span class="at">labeller =</span> label_both) <span class="sc">+</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> build_pal) <span class="sc">+</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Same average frame rate; one build hitches"</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Corridor zone. Dashed line: the 60 FPS budget (16.7 ms)."</span>,</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Frame"</span>, <span class="at">y =</span> <span class="st">"Frame time (ms)"</span>) <span class="sc">+</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_tidebreak</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="reference-ggplot2_files/figure-html/recipe-trace-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>New here:</strong> <code>geom_line()</code> for a sequence, and a reference line that turns “high” into “over budget”. <code>labeller = label_both</code> writes “build: A” on each panel instead of a bare “A”.</p>
+</section>
+<section id="a-level-heat-map-view-8" class="level3">
+<h3 class="anchored" data-anchor-id="a-level-heat-map-view-8">A level heat map (<a href="../index.html#view-8-where-players-actually-stand">View 8</a>)</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>deaths <span class="ot">&lt;-</span> positions[positions<span class="sc">$</span>event <span class="sc">==</span> <span class="st">"death"</span>, ]</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>walls  <span class="ot">&lt;-</span> level[level<span class="sc">$</span>kind <span class="sc">!=</span> <span class="st">"elevated"</span>, ]</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>raised <span class="ot">&lt;-</span> level[level<span class="sc">$</span>kind <span class="sc">==</span> <span class="st">"elevated"</span>, ]</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bin_2d</span>(<span class="at">data =</span> positions, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), <span class="at">binwidth =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_rect</span>(<span class="at">data =</span> walls, <span class="fu">aes</span>(<span class="at">xmin =</span> xmin, <span class="at">xmax =</span> xmax, <span class="at">ymin =</span> ymin, <span class="at">ymax =</span> ymax),</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">fill =</span> <span class="st">"grey20"</span>) <span class="sc">+</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_rect</span>(<span class="at">data =</span> raised, <span class="fu">aes</span>(<span class="at">xmin =</span> xmin, <span class="at">xmax =</span> xmax, <span class="at">ymin =</span> ymin, <span class="at">ymax =</span> ymax),</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">fill =</span> <span class="st">"grey40"</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> deaths, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y),</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">shape =</span> <span class="dv">4</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">stroke =</span> <span class="fl">1.2</span>, <span class="at">colour =</span> <span class="st">"#e34948"</span>) <span class="sc">+</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient</span>(<span class="at">low =</span> <span class="st">"#cde2fb"</span>, <span class="at">high =</span> <span class="st">"#104281"</span>, <span class="at">name =</span> <span class="st">"Seconds"</span>) <span class="sc">+</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">60</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">40</span>), <span class="at">expand =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Where players spend their time, and where they die"</span>,</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Crosses mark deaths. The translucent block is the walkable gantry."</span>,</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_tidebreak</span>() <span class="sc">+</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"right"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="reference-ggplot2_files/figure-html/recipe-heatmap-level-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>New here:</strong> several data frames in one figure. Leave the data out of <code>ggplot()</code> and give each layer its own: positions for the heat, the level for the walls, deaths for the crosses. <code>geom_bin_2d()</code> counts the seconds spent in each 2 m square, and <code>coord_fixed()</code> keeps a metre the same length in both directions. The showcase version animates the players with <code>plotly</code>; this is the static core of it.</p>
+</section>
+<section id="routes-as-small-multiples-view-8" class="level3">
+<h3 class="anchored" data-anchor-id="routes-as-small-multiples-view-8">Routes as small multiples (<a href="../index.html#view-8-where-players-actually-stand">View 8</a>)</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_rect</span>(<span class="at">data =</span> walls, <span class="fu">aes</span>(<span class="at">xmin =</span> xmin, <span class="at">xmax =</span> xmax, <span class="at">ymin =</span> ymin, <span class="at">ymax =</span> ymax),</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">fill =</span> <span class="st">"grey20"</span>) <span class="sc">+</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_rect</span>(<span class="at">data =</span> raised, <span class="fu">aes</span>(<span class="at">xmin =</span> xmin, <span class="at">xmax =</span> xmax, <span class="at">ymin =</span> ymin, <span class="at">ymax =</span> ymax),</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">fill =</span> <span class="st">"grey40"</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>(<span class="at">data =</span> positions, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">colour =</span> t)) <span class="sc">+</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> player_id, <span class="at">nrow =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_gradient</span>(<span class="at">low =</span> <span class="st">"#cde2fb"</span>, <span class="at">high =</span> <span class="st">"#104281"</span>, <span class="at">name =</span> <span class="st">"Second"</span>) <span class="sc">+</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">60</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">40</span>), <span class="at">expand =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Eight routes through the same match"</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_tidebreak</span>() <span class="sc">+</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text =</span> <span class="fu">element_blank</span>(), <span class="at">legend.position =</span> <span class="st">"right"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="reference-ggplot2_files/figure-html/recipe-routes-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>New here:</strong> <code>geom_path()</code> joins points in the order they occur, where <code>geom_line()</code> would join them in order of <code>x</code>. Mapping time to <code>colour</code> shows the direction of travel without animation, and faceting by player turns one tangle into eight readable routes.</p>
+<hr>
+</section>
+</section>
+<section id="building-a-figure-by-pointing-esquisse" class="level2">
+<h2 class="anchored" data-anchor-id="building-a-figure-by-pointing-esquisse">Building a figure by pointing: esquisse</h2>
+<p><a href="https://dreamrs.github.io/esquisse/">esquisse</a> is a package that lets you build a <code>ggplot2</code> figure by dragging columns onto x, y, colour, fill and facet, and then shows you the code that draws it. It is a good way to try several mappings quickly, and to learn what code produces what picture.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"esquisse"</span>)    <span class="co"># once</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(esquisse)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">esquisser</span>(sessions)                         <span class="co"># opens the builder on your data</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">esquisser</span>(sessions, <span class="at">viewer =</span> <span class="st">"browser"</span>)     <span class="co"># force it into a web browser</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Run it from the R console, not inside a Quarto chunk: it is an interactive tool for you to click in, not code for a report to run. In RStudio it opens in a dialog and also appears in the <strong>Addins</strong> menu as <em>‘ggplot2’ builder</em>. Outside RStudio, including the R terminal in VS Code, it opens in your web browser.</p>
+<p><strong>Use it to explore, then keep the code.</strong> esquisse is for finding the figure. The figure in your report is the code it generates, pasted into a chunk, with the labels, palette and title from this page added by hand. A figure that only exists as clicks cannot be re-run when the data changes, and cannot be checked by anyone else.</p>
 <hr>
 </section>
 <section id="common-errors" class="level2">
