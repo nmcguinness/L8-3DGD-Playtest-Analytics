@@ -18,7 +18,7 @@ execute:
 
 First time here? Work through [Lab 00](labs/setting-up.qmd) before anything else.
 
-## Ten questions you will be able to answer
+## Ten questions R can answer
 
 These are the questions that come up in the week after a playtest. None of them is
 exotic. All of them are painful to answer with a spreadsheet, and each one is
@@ -43,13 +43,27 @@ engine can already record. The only thing missing is the ability to read it.
 ## Before you read any code
 
 This document is a **showcase**, not a lesson. Nothing here is examinable and you
-are not expected to understand the code yet. Its only job is to show you what six
-hours of R can do to a pile of raw playtest numbers.
+are not expected to understand the code yet. Its only job is to show you what three
+weeks of R can do to a pile of raw playtest numbers.
 
-Every figure below was produced from four CSV files, in between eleven and fifty-five
-lines of code. By the end of these notes you will be able to answer all ten
-questions above using base R and dplyr, producing plainer plots than the ones shown
-here. The polish on this page is the destination, not the syllabus.
+```{r line-counts}
+#| include: false
+src    <- readLines("index.qmd")
+starts <- grep("^```\\{r view-", src)
+ends   <- grep("^```$", src)
+view_lines <- sapply(starts, function(s) {
+  body <- src[(s + 1):(min(ends[ends > s]) - 1)]
+  sum(!grepl("^\\s*$|^#\\|", body))
+})
+n_csv <- length(grep('read_csv\\("data/', src))
+```
+
+Every figure below was produced from `r n_csv` CSV files, in chunks of between
+`r min(view_lines)` and `r max(view_lines)` lines of code. By the end of these
+notes you will be able to answer the first seven questions with base R, dplyr and
+ggplot2, producing plainer, static versions of the plots shown here. The three
+movement questions in View 8 use position data that stays in this showcase. The
+polish on this page is the destination, not the syllabus.
 
 ::: {.callout-note}
 ## The data
