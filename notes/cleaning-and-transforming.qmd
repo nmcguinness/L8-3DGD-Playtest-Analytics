@@ -549,7 +549,7 @@ about these three rows, not a rule for every blank.
   outlier
 - [R and Quarto Reference: getting at parts of a data frame](../reference/r-quarto-reference.qmd#getting-at-parts-of-a-data-frame)
   and [describing by group](../reference/r-quarto-reference.qmd#describing-by-group)
-- [Lab 02: cleaning, transforming and comparing](../labs/comparing-builds.qmd)
+- [Lab 02: cleaning, transforming and comparing](../labs/comparing-builds.qmd#part-a-clean-and-transform), Part A
 
 ---
 

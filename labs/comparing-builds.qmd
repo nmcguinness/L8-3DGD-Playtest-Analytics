@@ -1,6 +1,6 @@
 ---
 title: "Lab 02 — Comparing Builds"
-subtitle: "ggplot2 figures, t-tests, and whether a difference matters"
+subtitle: "Cleaning, transforming, t-tests, and whether a difference matters"
 ---
 
 # Overview
@@ -10,17 +10,19 @@ asks the question the team built it to answer:
 
 > **Does improved environmental guidance help players navigate the level?**
 
-Part A rebuilds your Week 1 base R plots in `ggplot2`, then goes further than base
-R comfortably can. Part B puts a size, an interval and a p-value on the
+Part A takes the raw export the team received and gets it into a shape that can
+answer that question, first in base R and then with the pipe, keeping a written
+record of every decision. Part B puts a size, an interval and a p-value on the
 differences, and asks the question no function answers: does this difference
 matter?
 
 | Function | What it does |
 | :- | :- |
-| `ggplot()`, `aes()` | Start a figure: the data and the mapping |
-| `geom_histogram()`, `geom_bar()`, `geom_boxplot()` | Draw it |
-| `facet_wrap()` | One panel per group |
-| `labs()` | Title and axis labels |
+| `duplicated()` | TRUE for any row that repeats an earlier row |
+| `is.na()`, `complete.cases()` | Find missing values, and rows with none |
+| `trimws()`, `tolower()` | Make text labels consistent |
+| `|>` | Pass the result on its left into the function on its right |
+| `filter()`, `select()`, `mutate()`, `arrange()` | Keep rows, keep columns, change a column, sort |
 | `group_by()`, `summarise()` | One row of summaries per group |
 | `t.test()` | Independent-samples and paired t-tests, with confidence intervals |
 | `aggregate()` | Collapse several rows per player into one |
@@ -29,9 +31,11 @@ matter?
 
 By the end of this lab you can:
 
-- build histograms, bar charts and boxplots in `ggplot2`, split by group with
-  `fill` or facets, and label them for a reader;
-- choose the figure that makes a comparison easiest to see, and defend the choice;
+- find duplicates, gaps and inconsistent labels in a raw export, and fix them in
+  base R and again with the pipe;
+- use `filter()`, `select()`, `mutate()` and `arrange()` to answer a question about
+  the data in one readable pipeline;
+- write a cleaning log that records every row dropped, why, and what it did to *n*;
 - run an independent-samples and a paired t-test, and pull the estimate, interval
   and p-value out of the result;
 - tell "no meaningful difference" apart from "cannot tell" using a confidence
@@ -40,8 +44,12 @@ By the end of this lab you can:
 
 # Ground rules
 
-- Draw before you test. Every Part B exercise assumes you have looked at the data
+- Clean before you describe. Every change you make to the data goes in your
+  cleaning log, including changes that remove no rows.
+- Look before you test. Every Part B exercise assumes you have looked at the data
   first.
+- Part A uses the pipe `|>`. Some Part B solutions use `%>%`, the older tidyverse
+  pipe, which does the same job.
 - Type the code. Open the solution **after** your attempt, even when your attempt
   worked.
 - Every exercise ends with a short written answer. Write it. The Challenge is
@@ -60,166 +68,239 @@ library(ggplot2)
 sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
 paired   <- read_csv("data/tidebreak_paired.csv", show_col_types = FALSE)
 frames   <- read_csv("data/tidebreak_frame_times.csv", show_col_types = FALSE)
+raw      <- read_csv("data/tidebreak_sessions_raw.csv",
+                     trim_ws = FALSE, show_col_types = FALSE)
 
+nrow(raw)
 nrow(sessions)
 nrow(paired)
 ```
 
-`sessions` has one row per player per session, with each player on one build only.
-`paired` is a separate study in which every player played both builds.
+`raw` is the export as delivered, and Part A cleans it. `trim_ws = FALSE` stops
+`read_csv()` quietly stripping spaces from text values, so you see the file the way
+Excel or a database import would. `sessions` has one row per player per session,
+with each player on one build only. `paired` is a separate study in which every
+player played both builds.
 
 ---
 
-# Part A — Figures with ggplot2
+# Part A — Clean and transform
 
-## Exercise 01 — A histogram, rebuilt `[Do]`
+`raw` is the export the team actually received. Every problem in it is silent:
+nothing throws an error, and every problem changes an answer. Part A finds them,
+fixes them in base R, fixes them again with the pipe, and ends with the cleaning
+log that goes in your report.
 
-Redraw Lab 01's histogram of `score` in `ggplot2`, with bins 100 points wide.
+If you did the cleaning extension to Lab 01, Exercises 01–03 are revision. Do them
+quickly and spend the time on Exercise 06.
+
+## Exercise 01 — Rows exported twice `[Do]`
+
+Count the rows of `raw` that are exact copies of an earlier row. Then count the
+rows whose `session_id` has appeared before.
 
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
 #| label: ex01
-ggplot(sessions, aes(x = score)) +
-  geom_histogram(binwidth = 100)
+sum(duplicated(raw))
+sum(duplicated(raw$session_id))
 ```
 
-`binwidth` is in the units of the variable, so 100 means each bar covers 100
-points of score.
+The first counts rows that repeat every column; the second counts rows that repeat
+only the key.
 :::
 
-**Write 1 sentence:** point to the data, the mapping and the geometry in your code.
+**Write 2 sentences:** the two counts are equal. What would it mean if the second
+were larger, and why could you not simply delete the extra rows?
 
-## Exercise 02 — A boxplot, rebuilt `[Do]`
+## Exercise 02 — Where the gaps are `[Do]`
 
-Redraw Lab 01's boxplot of `score` by `archetype` in `ggplot2`.
+Count the missing values in every column of `raw` at once.
 
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
 #| label: ex02
-ggplot(sessions, aes(x = archetype, y = score)) +
-  geom_boxplot()
+colSums(is.na(raw))
 ```
 
-The base R formula `score ~ archetype` becomes a mapping: the group on `x`, the
-numeric variable on `y`.
+`is.na()` on a data frame gives a TRUE/FALSE table the same shape as the data, and
+`colSums()` counts the TRUEs in each column.
 :::
 
-**Write 1 sentence:** what did base R make you type that `ggplot2` did not, or the
-other way round?
+**Write 1 sentence:** which column's gaps would you investigate first, and why
+that one?
 
-## Exercise 03 — Quit reasons, by build, for a reader `[Apply]`
+## Exercise 03 — Clean it in base R `[Apply]`
 
-Draw the count of each `quit_reason`, with the two builds side by side in
-different colours. Give it a title, drop the redundant x-axis label, and label the
-y axis and the legend properly.
+Make a copy of `raw` called `clean` with the duplicated rows removed. Then fix
+`cohort` so that it has exactly three values, and check that it does. Note the
+number of rows after each step.
 
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
 #| label: ex03
-ggplot(sessions, aes(x = quit_reason, fill = build)) +
-  geom_bar(position = "dodge") +
-  labs(title = "How sessions ended, by build",
-       x = NULL, y = "Sessions", fill = "Build")
+clean <- raw[!duplicated(raw), ]
+nrow(clean)
+
+table(clean$cohort)
+clean$cohort <- tolower(trimws(clean$cohort))
+table(clean$cohort)
 ```
 
-`fill = build` is **mapped**, so it changes with the data and earns a legend.
-`position = "dodge"` stops the bars stacking, so each build's bar starts at zero
-and the two can be compared directly.
+`!duplicated()` keeps the first copy of every row. `trimws()` removes the stray
+spaces and `tolower()` the inconsistent capitals, and `table()` before and after
+is the only proof that the fix caught every variant.
 :::
 
-**Write 2 sentences:** remove `position = "dodge"` and look again. Which comparison
-does the stacked version make harder, and why?
+**Write 2 sentences:** the relabelling removed no rows. Why does it still belong in
+the cleaning log?
 
-## Exercise 04 — Where Build A loses players `[Apply]`
+## Exercise 04 — The same cleaning, with the pipe `[Apply]`
 
-Draw a histogram of `session_minutes` with one panel per build, stacked so the x
-axes line up, with bins one minute wide. Where does Build A lose players that
-Build B keeps?
+Rebuild `clean` as `clean_pipe` in one pipeline starting from `raw`: `filter()` out
+the duplicated rows, then `mutate()` the `cohort` column. Confirm the two versions
+are identical.
 
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
 #| label: ex04
-#| fig-height: 5
-ggplot(sessions, aes(x = session_minutes)) +
-  geom_histogram(binwidth = 1, fill = "grey60", colour = "white") +
-  facet_wrap(~ build, ncol = 1) +
-  labs(title = "Session length, by build", x = "Minutes played", y = "Sessions")
+clean_pipe <- raw |>
+  filter(!duplicated(raw)) |>
+  mutate(cohort = tolower(trimws(cohort)))
+
+identical(clean, clean_pipe)
 ```
 
-`facet_wrap(~ build, ncol = 1)` is the line base R has no short equivalent for.
-The fill is **set**, not mapped, because the panel labels already say which build
-is which.
+`filter()` keeps the rows where its condition is TRUE, which is what `[ , ]` did
+in Exercise 03, and `mutate()` replaces the column in place. Each line is one step,
+read top to bottom in the order it happens.
 :::
 
-**Write 2 sentences:** describe where Build A's extra early exits happen, and
-connect them to one bar in Exercise 03.
+**Write 2 sentences:** which version would you rather hand to a teammate who has to
+re-run it on next week's export, and why?
 
-::: {.callout-note collapse="true" title="Check your answer"}
+## Exercise 05 — Who is missing? `[Apply]`
 
-```{r}
-#| label: ex04-check
-#| echo: false
-early <- function(b) sum(sessions$build == b &
-                         sessions$session_minutes > 11 & sessions$session_minutes <= 13)
-```
-
-Build A has a cluster of sessions ending between minutes 11 and 13:
-`r early("A")` of them, against `r early("B")` in Build B. They line up with the
-Frustrated bar in Exercise 03, where Build A has
-`r sum(sessions$build == "A" & sessions$quit_reason == "Frustrated")` sessions to
-Build B's `r sum(sessions$build == "B" & sessions$quit_reason == "Frustrated")`.
-:::
-
-## Exercise 05 — One figure for the level designer `[Decide]`
-
-The level designer wants one figure that answers: *did the signposting reduce wrong
-turns?* Draw at least two candidates for `wrong_turns` by build, pick one, and
-justify it.
+Using the pipe, list every row of `clean` with a blank `session_minutes` **or** a
+blank `deaths`. Keep only `session_id`, `build`, `quit_reason`, `session_minutes`
+and `deaths`, and sort by `build` then `quit_reason`.
 
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex05-facet
-#| fig-height: 4
-ggplot(sessions, aes(x = wrong_turns)) +
-  geom_histogram(binwidth = 1, fill = "grey60", colour = "white") +
-  facet_wrap(~ build, ncol = 1) +
-  labs(title = "Wrong turns per session, by build",
-       x = "Wrong turns", y = "Sessions")
+#| label: ex05
+clean |>
+  filter(is.na(session_minutes) | is.na(deaths)) |>
+  select(session_id, build, quit_reason, session_minutes, deaths) |>
+  arrange(build, quit_reason)
 ```
 
-```{r}
-#| label: ex05-stacked
-ggplot(sessions, aes(x = wrong_turns, fill = build)) +
-  geom_histogram(binwidth = 1)
-```
-
-**One defensible answer: the faceted histogram.** The shared x axis makes the shift
-obvious at a glance, and it shows something a boxplot flattens: Build B is wider as
-well as lower, so the signposting helped most players and some hardly at all. A
-side-by-side boxplot is also defensible for a reader who is used to them.
-
-**What makes it defensible.** The figure makes the comparison the question asks
-about the easiest thing on the page to see, and hides nothing the designer would
-want to know.
-
-**What would make it indefensible.** The stacked histogram: Build A's bars sit on
-top of Build B's, so Build A's shape cannot be read. Or a bar chart of the two
-means, which throws away the spread entirely.
+`|` means "or", so a row is kept if either value is missing. Sorting puts rows
+with the same build and outcome next to each other, which is what makes the
+pattern visible.
 :::
 
-**Write 2 sentences:** what does your chosen figure show that the two means alone
-would hide?
+**Write 2 sentences:** describe the pattern in the blank `session_minutes` rows,
+and say how it differs from the pattern in the blank `deaths` rows.
+
+::: {.callout-note collapse="true" title="Check your answer"}
+
+```{r}
+#| label: ex05-check
+#| echo: false
+blank_min <- clean[is.na(clean$session_minutes), ]
+blank_dth <- clean[is.na(clean$deaths), ]
+stopifnot(all(blank_min$build == "A"), all(blank_min$quit_reason == "Frustrated"),
+          length(unique(blank_dth$quit_reason)) > 1)
+```
+
+All `r nrow(blank_min)` blank session lengths are Build A frustration quits. The
+`r nrow(blank_dth)` blank death counts are spread across
+`r length(unique(blank_dth$build))` builds and
+`r length(unique(blank_dth$quit_reason))` different outcomes. One set looks like
+something in the game failed to log; the other looks like noise.
+:::
+
+## Exercise 06 — Write the cleaning log `[Decide]`
+
+Decide what to do with the rows that have gaps, then write the cleaning log for
+`clean`: every step, the number of rows after it, and why. Your log is the record
+a reader of the report would use to check your *n*.
+
+Before you decide, compare Build A's median `session_minutes` with the blanks left
+out against the median of the Build A frustration quits that *were* recorded.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex06
+tapply(clean$session_minutes, clean$build, median, na.rm = TRUE)
+
+recorded_a_frustrated <- clean |>
+  filter(build == "A", quit_reason == "Frustrated", !is.na(session_minutes))
+median(recorded_a_frustrated$session_minutes)
+
+nrow(raw)
+nrow(clean)
+nrow(clean[complete.cases(clean), ])
+```
+
+**One defensible answer: keep every row, and handle the gaps per analysis.**
+
+| Step | Rows after | Why |
+| :- | -: | :- |
+| Raw export | `r nrow(raw)` | As delivered |
+| Remove exact duplicates | `r nrow(clean)` | `r sum(duplicated(raw))` sessions exported twice; no key duplicates with different values |
+| Standardise `cohort` | `r nrow(clean)` | `r sum(!raw$cohort[!duplicated(raw)] %in% c("Novice", "Regular", "Veteran"))` labels had stray spaces or inconsistent capitals |
+| Keep blank `session_minutes` | `r nrow(clean)` | All `r nrow(blank_min)` are Build A frustration quits. Summaries of session length exclude them and say so |
+| Keep blank `deaths` | `r nrow(clean)` | `r nrow(blank_dth)` rows, no pattern. Excluded from deaths summaries only |
+
+**What makes it defensible.** The blank session lengths are not random. Recorded
+Build A frustration quits have a median of
+`r round(median(recorded_a_frustrated$session_minutes), 1)` minutes, so the
+missing ones are almost certainly short, and Build A's median of
+`r round(median(clean$session_minutes[clean$build == "A"], na.rm = TRUE), 1)`
+minutes is an overestimate. Keeping the rows keeps their `quit_reason`, which is
+complete and carries the finding. The log says what every summary of session
+length is missing, so a reader can judge it.
+
+**What would make it indefensible.** Running `complete.cases()` by reflex, which
+silently takes *n* from `r nrow(clean)` to
+`r nrow(clean[complete.cases(clean), ])` and removes the frustration quits the
+comparison is about. Or filling the blanks with 0 or with Build A's average, which
+invents session lengths and hides the logging fault.
+:::
+
+**Write 3 sentences:** the blank session lengths are also a bug in Build A's
+telemetry. Who should hear about it, and what goes in the bug report?
+
+::: {.callout-note title="Before Part B"}
+
+Part B uses `sessions` from the Setup block, not your `clean`. It is the same
+sessions, exported again after the logging fault was fixed: the same rows, with the
+gaps you found filled.
+
+```{r}
+#| label: part-a-bridge
+identical(clean$session_id, sessions$session_id)
+sum(is.na(sessions$session_minutes))
+sum(is.na(sessions$deaths))
+```
+
+Everything Part B compares is therefore free of the bias you found in Exercise 06.
+In a real playtest you would rarely get that second export. Your cleaning log is
+what you would have instead.
+:::
 
 ---
 
 # Part B — Is the difference real, and does it matter?
 
-## Exercise 06 — Describe before you test `[Do]`
+## Exercise 07 — Describe before you test `[Do]`
 
 Using `group_by()` and `summarise()`, produce one row per build with the number of
 sessions and the mean, median, standard deviation and IQR of `wrong_turns`.
@@ -227,7 +308,7 @@ sessions and the mean, median, standard deviation and IQR of `wrong_turns`.
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex06
+#| label: ex07
 sessions %>%
   group_by(build) %>%
   summarise(n      = n(),
@@ -244,7 +325,7 @@ without the number of players behind it.
 **Write 1 sentence:** Build B's standard deviation is larger than Build A's. What
 does that mean for a player?
 
-## Exercise 07 — The independent-samples t-test `[Do]`
+## Exercise 08 — The independent-samples t-test `[Do]`
 
 Run the t-test comparing `wrong_turns` between builds. Store the result, then pull
 out the two means, the confidence interval and the p-value separately.
@@ -252,7 +333,7 @@ out the two means, the confidence interval and the p-value separately.
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex07
+#| label: ex08
 result <- t.test(wrong_turns ~ build, data = sessions)
 result
 
@@ -269,7 +350,7 @@ inline R rather than by copying.
 **Write 2 sentences:** is the confidence interval for Build A minus Build B, or
 Build B minus Build A? How can you tell from the output?
 
-## Exercise 08 — The same players, both builds `[Apply]`
+## Exercise 09 — The same players, both builds `[Apply]`
 
 `paired` records `r nrow(paired)` players who each played both builds. Run the
 paired t-test on `wrong_turns_a` and `wrong_turns_b`, then run the unpaired test on
@@ -278,7 +359,7 @@ the same two columns. Compare the widths of the two confidence intervals.
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex08
+#| label: ex09
 paired_test   <- t.test(paired$wrong_turns_a, paired$wrong_turns_b, paired = TRUE)
 unpaired_test <- t.test(paired$wrong_turns_a, paired$wrong_turns_b)
 
@@ -299,7 +380,7 @@ with themselves, so differences in player skill cancel out.
 played first. Why does that matter, and what would you change about the next
 paired study?
 
-## Exercise 09 — No difference, or cannot tell? `[Apply]`
+## Exercise 10 — No difference, or cannot tell? `[Apply]`
 
 Run the t-test on `enjoyment` by build and on `items_collected` by build. Neither
 is significant. For which one can you say there is **no meaningful difference**,
@@ -308,7 +389,7 @@ and for which can you only say **we cannot tell**?
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex09
+#| label: ex10
 enjoy <- t.test(enjoyment ~ build, data = sessions)
 items <- t.test(items_collected ~ build, data = sessions)
 
@@ -332,10 +413,10 @@ up to `r sprintf("%.1f", -items$conf.int[1])` more items each, or up to
 **Write 2 sentences:** why is "not significant" a weaker statement than "the
 confidence interval is narrow and sits around zero"?
 
-## Exercise 10 — "Players play longer in Build B" `[Decide]`
+## Exercise 11 — "Players play longer in Build B" `[Decide]`
 
 ```{r}
-#| label: ex10-setup
+#| label: ex11-setup
 #| include: false
 tt_min  <- t.test(session_minutes ~ build, data = sessions)
 not_fr  <- sessions[sessions$quit_reason != "Frustrated", ]
@@ -356,7 +437,7 @@ players who did **not** quit in frustration.
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex10
+#| label: ex11
 not_frustrated <- sessions[sessions$quit_reason != "Frustrated", ]
 t.test(session_minutes ~ build, data = not_frustrated)
 
@@ -384,10 +465,10 @@ below 0.05. The difference is real; the explanation attached to it is not.
 player shifting a little or from a few players shifting a lot. How do you tell
 which, and why does it change the design conclusion?
 
-## Exercise 11 — Which number goes in the report? `[Decide]`
+## Exercise 12 — Which number goes in the report? `[Decide]`
 
 You have three estimates of how much the signposting reduced wrong turns: the
-session-level test from Exercise 07, the paired study from Exercise 08, and a
+session-level test from Exercise 08, the paired study from Exercise 09, and a
 player-level test that averages each player's `r unique(as.vector(table(sessions$player_id)))`
 sessions first. Run the player-level test, then decide which result leads the
 report.
@@ -395,7 +476,7 @@ report.
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex11
+#| label: ex12
 per_player <- aggregate(wrong_turns ~ player_id + build, data = sessions, FUN = mean)
 player_test <- t.test(wrong_turns ~ build, data = per_player)
 
@@ -544,5 +625,8 @@ t.test(wrong_turns ~ build, data = sessions)
 | `grouping factor must have exactly 2 levels` | `t.test(y ~ group)` needs exactly two groups. Filter to two first |
 | `not enough 'x' observations` | A group is empty, usually a misspelled level such as `"a"` for `"A"` |
 | `could not find function "%>%"` | You have not run `library(dplyr)` |
+| `could not find function "filter"` | You have not run `library(dplyr)` |
+| `object 'clean' not found` | You skipped Exercise 03, or ran Part A out of order |
+| `unexpected '>'` on a line with `|>` | Your R is older than 4.1. Update R, or use `%>%` |
 
 :::
