@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Statistics Reference – Playtest Analytics</title>
+<title>Week 1 Demo – Playtest Analytics</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,6 +26,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -36,8 +71,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../reference/r-quarto-reference.html" rel="next">
-<link href="../labs/reading-data.html" rel="prev">
+<link href="../reference/r-quarto-reference.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -88,7 +122,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/reference-statistics.html">Reference</a></li><li class="breadcrumb-item"><a href="../reference/reference-statistics.html">Statistics Reference</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../demos/week-1.html">Demos</a></li><li class="breadcrumb-item"><a href="../demos/week-1.html">Week 1 Demo</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -188,7 +222,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../reference/reference-statistics.html" class="sidebar-item-text sidebar-link active">
+  <a href="../reference/reference-statistics.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Statistics Reference</span></a>
   </div>
 </li>
@@ -211,7 +245,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../demos/week-1.html" class="sidebar-item-text sidebar-link">
+  <a href="../demos/week-1.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Week 1 Demo</span></a>
   </div>
 </li>
@@ -227,23 +261,18 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#describing-data" id="toc-describing-data" class="nav-link active" data-scroll-target="#describing-data">Describing data</a></li>
-  <li><a href="#centre-and-spread" id="toc-centre-and-spread" class="nav-link" data-scroll-target="#centre-and-spread">Centre and spread</a></li>
-  <li><a href="#shape" id="toc-shape" class="nav-link" data-scroll-target="#shape">Shape</a></li>
-  <li><a href="#from-sample-to-population" id="toc-from-sample-to-population" class="nav-link" data-scroll-target="#from-sample-to-population">From sample to population</a></li>
-  <li><a href="#testing-a-difference" id="toc-testing-a-difference" class="nav-link" data-scroll-target="#testing-a-difference">Testing a difference</a></li>
-  <li><a href="#relationships" id="toc-relationships" class="nav-link" data-scroll-target="#relationships">Relationships</a></li>
-  <li><a href="#which-tool-for-which-question" id="toc-which-tool-for-which-question" class="nav-link" data-scroll-target="#which-tool-for-which-question">Which tool for which question</a></li>
+  <li><a href="#demo-1-from-values-to-a-data-frame" id="toc-demo-1-from-values-to-a-data-frame" class="nav-link active" data-scroll-target="#demo-1-from-values-to-a-data-frame">Demo 1 — From values to a data frame</a></li>
+  <li><a href="#demo-2-describing-then-looking" id="toc-demo-2-describing-then-looking" class="nav-link" data-scroll-target="#demo-2-describing-then-looking">Demo 2 — Describing, then looking</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/reference-statistics.html">Reference</a></li><li class="breadcrumb-item"><a href="../reference/reference-statistics.html">Statistics Reference</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../demos/week-1.html">Demos</a></li><li class="breadcrumb-item"><a href="../demos/week-1.html">Week 1 Demo</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Statistics Reference</h1>
-<p class="subtitle lead">Every term in the strand, in plain English</p>
+<h1 class="title">Week 1 Demo</h1>
+<p class="subtitle lead">Describing playtest data, live</p>
 </div>
 
 
@@ -261,367 +290,193 @@ ul.task-list li input[type="checkbox"] {
 
 
 <blockquote class="blockquote">
-<p>A lookup sheet, not a tutorial. Each term has a plain-English meaning, a <em>Tidebreak</em> example and the mistake people make with it. Every number on this page is computed from the playtest data when the site is built. The notes teach these ideas; this page is for checking one quickly during a lab.</p>
+<p>The lecturer’s script for the two 15-minute demo slots in Week 1. Every chunk runs and shows its output. Step through it top to bottom; the bold headings are the places to pause. Base R plotting only this week.</p>
 </blockquote>
 <hr>
-<section id="describing-data" class="level2">
-<h2 class="anchored" data-anchor-id="describing-data">Describing data</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Term</th>
-<th style="text-align: left;">What it means</th>
-<th style="text-align: left;"><em>Tidebreak</em> example</th>
-<th style="text-align: left;">The common mistake</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>Observation</strong></td>
-<td style="text-align: left;">One unit you measured. Read it as: one row.</td>
-<td style="text-align: left;">One player in one session: 120 observations in <code>tidebreak_sessions.csv</code>.</td>
-<td style="text-align: left;">Mixing units in one table, such as session rows and per-player totals side by side.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Variable</strong></td>
-<td style="text-align: left;">One thing recorded about every observation. Read it as: one column.</td>
-<td style="text-align: left;"><code>session_minutes</code>, <code>cohort</code>, <code>deaths</code>: 20 variables in all.</td>
-<td style="text-align: left;">Spreading one variable across several columns, as a survey export does with its questions.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Categorical</strong></td>
-<td style="text-align: left;">Values are labels. <strong>Nominal</strong> labels have no order; <strong>ordinal</strong> labels do, with unknown gaps.</td>
-<td style="text-align: left;"><code>quit_reason</code> is nominal, with 4 categories. <code>cohort</code> is ordinal: Novice, Regular, Veteran.</td>
-<td style="text-align: left;">Averaging a category because it was coded as 1, 2, 3.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Numerical</strong></td>
-<td style="text-align: left;">Values are quantities, so arithmetic on them means something.</td>
-<td style="text-align: left;"><code>score</code>, <code>deaths</code>, <code>session_minutes</code>.</td>
-<td style="text-align: left;">Treating an ID or a 1–5 rating as a plain number without thinking about it.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Discrete</strong></td>
-<td style="text-align: left;">Numerical values that are counts: whole numbers only.</td>
-<td style="text-align: left;"><code>deaths</code> runs from 0 to 7.</td>
-<td style="text-align: left;">Drawing a histogram with more bars than there are possible values, which leaves gaps that look like a pattern.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Continuous</strong></td>
-<td style="text-align: left;">Numerical values that can fall anywhere in a range.</td>
-<td style="text-align: left;"><code>session_minutes</code>, <code>frames$ms</code>.</td>
-<td style="text-align: left;">Tabulating it with <code>table()</code>; almost every value is unique. Use a histogram.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Sample</strong></td>
-<td style="text-align: left;">The observations you actually have.</td>
-<td style="text-align: left;">120 sessions from 30 players.</td>
-<td style="text-align: left;">Forgetting to report how many (<a href="../notes/ten-rules.html">rule 8</a>).</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Population</strong></td>
-<td style="text-align: left;">Everyone the conclusion is meant to apply to. You never measure it.</td>
-<td style="text-align: left;">Everyone who will play <em>Tidebreak</em> after launch.</td>
-<td style="text-align: left;">Assuming the sample looks like the population. A studio’s Discord is not its audience.</td>
-</tr>
-</tbody>
-</table>
+<section id="demo-1-from-values-to-a-data-frame" class="level2">
+<h2 class="anchored" data-anchor-id="demo-1-from-values-to-a-data-frame">Demo 1 — From values to a data frame</h2>
+<p><strong>Step 1. A vector is a column</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Five players' deaths, typed in by hand. c() combines values into a vector.</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>deaths <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">5</span>, <span class="dv">3</span>, <span class="dv">1</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>deaths          <span class="co"># print it</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2 0 5 3 1</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(deaths)  <span class="co"># how many players</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>deaths[<span class="dv">3</span>]       <span class="co"># the third player: square brackets pick by position</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>deaths <span class="sc">&gt;</span> <span class="dv">2</span>      <span class="co"># a condition gives one TRUE/FALSE per player</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE FALSE  TRUE  TRUE FALSE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(deaths <span class="sc">&gt;</span> <span class="dv">2</span>) <span class="co"># TRUE counts as 1, so this is a count, not a total</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2</code></pre>
+</div>
+</div>
+<p><strong>Step 2. A missing value poisons the arithmetic</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The fourth player's log was lost. NA means "not recorded", not zero.</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>deaths <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">5</span>, <span class="cn">NA</span>, <span class="dv">1</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(deaths)               <span class="co"># NA: R will not guess</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(deaths, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="co"># say out loud what you are leaving out</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2</code></pre>
+</div>
+</div>
+<p><strong>Step 3. Read the real file</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># The path is relative to the project folder.</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>sessions <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_sessions.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Step 4. Look before you touch</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(sessions)          <span class="co"># every column: name, type, first values</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 120
+Columns: 20
+$ session_id        &lt;chr&gt; "S001", "S002", "S003", "S004", "S005", "S006", "S00…
+$ player_id         &lt;chr&gt; "P01", "P02", "P03", "P04", "P05", "P06", "P07", "P0…
+$ cohort            &lt;chr&gt; "Regular", "Veteran", "Regular", "Novice", "Veteran"…
+$ archetype         &lt;chr&gt; "Scout", "Scout", "Scout", "Scout", "Scout", "Scout"…
+$ build             &lt;chr&gt; "A", "B", "A", "B", "A", "B", "A", "B", "A", "B", "A…
+$ accuracy          &lt;dbl&gt; 55, 54, 48, 35, 67, 51, 57, 42, 51, 47, 56, 40, 60, …
+$ mobility          &lt;dbl&gt; 84, 91, 89, 80, 97, 90, 95, 73, 86, 86, 84, 83, 92, …
+$ survivability     &lt;dbl&gt; 48, 52, 42, 35, 56, 41, 45, 30, 35, 40, 49, 27, 46, …
+$ objective_control &lt;dbl&gt; 39, 66, 43, 47, 55, 45, 53, 39, 51, 49, 52, 35, 52, …
+$ support           &lt;dbl&gt; 52, 46, 52, 28, 38, 56, 47, 46, 34, 51, 55, 40, 53, …
+$ awareness         &lt;dbl&gt; 77, 91, 74, 74, 95, 87, 83, 67, 79, 82, 88, 67, 88, …
+$ score             &lt;dbl&gt; 1370, 1795, 1690, 1544, 2019, 1614, 1652, 1331, 1632…
+$ kills             &lt;dbl&gt; 7, 5, 5, 7, 12, 7, 6, 7, 7, 10, 9, 5, 10, 10, 5, 8, …
+$ deaths            &lt;dbl&gt; 4, 2, 2, 4, 3, 5, 4, 4, 3, 4, 3, 5, 5, 5, 5, 4, 4, 2…
+$ objectives        &lt;dbl&gt; 0, 2, 4, 2, 4, 4, 3, 2, 3, 3, 4, 1, 1, 1, 2, 4, 1, 2…
+$ shots_fired       &lt;dbl&gt; 148, 140, 190, 92, 143, 149, 143, 126, 138, 137, 118…
+$ time_alive_s      &lt;dbl&gt; 98, 105, 115, 80, 121, 115, 118, 99, 103, 71, 143, 7…
+$ distance_m        &lt;dbl&gt; 571, 520, 533, 349, 542, 566, 572, 308, 560, 451, 40…
+$ session_minutes   &lt;dbl&gt; 12.9, 24.6, 12.5, 18.8, 18.7, 25.3, 11.5, 27.0, 14.4…
+$ quit_reason       &lt;chr&gt; "Frustrated", "Lost interest", "Frustrated", "Lost i…</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(sessions<span class="sc">$</span>deaths)   <span class="co"># $ pulls out one column as a vector</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  0.000   2.000   3.000   3.008   4.000   7.000 </code></pre>
+</div>
+</div>
+<p><strong>Pause here.</strong> Ask the room: which columns are text, and is <code>cohort</code> just text?</p>
 <hr>
 </section>
-<section id="centre-and-spread" class="level2">
-<h2 class="anchored" data-anchor-id="centre-and-spread">Centre and spread</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Term</th>
-<th style="text-align: left;">What it means</th>
-<th style="text-align: left;"><em>Tidebreak</em> example</th>
-<th style="text-align: left;">The common mistake</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>Mean</strong></td>
-<td style="text-align: left;">The total divided by the count. Read it as: the value if everyone were equal.</td>
-<td style="text-align: left;">Mean session length 22.8 minutes.</td>
-<td style="text-align: left;">Quoting it for skewed data, where a few extreme values drag it away from most players.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Median</strong></td>
-<td style="text-align: left;">The middle value when sorted. Half above, half below.</td>
-<td style="text-align: left;">Median session length 26.1 minutes.</td>
-<td style="text-align: left;">Assuming it is always better. It ignores how extreme the extremes are, which is sometimes the point.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Minimum / maximum</strong></td>
-<td style="text-align: left;">The smallest and largest values.</td>
-<td style="text-align: left;">Session length from 7.7 to 32 minutes.</td>
-<td style="text-align: left;">Skipping them. They are the fastest way to spot an impossible value.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Range</strong></td>
-<td style="text-align: left;">Maximum minus minimum.</td>
-<td style="text-align: left;">24.3 minutes for session length.</td>
-<td style="text-align: left;">Using it as the measure of spread. One unusual player sets it.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Standard deviation</strong></td>
-<td style="text-align: left;">The typical distance of a value from the mean.</td>
-<td style="text-align: left;">Frame time: 1.05 ms in Build A, 3.40 ms in Build B.</td>
-<td style="text-align: left;">Quoting it for skewed data. It inherits every weakness of the mean.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Interquartile range (IQR)</strong></td>
-<td style="text-align: left;">The width of the middle half of the data.</td>
-<td style="text-align: left;">13.8 minutes for session length.</td>
-<td style="text-align: left;">Forgetting it exists. For skewed data, quote the median and IQR together.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Percentile</strong></td>
-<td style="text-align: left;">The value with that percentage of the data below it.</td>
-<td style="text-align: left;">99th percentile frame time: 19.5 ms in Build A, 39.4 ms in Build B.</td>
-<td style="text-align: left;">Stopping at the 95th, which cannot see a problem rarer than one case in twenty.</td>
-</tr>
-</tbody>
-</table>
-<hr>
-</section>
-<section id="shape" class="level2">
-<h2 class="anchored" data-anchor-id="shape">Shape</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Term</th>
-<th style="text-align: left;">What it means</th>
-<th style="text-align: left;"><em>Tidebreak</em> example</th>
-<th style="text-align: left;">The common mistake</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>Distribution</strong></td>
-<td style="text-align: left;">The full pattern of values: which occur and how often. A histogram draws it.</td>
-<td style="text-align: left;">Sentinel score has two humps: games that anchor the round and games that collapse early.</td>
-<td style="text-align: left;">Summarising a two-humped distribution with one average, which describes neither group (<a href="../notes/ten-rules.html">rule 4</a>).</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Skew</strong></td>
-<td style="text-align: left;">A distribution with a long tail on one side. The mean is pulled towards the tail.</td>
-<td style="text-align: left;">Session length is left-skewed: mean 22.8 below median 26.1, pulled down by early quits.</td>
-<td style="text-align: left;">Reading the gap between mean and median without comparing it to the size of the variable.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Outlier</strong></td>
-<td style="text-align: left;">A value far from the rest. A boxplot draws each one as a point.</td>
-<td style="text-align: left;">The boxplot of <code>score</code> flags 7 low values, all of them Sentinel games.</td>
-<td style="text-align: left;">Deleting it. An outlier is an error, an extreme player or the finding; find out which first (<a href="../notes/ten-rules.html">rule 6</a>).</td>
-</tr>
-</tbody>
-</table>
-<hr>
-</section>
-<section id="from-sample-to-population" class="level2">
-<h2 class="anchored" data-anchor-id="from-sample-to-population">From sample to population</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Term</th>
-<th style="text-align: left;">What it means</th>
-<th style="text-align: left;"><em>Tidebreak</em> example</th>
-<th style="text-align: left;">The common mistake</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>Sampling variability</strong></td>
-<td style="text-align: left;">A different sample gives different numbers, even from the same population.</td>
-<td style="text-align: left;">Split the sessions into four batches of 30 in file order: mean scores 1550, 1313, 1462, 1390.</td>
-<td style="text-align: left;">Treating one playtest’s numbers as fixed facts about the game.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Confidence interval</strong></td>
-<td style="text-align: left;">A range of plausible values for the population, given the sample. Wider means less certain.</td>
-<td style="text-align: left;">Build B sessions ran between 0.2 and 5.7 minutes longer than Build A (95% interval).</td>
-<td style="text-align: left;">Reading “95%” as the chance this particular interval is right. It describes how often the method captures the true value.</td>
-</tr>
-</tbody>
-</table>
-<hr>
-</section>
-<section id="testing-a-difference" class="level2">
-<h2 class="anchored" data-anchor-id="testing-a-difference">Testing a difference</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Term</th>
-<th style="text-align: left;">What it means</th>
-<th style="text-align: left;"><em>Tidebreak</em> example</th>
-<th style="text-align: left;">The common mistake</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>Null hypothesis</strong></td>
-<td style="text-align: left;">The claim that there is no difference, which the test tries to find evidence against.</td>
-<td style="text-align: left;">Build A and Build B have the same mean session length.</td>
-<td style="text-align: left;">Believing the test can prove it. Failing to find a difference is not showing there is none.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Alternative hypothesis</strong></td>
-<td style="text-align: left;">The claim that there is a difference.</td>
-<td style="text-align: left;">Mean session length differs between the builds.</td>
-<td style="text-align: left;">Choosing a one-sided direction after seeing which way the data went.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>p-value</strong></td>
-<td style="text-align: left;">How surprising the data would be if the null hypothesis were true. Small means surprising.</td>
-<td style="text-align: left;">Session length by build: p = 0.037.</td>
-<td style="text-align: left;">Reading it as the probability that the null hypothesis is true. It is not.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Statistical significance</strong></td>
-<td style="text-align: left;">A p-value below a threshold set in advance, conventionally 0.05.</td>
-<td style="text-align: left;">Session length differs (p = 0.037); score does not (p = 0.822).</td>
-<td style="text-align: left;">Treating “significant” as “important”. It means “unlikely to be chance alone”, nothing more.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Practical significance</strong></td>
-<td style="text-align: left;">Whether a difference is big enough to change a design decision.</td>
-<td style="text-align: left;">In the Atrium, Build B’s frames are 0.42 ms faster (p &lt; 0.001): highly significant and imperceptible to any player.</td>
-<td style="text-align: left;">Reporting a tiny, significant difference as a win. Always give the size of the difference too.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Independent-samples t-test</strong></td>
-<td style="text-align: left;">Compares two group means when different people are in each group. <code>t.test(y ~ group)</code></td>
-<td style="text-align: left;"><code>t.test(session_minutes ~ build)</code>: every player saw only one build.</td>
-<td style="text-align: left;">Ignoring that each player contributed 4 sessions, so the sessions are not fully independent of one another.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Paired t-test</strong></td>
-<td style="text-align: left;">Compares two measurements taken on the same people. <code>t.test(x, y, paired = TRUE)</code></td>
-<td style="text-align: left;">Not possible on this playtest: 0 of 30 players played both builds.</td>
-<td style="text-align: left;">Running a paired test on unpaired data, or an independent test when the same players did both.</td>
-</tr>
-</tbody>
-</table>
-<hr>
-</section>
-<section id="relationships" class="level2">
-<h2 class="anchored" data-anchor-id="relationships">Relationships</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Term</th>
-<th style="text-align: left;">What it means</th>
-<th style="text-align: left;"><em>Tidebreak</em> example</th>
-<th style="text-align: left;">The common mistake</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><strong>Correlation</strong></td>
-<td style="text-align: left;">How closely two numerical variables move together, from −1 (opposite) through 0 (unrelated) to +1 (together).</td>
-<td style="text-align: left;">Awareness and score: 0.59, the strongest of the ability ratings. Shots fired and score: 0.05. Mobility and survivability: -0.66, a trade-off.</td>
-<td style="text-align: left;">Calling a correlation “strong” without context. Whether 0.3 matters depends on the question.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><strong>Confounding variable</strong></td>
-<td style="text-align: left;">A third variable that drives both of the variables you are comparing.</td>
-<td style="text-align: left;">Veterans average 75.6 awareness against 57.3 for Novices, and a median score of 1664 against 1281. Experience could be driving both.</td>
-<td style="text-align: left;">Reporting a relationship without asking what else differs between the players at each end of it.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>Correlation versus causation</strong></td>
-<td style="text-align: left;">Two things moving together does not show that one causes the other.</td>
-<td style="text-align: left;">Buffing awareness would not necessarily raise score; the players with high awareness may simply be better players.</td>
-<td style="text-align: left;">Turning “is associated with” into “causes” between the analysis and the design meeting.</td>
-</tr>
-</tbody>
-</table>
-<hr>
-</section>
-<section id="which-tool-for-which-question" class="level2">
-<h2 class="anchored" data-anchor-id="which-tool-for-which-question">Which tool for which question</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">The question</th>
-<th style="text-align: left;">Look at</th>
-<th style="text-align: left;">Summarise with</th>
-<th style="text-align: left;">Test with</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">What was a typical session like?</td>
-<td style="text-align: left;">Histogram</td>
-<td style="text-align: left;">Median and IQR</td>
-<td style="text-align: left;">—</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">How bad does the worst case get?</td>
-<td style="text-align: left;">Histogram or trace</td>
-<td style="text-align: left;">95th and 99th percentiles</td>
-<td style="text-align: left;">—</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Do two builds differ, with different players on each?</td>
-<td style="text-align: left;">Side-by-side boxplots</td>
-<td style="text-align: left;">Medians, IQRs, difference in means</td>
-<td style="text-align: left;">Independent-samples t-test</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Do two builds differ, with the same players on both?</td>
-<td style="text-align: left;">Each player’s difference</td>
-<td style="text-align: left;">Mean difference</td>
-<td style="text-align: left;">Paired t-test</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Do two numerical variables move together?</td>
-<td style="text-align: left;">Scatterplot</td>
-<td style="text-align: left;">Correlation</td>
-<td style="text-align: left;">—</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Is a difference worth acting on?</td>
-<td style="text-align: left;">The size of the difference and its confidence interval</td>
-<td style="text-align: left;">—</td>
-<td style="text-align: left;">No test answers this; it is a design judgement</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<p>See also: <a href="../notes/ten-rules.html">Ten Rules</a>, <a href="../reference/r-quarto-reference.html">R and Quarto Reference</a>.</p>
+<section id="demo-2-describing-then-looking" class="level2">
+<h2 class="anchored" data-anchor-id="demo-2-describing-then-looking">Demo 2 — Describing, then looking</h2>
+<p><strong>Step 5. Centre and spread</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>kills <span class="ot">&lt;-</span> sessions<span class="sc">$</span>kills</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(kills)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6.875</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(kills)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 7</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(kills)                     <span class="co"># typical distance from the mean</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.171482</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">IQR</span>(kills)                    <span class="co"># width of the middle half</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(kills, <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>))  <span class="co"># any percentiles you ask for</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>10% 90% 
+  4  10 </code></pre>
+</div>
+</div>
+<p><strong>Step 6. The shape, the groups, the counts</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(sessions<span class="sc">$</span>time_alive_s, <span class="at">breaks =</span> <span class="dv">15</span>,</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Seconds alive"</span>, <span class="at">xlab =</span> <span class="st">"Seconds"</span>, <span class="at">col =</span> <span class="st">"grey85"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week-1_files/figure-html/d2-plots-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(session_minutes <span class="sc">~</span> build, <span class="at">data =</span> sessions,</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Session length by build"</span>, <span class="at">ylab =</span> <span class="st">"Minutes"</span>, <span class="at">col =</span> <span class="st">"grey85"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week-1_files/figure-html/d2-plots-2.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(<span class="fu">table</span>(sessions<span class="sc">$</span>quit_reason),</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"How sessions ended"</span>, <span class="at">col =</span> <span class="st">"grey85"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week-1_files/figure-html/d2-plots-3.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sessions<span class="sc">$</span>deaths, sessions<span class="sc">$</span>score, <span class="at">pch =</span> <span class="dv">19</span>,</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Deaths against score"</span>, <span class="at">xlab =</span> <span class="st">"Deaths"</span>, <span class="at">ylab =</span> <span class="st">"Score"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week-1_files/figure-html/d2-plots-4.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Pause here.</strong> Ask: which build loses players, and which plot told you?</p>
+<p><strong>Step 7. The frame-rate trap</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>frames <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_frame_times.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Base R: one summary per build, one call per summary.</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tapply</span>(frames<span class="sc">$</span>ms, frames<span class="sc">$</span>build, mean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       A        B 
+16.99925 16.94679 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tapply</span>(frames<span class="sc">$</span>ms, frames<span class="sc">$</span>build, quantile, <span class="fl">0.99</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      A       B 
+19.4800 39.3708 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tidyverse: every summary per build in one table.</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>frames <span class="sc">%&gt;%</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(build) <span class="sc">%&gt;%</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">fps    =</span> <span class="dv">1000</span> <span class="sc">/</span> <span class="fu">mean</span>(ms),</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">median =</span> <span class="fu">median</span>(ms),</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">p99    =</span> <span class="fu">quantile</span>(ms, <span class="fl">0.99</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 4
+  build   fps median   p99
+  &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+1 A      58.8   17.0  19.5
+2 B      59.0   16.6  39.4</code></pre>
+</div>
+</div>
+<p><strong>Finish here.</strong> Same frame rate, one build stutters. The mean could never have shown it.</p>
 
 
 </section>
@@ -1029,14 +884,11 @@ ul.task-list li input[type="checkbox"] {
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../labs/reading-data.html" class="pagination-link" aria-label="Lab 01 — Reading Data">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Lab 01 — Reading Data</span>
+      <a href="../reference/r-quarto-reference.html" class="pagination-link" aria-label="R and Quarto Reference">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">R and Quarto Reference</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../reference/r-quarto-reference.html" class="pagination-link" aria-label="R and Quarto Reference">
-        <span class="nav-page-text">R and Quarto Reference</span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
