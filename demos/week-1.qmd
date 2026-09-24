@@ -1,0 +1,115 @@
+---
+title: "Week 1 Demo"
+subtitle: "Describing playtest data, live"
+---
+
+> The lecturer's script for the two 15-minute demo slots in Week 1. Every chunk
+> runs and shows its output. Step through it top to bottom; the bold headings are
+> the places to pause. Base R plotting only this week.
+
+---
+
+## Demo 1 — From values to a data frame
+
+**Step 1. A vector is a column**
+
+```{r}
+#| label: d1-vector
+# Five players' deaths, typed in by hand. c() combines values into a vector.
+deaths <- c(2, 0, 5, 3, 1)
+
+deaths          # print it
+length(deaths)  # how many players
+deaths[3]       # the third player: square brackets pick by position
+deaths > 2      # a condition gives one TRUE/FALSE per player
+sum(deaths > 2) # TRUE counts as 1, so this is a count, not a total
+```
+
+**Step 2. A missing value poisons the arithmetic**
+
+```{r}
+#| label: d1-na
+# The fourth player's log was lost. NA means "not recorded", not zero.
+deaths <- c(2, 0, 5, NA, 1)
+
+mean(deaths)               # NA: R will not guess
+mean(deaths, na.rm = TRUE) # say out loud what you are leaving out
+```
+
+**Step 3. Read the real file**
+
+```{r}
+#| label: d1-read
+library(readr)
+library(dplyr)
+
+# The path is relative to the project folder.
+sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+```
+
+**Step 4. Look before you touch**
+
+```{r}
+#| label: d1-look
+glimpse(sessions)          # every column: name, type, first values
+summary(sessions$deaths)   # $ pulls out one column as a vector
+```
+
+**Pause here.** Ask the room: which columns are text, and is `cohort` just text?
+
+---
+
+## Demo 2 — Describing, then looking
+
+**Step 5. Centre and spread**
+
+```{r}
+#| label: d2-centre
+kills <- sessions$kills
+
+mean(kills)
+median(kills)
+sd(kills)                     # typical distance from the mean
+IQR(kills)                    # width of the middle half
+quantile(kills, c(0.1, 0.9))  # any percentiles you ask for
+```
+
+**Step 6. The shape, the groups, the counts**
+
+```{r}
+#| label: d2-plots
+hist(sessions$time_alive_s, breaks = 15,
+     main = "Seconds alive", xlab = "Seconds", col = "grey85")
+
+boxplot(session_minutes ~ build, data = sessions,
+        main = "Session length by build", ylab = "Minutes", col = "grey85")
+
+barplot(table(sessions$quit_reason),
+        main = "How sessions ended", col = "grey85")
+
+plot(sessions$deaths, sessions$score, pch = 19,
+     main = "Deaths against score", xlab = "Deaths", ylab = "Score")
+```
+
+**Pause here.** Ask: which build loses players, and which plot told you?
+
+**Step 7. The frame-rate trap**
+
+```{r}
+#| label: d2-frames
+frames <- read_csv("data/tidebreak_frame_times.csv", show_col_types = FALSE)
+
+# Base R: one summary per build, one call per summary.
+tapply(frames$ms, frames$build, mean)
+tapply(frames$ms, frames$build, quantile, 0.99)
+
+# Tidyverse: every summary per build in one table.
+frames %>%
+  group_by(build) %>%
+  summarise(fps    = 1000 / mean(ms),
+            median = median(ms),
+            p99    = quantile(ms, 0.99))
+```
+
+**Finish here.** Same frame rate, one build stutters. The mean could never have
+shown it.

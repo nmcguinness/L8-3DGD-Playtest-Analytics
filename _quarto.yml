@@ -8,6 +8,7 @@ project:
     - "notes/*.qmd"
     - "labs/*.qmd"
     - "reference/*.qmd"
+    - "demos/*.qmd"
     - "!lecturer/"
   # All chunks execute with the PROJECT ROOT as the working directory, so every
   # file can write data/tidebreak_sessions.csv regardless of which folder it is in.
@@ -43,6 +44,9 @@ website:
         contents:
           - reference/reference-statistics.qmd
           - reference/r-quarto-reference.qmd
+      - section: "Demos"
+        contents:
+          - demos/week-1.qmd
   page-footer:
     center: "COMP I8015 · 3D Game Development · Dundalk Institute of Technology"
 
