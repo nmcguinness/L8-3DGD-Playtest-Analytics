@@ -1,6 +1,6 @@
 ---
 title: "Week 3 Demo"
-subtitle: "Building figures and reporting, live"
+subtitle: "Figures, relationships, reshaping and a report that recomputes, live"
 ---
 
 > The lecturer's script for the two 15-minute demo slots in Week 3. Every chunk
@@ -70,3 +70,137 @@ ggplot(sessions, aes(x = wrong_turns)) +
 ggplot(sessions, aes(x = awareness, y = score)) +
   geom_point(aes(colour = "blue"))
 ```
+
+**Step 6. The scatterplot, done properly**
+
+```{r}
+#| label: d1-scatter
+# colour SET outside aes(); geom_smooth(method = "lm") adds the straight-line fit.
+ggplot(sessions, aes(x = awareness, y = score)) +
+  geom_point(colour = "grey40") +
+  geom_smooth(method = "lm", se = FALSE, colour = "black") +
+  labs(title = "Awareness against score", x = "Awareness rating", y = "Score")
+
+cor(sessions$awareness, sessions$score)    # the line, as one number
+cor(sessions$shots_fired, sessions$score)  # the stat everyone assumes matters
+```
+
+**Step 7. A strong correlation that means the opposite**
+
+```{r}
+#| label: d1-reversal
+cor(sessions$mobility, sessions$survivability)   # faster players are more fragile?
+
+# Map colour to archetype: one cloud and one trend line per group.
+ggplot(sessions, aes(x = mobility, y = survivability, colour = archetype)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Mobility rating", y = "Survivability rating", colour = "Archetype")
+```
+
+**Finish here.** Ask: the overall correlation is negative; every archetype's line
+goes up.
+Which one answers "should a Scout lose health as they get faster"? Archetype is the
+confound. This is Lab 03, Exercise 06.
+
+---
+
+## Demo 2 — From a survey to a report that recomputes
+
+**Step 8. The survey arrives wide**
+
+```{r}
+#| label: d2-wide
+library(tidyr)
+
+survey <- read_csv("data/tidebreak_survey.csv", show_col_types = FALSE)
+head(survey, 2)   # one column per question: the item is a column NAME
+```
+
+**Pause here.** Ask: how would you get the mean of all eight items, by build,
+from this shape?
+
+**Step 9. Pivot it long**
+
+```{r}
+#| label: d2-long
+# Stack every column except the key: names into item, values into rating.
+long <- survey |>
+  pivot_longer(-session_id, names_to = "item", values_to = "rating")
+
+dim(survey)
+dim(long)   # 120 sessions x 8 items = 960 rows
+```
+
+**Step 10. Every item at once, now that item is a column**
+
+```{r}
+#| label: d2-items
+long |>
+  group_by(item) |>
+  summarise(agree = mean(rating >= 4)) |>   # TRUE counts as 1
+  arrange(agree)
+```
+
+**Step 11. The report skeleton**
+
+The report is a `.qmd` file: the nine part headings, a hidden setup chunk, and
+numbers written as inline R.
+
+````markdown
+---
+title: "Tidebreak Build B: Playtest Report"
+---
+
+```{{r}}
+#| echo: false
+sessions <- readr::read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+```
+
+## 1. Research question
+## 2. Experimental design
+
+We analysed `r knitr::inline_expr("nrow(sessions)")` sessions.
+
+## 3. Descriptive evidence
+...
+## 9. Design conclusion
+````
+
+**Step 12. Watch the inline numbers recompute**
+
+```{r}
+#| label: d2-render-helper
+#| include: false
+# Replaces each inline `r ...` in some text with its value, as quarto render does.
+# knit_child() moves the working directory, so put it back afterwards.
+render_text <- function(text) {
+  env <- parent.frame()
+  wd  <- getwd()
+  on.exit(setwd(wd))
+  cat(knitr::knit_child(text = text, quiet = TRUE, envir = env))
+}
+```
+
+```{r}
+#| label: d2-recompute
+# One sentence of the report, with its numbers as inline R.
+part2 <- paste(
+  "We analysed `r nrow(sessions)` sessions. Build A's median session lasted",
+  "`r median(sessions$session_minutes[sessions$build == 'A'], na.rm = TRUE)` minutes."
+)
+
+# render_text() does to this sentence what quarto render does to the report.
+render_text(part2)   # against the full data...
+
+# ...then against Week 2's raw export with incomplete rows dropped.
+raw <- read_csv("data/tidebreak_sessions_raw.csv", show_col_types = FALSE)
+sessions <- raw[!duplicated(raw), ]
+sessions <- sessions[complete.cases(sessions), ]
+
+render_text(part2)
+```
+
+**Finish here.** Same sentence, nobody retyped a number, and both figures changed.
+The second one also shows why the cleaning log goes in part 2: the report is only
+as honest as the data it was rendered against.

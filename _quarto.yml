@@ -55,6 +55,7 @@ website:
         contents:
           - demos/week-1.qmd
           - demos/week-2.qmd
+          - demos/week-3.qmd
   page-footer:
     center: "COMP I8015 · 3D Game Development · Dundalk Institute of Technology"
 
