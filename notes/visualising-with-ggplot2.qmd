@@ -3,11 +3,17 @@ title: "Visualising with ggplot2"
 subtitle: "From a plot you look at to a figure someone else reads"
 ---
 
-> Week 2, first cycle, for everyone, before Part A of Lab 02. It introduces
+> Week 3, first cycle, for everyone, before Part A of Lab 03. It introduces
 > `ggplot2` as a system rather than a list of commands: every figure is data,
 > mapped to aesthetics, drawn as a geometry. The worked example is the one to
 > remember: the same wrong-turn counts drawn three ways, and only the third shows
 > what the new signposting did.
+
+::: {.callout-note collapse="true" title="Note for the lecturer"}
+These notes and Relationships and Confounding share one 30-minute theory slot, and
+are written to be taught together. The scatterplot is the correlation visual, so
+`geom_point()` and `cor()` arrive at the same moment rather than twice.
+:::
 
 ---
 
@@ -39,7 +45,7 @@ reader draws the wrong conclusion, however careful the analysis behind it was.
 Choosing what to compare, and making that comparison the easiest thing on the page
 to see, is part of the analysis rather than decoration added after it.
 
-**Week 1's plots were for you.** `hist()` and `boxplot()` answer a question in one
+**The plots in Weeks 1 and 2 were for you.** `hist()` and `boxplot()` answer a question in one
 line while you are thinking. They stay useful. What they are not built for is the
 figure that has to survive being pasted into a report, split by three groups and
 read by someone who was not in the room.
@@ -152,6 +158,13 @@ Both are correct tools, and neither replaces the other.
 run `hist(sessions$wrong_turns)` a dozen times while exploring and build one
 `ggplot2` figure for the report. That is the right division of labour, not a
 failure to commit to one tool.
+
+**That is why Weeks 1 and 2 used base R and this week does not.** For two weeks
+you were inspecting: describing a variable, checking a clean, looking at two builds
+before testing them. Every plot had one reader, you, and one line was all it needed
+to earn. This week the reader changes. The report at the end of Lab 03 is for
+someone who was not in the room, and building that figure is the job `ggplot2` is
+designed for. Base R has not been replaced: you will still reach for `hist()` first.
 
 ---
 
@@ -300,7 +313,8 @@ ggplot(sessions, aes(x = awareness, y = score, colour = cohort)) +
 `geom_point()` is `plot(x, y)`. Mapping `colour = cohort` adds a third variable
 without a second chart. The cloud rises from left to right: players rated higher
 for awareness tend to score more. How strong that relationship is, and whether
-awareness is the cause, is Week 3's subject.
+awareness is the cause, is the subject of Relationships and Confounding, which
+starts from this scatterplot.
 
 ```{r}
 #| label: demo-facet
@@ -343,8 +357,9 @@ cohort, an archetype or a route that the new lighting does not reach.
 **What can legitimately be concluded.** The testers who played Build B took fewer
 wrong turns than the testers who played Build A. A figure cannot tell you whether
 another group of players would show the same gap, or whether a gap this size could
-arise by chance. That is the next notes' job, and it is why the figure comes before
-the test rather than instead of it.
+arise by chance. That is what the t-test in
+[Comparing Playtest Conditions](comparing-conditions.qmd) answers, and it is why
+the figure comes before the test rather than instead of it.
 
 **Every figure answers one question.** Before you draw, write the question the
 reader is meant to answer in one sentence. Then check the finished figure makes
