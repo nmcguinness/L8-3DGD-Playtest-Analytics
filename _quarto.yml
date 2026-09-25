@@ -45,6 +45,7 @@ website:
           - labs/setting-up.qmd
           - labs/reading-data.qmd
           - labs/comparing-builds.qmd
+          - labs/complete-analysis.qmd
       - section: "Reference"
         contents:
           - reference/reference-statistics.qmd
