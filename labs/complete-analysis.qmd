@@ -79,6 +79,8 @@ session, eight agreement items rated 1 to 5.
 
 # Part A — Visualise and relate
 
+Notes for this part: [Visualising with ggplot2](../notes/visualising-with-ggplot2.qmd).
+
 ## Exercise 01 — A histogram, rebuilt `[Do]`
 
 Redraw Lab 01's histogram of `score` in `ggplot2`, with bins 100 points wide and a
@@ -253,6 +255,8 @@ say which part of the report this belongs in.
 ---
 
 # Part B — Reshape and report
+
+Notes for this part: [Interpreting and Reporting Evidence](../notes/reporting-evidence.qmd).
 
 Every exercise in this part produces a piece of `report.qmd`. Create the file now,
 in the project folder next to `data/`, and add to it as you go.
@@ -471,7 +475,8 @@ did not load, and a missing closing ```` ``` ````.
 
 Write parts 8 and 9 of the report. Part 8 lists what could make your conclusion
 wrong. Part 9 is one finding in **What → Pattern → Meaning → Action** form that
-answers the research question. Every number is inline R.
+answers the research question; a finding that does not name an action is not
+finished ([rule 10](../notes/ten-rules.qmd)). Every number is inline R.
 
 ::: {.callout-tip collapse="true" title="Solution"}
 

@@ -74,6 +74,9 @@ nrow(sessions)
 
 # Part A — Values, vectors and missing data
 
+Notes for this part: [Why Developers Measure Anything](../notes/why-measure.qmd)
+and [Describing What You Have](../notes/describing-what-you-have.qmd).
+
 ## Exercise 01 — Build a vector and look at it `[Do]`
 
 Create a vector called `deaths` holding the death counts from six playtest
@@ -192,6 +195,9 @@ do not?
 ---
 
 # Part B — Loading and describing real data
+
+Notes for this part: [Describing What You Have](../notes/describing-what-you-have.qmd)
+and [Distributions and Variation](../notes/distributions-and-variation.qmd).
 
 From here on you are working with `sessions`, loaded in the Setup block: 120 real
 playtest sessions from the *Tidebreak* arena.

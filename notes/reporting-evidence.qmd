@@ -546,6 +546,9 @@ quits happened. They cannot tell you how often each cause occurs.
   practical significance, parts 5 and 6
 - [Statistics Reference: which tool for which question](../reference/reference-statistics.qmd#which-tool-for-which-question)
 - [R and Quarto Reference: Quarto](../reference/r-quarto-reference.qmd#quarto)
+  and [reshaping and joining](../reference/r-quarto-reference.qmd#reshaping-and-joining)
+- [Lab 03: complete playtest analysis](../labs/complete-analysis.qmd#part-b-reshape-and-report),
+  Part B
 
 ---
 

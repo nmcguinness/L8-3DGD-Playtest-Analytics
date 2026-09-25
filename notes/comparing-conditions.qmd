@@ -619,6 +619,9 @@ is not, which is a case for a larger playtest rather than a decision.
 - [Visualising with ggplot2](visualising-with-ggplot2.qmd): the boxplots and
   faceted histograms that come before every test
 - [ggplot2 Reference](../reference/reference-ggplot2.qmd)
+- [R and Quarto Reference: relationships and tests](../reference/r-quarto-reference.qmd#relationships-and-tests)
+- [Lab 02: cleaning, transforming and comparing](../labs/comparing-builds.qmd#part-b-is-the-difference-real-and-does-it-matter),
+  Part B
 
 ---
 

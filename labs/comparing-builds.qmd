@@ -86,6 +86,8 @@ player played both builds.
 
 # Part A — Clean and transform
 
+Notes for this part: [Cleaning and Transforming](../notes/cleaning-and-transforming.qmd).
+
 `raw` is the export the team actually received. Every problem in it is silent:
 nothing throws an error, and every problem changes an answer. Part A finds them,
 fixes them in base R, fixes them again with the pipe, and ends with the cleaning
@@ -229,7 +231,8 @@ something in the game failed to log; the other looks like noise.
 
 Decide what to do with the rows that have gaps, then write the cleaning log for
 `clean`: every step, the number of rows after it, and why. Your log is the record
-a reader of the report would use to check your *n*.
+a reader of the report would use to check your *n*
+([rule 6](../notes/ten-rules.qmd)).
 
 Before you decide, compare Build A's median `session_minutes` with the blanks left
 out against the median of the Build A frustration quits that *were* recorded.
@@ -299,6 +302,8 @@ what you would have instead.
 ---
 
 # Part B — Is the difference real, and does it matter?
+
+Notes for this part: [Comparing Playtest Conditions](../notes/comparing-conditions.qmd).
 
 ## Exercise 07 — Describe before you test `[Do]`
 

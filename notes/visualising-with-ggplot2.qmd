@@ -510,6 +510,9 @@ questions.
 - [R and Quarto Reference: plots](../reference/r-quarto-reference.qmd#plots)
 - [Lab 01: exploring playtest data](../labs/reading-data.qmd), Exercises 11 and 12:
   the base R histogram and boxplot rebuilt in the R Demonstrations above
+- [ggplot2 Reference](../reference/reference-ggplot2.qmd)
+- [Lab 03: complete playtest analysis](../labs/complete-analysis.qmd#part-a-visualise-and-relate),
+  Part A
 
 ---
 
