@@ -246,7 +246,7 @@
     "href": "notes/visualising-with-ggplot2.html",
     "title": "Visualising with ggplot2",
     "section": "",
-    "text": "NoteNote for the lecturer\n\n\n\n\n\nThese notes and Relationships and Confounding share one 30-minute theory slot, and are written to be taught together. The scatterplot is the correlation visual, so geom_point() and cor() arrive at the same moment rather than twice.",
+    "text": "By the end of these notes you can:\n\nname the three parts every ggplot2 figure is built from, and point to each in a line of code;\ntell mapping an aesthetic apart from setting one, and fix the bug that comes from confusing them;\nchoose between geom_histogram(), geom_bar(), geom_boxplot() and geom_point() from the kind of variable you are drawing;\nuse fill, colour and faceting to split a figure by group, and say which comparison each one makes easy;\ngive a figure a title and axis labels a reader outside the team can follow;\nsay when base R is the right tool and when ggplot2 is.",
     "crumbs": [
       "Notes",
       "Visualising with ggplot2"
@@ -256,8 +256,8 @@
     "objectID": "notes/visualising-with-ggplot2.html#learning-outcomes",
     "href": "notes/visualising-with-ggplot2.html#learning-outcomes",
     "title": "Visualising with ggplot2",
-    "section": "Learning Outcomes",
-    "text": "Learning Outcomes\nBy the end of these notes you can:\n\nname the three parts every ggplot2 figure is built from, and point to each in a line of code;\ntell mapping an aesthetic apart from setting one, and fix the bug that comes from confusing them;\nchoose between geom_histogram(), geom_bar(), geom_boxplot() and geom_point() from the kind of variable you are drawing;\nuse fill, colour and faceting to split a figure by group, and say which comparison each one makes easy;\ngive a figure a title and axis labels a reader outside the team can follow;\nsay when base R is the right tool and when ggplot2 is.",
+    "section": "",
+    "text": "By the end of these notes you can:\n\nname the three parts every ggplot2 figure is built from, and point to each in a line of code;\ntell mapping an aesthetic apart from setting one, and fix the bug that comes from confusing them;\nchoose between geom_histogram(), geom_bar(), geom_boxplot() and geom_point() from the kind of variable you are drawing;\nuse fill, colour and faceting to split a figure by group, and say which comparison each one makes easy;\ngive a figure a title and axis labels a reader outside the team can follow;\nsay when base R is the right tool and when ggplot2 is.",
     "crumbs": [
       "Notes",
       "Visualising with ggplot2"
@@ -587,7 +587,7 @@
     "href": "notes/describing-what-you-have.html",
     "title": "Describing What You Have",
     "section": "",
-    "text": "Week 1, for everyone, before Part B of Lab 01. This is the vocabulary for describing a single variable: what kind of number it is, where its centre sits, how spread out it is and what shape it has. Every later page assumes it.",
+    "text": "By the end of these notes you can:\n\nclassify a variable as nominal, ordinal, discrete or continuous, and say which operations that allows;\nrecognise a tidy table and name the most common way data fails to be one;\nsay what a sample is, and why every number you compute describes the sample rather than your audience;\nchoose between mean and median, and read the gap between them as evidence of skew;\ndescribe spread with the standard deviation, quartiles and IQR, and say why the range is rarely enough;\ndraw a histogram and a boxplot in base R and say what each shows that a summary hides.",
     "crumbs": [
       "Notes",
       "Describing What You Have"
@@ -597,8 +597,8 @@
     "objectID": "notes/describing-what-you-have.html#learning-outcomes",
     "href": "notes/describing-what-you-have.html#learning-outcomes",
     "title": "Describing What You Have",
-    "section": "Learning Outcomes",
-    "text": "Learning Outcomes\nBy the end of these notes you can:\n\nclassify a variable as nominal, ordinal, discrete or continuous, and say which operations that allows;\nrecognise a tidy table and name the most common way data fails to be one;\nsay what a sample is, and why every number you compute describes the sample rather than your audience;\nchoose between mean and median, and read the gap between them as evidence of skew;\ndescribe spread with the standard deviation, quartiles and IQR, and say why the range is rarely enough;\ndraw a histogram and a boxplot in base R and say what each shows that a summary hides.",
+    "section": "",
+    "text": "By the end of these notes you can:\n\nclassify a variable as nominal, ordinal, discrete or continuous, and say which operations that allows;\nrecognise a tidy table and name the most common way data fails to be one;\nsay what a sample is, and why every number you compute describes the sample rather than your audience;\nchoose between mean and median, and read the gap between them as evidence of skew;\ndescribe spread with the standard deviation, quartiles and IQR, and say why the range is rarely enough;\ndraw a histogram and a boxplot in base R and say what each shows that a summary hides.",
     "crumbs": [
       "Notes",
       "Describing What You Have"
@@ -1682,17 +1682,6 @@
     ]
   },
   {
-    "objectID": "notes/comparing-conditions.html",
-    "href": "notes/comparing-conditions.html",
-    "title": "Comparing Playtest Conditions",
-    "section": "",
-    "text": "Week 2, second cycle, for everyone, before Part B of Lab 02. It takes the question every A/B playtest ends with, “is Build B better?”, and splits it into the two questions it actually contains: would the difference hold up with other players, and is it big enough to act on? The worked example is the one to remember: two results that are both statistically significant, one of which you should act on and one of which you should not.",
-    "crumbs": [
-      "Notes",
-      "Comparing Playtest Conditions"
-    ]
-  },
-  {
     "objectID": "notes/comparing-conditions.html#learning-outcomes",
     "href": "notes/comparing-conditions.html#learning-outcomes",
     "title": "Comparing Playtest Conditions",
@@ -2060,7 +2049,7 @@
     "href": "notes/why-measure.html",
     "title": "Why Developers Measure Anything",
     "section": "",
-    "text": "The first notes page of the strand, for everyone, before Lab 01. It sets out when measurement is worth the effort, where playtest data comes from, and how to turn a designer’s question into something you can record. The only code is in the R Demonstrations section near the end.",
+    "text": "By the end of these notes you can:\n\nname the three cases where a team’s judgement of its own game reliably fails;\ndistinguish telemetry, performance capture and asking people, and say what each can and cannot tell you;\nrewrite a vague design question as a measure you could record for a single player;\nwrite down, before collecting anything, the result that would change your mind;\nload a playtest CSV into R and take a first look at it with read_csv(), glimpse() and summary().",
     "crumbs": [
       "Notes",
       "Why Developers Measure Anything"
@@ -2070,8 +2059,8 @@
     "objectID": "notes/why-measure.html#learning-outcomes",
     "href": "notes/why-measure.html#learning-outcomes",
     "title": "Why Developers Measure Anything",
-    "section": "Learning Outcomes",
-    "text": "Learning Outcomes\nBy the end of these notes you can:\n\nname the three cases where a team’s judgement of its own game reliably fails;\ndistinguish telemetry, performance capture and asking people, and say what each can and cannot tell you;\nrewrite a vague design question as a measure you could record for a single player;\nwrite down, before collecting anything, the result that would change your mind;\nload a playtest CSV into R and take a first look at it with read_csv(), glimpse() and summary().",
+    "section": "",
+    "text": "By the end of these notes you can:\n\nname the three cases where a team’s judgement of its own game reliably fails;\ndistinguish telemetry, performance capture and asking people, and say what each can and cannot tell you;\nrewrite a vague design question as a measure you could record for a single player;\nwrite down, before collecting anything, the result that would change your mind;\nload a playtest CSV into R and take a first look at it with read_csv(), glimpse() and summary().",
     "crumbs": [
       "Notes",
       "Why Developers Measure Anything"
