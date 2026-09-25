@@ -475,6 +475,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="part-a-clean-and-transform" class="level1">
 <h1>Part A — Clean and transform</h1>
+<p>Notes for this part: <a href="../notes/cleaning-and-transforming.html">Cleaning and Transforming</a>.</p>
 <p><code>raw</code> is the export the team actually received. Every problem in it is silent: nothing throws an error, and every problem changes an answer. Part A finds them, fixes them in base R, fixes them again with the pipe, and ends with the cleaning log that goes in your report.</p>
 <p>If you did the cleaning extension to Lab 01, Exercises 01–03 are revision. Do them quickly and spend the time on Exercise 06.</p>
 <section id="exercise-01-rows-exported-twice-do" class="level2">
@@ -683,7 +684,7 @@ Regular   veteran  Veteran  VETERAN Veteran
 </section>
 <section id="exercise-06-write-the-cleaning-log-decide" class="level2">
 <h2 class="anchored" data-anchor-id="exercise-06-write-the-cleaning-log-decide">Exercise 06 — Write the cleaning log <code>[Decide]</code></h2>
-<p>Decide what to do with the rows that have gaps, then write the cleaning log for <code>clean</code>: every step, the number of rows after it, and why. Your log is the record a reader of the report would use to check your <em>n</em>.</p>
+<p>Decide what to do with the rows that have gaps, then write the cleaning log for <code>clean</code>: every step, the number of rows after it, and why. Your log is the record a reader of the report would use to check your <em>n</em> (<a href="../notes/ten-rules.html">rule 6</a>).</p>
 <p>Before you decide, compare Build A’s median <code>session_minutes</code> with the blanks left out against the median of the Build A frustration quits that <em>were</em> recorded.</p>
 <div class="callout callout-style-default callout-tip callout-titled" title="Solution">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
@@ -803,6 +804,7 @@ Regular   veteran  Veteran  VETERAN Veteran
 </section>
 <section id="part-b-is-the-difference-real-and-does-it-matter" class="level1">
 <h1>Part B — Is the difference real, and does it matter?</h1>
+<p>Notes for this part: <a href="../notes/comparing-conditions.html">Comparing Playtest Conditions</a>.</p>
 <section id="exercise-07-describe-before-you-test-do" class="level2">
 <h2 class="anchored" data-anchor-id="exercise-07-describe-before-you-test-do">Exercise 07 — Describe before you test <code>[Do]</code></h2>
 <p>Using <code>group_by()</code> and <code>summarise()</code>, produce one row per build with the number of sessions and the mean, median, standard deviation and IQR of <code>wrong_turns</code>.</p>
