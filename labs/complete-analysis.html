@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Lab 03 — Complete Playtest Analysis – Playtest Analytics</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../reference/reference-statistics.html" rel="next">
+<link href="../labs/comparing-builds.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-640402775883e0dc5b71a44650c95e06.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/setting-up.html">Labs</a></li><li class="breadcrumb-item"><a href="../labs/complete-analysis.html">Lab 03 — Complete Playtest Analysis</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Playtest Analytics</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Start here</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Notes</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/ten-rules.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ten Rules for Reading Playtest Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/why-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Why Developers Measure Anything</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/describing-what-you-have.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Describing What You Have</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/distributions-and-variation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Distributions and Variation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/cleaning-and-transforming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cleaning and Transforming</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/visualising-with-ggplot2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Visualising with ggplot2</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/comparing-conditions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Comparing Playtest Conditions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/reporting-evidence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Interpreting and Reporting Evidence</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Labs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/setting-up.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 00 — Setting Up</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/reading-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 01 — Reading Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/comparing-builds.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 02 — Comparing Builds</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/complete-analysis.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Lab 03 — Complete Playtest Analysis</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Reference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/reference-statistics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Statistics Reference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/r-quarto-reference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R and Quarto Reference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/reference-ggplot2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ggplot2 Reference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Demos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/week-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 1 Demo</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/week-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 2 Demo</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/week-3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 3 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#learning-outcomes" id="toc-learning-outcomes" class="nav-link" data-scroll-target="#learning-outcomes">Learning outcomes</a></li>
+  <li><a href="#ground-rules" id="toc-ground-rules" class="nav-link" data-scroll-target="#ground-rules">Ground rules</a></li>
+  <li><a href="#setup-run-this-first" id="toc-setup-run-this-first" class="nav-link" data-scroll-target="#setup-run-this-first">Setup (run this first)</a></li>
+  <li><a href="#part-a-visualise-and-relate" id="toc-part-a-visualise-and-relate" class="nav-link" data-scroll-target="#part-a-visualise-and-relate">Part A — Visualise and relate</a>
+  <ul class="collapse">
+  <li><a href="#exercise-01-a-histogram-rebuilt-do" id="toc-exercise-01-a-histogram-rebuilt-do" class="nav-link" data-scroll-target="#exercise-01-a-histogram-rebuilt-do">Exercise 01 — A histogram, rebuilt <code>[Do]</code></a></li>
+  <li><a href="#exercise-02-a-boxplot-rebuilt-do" id="toc-exercise-02-a-boxplot-rebuilt-do" class="nav-link" data-scroll-target="#exercise-02-a-boxplot-rebuilt-do">Exercise 02 — A boxplot, rebuilt <code>[Do]</code></a></li>
+  <li><a href="#exercise-03-the-navigation-figure-apply" id="toc-exercise-03-the-navigation-figure-apply" class="nav-link" data-scroll-target="#exercise-03-the-navigation-figure-apply">Exercise 03 — The navigation figure <code>[Apply]</code></a></li>
+  <li><a href="#exercise-04-what-goes-with-score-do" id="toc-exercise-04-what-goes-with-score-do" class="nav-link" data-scroll-target="#exercise-04-what-goes-with-score-do">Exercise 04 — What goes with score? <code>[Do]</code></a></li>
+  <li><a href="#exercise-05-the-trade-off-apply" id="toc-exercise-05-the-trade-off-apply" class="nav-link" data-scroll-target="#exercise-05-the-trade-off-apply">Exercise 05 — The trade-off <code>[Apply]</code></a></li>
+  <li><a href="#exercise-06-faster-players-are-more-fragile-decide" id="toc-exercise-06-faster-players-are-more-fragile-decide" class="nav-link" data-scroll-target="#exercise-06-faster-players-are-more-fragile-decide">Exercise 06 — Faster players are more fragile? <code>[Decide]</code></a></li>
+  </ul></li>
+  <li><a href="#part-b-reshape-and-report" id="toc-part-b-reshape-and-report" class="nav-link" data-scroll-target="#part-b-reshape-and-report">Part B — Reshape and report</a>
+  <ul class="collapse">
+  <li><a href="#exercise-07-wide-to-long-do" id="toc-exercise-07-wide-to-long-do" class="nav-link" data-scroll-target="#exercise-07-wide-to-long-do">Exercise 07 — Wide to long <code>[Do]</code></a></li>
+  <li><a href="#exercise-08-every-item-both-builds-apply" id="toc-exercise-08-every-item-both-builds-apply" class="nav-link" data-scroll-target="#exercise-08-every-item-both-builds-apply">Exercise 08 — Every item, both builds <code>[Apply]</code></a></li>
+  <li><a href="#exercise-09-without-reducing-enjoyment-decide" id="toc-exercise-09-without-reducing-enjoyment-decide" class="nav-link" data-scroll-target="#exercise-09-without-reducing-enjoyment-decide">Exercise 09 — “Without reducing enjoyment” <code>[Decide]</code></a></li>
+  <li><a href="#exercise-10-start-the-report-and-render-it-apply" id="toc-exercise-10-start-the-report-and-render-it-apply" class="nav-link" data-scroll-target="#exercise-10-start-the-report-and-render-it-apply">Exercise 10 — Start the report, and render it <code>[Apply]</code></a></li>
+  <li><a href="#exercise-11-limitations-and-the-conclusion-decide" id="toc-exercise-11-limitations-and-the-conclusion-decide" class="nav-link" data-scroll-target="#exercise-11-limitations-and-the-conclusion-decide">Exercise 11 — Limitations and the conclusion <code>[Decide]</code></a></li>
+  </ul></li>
+  <li><a href="#challenge-a-finding-that-contradicts-your-own-report-decide" id="toc-challenge-a-finding-that-contradicts-your-own-report-decide" class="nav-link" data-scroll-target="#challenge-a-finding-that-contradicts-your-own-report-decide">Challenge — A finding that contradicts your own report <code>[Decide]</code></a></li>
+  <li><a href="#output" id="toc-output" class="nav-link" data-scroll-target="#output">Output</a></li>
+  <li><a href="#appendix-common-errors" id="toc-appendix-common-errors" class="nav-link" data-scroll-target="#appendix-common-errors">Appendix — Common errors</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/setting-up.html">Labs</a></li><li class="breadcrumb-item"><a href="../labs/complete-analysis.html">Lab 03 — Complete Playtest Analysis</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Lab 03 — Complete Playtest Analysis</h1>
+<p class="subtitle lead">Figures, relationships, reshaping, and the report you will revise from</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>This lab ends the strand by answering one question from start to finish:</p>
+<blockquote class="blockquote">
+<p><strong>Does environmental guidance improve navigation without reducing enjoyment?</strong></p>
+</blockquote>
+<p>Part A builds the figures and relationships the answer needs, in <code>ggplot2</code>, and finds a correlation that means the opposite of what it seems to. Part B reshapes the survey, then assembles everything into a nine-part report in Quarto.</p>
+<p><strong>The report is the point.</strong> It is the artefact you revise from for the Week 8 practical. Every exercise in Part B adds a piece of it, and you should leave the lab with a <code>report.qmd</code> that renders.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Function</th>
+<th style="text-align: left;">What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>ggplot()</code>, <code>aes()</code>, <code>geom_*()</code></td>
+<td style="text-align: left;">Build a figure from data, mapping and geometry</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>facet_wrap()</code>, <code>colour =</code></td>
+<td style="text-align: left;">Split a figure by group</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>geom_smooth(method = "lm")</code></td>
+<td style="text-align: left;">Add a straight-line trend to a scatterplot</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>labs()</code></td>
+<td style="text-align: left;">Title, axis and legend labels</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>cor()</code></td>
+<td style="text-align: left;">Strength and direction of a straight-line relationship, −1 to +1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>pivot_longer()</code></td>
+<td style="text-align: left;">Reshape wide columns into long rows</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>table()</code>, <code>prop.table()</code></td>
+<td style="text-align: left;">Count, then turn counts into proportions</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>left_join()</code></td>
+<td style="text-align: left;">Add columns from another table, matched on a key</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>quarto render</code></td>
+<td style="text-align: left;">Turn a <code>.qmd</code> report into HTML</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="learning-outcomes" class="level1">
+<h1>Learning outcomes</h1>
+<p>By the end of this lab you can:</p>
+<ul>
+<li>rebuild a base R plot in <code>ggplot2</code>, and build a figure base R cannot easily produce;</li>
+<li>measure a relationship with <code>cor()</code>, draw it with <code>geom_smooth()</code>, and check it within groups before trusting it;</li>
+<li>identify a confounding variable and say what it does to a conclusion;</li>
+<li>reshape a survey with <code>pivot_longer()</code> and summarise every item at once;</li>
+<li>assemble a nine-part playtest report in Quarto, with every number computed, and render it;</li>
+<li>write a finding as What → Pattern → Meaning → Action, including one that contradicts an earlier claim.</li>
+</ul>
+</section>
+<section id="ground-rules" class="level1">
+<h1>Ground rules</h1>
+<ul>
+<li>Choose, then justify. Several exercises have more than one sensible method; the written answer is where you say why you chose yours.</li>
+<li>Type the code. Open the solution <strong>after</strong> your attempt, even when your attempt worked.</li>
+<li>Keep every figure and number you produce. Part B puts them into the report.</li>
+<li>No number goes into the report by hand. If it is a number, it is inline R.</li>
+<li>If <code>library(tidyr)</code> or <code>library(ggplot2)</code> fails, run <code>install.packages(c("dplyr", "tidyr", "ggplot2"))</code> once in the Console.</li>
+</ul>
+</section>
+<section id="setup-run-this-first" class="level1">
+<h1>Setup (run this first)</h1>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>sessions <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_sessions.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>survey   <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_survey.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(sessions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 120</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(survey)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 120   9</code></pre>
+</div>
+</div>
+<p><code>sessions</code> is the cleaned session data from Lab 02: one row per player per session, each player on one build. <code>survey</code> is the post-session questionnaire: one row per session, eight agreement items rated 1 to 5.</p>
+<hr>
+</section>
+<section id="part-a-visualise-and-relate" class="level1">
+<h1>Part A — Visualise and relate</h1>
+<section id="exercise-01-a-histogram-rebuilt-do" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-01-a-histogram-rebuilt-do">Exercise 01 — A histogram, rebuilt <code>[Do]</code></h2>
+<p>Redraw Lab 01’s histogram of <code>score</code> in <code>ggplot2</code>, with bins 100 points wide and a title and axis labels a reader could follow.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> score)) <span class="sc">+</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">100</span>, <span class="at">fill =</span> <span class="st">"grey60"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Score per session"</span>, <span class="at">x =</span> <span class="st">"Score"</span>, <span class="at">y =</span> <span class="st">"Sessions"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="complete-analysis_files/figure-html/ex01-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p><strong>Write 1 sentence:</strong> point to the data, the mapping and the geometry in your code.</p>
+</section>
+<section id="exercise-02-a-boxplot-rebuilt-do" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-02-a-boxplot-rebuilt-do">Exercise 02 — A boxplot, rebuilt <code>[Do]</code></h2>
+<p>Redraw Lab 01’s boxplot of <code>score</code> by <code>archetype</code> in <code>ggplot2</code>, with labels.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> archetype, <span class="at">y =</span> score)) <span class="sc">+</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Score by archetype"</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Score"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="complete-analysis_files/figure-html/ex02-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> the Sentinel box is the widest. Draw the Sentinel scores as a histogram and say what the box was hiding.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Check your answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Check your answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(sessions, archetype <span class="sc">==</span> <span class="st">"Sentinel"</span>), <span class="fu">aes</span>(<span class="at">x =</span> score)) <span class="sc">+</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">100</span>, <span class="at">fill =</span> <span class="st">"grey60"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Sentinel score"</span>, <span class="at">x =</span> <span class="st">"Score"</span>, <span class="at">y =</span> <span class="st">"Sessions"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="complete-analysis_files/figure-html/ex02-check-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Two humps, not one wide spread: Sentinels either anchor the round or collapse early. A boxplot summarises one distribution and cannot show two.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-03-the-navigation-figure-apply" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-03-the-navigation-figure-apply">Exercise 03 — The navigation figure <code>[Apply]</code></h2>
+<p>Build the figure for part 4 of your report: the distribution of <code>wrong_turns</code> in each build, stacked so the x axes line up, labelled for a level designer. This is the figure base R cannot produce in one short call.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> wrong_turns)) <span class="sc">+</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">"grey60"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> build, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Wrong turns per session, by build"</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Wrong turns"</span>, <span class="at">y =</span> <span class="st">"Sessions"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="complete-analysis_files/figure-html/ex03-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><code>facet_wrap(~ build, ncol = 1)</code> gives one panel per build on a shared x axis, so the shift between builds is the first thing the reader sees. The fill is set, not mapped, because the panel labels already name the builds.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> what does this figure show that the two means from Lab 02 did not?</p>
+</section>
+<section id="exercise-04-what-goes-with-score-do" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-04-what-goes-with-score-do">Exercise 04 — What goes with score? <code>[Do]</code></h2>
+<p>Use <code>cor()</code> to measure how strongly <code>score</code> is related to <code>awareness</code>, and to <code>shots_fired</code>.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sessions<span class="sc">$</span>awareness, sessions<span class="sc">$</span>score)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.5907852</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sessions<span class="sc">$</span>shots_fired, sessions<span class="sc">$</span>score)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.05307857</code></pre>
+</div>
+</div>
+<p><code>cor()</code> gives a number from −1 to +1. Near 0 means no straight-line relationship; the sign gives the direction.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> a designer wants to reward players who fire more shots, “because they are the ones scoring”. What do you tell them?</p>
+</section>
+<section id="exercise-05-the-trade-off-apply" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-05-the-trade-off-apply">Exercise 05 — The trade-off <code>[Apply]</code></h2>
+<p>Draw <code>survivability</code> against <code>mobility</code> as a scatterplot with a straight-line trend, and measure the relationship with <code>cor()</code>.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> mobility, <span class="at">y =</span> survivability)) <span class="sc">+</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">colour =</span> <span class="st">"grey40"</span>) <span class="sc">+</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">colour =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Mobility against survivability"</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Mobility rating"</span>, <span class="at">y =</span> <span class="st">"Survivability rating"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="complete-analysis_files/figure-html/ex05-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sessions<span class="sc">$</span>mobility, sessions<span class="sc">$</span>survivability)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -0.6562375</code></pre>
+</div>
+</div>
+<p><code>geom_smooth(method = "lm")</code> draws the straight line that best fits the points; <code>se = FALSE</code> leaves out the shaded band. The line and <code>cor()</code> describe the same relationship, one as a picture and one as a number.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 1 sentence:</strong> describe the relationship in words a balance designer would use.</p>
+</section>
+<section id="exercise-06-faster-players-are-more-fragile-decide" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-06-faster-players-are-more-fragile-decide">Exercise 06 — Faster players are more fragile? <code>[Decide]</code></h2>
+<p>The balance designer reads Exercise 05 and proposes a patch: <em>“Faster players are more fragile, so when a Scout player gets faster, cut their health to match.”</em> Redraw the scatterplot with each archetype in its own colour and its own trend line, then decide whether the patch follows from the data.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> mobility, <span class="at">y =</span> survivability, <span class="at">colour =</span> archetype)) <span class="sc">+</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Mobility against survivability, by archetype"</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Mobility rating"</span>, <span class="at">y =</span> <span class="st">"Survivability rating"</span>, <span class="at">colour =</span> <span class="st">"Archetype"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="complete-analysis_files/figure-html/ex06-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>sessions <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(archetype) <span class="sc">|&gt;</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">r =</span> <span class="fu">cor</span>(mobility, survivability))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 2
+  archetype     r
+  &lt;chr&gt;     &lt;dbl&gt;
+1 Duelist   0.302
+2 Engineer  0.512
+3 Scout     0.465
+4 Sentinel  0.598</code></pre>
+</div>
+</div>
+<p><strong>One defensible answer: no, the patch reads the data backwards.</strong> Across all players the correlation is -0.66. Within every archetype it is positive, from 0.3 to 0.6. The downward trend is the gap <em>between</em> archetypes: Scouts are built fast and fragile, Sentinels slow and tough. Within any one archetype, better players are better at both. <strong>Archetype is the confounding variable</strong>: it drives both measures, and ignoring it reverses the direction of the relationship.</p>
+<p><strong>What makes it defensible.</strong> It checks the relationship inside the groups the design is made of before drawing a conclusion about individuals, and it says what the overall correlation <em>does</em> show: the archetypes are balanced against each other as intended.</p>
+<p><strong>What would make it indefensible.</strong> Applying the patch because the correlation is strong. A strong correlation across groups says nothing about what happens to one player within a group.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 3 sentences:</strong> name the confound, say what it does to the conclusion, and say which part of the report this belongs in.</p>
+<hr>
+</section>
+</section>
+<section id="part-b-reshape-and-report" class="level1">
+<h1>Part B — Reshape and report</h1>
+<p>Every exercise in this part produces a piece of <code>report.qmd</code>. Create the file now, in the project folder next to <code>data/</code>, and add to it as you go.</p>
+<section id="exercise-07-wide-to-long-do" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-07-wide-to-long-do">Exercise 07 — Wide to long <code>[Do]</code></h2>
+<p>Reshape <code>survey</code> so that it has one row per session per item, with columns <code>session_id</code>, <code>item</code> and <code>rating</code>. Call it <code>long</code>, and check its size.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>long <span class="ot">&lt;-</span> survey <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>session_id, <span class="at">names_to =</span> <span class="st">"item"</span>, <span class="at">values_to =</span> <span class="st">"rating"</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(long)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 960   3</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(long, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  session_id item                rating
+  &lt;chr&gt;      &lt;chr&gt;                &lt;dbl&gt;
+1 S001       controls_responsive      3
+2 S001       objective_clear          1
+3 S001       difficulty_fair          3</code></pre>
+</div>
+</div>
+<p><code>-session_id</code> stacks every column except the key. 120 sessions × 8 items = 960 rows.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 1 sentence:</strong> why can you not <code>group_by()</code> the items in the wide <code>survey</code>?</p>
+</section>
+<section id="exercise-08-every-item-both-builds-apply" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-08-every-item-both-builds-apply">Exercise 08 — Every item, both builds <code>[Apply]</code></h2>
+<p>Use <code>table()</code> and <code>prop.table()</code> to show the distribution of ratings for every item. Then join each session’s <code>build</code> onto <code>long</code> and find the proportion of players agreeing (4 or 5) with each item in each build. Which item moved most between the builds?</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">prop.table</span>(<span class="fu">table</span>(long<span class="sc">$</span>item, long<span class="sc">$</span>rating), <span class="at">margin =</span> <span class="dv">1</span>), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                     
+                         1    2    3    4    5
+  controls_responsive 0.00 0.02 0.22 0.36 0.40
+  death_understood    0.04 0.31 0.43 0.18 0.03
+  difficulty_fair     0.05 0.29 0.35 0.22 0.08
+  level_navigable     0.04 0.18 0.38 0.30 0.09
+  match_length        0.01 0.06 0.17 0.42 0.34
+  objective_clear     0.20 0.26 0.31 0.20 0.03
+  visual_style        0.00 0.00 0.07 0.41 0.52
+  would_play_again    0.03 0.12 0.34 0.39 0.12</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>agree_by_build <span class="ot">&lt;-</span> long <span class="sc">|&gt;</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">select</span>(sessions, session_id, build), <span class="at">by =</span> <span class="st">"session_id"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(item, build) <span class="sc">|&gt;</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">agree =</span> <span class="fu">mean</span>(rating <span class="sc">&gt;=</span> <span class="dv">4</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> build, <span class="at">values_from =</span> agree) <span class="sc">|&gt;</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">change =</span> B <span class="sc">-</span> A) <span class="sc">|&gt;</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(<span class="fu">abs</span>(change)))</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>agree_by_build</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 4
+  item                     A     B  change
+  &lt;chr&gt;                &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+1 objective_clear     0.0833 0.383  0.3   
+2 match_length        0.7    0.817  0.117 
+3 death_understood    0.267  0.167 -0.1   
+4 controls_responsive 0.717  0.8    0.0833
+5 level_navigable     0.35   0.433  0.0833
+6 would_play_again    0.5    0.517  0.0167
+7 difficulty_fair     0.317  0.3   -0.0167
+8 visual_style        0.933  0.933  0     </code></pre>
+</div>
+</div>
+<p><code>margin = 1</code> makes each row of the table sum to 1. <code>mean(rating &gt;= 4)</code> is the proportion agreeing, and <code>pivot_wider()</code>, the reverse of <code>pivot_longer()</code>, puts the two builds side by side so the change is one subtraction.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> <code>objective_clear</code> moved most. Which item would you have <em>expected</em> to move most, given what Build B changed, and did it?</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Check your answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Check your answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><code>level_navigable</code>, since Build B added guidance to help players navigate. It moved from 35% agreeing to 43%, against <code>objective_clear</code>’s 8% to 38%. Build B cut wrong turns, but what players noticed was knowing where they were meant to go. That is worth a sentence in the report.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-09-without-reducing-enjoyment-decide" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-09-without-reducing-enjoyment-decide">Exercise 09 — “Without reducing enjoyment” <code>[Decide]</code></h2>
+<p>The research question has two halves. Test the second: did Build B reduce enjoyment? Use <code>enjoyment</code> from <code>sessions</code> (1–7) and <code>would_play_again</code> from the survey, and decide what the report may claim.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>enjoy <span class="ot">&lt;-</span> <span class="fu">t.test</span>(enjoyment <span class="sc">~</span> build, <span class="at">data =</span> sessions)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>enjoy<span class="sc">$</span>estimate</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>mean in group A mean in group B 
+       3.933333        3.933333 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>enjoy<span class="sc">$</span>conf.int</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -0.3483742  0.3483742
+attr(,"conf.level")
+[1] 0.95</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>agree_by_build[agree_by_build<span class="sc">$</span>item <span class="sc">==</span> <span class="st">"would_play_again"</span>, ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+  item                 A     B change
+  &lt;chr&gt;            &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+1 would_play_again   0.5 0.517 0.0167</code></pre>
+</div>
+</div>
+<p><strong>One defensible answer: the report may claim no meaningful reduction.</strong> Mean enjoyment was 3.93 in Build A and 3.93 in Build B. The 95% confidence interval for the difference runs from -0.35 to 0.35 on a seven-point scale, so any true difference is small. Agreement with <code>would_play_again</code> was 50% and 52%. Two different measures agree.</p>
+<p><strong>What makes it defensible.</strong> It rests on an interval, not on “not significant”, and on two measures rather than one. It claims <em>no meaningful reduction</em>, which the evidence supports, rather than <em>no effect</em>, which no test can show.</p>
+<p><strong>What would make it indefensible.</strong> “The p-value is above 0.05, so Build B has no effect on enjoyment.” Or “Build B is just as enjoyable” from one measure with no interval.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> both measures were taken straight after one session. What would you need to know before claiming Build B is as enjoyable over a week of play?</p>
+</section>
+<section id="exercise-10-start-the-report-and-render-it-apply" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-10-start-the-report-and-render-it-apply">Exercise 10 — Start the report, and render it <code>[Apply]</code></h2>
+<p>In <code>report.qmd</code>, write:</p>
+<ul>
+<li>a YAML header with a title;</li>
+<li>the nine part headings from <a href="../notes/reporting-evidence.html">Interpreting and Reporting Evidence</a>;</li>
+<li>a setup chunk, hidden with <code>echo: false</code>, that loads the libraries and both CSVs;</li>
+<li>under part 1, the research question;</li>
+<li>under part 2, one sentence giving the number of sessions and players, with both numbers as inline R;</li>
+<li>under part 4, the figure from Exercise 03.</li>
+</ul>
+<p>Then render it from the Terminal with <code>quarto render report.qmd</code> and open <code>report.html</code>.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Tidebreak Build B: Playtest Report"</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>sessions <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_sessions.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>survey   <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_survey.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1. Research question</span></span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>Does environmental guidance improve navigation without reducing enjoyment?</span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2. Experimental design</span></span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>We analysed <span class="in">`r nrow(sessions)`</span> sessions from</span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a><span class="in">`r length(unique(sessions$player_id))`</span> players, each of whom</span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>played one build only.</span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3. Descriptive evidence</span></span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4. Visual evidence</span></span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> wrong_turns)) <span class="sc">+</span></span>
+<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">"grey60"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> build, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Wrong turns per session, by build"</span>,</span>
+<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Wrong turns"</span>, <span class="at">y =</span> <span class="st">"Sessions"</span>)</span>
+<span id="cb33-37"><a href="#cb33-37" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb33-38"><a href="#cb33-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-39"><a href="#cb33-39" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5. Statistical evidence</span></span>
+<span id="cb33-40"><a href="#cb33-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-41"><a href="#cb33-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6. Practical significance</span></span>
+<span id="cb33-42"><a href="#cb33-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-43"><a href="#cb33-43" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7. Qualitative evidence</span></span>
+<span id="cb33-44"><a href="#cb33-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-45"><a href="#cb33-45" aria-hidden="true" tabindex="-1"></a><span class="fu">## 8. Limitations</span></span>
+<span id="cb33-46"><a href="#cb33-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-47"><a href="#cb33-47" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9. Design conclusion</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The two inline expressions produce these values when the report renders:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(sessions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 120</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(sessions<span class="sc">$</span>player_id))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 30</code></pre>
+</div>
+</div>
+<p><code>echo: false</code> hides the code and keeps its output, which is what a reader of a report wants. Because the numbers are inline, the report corrects itself the next time the data changes.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 2 sentences:</strong> change one value in your copy of the CSV, render again, and describe what changed in the report and what you did not have to do.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="What you should see">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>What you should see
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The terminal ends with <code>Output created: report.html</code>. The page shows nine headings, the sentence under part 2 reads “120 sessions from 30 players”, and the two-panel histogram sits under part 4 with no code above it.</p>
+<p>If the render stops with an error, the message names the line. The most common causes are a data path written as <code>../data/...</code>, a chunk that uses a package it did not load, and a missing closing <code>```</code>.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-11-limitations-and-the-conclusion-decide" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-11-limitations-and-the-conclusion-decide">Exercise 11 — Limitations and the conclusion <code>[Decide]</code></h2>
+<p>Write parts 8 and 9 of the report. Part 8 lists what could make your conclusion wrong. Part 9 is one finding in <strong>What → Pattern → Meaning → Action</strong> form that answers the research question. Every number is inline R.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>wt <span class="ot">&lt;-</span> <span class="fu">t.test</span>(wrong_turns <span class="sc">~</span> build, <span class="at">data =</span> sessions)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>wt<span class="sc">$</span>estimate</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>mean in group A mean in group B 
+       8.916667        5.516667 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>wt<span class="sc">$</span>conf.int</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.480141 4.319859
+attr(,"conf.level")
+[1] 0.95</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sessions<span class="sc">$</span>player_id)[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+P01 P02 P03 P04 
+  4   4   4   4 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sessions<span class="sc">$</span>cohort, sessions<span class="sc">$</span>build)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         
+           A  B
+  Novice  18 15
+  Regular 26 27
+  Veteran 16 18</code></pre>
+</div>
+</div>
+<p><strong>One defensible part 8.</strong></p>
+<ul>
+<li>Each of the 30 players contributed 4 sessions, so the 120 sessions are not independent, and the session-level test is more confident than the data justifies.</li>
+<li>Every measure was taken after one session. Nothing here shows whether the difference lasts.</li>
+<li>Cohorts were not perfectly balanced between the builds; the cohort table is in the report so the reader can judge.</li>
+<li>Comments record how a session felt, and do not agree with the wrong-turn counts (see the Challenge).</li>
+<li>Strong correlations in this data can reverse within archetypes (Exercise 06), so no relationship here is reported as a cause without checking within groups.</li>
+</ul>
+<p><strong>One defensible part 9.</strong></p>
+<blockquote class="blockquote">
+<p><strong>What.</strong> Wrong turns per session in 120 sessions, and enjoyment on a seven-point scale, compared between Build A and Build B.</p>
+<p><strong>Pattern.</strong> Build B players averaged 5.5 wrong turns against Build A’s 8.9, a reduction of between 2.5 and 4.3 per session at 95% confidence. Enjoyment was unchanged, with a mean of 3.93 in both builds.</p>
+<p><strong>Meaning.</strong> The guidance works, and costs nothing players noticed.</p>
+<p><strong>Action.</strong> Keep Build B’s guidance and carry it into the next build. Retest with an on-screen objective added, since objective clarity was the item that moved most.</p>
+</blockquote>
+<p><strong>What makes it defensible.</strong> Part 8 names limitations specific to this data, not a generic “the sample was small”. Part 9’s Action follows from its Meaning, and its Pattern gives a size and an interval.</p>
+<p><strong>What would make it indefensible.</strong> A part 8 that lists nothing the reader could check, or a part 9 whose Action (“improve the level”) no one could start on.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 3 sentences:</strong> which limitation in your part 8 would most change your Action if it turned out to matter, and how would you test it?</p>
+<hr>
+</section>
+</section>
+<section id="challenge-a-finding-that-contradicts-your-own-report-decide" class="level1">
+<h1>Challenge — A finding that contradicts your own report <code>[Decide]</code></h1>
+<p>A report that agrees with itself everywhere has usually stopped looking. Add a finding to part 7 or part 8 of your report that contradicts a claim made earlier in the same report, and write it so the reader is better informed, not confused.</p>
+<div class="callout callout-style-default callout-important callout-titled" title="One defensible answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>One defensible answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>themed <span class="ot">&lt;-</span> sessions <span class="sc">|&gt;</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">theme =</span> <span class="fu">case_when</span>(</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">grepl</span>(<span class="st">"lost|circles|meant to go|objective"</span>, comment) <span class="sc">~</span> <span class="st">"Lost or unclear"</span>,</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">grepl</span>(<span class="st">"route|exit|signposting"</span>, comment)             <span class="sc">~</span> <span class="st">"Found the way"</span>,</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">grepl</span>(<span class="st">"Died|hard"</span>, comment)                          <span class="sc">~</span> <span class="st">"Difficulty"</span>,</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span>                                                 <span class="sc">~</span> <span class="st">"General"</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(themed<span class="sc">$</span>theme, themed<span class="sc">$</span>build)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 
+                   A  B
+  Difficulty      19 16
+  Found the way   12  9
+  General          6  4
+  Lost or unclear 23 31</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(themed<span class="sc">$</span>theme, <span class="at">enjoyed =</span> themed<span class="sc">$</span>enjoyment <span class="sc">&gt;=</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 enjoyed
+                  FALSE TRUE
+  Difficulty         35    0
+  Found the way       0   21
+  General             0   10
+  Lost or unclear    54    0</code></pre>
+</div>
+</div>
+<p><strong>The contradiction.</strong> Part 5 says Build B players took fewer wrong turns. Yet 31 Build B players left a comment about being lost or unclear, against 23 in Build A.</p>
+<blockquote class="blockquote">
+<p><strong>What.</strong> One free-text comment per session, 120 in all, categorised into four themes.</p>
+<p><strong>Pattern.</strong> “Lost or unclear” comments were more common in Build B (31) than in Build A (23), the opposite of the wrong-turn counts. Split by enjoyment instead of build, every one of those comments came from a player who rated enjoyment below 5.</p>
+<p><strong>Meaning.</strong> The comments track how the session felt, not where the player went. They do not undermine the wrong-turn result, but they show that players who had a poor session describe it as getting lost whichever build they played.</p>
+<p><strong>Action.</strong> Report the wrong-turn counts as the navigation evidence and the comments as evidence about mood. In the next playtest, ask a specific navigation question in the survey rather than relying on free text.</p>
+</blockquote>
+<p>Other contradictions in this data that would serve: <code>level_navigable</code> barely moved while wrong turns fell (Exercise 08); the mobility–survivability trade-off reverses within archetypes (Exercise 06).</p>
+<p><strong>What would make it indefensible.</strong> Leaving the contradiction out because it spoils the story, or including it without saying which evidence the reader should trust and why.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 4 sentences</strong>, using <strong>What → Pattern → Meaning → Action</strong>:</p>
+<ul>
+<li><strong>What</strong> did you measure?</li>
+<li><strong>Pattern</strong> — what does the evidence show, and what does it contradict?</li>
+<li><strong>Meaning</strong> — which piece of evidence should the reader trust, and why?</li>
+<li><strong>Action</strong> — what changes in the next playtest because of it?</li>
+</ul>
+<hr>
+</section>
+<section id="output" class="level1">
+<h1>Output</h1>
+<p>Hand in two files: <code>report.qmd</code> and the <code>report.html</code> it renders to.</p>
+<ul>
+<li>All nine parts present, each with at least one sentence.</li>
+<li>Parts 3 to 7 each contain at least one computed number, table or figure from this lab or Lab 02.</li>
+<li>No number in the prose typed by hand.</li>
+<li>Part 9 written as What → Pattern → Meaning → Action, and the Challenge finding in part 7 or 8.</li>
+<li>The report renders with <code>quarto render report.qmd</code> and no errors.</li>
+</ul>
+<p>This is the report you revise from for the Week 8 practical. Anything you could not finish in the lab, finish before then: an unfinished part is easier to complete now than to reconstruct later.</p>
+<hr>
+</section>
+<section id="appendix-common-errors" class="level1">
+<h1>Appendix — Common errors</h1>
+<div class="callout callout-style-default callout-warning callout-titled" title="Show the error guide">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Show the error guide
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Message</th>
+<th style="text-align: left;">What it usually means</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>could not find function "ggplot"</code></td>
+<td style="text-align: left;">You have not run <code>library(ggplot2)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>could not find function "pivot_longer"</code></td>
+<td style="text-align: left;">You have not run <code>library(tidyr)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>Cannot use `+` with a single argument</code></td>
+<td style="text-align: left;">A line starts with <code>+</code>. Move it to the end of the line above</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>object 'build' not found</code></td>
+<td style="text-align: left;">A column name used outside <code>aes()</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>'data/tidebreak_sessions.csv' does not exist</code></td>
+<td style="text-align: left;"><code>report.qmd</code> is not in the project folder next to <code>data/</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>object 'agree_by_build' not found</code> when rendering</td>
+<td style="text-align: left;">The report uses an object you made in the Console. Put the code in a chunk in the report</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../labs/comparing-builds.html" class="pagination-link" aria-label="Lab 02 — Comparing Builds">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Lab 02 — Comparing Builds</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../reference/reference-statistics.html" class="pagination-link" aria-label="Statistics Reference">
+        <span class="nav-page-text">Statistics Reference</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>COMP I8015 · 3D Game Development · Dundalk Institute of Technology</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

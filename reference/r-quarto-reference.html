@@ -154,6 +154,12 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../notes/cleaning-and-transforming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cleaning and Transforming</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../notes/visualising-with-ggplot2.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Visualising with ggplot2</span></a>
   </div>
@@ -162,6 +168,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../notes/comparing-conditions.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Comparing Playtest Conditions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/reporting-evidence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Interpreting and Reporting Evidence</span></a>
   </div>
 </li>
       </ul>
@@ -191,6 +203,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../labs/comparing-builds.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Lab 02 — Comparing Builds</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/complete-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 03 — Complete Playtest Analysis</span></a>
   </div>
 </li>
       </ul>
@@ -245,6 +263,12 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Week 2 Demo</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/week-3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 3 Demo</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -257,11 +281,17 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#getting-data-in" id="toc-getting-data-in" class="nav-link active" data-scroll-target="#getting-data-in">Getting data in</a></li>
+  <li><a href="#values-and-vectors" id="toc-values-and-vectors" class="nav-link active" data-scroll-target="#values-and-vectors">Values and vectors</a></li>
+  <li><a href="#getting-data-in" id="toc-getting-data-in" class="nav-link" data-scroll-target="#getting-data-in">Getting data in</a></li>
   <li><a href="#getting-at-parts-of-a-data-frame" id="toc-getting-at-parts-of-a-data-frame" class="nav-link" data-scroll-target="#getting-at-parts-of-a-data-frame">Getting at parts of a data frame</a></li>
   <li><a href="#describing-one-variable" id="toc-describing-one-variable" class="nav-link" data-scroll-target="#describing-one-variable">Describing one variable</a></li>
   <li><a href="#describing-by-group" id="toc-describing-by-group" class="nav-link" data-scroll-target="#describing-by-group">Describing by group</a></li>
+  <li><a href="#cleaning" id="toc-cleaning" class="nav-link" data-scroll-target="#cleaning">Cleaning</a></li>
+  <li><a href="#transforming-with-dplyr" id="toc-transforming-with-dplyr" class="nav-link" data-scroll-target="#transforming-with-dplyr">Transforming with dplyr</a></li>
+  <li><a href="#reshaping-and-joining" id="toc-reshaping-and-joining" class="nav-link" data-scroll-target="#reshaping-and-joining">Reshaping and joining</a></li>
+  <li><a href="#relationships-and-tests" id="toc-relationships-and-tests" class="nav-link" data-scroll-target="#relationships-and-tests">Relationships and tests</a></li>
   <li><a href="#plots" id="toc-plots" class="nav-link" data-scroll-target="#plots">Plots</a></li>
+  <li><a href="#figures-for-a-reader-ggplot2" id="toc-figures-for-a-reader-ggplot2" class="nav-link" data-scroll-target="#figures-for-a-reader-ggplot2">Figures for a reader: ggplot2</a></li>
   <li><a href="#quarto" id="toc-quarto" class="nav-link" data-scroll-target="#quarto">Quarto</a></li>
   <li><a href="#errors-you-will-meet" id="toc-errors-you-will-meet" class="nav-link" data-scroll-target="#errors-you-will-meet">Errors you will meet</a></li>
   </ul>
@@ -291,9 +321,66 @@ ul.task-list li input[type="checkbox"] {
 
 
 <blockquote class="blockquote">
-<p>A lookup sheet, not a tutorial. Everything here appears in the labs; this page exists so you are not scrolling back through three weeks of notes to remember an argument name.</p>
+<p>A lookup sheet, not a tutorial. Everything here appears in the notes or labs; this page exists so you are not scrolling back through three weeks of notes to remember an argument name.</p>
 </blockquote>
 <hr>
+<section id="values-and-vectors" class="level2">
+<h2 class="anchored" data-anchor-id="values-and-vectors">Values and vectors</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Task</th>
+<th style="text-align: left;">Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Build a vector</td>
+<td style="text-align: left;"><code>deaths &lt;- c(2, 0, 5, 3, 1)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">How many values</td>
+<td style="text-align: left;"><code>length(deaths)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">What type</td>
+<td style="text-align: left;"><code>class(deaths)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Repeat a value</td>
+<td style="text-align: left;"><code>rep("A", 3)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Count values meeting a condition</td>
+<td style="text-align: left;"><code>sum(deaths &gt; 2)</code> (TRUE counts as 1)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Proportion meeting a condition</td>
+<td style="text-align: left;"><code>mean(deaths &gt; 2)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">The distinct values</td>
+<td style="text-align: left;"><code>unique(d$cohort)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Distance to zero</td>
+<td style="text-align: left;"><code>abs(-3)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Differences between neighbours</td>
+<td style="text-align: left;"><code>diff(c(2, 5, 9))</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Vectors side by side as a table</td>
+<td style="text-align: left;"><code>data.frame(player = c("P1", "P2"), deaths = c(2, 0))</code></td>
+</tr>
+</tbody>
+</table>
+</section>
 <section id="getting-data-in" class="level2">
 <h2 class="anchored" data-anchor-id="getting-data-in">Getting data in</h2>
 <table class="caption-top table">
@@ -313,8 +400,16 @@ ul.task-list li input[type="checkbox"] {
 <td style="text-align: left;"><code>library(readr)</code></td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">Check a file is where you think</td>
+<td style="text-align: left;"><code>file.exists("data/file.csv")</code></td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">Read a CSV</td>
 <td style="text-align: left;"><code>d &lt;- read_csv("data/file.csv", show_col_types = FALSE)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Read it without trimming spaces from text</td>
+<td style="text-align: left;"><code>read_csv("data/file.csv", trim_ws = FALSE)</code></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Check it loaded</td>
@@ -322,7 +417,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="even">
 <td style="text-align: left;">Look at structure and types</td>
-<td style="text-align: left;"><code>str(d)</code></td>
+<td style="text-align: left;"><code>str(d)</code>, or <code>glimpse(d)</code> after <code>library(dplyr)</code></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">First / last rows</td>
@@ -363,6 +458,10 @@ ul.task-list li input[type="checkbox"] {
 <section id="describing-one-variable" class="level2">
 <h2 class="anchored" data-anchor-id="describing-one-variable">Describing one variable</h2>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Task</th>
@@ -399,6 +498,10 @@ ul.task-list li input[type="checkbox"] {
 <td style="text-align: left;"><code>table(d$build, d$quit_reason)</code></td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">Counts as proportions of each row</td>
+<td style="text-align: left;"><code>prop.table(table(d$build, d$quit_reason), margin = 1)</code></td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">Ignore missing values</td>
 <td style="text-align: left;">add <code>na.rm = TRUE</code></td>
 </tr>
@@ -426,6 +529,194 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td style="text-align: left;">Several columns at once</td>
 <td style="text-align: left;"><code>aggregate(score ~ cohort, data = d, FUN = median)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Several summaries per group</td>
+<td style="text-align: left;"><code>d |&gt; group_by(cohort) |&gt; summarise(n = n(), med = median(score))</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="cleaning" class="level2">
+<h2 class="anchored" data-anchor-id="cleaning">Cleaning</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Task</th>
+<th style="text-align: left;">Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Which values are missing</td>
+<td style="text-align: left;"><code>is.na(d$deaths)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Missing values in every column</td>
+<td style="text-align: left;"><code>colSums(is.na(d))</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Rows with no missing values</td>
+<td style="text-align: left;"><code>complete.cases(d)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rows that repeat an earlier row</td>
+<td style="text-align: left;"><code>duplicated(d)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Rows that repeat an earlier key</td>
+<td style="text-align: left;"><code>duplicated(d$session_id)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Remove repeated rows</td>
+<td style="text-align: left;"><code>d &lt;- d[!duplicated(d), ]</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Strip spaces from the ends of text</td>
+<td style="text-align: left;"><code>trimws(d$cohort)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Make text lower case</td>
+<td style="text-align: left;"><code>tolower(d$cohort)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Text to numbers</td>
+<td style="text-align: left;"><code>as.numeric(x)</code> (unreadable values become <code>NA</code>)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fix the order of categories</td>
+<td style="text-align: left;"><code>factor(d$cohort, levels = c("novice", "regular", "veteran"))</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Does text contain a word</td>
+<td style="text-align: left;"><code>grepl("lost|circles", d$comment)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Are two objects exactly the same</td>
+<td style="text-align: left;"><code>identical(a, b)</code></td>
+</tr>
+</tbody>
+</table>
+<p>Record every row you drop, why, and the <em>n</em> before and after. Cleaning is analysis.</p>
+</section>
+<section id="transforming-with-dplyr" class="level2">
+<h2 class="anchored" data-anchor-id="transforming-with-dplyr">Transforming with dplyr</h2>
+<p>Load with <code>library(dplyr)</code>. Each verb takes a data frame and returns one.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Task</th>
+<th style="text-align: left;">Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Pass a result into the next function</td>
+<td style="text-align: left;"><code>d |&gt; filter(build == "A")</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Keep rows</td>
+<td style="text-align: left;"><code>filter(d, build == "A", score &gt; 1500)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Keep columns</td>
+<td style="text-align: left;"><code>select(d, session_id, build, score)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Add or change a column</td>
+<td style="text-align: left;"><code>mutate(d, kd = kills / deaths)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sort rows</td>
+<td style="text-align: left;"><code>arrange(d, score)</code>; largest first <code>arrange(d, desc(score))</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mark groups</td>
+<td style="text-align: left;"><code>group_by(d, build)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">One row of results per group</td>
+<td style="text-align: left;"><code>summarise(mean_score = mean(score))</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rows in each group</td>
+<td style="text-align: left;"><code>n()</code>, inside <code>summarise()</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Choose a value by condition</td>
+<td style="text-align: left;"><code>case_when(score &gt; 1500 ~ "high", TRUE ~ "other")</code>, inside <code>mutate()</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>%&gt;%</code> is the older pipe from the tidyverse and does the same job as <code>|&gt;</code>.</p>
+</section>
+<section id="reshaping-and-joining" class="level2">
+<h2 class="anchored" data-anchor-id="reshaping-and-joining">Reshaping and joining</h2>
+<p>Load with <code>library(tidyr)</code> for the pivots and <code>library(dplyr)</code> for the join.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Task</th>
+<th style="text-align: left;">Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Wide columns to long rows</td>
+<td style="text-align: left;"><code>pivot_longer(survey, -session_id, names_to = "item", values_to = "rating")</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Long rows back to wide columns</td>
+<td style="text-align: left;"><code>pivot_wider(long, names_from = build, values_from = agree)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Add columns from another table</td>
+<td style="text-align: left;"><code>left_join(long, select(d, session_id, build), by = "session_id")</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="relationships-and-tests" class="level2">
+<h2 class="anchored" data-anchor-id="relationships-and-tests">Relationships and tests</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Task</th>
+<th style="text-align: left;">Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Correlation, −1 to +1</td>
+<td style="text-align: left;"><code>cor(d$awareness, d$score)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Compare two groups of different players</td>
+<td style="text-align: left;"><code>t.test(wrong_turns ~ build, data = d)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Compare the same players twice</td>
+<td style="text-align: left;"><code>t.test(p$before, p$after, paired = TRUE)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Keep the result and pull out parts</td>
+<td style="text-align: left;"><code>res &lt;- t.test(...)</code>, then <code>res$estimate</code>, <code>res$conf.int</code>, <code>res$p.value</code></td>
 </tr>
 </tbody>
 </table>
@@ -468,9 +759,14 @@ ul.task-list li input[type="checkbox"] {
 </table>
 <p>Useful arguments for all of them: <code>main =</code> (title), <code>xlab =</code> / <code>ylab =</code> (axis labels), <code>col =</code> (fill colour).</p>
 </section>
-<section id="quarto" class="level2">
-<h2 class="anchored" data-anchor-id="quarto">Quarto</h2>
+<section id="figures-for-a-reader-ggplot2" class="level2">
+<h2 class="anchored" data-anchor-id="figures-for-a-reader-ggplot2">Figures for a reader: ggplot2</h2>
+<p>Week 3 onwards. Load with <code>library(ggplot2)</code>; the full lookup is the <a href="../reference/reference-ggplot2.html">ggplot2 Reference</a>.</p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Task</th>
@@ -479,30 +775,87 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: left;">Data and mapping</td>
+<td style="text-align: left;"><code>ggplot(d, aes(x = score))</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Histogram, bar, boxplot, scatter</td>
+<td style="text-align: left;"><code>geom_histogram()</code>, <code>geom_bar()</code>, <code>geom_boxplot()</code>, <code>geom_point()</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Straight-line trend</td>
+<td style="text-align: left;"><code>geom_smooth(method = "lm", se = FALSE)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">One panel per group</td>
+<td style="text-align: left;"><code>facet_wrap(~ build)</code>; a grid <code>facet_grid(build ~ zone)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Title and axis labels</td>
+<td style="text-align: left;"><code>labs(title = "...", x = "...", y = "...")</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="quarto" class="level2">
+<h2 class="anchored" data-anchor-id="quarto">Quarto</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Task</th>
+<th style="text-align: left;">Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Title the document</td>
+<td style="text-align: left;">A YAML header at the top: <code>title: "Playtest Report"</code> between two <code>---</code> lines</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A heading</td>
+<td style="text-align: left;"><code>## 1. Research question</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A link</td>
+<td style="text-align: left;"><code>[Lab 03](labs/complete-analysis.qmd)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A table</td>
+<td style="text-align: left;">Rows of <code>| a | b |</code> under a <code>| :- | :- |</code> line</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Read data from a report</td>
+<td style="text-align: left;"><code>read_csv("data/file.csv")</code>, with <code>report.qmd</code> in the project folder</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">Start a code chunk</td>
 <td style="text-align: left;"><code>```{r}</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">Hide the code, keep the output</td>
 <td style="text-align: left;"><code>#| echo: false</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">Show the code, skip running it</td>
 <td style="text-align: left;"><code>#| eval: false</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">Name a chunk</td>
 <td style="text-align: left;"><code>#| label: my-chunk</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">Set figure size</td>
 <td style="text-align: left;"><code>#| fig-width: 7</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">A number inside a sentence</td>
 <td style="text-align: left;"><code>`r round(mean(d$score))`</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">Render</td>
 <td style="text-align: left;"><code>quarto render report.qmd</code></td>
 </tr>

@@ -72,7 +72,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
 <link href="../notes/comparing-conditions.html" rel="next">
-<link href="../notes/distributions-and-variation.html" rel="prev">
+<link href="../notes/cleaning-and-transforming.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -189,6 +189,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../notes/cleaning-and-transforming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cleaning and Transforming</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../notes/visualising-with-ggplot2.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Visualising with ggplot2</span></a>
   </div>
@@ -197,6 +203,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="../notes/comparing-conditions.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Comparing Playtest Conditions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/reporting-evidence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Interpreting and Reporting Evidence</span></a>
   </div>
 </li>
       </ul>
@@ -226,6 +238,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="../labs/comparing-builds.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Lab 02 — Comparing Builds</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/complete-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 03 — Complete Playtest Analysis</span></a>
   </div>
 </li>
       </ul>
@@ -278,6 +296,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="../demos/week-2.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Week 2 Demo</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/week-3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 3 Demo</span></a>
   </div>
 </li>
       </ul>
@@ -334,8 +358,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <blockquote class="blockquote">
-<p>Week 2, first cycle, for everyone, before Part A of Lab 02. It introduces <code>ggplot2</code> as a system rather than a list of commands: every figure is data, mapped to aesthetics, drawn as a geometry. The worked example is the one to remember: the same wrong-turn counts drawn three ways, and only the third shows what the new signposting did.</p>
+<p>Week 3, first cycle, for everyone, before Part A of Lab 03. It introduces <code>ggplot2</code> as a system rather than a list of commands: every figure is data, mapped to aesthetics, drawn as a geometry. The worked example is the one to remember: the same wrong-turn counts drawn three ways, and only the third shows what the new signposting did.</p>
 </blockquote>
+<div class="callout callout-style-default callout-note callout-titled" title="Note for the lecturer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Note for the lecturer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>These notes and Relationships and Confounding share one 30-minute theory slot, and are written to be taught together. The scatterplot is the correlation visual, so <code>geom_point()</code> and <code>cor()</code> arrive at the same moment rather than twice.</p>
+</div>
+</div>
+</div>
 <hr>
 <section id="learning-outcomes" class="level2">
 <h2 class="anchored" data-anchor-id="learning-outcomes">Learning Outcomes</h2>
@@ -354,7 +394,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="why-this-matters-for-playtesting">Why This Matters for Playtesting</h2>
 <p>A finding leaves your hands as a figure. The producer, the level designer and the person approving the next sprint will not read your console output. They will look at one chart for a few seconds and remember what it seemed to say.</p>
 <p><strong>The chart is the claim.</strong> If the figure puts the wrong thing side by side, the reader draws the wrong conclusion, however careful the analysis behind it was. Choosing what to compare, and making that comparison the easiest thing on the page to see, is part of the analysis rather than decoration added after it.</p>
-<p><strong>Week 1’s plots were for you.</strong> <code>hist()</code> and <code>boxplot()</code> answer a question in one line while you are thinking. They stay useful. What they are not built for is the figure that has to survive being pasted into a report, split by three groups and read by someone who was not in the room.</p>
+<p><strong>The plots in Weeks 1 and 2 were for you.</strong> <code>hist()</code> and <code>boxplot()</code> answer a question in one line while you are thinking. They stay useful. What they are not built for is the figure that has to survive being pasted into a report, split by three groups and read by someone who was not in the room.</p>
 <hr>
 </section>
 <section id="the-grammar-data-mapping-geometry" class="level2">
@@ -509,6 +549,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 <p><strong>Use base R to find the finding and <code>ggplot2</code> to show it.</strong> In practice you will run <code>hist(sessions$wrong_turns)</code> a dozen times while exploring and build one <code>ggplot2</code> figure for the report. That is the right division of labour, not a failure to commit to one tool.</p>
+<p><strong>That is why Weeks 1 and 2 used base R and this week does not.</strong> For two weeks you were inspecting: describing a variable, checking a clean, looking at two builds before testing them. Every plot had one reader, you, and one line was all it needed to earn. This week the reader changes. The report at the end of Lab 03 is for someone who was not in the room, and building that figure is the job <code>ggplot2</code> is designed for. Base R has not been replaced: you will still reach for <code>hist()</code> first.</p>
 <hr>
 </section>
 <section id="worked-examples" class="level2">
@@ -622,7 +663,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p><code>geom_point()</code> is <code>plot(x, y)</code>. Mapping <code>colour = cohort</code> adds a third variable without a second chart. The cloud rises from left to right: players rated higher for awareness tend to score more. How strong that relationship is, and whether awareness is the cause, is Week 3’s subject.</p>
+<p><code>geom_point()</code> is <code>plot(x, y)</code>. Mapping <code>colour = cohort</code> adds a third variable without a second chart. The cloud rises from left to right: players rated higher for awareness tend to score more. How strong that relationship is, and whether awareness is the cause, is the subject of Relationships and Confounding, which starts from this scatterplot.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> session_minutes)) <span class="sc">+</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">"grey60"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
@@ -655,7 +696,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="interpretation-guidance">Interpretation Guidance</h2>
 <p><strong>What the data shows.</strong> In this playtest, Build B’s median was 5 wrong turns per session against Build A’s 9. Build B’s sessions were also more spread out, and its worst session took 12 wrong turns.</p>
 <p><strong>What the analysis suggests.</strong> The signposting guided most players but not all of them. The long right-hand tail of Build B’s panel is a group worth identifying: a cohort, an archetype or a route that the new lighting does not reach.</p>
-<p><strong>What can legitimately be concluded.</strong> The testers who played Build B took fewer wrong turns than the testers who played Build A. A figure cannot tell you whether another group of players would show the same gap, or whether a gap this size could arise by chance. That is the next notes’ job, and it is why the figure comes before the test rather than instead of it.</p>
+<p><strong>What can legitimately be concluded.</strong> The testers who played Build B took fewer wrong turns than the testers who played Build A. A figure cannot tell you whether another group of players would show the same gap, or whether a gap this size could arise by chance. That is what the t-test in <a href="../notes/comparing-conditions.html">Comparing Playtest Conditions</a> answers, and it is why the figure comes before the test rather than instead of it.</p>
 <p><strong>Every figure answers one question.</strong> Before you draw, write the question the reader is meant to answer in one sentence. Then check the finished figure makes that comparison the easiest thing on the page to see. If it does not, change the split, not the colours.</p>
 <p><strong>Label for the reader, not for R.</strong> <code>wrong_turns</code> is a column name. “Wrong turns” is an axis label. A title that states the subject (“Wrong turns per session, by build”) lets the figure be understood when it is lifted out of your report and pasted somewhere else, which it will be.</p>
 <hr>
@@ -675,7 +716,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Each takes two or three minutes.</p>
 <p><strong>1.</strong> Did the signposting make Build B less enjoyable? Draw the distribution of <code>enjoyment</code>, a 1–7 rating, for each build. Which geometry fits a 1–7 rating, and why?</p>
 <div class="callout callout-style-default callout-note callout-titled" title="Check your answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -684,7 +725,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> enjoyment)) <span class="sc">+</span></span>
@@ -707,7 +748,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> deaths, <span class="at">y =</span> score)) <span class="sc">+</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> <span class="st">"blue"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-note callout-titled" title="Check your answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -716,7 +757,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> deaths, <span class="at">y =</span> score)) <span class="sc">+</span></span>
@@ -746,7 +787,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p><strong>3.</strong> Draw the quit reasons by build twice: once with <code>fill = build</code> and <code>position = "dodge"</code>, once with <code>facet_wrap(~ build)</code>. Which version makes it easier to see how Build A’s players left, and which makes it easier to compare the builds on one reason?</p>
 <div class="callout callout-style-default callout-note callout-titled" title="Check your answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -755,7 +796,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">y =</span> quit_reason)) <span class="sc">+</span></span>
@@ -1214,8 +1255,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../notes/distributions-and-variation.html" class="pagination-link" aria-label="Distributions and Variation">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Distributions and Variation</span>
+      <a href="../notes/cleaning-and-transforming.html" class="pagination-link" aria-label="Cleaning and Transforming">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Cleaning and Transforming</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
