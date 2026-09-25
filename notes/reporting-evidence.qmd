@@ -2,14 +2,6 @@
 title: "Interpreting and Reporting Evidence"
 subtitle: "From a set of results to a finding someone can act on"
 ---
-
-> Week 3, second cycle, for everyone, before Part B of Lab 03. It covers the last
-> step of the analytical workflow: turning results into a report that another
-> person can check and act on. It sets out the nine parts of a playtest report,
-> introduces `pivot_longer()` as the last stage of the R cycle you have not met,
-> and works one finding through What → Pattern → Meaning → Action twice: once well,
-> once badly, with the same numbers.
-
 ```{r}
 #| label: setup
 #| include: false

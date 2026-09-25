@@ -3,14 +3,6 @@ title: "Distributions and Variation"
 subtitle: "Why the average is never the whole story"
 ---
 
-> Week 1, second cycle, for everyone, before Part B of Lab 01. It moves on from
-> a single typical value to the whole spread of players: how much they differ,
-> what shape that difference takes, and which values sit outside it. The worked
-> example is the one to remember: two builds with the same frame rate, one of
-> which stutters.
-
----
-
 ## Learning Outcomes
 
 By the end of these notes you can:

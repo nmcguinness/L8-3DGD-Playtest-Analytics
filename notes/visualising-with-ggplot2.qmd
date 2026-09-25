@@ -3,12 +3,6 @@ title: "Visualising with ggplot2"
 subtitle: "From a plot you look at to a figure someone else reads"
 ---
 
-> Week 3, first cycle, for everyone, before Part A of Lab 03. It introduces
-> `ggplot2` as a system rather than a list of commands: every figure is data,
-> mapped to aesthetics, drawn as a geometry. The worked example is the one to
-> remember: the same wrong-turn counts drawn three ways, and only the third shows
-> what the new signposting did.
-
 ::: {.callout-note collapse="true" title="Note for the lecturer"}
 These notes and Relationships and Confounding share one 30-minute theory slot, and
 are written to be taught together. The scatterplot is the correlation visual, so

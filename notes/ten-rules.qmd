@@ -40,4 +40,4 @@ subtitle: "The spine of the next three weeks"
    Averages hide stutter, crashes, and the one puzzle where everybody quits.
 
 10. **A finding that does not name an action is not finished.**
-    What -> Pattern -> Meaning -> Action.
+    What => Pattern => Meaning => Action.

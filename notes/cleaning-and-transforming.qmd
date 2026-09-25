@@ -3,13 +3,6 @@ title: "Cleaning and Transforming"
 subtitle: "Every cleaning choice is part of the analysis"
 ---
 
-> Week 2, first cycle, for everyone, before Part A of Lab 02. It covers getting a
-> raw export into a shape that can answer a question: finding what is missing,
-> doubled, mislabelled or impossible, and deciding what to do about each. Then it
-> introduces the six `dplyr` verbs and the pipe, and shows what they are doing by
-> setting them next to the base R you already know. The worked example is the one
-> to remember: eight blank cells that were hiding the finding.
-
 ```{r}
 #| label: setup
 #| include: false

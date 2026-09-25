@@ -16,8 +16,6 @@ execute:
   message: false
 ---
 
-First time here? Work through [Lab 00](labs/setting-up.qmd) before anything else.
-
 ## Ten questions R can answer
 
 These are the questions that come up in the week after a playtest. None of them is
