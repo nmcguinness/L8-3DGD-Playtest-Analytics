@@ -9,14 +9,31 @@ subtitle: "One page to keep open while you work"
 
 ---
 
+## Values and vectors
+
+| Task | Code |
+| :- | :- |
+| Build a vector | `deaths <- c(2, 0, 5, 3, 1)` |
+| How many values | `length(deaths)` |
+| What type | `class(deaths)` |
+| Repeat a value | `rep("A", 3)` |
+| Count values meeting a condition | `sum(deaths > 2)` (TRUE counts as 1) |
+| Proportion meeting a condition | `mean(deaths > 2)` |
+| The distinct values | `unique(d$cohort)` |
+| Distance to zero | `abs(-3)` |
+| Differences between neighbours | `diff(c(2, 5, 9))` |
+| Vectors side by side as a table | `data.frame(player = c("P1", "P2"), deaths = c(2, 0))` |
+
 ## Getting data in
 
 | Task | Code |
 | :- | :- |
 | Load a package | `library(readr)` |
+| Check a file is where you think | `file.exists("data/file.csv")` |
 | Read a CSV | `d <- read_csv("data/file.csv", show_col_types = FALSE)` |
+| Read it without trimming spaces from text | `read_csv("data/file.csv", trim_ws = FALSE)` |
 | Check it loaded | `nrow(d)`, `dim(d)`, `names(d)` |
-| Look at structure and types | `str(d)` |
+| Look at structure and types | `str(d)`, or `glimpse(d)` after `library(dplyr)` |
 | First / last rows | `head(d, 5)`, `tail(d, 5)` |
 
 ## Getting at parts of a data frame
@@ -39,6 +56,7 @@ subtitle: "One page to keep open while you work"
 | A specific percentile | `quantile(x, 0.99)` |
 | Count a category | `table(d$cohort)` |
 | Cross-tabulate two | `table(d$build, d$quit_reason)` |
+| Counts as proportions of each row | `prop.table(table(d$build, d$quit_reason), margin = 1)` |
 | Ignore missing values | add `na.rm = TRUE` |
 
 ## Describing by group
@@ -47,6 +65,63 @@ subtitle: "One page to keep open while you work"
 | :- | :- |
 | One summary per group | `tapply(d$score, d$cohort, median)` |
 | Several columns at once | `aggregate(score ~ cohort, data = d, FUN = median)` |
+| Several summaries per group | `d |> group_by(cohort) |> summarise(n = n(), med = median(score))` |
+
+## Cleaning
+
+| Task | Code |
+| :- | :- |
+| Which values are missing | `is.na(d$deaths)` |
+| Missing values in every column | `colSums(is.na(d))` |
+| Rows with no missing values | `complete.cases(d)` |
+| Rows that repeat an earlier row | `duplicated(d)` |
+| Rows that repeat an earlier key | `duplicated(d$session_id)` |
+| Remove repeated rows | `d <- d[!duplicated(d), ]` |
+| Strip spaces from the ends of text | `trimws(d$cohort)` |
+| Make text lower case | `tolower(d$cohort)` |
+| Text to numbers | `as.numeric(x)` (unreadable values become `NA`) |
+| Fix the order of categories | `factor(d$cohort, levels = c("novice", "regular", "veteran"))` |
+| Does text contain a word | `grepl("lost|circles", d$comment)` |
+| Are two objects exactly the same | `identical(a, b)` |
+
+Record every row you drop, why, and the *n* before and after. Cleaning is analysis.
+
+## Transforming with dplyr
+
+Load with `library(dplyr)`. Each verb takes a data frame and returns one.
+
+| Task | Code |
+| :- | :- |
+| Pass a result into the next function | `d |> filter(build == "A")` |
+| Keep rows | `filter(d, build == "A", score > 1500)` |
+| Keep columns | `select(d, session_id, build, score)` |
+| Add or change a column | `mutate(d, kd = kills / deaths)` |
+| Sort rows | `arrange(d, score)`; largest first `arrange(d, desc(score))` |
+| Mark groups | `group_by(d, build)` |
+| One row of results per group | `summarise(mean_score = mean(score))` |
+| Rows in each group | `n()`, inside `summarise()` |
+| Choose a value by condition | `case_when(score > 1500 ~ "high", TRUE ~ "other")`, inside `mutate()` |
+
+`%>%` is the older pipe from the tidyverse and does the same job as `|>`.
+
+## Reshaping and joining
+
+Load with `library(tidyr)` for the pivots and `library(dplyr)` for the join.
+
+| Task | Code |
+| :- | :- |
+| Wide columns to long rows | `pivot_longer(survey, -session_id, names_to = "item", values_to = "rating")` |
+| Long rows back to wide columns | `pivot_wider(long, names_from = build, values_from = agree)` |
+| Add columns from another table | `left_join(long, select(d, session_id, build), by = "session_id")` |
+
+## Relationships and tests
+
+| Task | Code |
+| :- | :- |
+| Correlation, −1 to +1 | `cor(d$awareness, d$score)` |
+| Compare two groups of different players | `t.test(wrong_turns ~ build, data = d)` |
+| Compare the same players twice | `t.test(p$before, p$after, paired = TRUE)` |
+| Keep the result and pull out parts | `res <- t.test(...)`, then `res$estimate`, `res$conf.int`, `res$p.value` |
 
 ## Plots
 
@@ -62,10 +137,28 @@ subtitle: "One page to keep open while you work"
 Useful arguments for all of them: `main =` (title), `xlab =` / `ylab =` (axis
 labels), `col =` (fill colour).
 
+## Figures for a reader: ggplot2
+
+Week 3 onwards. Load with `library(ggplot2)`; the full lookup is the
+[ggplot2 Reference](reference-ggplot2.qmd).
+
+| Task | Code |
+| :- | :- |
+| Data and mapping | `ggplot(d, aes(x = score))` |
+| Histogram, bar, boxplot, scatter | `geom_histogram()`, `geom_bar()`, `geom_boxplot()`, `geom_point()` |
+| Straight-line trend | `geom_smooth(method = "lm", se = FALSE)` |
+| One panel per group | `facet_wrap(~ build)`; a grid `facet_grid(build ~ zone)` |
+| Title and axis labels | `labs(title = "...", x = "...", y = "...")` |
+
 ## Quarto
 
 | Task | Code |
 | :- | :- |
+| Title the document | A YAML header at the top: `title: "Playtest Report"` between two `---` lines |
+| A heading | `## 1. Research question` |
+| A link | `[Lab 03](labs/complete-analysis.qmd)` |
+| A table | Rows of `| a | b |` under a `| :- | :- |` line |
+| Read data from a report | `read_csv("data/file.csv")`, with `report.qmd` in the project folder |
 | Start a code chunk | ```` ```{r} ```` |
 | Hide the code, keep the output | `#| echo: false` |
 | Show the code, skip running it | `#| eval: false` |
