@@ -3,7 +3,7 @@ title: "R and Quarto Reference"
 subtitle: "One page to keep open while you work"
 ---
 
-> A lookup sheet, not a tutorial. Everything here appears in the labs; this page
+> A lookup sheet, not a tutorial. Everything here appears in the notes or labs; this page
 > exists so you are not scrolling back through three weeks of notes to remember an
 > argument name.
 
