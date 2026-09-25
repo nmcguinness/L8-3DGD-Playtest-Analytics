@@ -277,28 +277,53 @@ order by accident. Never rely on that.
 **Write 2 sentences:** pick one column above and explain what would go wrong if you
 treated it as the wrong type.
 
-## Exercise 09 — Count the categorical columns `[Do]`
+## Exercise 09 — "Only one in five" `[Decide]`
 
-Produce counts for `cohort`, `archetype` and `quit_reason`. Then produce a
-cross-tabulation of `build` against `quit_reason`.
+```{r}
+#| label: ex09-setup
+#| include: false
+fr_all <- sum(sessions$quit_reason == "Frustrated")
+fr_a   <- sum(sessions$build == "A" & sessions$quit_reason == "Frustrated")
+fr_b   <- sum(sessions$build == "B" & sessions$quit_reason == "Frustrated")
+n_a    <- sum(sessions$build == "A")
+n_b    <- sum(sessions$build == "B")
+stopifnot(round(fr_all / nrow(sessions), 1) == 0.2, fr_a > 3 * fr_b)
+```
+
+The producer counts the quit reasons and says: *"Only one in five players quit in
+frustration. Most players are fine, so frustration is not a priority."* Count
+`quit_reason` with `table()`, then cross-tabulate `build` against `quit_reason`,
+and decide whether the producer's reading is defensible.
 
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
 #| label: ex09
-table(sessions$cohort)
-table(sessions$archetype)
 table(sessions$quit_reason)
+table(sessions$quit_reason) / nrow(sessions)
 
 table(sessions$build, sessions$quit_reason)
 ```
 
-The cross-tabulation is the one that earns its keep.
+**One defensible answer: no, because "one in five" averages two different
+games.** Overall, `r fr_all` of `r nrow(sessions)` sessions ended in frustration,
+`r round(100 * fr_all / nrow(sessions))`%. Split by build, that is `r fr_a` of
+`r n_a` in Build A (`r round(100 * fr_a / n_a)`%) and `r fr_b` of `r n_b` in
+Build B (`r round(100 * fr_b / n_b)`%). One build loses a third of its players to
+frustration; the other hardly any. The overall figure describes neither.
+
+**What makes it defensible.** It breaks the count down by the one thing the
+playtest was designed to compare before judging it, and it reads the numbers as
+a difference between builds rather than a verdict on the game.
+
+**What would make it indefensible.** Accepting "one in five" because it is smaller
+than the number who completed the test, without asking where the one in five came
+from. Or going the other way and calling the whole game frustrating, when Build B
+barely is.
 :::
 
-**Write 2 sentences:** look at the cross-tabulation. What is the single most
-noticeable difference between the two builds, and what would you want to check
-next?
+**Write 2 sentences:** what would you say to the producer instead, and what would
+you want to check next?
 
 ## Exercise 10 — Describe a numeric variable properly `[Apply]`
 
