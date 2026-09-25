@@ -3,12 +3,6 @@ title: "Describing What You Have"
 subtitle: "Variable types, tidy data, centre, spread and shape"
 ---
 
-> Week 1, for everyone, before Part B of Lab 01. This is the vocabulary for
-> describing a single variable: what kind of number it is, where its centre sits,
-> how spread out it is and what shape it has. Every later page assumes it.
-
----
-
 ## Learning Outcomes
 
 By the end of these notes you can:

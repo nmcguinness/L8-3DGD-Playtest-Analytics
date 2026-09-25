@@ -3,14 +3,6 @@ title: "Visualising with ggplot2"
 subtitle: "From a plot you look at to a figure someone else reads"
 ---
 
-::: {.callout-note collapse="true" title="Note for the lecturer"}
-These notes and Relationships and Confounding share one 30-minute theory slot, and
-are written to be taught together. The scatterplot is the correlation visual, so
-`geom_point()` and `cor()` arrive at the same moment rather than twice.
-:::
-
----
-
 ## Learning Outcomes
 
 By the end of these notes you can:

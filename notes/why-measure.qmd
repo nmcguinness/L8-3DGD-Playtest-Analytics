@@ -3,13 +3,6 @@ title: "Why Developers Measure Anything"
 subtitle: "And what is actually worth measuring"
 ---
 
-> The first notes page of the strand, for everyone, before Lab 01. It sets out when
-> measurement is worth the effort, where playtest data comes from, and how to turn
-> a designer's question into something you can record. The only code is in the R
-> Demonstrations section near the end.
-
----
-
 ## Learning Outcomes
 
 By the end of these notes you can:

@@ -3,13 +3,6 @@ title: "Comparing Playtest Conditions"
 subtitle: "Is the difference real, and does it matter?"
 ---
 
-> Week 2, second cycle, for everyone, before Part B of Lab 02. It takes the
-> question every A/B playtest ends with, "is Build B better?", and splits it into
-> the two questions it actually contains: would the difference hold up with other
-> players, and is it big enough to act on? The worked example is the one to
-> remember: two results that are both statistically significant, one of which you
-> should act on and one of which you should not.
-
 ```{r}
 #| label: setup
 #| include: false
