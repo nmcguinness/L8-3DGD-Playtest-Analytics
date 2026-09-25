@@ -246,7 +246,7 @@
     "href": "notes/visualising-with-ggplot2.html",
     "title": "Visualising with ggplot2",
     "section": "",
-    "text": "Week 3, first cycle, for everyone, before Part A of Lab 03. It introduces ggplot2 as a system rather than a list of commands: every figure is data, mapped to aesthetics, drawn as a geometry. The worked example is the one to remember: the same wrong-turn counts drawn three ways, and only the third shows what the new signposting did.",
+    "text": "NoteNote for the lecturer\n\n\n\n\n\nThese notes and Relationships and Confounding share one 30-minute theory slot, and are written to be taught together. The scatterplot is the correlation visual, so geom_point() and cor() arrive at the same moment rather than twice.",
     "crumbs": [
       "Notes",
       "Visualising with ggplot2"
@@ -415,17 +415,6 @@
     "crumbs": [
       "Notes",
       "Visualising with ggplot2"
-    ]
-  },
-  {
-    "objectID": "notes/reporting-evidence.html",
-    "href": "notes/reporting-evidence.html",
-    "title": "Interpreting and Reporting Evidence",
-    "section": "",
-    "text": "Week 3, second cycle, for everyone, before Part B of Lab 03. It covers the last step of the analytical workflow: turning results into a report that another person can check and act on. It sets out the nine parts of a playtest report, introduces pivot_longer() as the last stage of the R cycle you have not met, and works one finding through What → Pattern → Meaning → Action twice: once well, once badly, with the same numbers.",
-    "crumbs": [
-      "Notes",
-      "Interpreting and Reporting Evidence"
     ]
   },
   {
@@ -778,17 +767,6 @@
     "crumbs": [
       "Notes",
       "Describing What You Have"
-    ]
-  },
-  {
-    "objectID": "notes/cleaning-and-transforming.html",
-    "href": "notes/cleaning-and-transforming.html",
-    "title": "Cleaning and Transforming",
-    "section": "",
-    "text": "Week 2, first cycle, for everyone, before Part A of Lab 02. It covers getting a raw export into a shape that can answer a question: finding what is missing, doubled, mislabelled or impossible, and deciding what to do about each. Then it introduces the six dplyr verbs and the pipe, and shows what they are doing by setting them next to the base R you already know. The worked example is the one to remember: eight blank cells that were hiding the finding.",
-    "crumbs": [
-      "Notes",
-      "Cleaning and Transforming"
     ]
   },
   {
@@ -1423,7 +1401,7 @@
     "href": "index.html",
     "title": "Eight Views of a Playtest",
     "section": "",
-    "text": "First time here? Work through Lab 00 before anything else.",
+    "text": "These are the questions that come up in the week after a playtest. None of them is exotic. All of them are painful to answer with a spreadsheet, and each one is answered below by a single figure and a few dozen lines of R.\n\n\n\nThe question you are actually asking\nAnswered by\n\n\n\n\nI have 120 rows of results and no idea what is in them. Where do I start?\nView 1\n\n\nAll four characters average about the same score. Does that mean they are balanced?\nView 2\n\n\nI designed four classes to play differently. Did they stay different once real people played them?\nView 3\n\n\nI want players to score higher. Which ability is actually worth buffing?\nView 4\n\n\nTesters keep giving up partway through. When do I lose them, and is it the same moment every time?\nView 5\n\n\nThe survey came back with 960 ratings across eight questions. Which complaint do I fix first?\nView 6\n\n\nMy frame-rate counter says 60 FPS. My testers say the game stutters. Who is lying?\nView 7\n\n\nHow can I find where players are loitering, sniping, or being funnelled into a kill zone?\nView 8\n\n\nWhich parts of my level is nobody using?\nView 8\n\n\nHow did one particular player move through the level — did they learn the route, or wander?\nView 8b\n\n\n\nEvery one of these is a question about your own game, asked of data your own engine can already record. The only thing missing is the ability to read it.",
     "crumbs": [
       "Start here"
     ]
@@ -1432,8 +1410,8 @@
     "objectID": "index.html#ten-questions-r-can-answer",
     "href": "index.html#ten-questions-r-can-answer",
     "title": "Eight Views of a Playtest",
-    "section": "Ten questions R can answer",
-    "text": "Ten questions R can answer\nThese are the questions that come up in the week after a playtest. None of them is exotic. All of them are painful to answer with a spreadsheet, and each one is answered below by a single figure and a few dozen lines of R.\n\n\n\nThe question you are actually asking\nAnswered by\n\n\n\n\nI have 120 rows of results and no idea what is in them. Where do I start?\nView 1\n\n\nAll four characters average about the same score. Does that mean they are balanced?\nView 2\n\n\nI designed four classes to play differently. Did they stay different once real people played them?\nView 3\n\n\nI want players to score higher. Which ability is actually worth buffing?\nView 4\n\n\nTesters keep giving up partway through. When do I lose them, and is it the same moment every time?\nView 5\n\n\nThe survey came back with 960 ratings across eight questions. Which complaint do I fix first?\nView 6\n\n\nMy frame-rate counter says 60 FPS. My testers say the game stutters. Who is lying?\nView 7\n\n\nHow can I find where players are loitering, sniping, or being funnelled into a kill zone?\nView 8\n\n\nWhich parts of my level is nobody using?\nView 8\n\n\nHow did one particular player move through the level — did they learn the route, or wander?\nView 8b\n\n\n\nEvery one of these is a question about your own game, asked of data your own engine can already record. The only thing missing is the ability to read it.",
+    "section": "",
+    "text": "These are the questions that come up in the week after a playtest. None of them is exotic. All of them are painful to answer with a spreadsheet, and each one is answered below by a single figure and a few dozen lines of R.\n\n\n\nThe question you are actually asking\nAnswered by\n\n\n\n\nI have 120 rows of results and no idea what is in them. Where do I start?\nView 1\n\n\nAll four characters average about the same score. Does that mean they are balanced?\nView 2\n\n\nI designed four classes to play differently. Did they stay different once real people played them?\nView 3\n\n\nI want players to score higher. Which ability is actually worth buffing?\nView 4\n\n\nTesters keep giving up partway through. When do I lose them, and is it the same moment every time?\nView 5\n\n\nThe survey came back with 960 ratings across eight questions. Which complaint do I fix first?\nView 6\n\n\nMy frame-rate counter says 60 FPS. My testers say the game stutters. Who is lying?\nView 7\n\n\nHow can I find where players are loitering, sniping, or being funnelled into a kill zone?\nView 8\n\n\nWhich parts of my level is nobody using?\nView 8\n\n\nHow did one particular player move through the level — did they learn the route, or wander?\nView 8b\n\n\n\nEvery one of these is a question about your own game, asked of data your own engine can already record. The only thing missing is the ability to read it.",
     "crumbs": [
       "Start here"
     ]
@@ -1906,7 +1884,7 @@
     "href": "notes/distributions-and-variation.html",
     "title": "Distributions and Variation",
     "section": "",
-    "text": "Week 1, second cycle, for everyone, before Part B of Lab 01. It moves on from a single typical value to the whole spread of players: how much they differ, what shape that difference takes, and which values sit outside it. The worked example is the one to remember: two builds with the same frame rate, one of which stutters.",
+    "text": "By the end of these notes you can:\n\nexplain why an average on its own cannot describe a playtest;\nread a standard deviation as the typical distance of a player from the mean;\ndescribe a distribution by its centre, spread, skew and outliers;\nsay whether an outlier is an error, an extreme player or the finding itself;\nread the mean, median, standard deviation and high percentiles together and say what each adds;\ndraw hist(), boxplot(), barplot() and plot() in base R and say what each one is for.",
     "crumbs": [
       "Notes",
       "Distributions and Variation"
@@ -1916,8 +1894,8 @@
     "objectID": "notes/distributions-and-variation.html#learning-outcomes",
     "href": "notes/distributions-and-variation.html#learning-outcomes",
     "title": "Distributions and Variation",
-    "section": "Learning Outcomes",
-    "text": "Learning Outcomes\nBy the end of these notes you can:\n\nexplain why an average on its own cannot describe a playtest;\nread a standard deviation as the typical distance of a player from the mean;\ndescribe a distribution by its centre, spread, skew and outliers;\nsay whether an outlier is an error, an extreme player or the finding itself;\nread the mean, median, standard deviation and high percentiles together and say what each adds;\ndraw hist(), boxplot(), barplot() and plot() in base R and say what each one is for.",
+    "section": "",
+    "text": "By the end of these notes you can:\n\nexplain why an average on its own cannot describe a playtest;\nread a standard deviation as the typical distance of a player from the mean;\ndescribe a distribution by its centre, spread, skew and outliers;\nsay whether an outlier is an error, an extreme player or the finding itself;\nread the mean, median, standard deviation and high percentiles together and say what each adds;\ndraw hist(), boxplot(), barplot() and plot() in base R and say what each one is for.",
     "crumbs": [
       "Notes",
       "Distributions and Variation"
@@ -2071,7 +2049,7 @@
     "href": "notes/ten-rules.html",
     "title": "Ten Rules for Reading Playtest Data",
     "section": "",
-    "text": "These ten rules are the spine of this module’s analytics strand. Each one is unpacked in the notes that follow, and every lab will send you back to at least one of them. When a lab says “rule 5 again”, this is the page it means.\n\n\n\nDecide what would change your mind before you look at the data. An analysis that cannot come out against you is not an analysis.\nA number without a question attached is decoration. Ask the question first, in words, and in the form a designer would ask it.\nKnow what kind of number you are holding. You cannot average a category, and a 1–5 rating is not a measurement.\nLook at the shape before you quote the average. Every summary throws information away; the shape tells you what was thrown.\nThe mean is the wrong summary more often than you think. Anything skewed — completion times, session lengths, frame times — belongs to the median.\nCleaning is analysis. Every row you drop is a decision with a consequence, and you must be able to say what it was.\nCompare distributions, not averages. Two groups with the same mean can be completely different games.\nSmall samples lie confidently. Report how many people you measured, every time, in the same breath as the result.\nSometimes the rare value is the whole story. Averages hide stutter, crashes, and the one puzzle where everybody quits.\nA finding that does not name an action is not finished. What -&gt; Pattern -&gt; Meaning -&gt; Action.",
+    "text": "These ten rules are the spine of this module’s analytics strand. Each one is unpacked in the notes that follow, and every lab will send you back to at least one of them. When a lab says “rule 5 again”, this is the page it means.\n\n\n\nDecide what would change your mind before you look at the data. An analysis that cannot come out against you is not an analysis.\nA number without a question attached is decoration. Ask the question first, in words, and in the form a designer would ask it.\nKnow what kind of number you are holding. You cannot average a category, and a 1–5 rating is not a measurement.\nLook at the shape before you quote the average. Every summary throws information away; the shape tells you what was thrown.\nThe mean is the wrong summary more often than you think. Anything skewed — completion times, session lengths, frame times — belongs to the median.\nCleaning is analysis. Every row you drop is a decision with a consequence, and you must be able to say what it was.\nCompare distributions, not averages. Two groups with the same mean can be completely different games.\nSmall samples lie confidently. Report how many people you measured, every time, in the same breath as the result.\nSometimes the rare value is the whole story. Averages hide stutter, crashes, and the one puzzle where everybody quits.\nA finding that does not name an action is not finished. What =&gt; Pattern =&gt; Meaning =&gt; Action.",
     "crumbs": [
       "Notes",
       "Ten Rules for Reading Playtest Data"
