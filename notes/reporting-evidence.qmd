@@ -1,0 +1,564 @@
+---
+title: "Interpreting and Reporting Evidence"
+subtitle: "From a set of results to a finding someone can act on"
+---
+
+> Week 3, second cycle, for everyone, before Part B of Lab 03. It covers the last
+> step of the analytical workflow: turning results into a report that another
+> person can check and act on. It sets out the nine parts of a playtest report,
+> introduces `pivot_longer()` as the last stage of the R cycle you have not met,
+> and works one finding through What → Pattern → Meaning → Action twice: once well,
+> once badly, with the same numbers.
+
+```{r}
+#| label: setup
+#| include: false
+library(readr)
+library(dplyr)
+library(tidyr)
+
+sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+survey   <- read_csv("data/tidebreak_survey.csv", show_col_types = FALSE)
+
+long   <- pivot_longer(survey, -session_id, names_to = "item", values_to = "rating")
+joined <- left_join(long, select(sessions, session_id, build, quit_reason),
+                    by = "session_id")
+
+items <- long |>
+  group_by(item) |>
+  summarise(mean = mean(rating), agree = mean(rating >= 4),
+            disagree = mean(rating <= 2)) |>
+  arrange(mean)
+
+by_build <- joined |>
+  group_by(item, build) |>
+  summarise(mean = mean(rating), .groups = "drop") |>
+  pivot_wider(names_from = build, values_from = mean)
+
+obj    <- joined[joined$item == "objective_clear", ]
+obj_a  <- mean(obj$rating[obj$build == "A"])
+obj_b  <- mean(obj$rating[obj$build == "B"])
+obj_fr <- mean(obj$rating[obj$quit_reason == "Frustrated"])
+obj_nf <- mean(obj$rating[obj$quit_reason != "Frustrated"])
+item_row <- function(i) items[items$item == i, ]
+
+themed <- sessions |>
+  mutate(theme = case_when(
+    grepl("lost|circles|meant to go|objective", comment) ~ "Lost or unclear",
+    grepl("route|exit|signposting", comment)             ~ "Found the way",
+    grepl("Died|hard", comment)                          ~ "Difficulty",
+    TRUE                                                 ~ "General"
+  ))
+lost_a  <- sum(themed$theme == "Lost or unclear" & themed$build == "A")
+lost_b  <- sum(themed$theme == "Lost or unclear" & themed$build == "B")
+found_a <- sum(themed$theme == "Found the way" & themed$build == "A")
+found_b <- sum(themed$theme == "Found the way" & themed$build == "B")
+helped_a <- sum(sessions$comment == "The signposting helped." & sessions$build == "A")
+
+wt <- t.test(wrong_turns ~ build, data = sessions)
+
+stopifnot(items$item[1] == "objective_clear",
+          items$item[nrow(items)] == "visual_style",
+          obj_b > obj_a, obj_fr < obj_nf,
+          lost_b > lost_a, found_b < found_a, helped_a > 0,
+          all(themed$enjoyment[themed$theme == "Found the way"] >= 5),
+          all(themed$enjoyment[themed$theme == "Lost or unclear"] < 5),
+          wt$estimate[[1]] > wt$estimate[[2]],
+          by_build$item[which.max(abs(by_build$B - by_build$A))] == "objective_clear")
+
+fr_check <- table(themed$theme[themed$quit_reason == "Frustrated"])
+stopifnot(names(which.max(fr_check)) == "Difficulty")
+```
+
+---
+
+## Learning Outcomes
+
+By the end of these notes you can:
+
+- lay out a playtest report in nine parts, and say what question each part answers;
+- explain why survey exports arrive wide, and what makes a table tidy;
+- reshape a whole survey with `pivot_longer()` and summarise or plot every item in
+  one step;
+- categorise free-text comments into a few themes, and say what they can and cannot
+  support;
+- write a finding as What → Pattern → Meaning → Action, and diagnose a finding that
+  skips a step;
+- explain why a Quarto report cannot quote a stale number.
+
+---
+
+## Why This Matters for Playtesting
+
+A playtest ends in a decision: keep the change, cut it, or test again. The person
+making that decision will not rerun your analysis. They will read the report, and
+the report is the only part of your work that reaches them.
+
+**A report is an argument, not a results dump.** Every table and figure you include
+should move the reader towards the conclusion or warn them off it. A reader faced
+with forty numbers will pick the one they already believed.
+
+**The reader must be able to check you.** A report that says what was measured, how
+the data was cleaned, what was tested and what was not, lets a sceptical producer
+find the weak point themselves. That is what makes the conclusion trustworthy, and
+it is why the limitations section is not optional.
+
+---
+
+## The Nine-Part Report
+
+Every playtest report in this module uses the same nine parts, in this order. The
+order is the analytical workflow: question, then data, then evidence, then what it
+means.
+
+| Part | Answers | In the *Tidebreak* report |
+| :- | :- | :- |
+| 1. Research question | What did we want to know? | Did Build B's guidance improve navigation without reducing enjoyment? |
+| 2. Experimental design | Who played what, and how was the data cleaned? | `r nrow(sessions)` sessions, each player on one build; the cleaning log |
+| 3. Descriptive evidence | What are the numbers? | Wrong turns per session: mean `r round(wt$estimate[[1]], 1)` in A, `r round(wt$estimate[[2]], 1)` in B |
+| 4. Visual evidence | What does it look like? | The faceted histogram of wrong turns |
+| 5. Statistical evidence | Could it be chance, and how big could it be? | The t-test and its confidence interval |
+| 6. Practical significance | Is it big enough to matter? | Is the reduction in wrong turns worth the build's cost? |
+| 7. Qualitative evidence | What did players say? | The comment themes |
+| 8. Limitations | What could make this wrong? | Sample, design, confounds, what was not measured |
+| 9. Design conclusion | What do we do next? | A decision and the next test |
+
+**Parts 3 to 7 are evidence; parts 8 and 9 are judgement.** Keep them separate. A
+reader should be able to disagree with your conclusion while agreeing with every
+number above it.
+
+**Part 8 is where confounds go.** Anything from
+Relationships and Confounding that you could not rule out belongs here, stated
+plainly. A limitation you name costs you less than one the reader finds.
+
+---
+
+## Wide, Long and Tidy
+
+A survey tool exports one row per respondent and one column per question, because
+that is how a form is filled in. That shape is **wide**. The *Tidebreak* survey has
+`r nrow(survey)` rows and `r ncol(survey)` columns: a session ID and eight
+agreement items, each rated 1 to 5.
+
+**Tidy data** has one row per observation, one column per variable. In the survey,
+an observation is one player's answer to one item. So the tidy shape has three
+columns, `session_id`, `item` and `rating`, and one row per answer. That shape is
+**long**: `r nrow(survey)` sessions × 8 items = `r nrow(long)` rows.
+
+**Why long matters.** In the wide table, the item is a column *name*, and you cannot
+group by, filter on or plot a column name. In the long table, the item is a column
+*value*, so `group_by(item)` summarises every item at once, `filter(item == ...)`
+picks one, and `ggplot2` can put every item on one axis. Eight separate calculations
+become one.
+
+**`pivot_longer()`** is the reshape. It takes the columns you name, stacks them, and
+writes their old names into one new column and their values into another. It is the
+last stage of the R cycle, **Tidy**, and it is usually needed exactly when you want
+to report a whole questionnaire.
+
+---
+
+## Qualitative Evidence
+
+The `comment` column holds one sentence per session. **Categorising** comments means
+reading them, deciding on a handful of **themes**, and assigning each comment to
+one. It is a coding decision, like a cleaning decision, and it goes in the report.
+
+**Comments explain; they do not measure.** A comment tells you what a player
+noticed and how they felt. It does not tell you how often something happened, and
+it can contradict the telemetry from the same session. When it does, the telemetry
+says what happened and the comment says how it felt. Both are true, and a report
+that reports only one of them has thrown evidence away.
+
+**Quote a comment to show a pattern, never to be the pattern.** One vivid quote
+beside a chart of frustration quits makes the chart human. One vivid quote instead
+of the chart is an anecdote.
+
+---
+
+## What → Pattern → Meaning → Action
+
+Every finding in the report is written in four moves:
+
+| Move | Says | Test |
+| :- | :- | :- |
+| **What** | What was measured, on whom, how many | Could a reader repeat the measurement? |
+| **Pattern** | What the data shows, with its size | Is there a number, and is it the right one? |
+| **Meaning** | What that suggests about the game, and how sure you are | Does it follow from the pattern, and no further? |
+| **Action** | The one change or test you recommend | Could someone start work on it tomorrow? |
+
+**Meaning is where findings go wrong.** What and Pattern are facts. Action is a
+recommendation. Meaning is the step where you connect them, and it is the step most
+often skipped, overstated or quietly replaced by what you hoped to find. A finding
+that does not name an action is not finished ([rule 10](ten-rules.qmd)); a finding
+whose action does not follow from its meaning is worse.
+
+---
+
+## Worked Examples
+
+**The data.** The same `r nrow(survey)` surveys, reshaped long and joined to the
+session outcomes, feed both examples below. Every number in both is correct.
+
+### A good finding
+
+> **What.** `r nrow(survey)` players each rated eight statements about their session
+> from 1 (strongly disagree) to 5 (strongly agree).
+>
+> **Pattern.** "I always knew what my objective was" was the lowest-rated of the
+> eight, averaging `r round(item_row("objective_clear")$mean, 2)`, with
+> `r round(100 * item_row("objective_clear")$disagree)`% disagreeing. It split
+> sharply by build: `r round(obj_a, 2)` in Build A against `r round(obj_b, 2)` in
+> Build B. Players who quit in frustration rated it `r round(obj_fr, 2)`, against
+> `r round(obj_nf, 2)` for everyone else.
+>
+> **Meaning.** Build B's guidance made the objective clearer. The playtest was
+> designed to compare the two builds, so this is the comparison it can best support.
+> The link to frustration quits is an association: players who did not know what to
+> do were the ones who left, which is consistent with unclear objectives causing
+> the quits but does not prove it.
+>
+> **Action.** Keep Build B's guidance. For the next build, add an explicit on-screen
+> objective in the first minute, and retest with objective clarity and the
+> frustration-quit rate as the two target measures, with the success threshold
+> agreed before the test.
+
+**Why it works.** The What says who and how many. The Pattern gives the size and
+the comparison, not only the ranking. The Meaning separates the claim the design
+supports (the build changed clarity) from the one it only suggests (clarity drives
+quits). The Action is specific, testable, and follows from the Meaning.
+
+### A bad finding
+
+> Players loved *Tidebreak*: visual style scored
+> `r round(item_row("visual_style")$mean, 2)` out of 5, with
+> `r round(100 * item_row("visual_style")$agree)`% agreeing. Build B scored higher
+> than Build A on `r sum(by_build$B > by_build$A)` of the 8 survey items. Overall the
+> playtest was a success, and the team should continue as planned.
+
+**Why it fails.** Every number is true, and the finding is still useless.
+
+- **What is missing.** Who answered, how many, and on what scale.
+- **The Pattern is chosen, not found.** It leads with the best-rated item, which
+  differs between the builds by
+  `r sprintf("%.2f", abs(by_build$B[by_build$item == "visual_style"] - by_build$A[by_build$item == "visual_style"]))`
+  of a point. "Higher on `r sum(by_build$B > by_build$A)` of 8" counts that as a
+  win, the same as the objective item's gap of
+  `r round(obj_b - obj_a, 2)`.
+- **The Meaning is a verdict.** "A success" measured against what? Nothing in the
+  question was about visual style.
+- **The Action names nothing.** "Continue as planned" is not a decision anyone can
+  start work on ([rule 10](ten-rules.qmd)).
+- **It misses the finding.** The worst-rated item, the one tied to why players
+  quit, is not mentioned. The bad version is not a weaker account of the good one.
+  It is an account of a different, more comfortable playtest.
+
+---
+
+## R Demonstrations
+
+```{r}
+#| label: demo-load
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+survey   <- read_csv("data/tidebreak_survey.csv", show_col_types = FALSE)
+dim(survey)
+```
+
+### Wide to long
+
+```{r}
+#| label: demo-pivot
+long <- survey |>
+  pivot_longer(-session_id, names_to = "item", values_to = "rating")
+
+dim(long)
+head(long, 3)
+```
+
+`-session_id` means "every column except `session_id`". Those eight columns are
+stacked: their names go into `item` and their values into `rating`. The session ID
+is repeated on each of its eight rows, so nothing is lost.
+
+### Every item at once
+
+```{r}
+#| label: demo-items
+long |>
+  group_by(item) |>
+  summarise(mean     = mean(rating),
+            agree    = mean(rating >= 4),
+            disagree = mean(rating <= 2)) |>
+  arrange(mean)
+```
+
+One `group_by()` summarises all eight items. `mean(rating >= 4)` is the proportion
+who agreed: TRUE counts as 1. For a rating scale, report the proportion agreeing
+and disagreeing alongside the mean; the mean of an ordinal scale is a convenience,
+not a measurement ([rule 3](ten-rules.qmd)).
+
+```{r}
+#| label: demo-prop
+round(prop.table(table(long$item, long$rating), margin = 1), 2)
+```
+
+`table()` counts each rating for each item; `prop.table(..., margin = 1)` turns each
+row into proportions that sum to 1. This is the full distribution of every item in
+one table.
+
+### Every item in one figure
+
+```{r}
+#| label: demo-plot
+#| fig-height: 4
+long |>
+  ggplot(aes(y = reorder(item, rating), fill = factor(rating))) +
+  geom_bar(position = "fill") +
+  scale_fill_brewer(palette = "RdBu") +
+  labs(title = "Post-session survey, all items",
+       x = "Proportion of players", y = NULL, fill = "Rating")
+```
+
+Only possible because the data is long: `item` is a column, so it can go on an
+axis. `reorder(item, rating)` sorts the items by their mean rating, and
+`position = "fill"` stretches every bar to the same length so the items compare as
+proportions. The diverging palette puts disagreement in red and agreement in blue.
+
+### Joining the survey to what happened
+
+```{r}
+#| label: demo-join
+long |>
+  left_join(select(sessions, session_id, build), by = "session_id") |>
+  filter(item == "objective_clear") |>
+  group_by(build) |>
+  summarise(n = n(), mean = mean(rating), disagree = mean(rating <= 2))
+```
+
+`left_join()` from Week 2 adds each session's build to all eight of its rows. The
+same pipeline with `quit_reason` in place of `build` gives the frustration-quit
+comparison in the good finding above.
+
+### Categorising comments
+
+```{r}
+#| label: demo-themes
+themed <- sessions |>
+  mutate(theme = case_when(
+    grepl("lost|circles|meant to go|objective", comment) ~ "Lost or unclear",
+    grepl("route|exit|signposting", comment)             ~ "Found the way",
+    grepl("Died|hard", comment)                          ~ "Difficulty",
+    TRUE                                                 ~ "General"
+  ))
+
+table(themed$theme, themed$build)
+```
+
+`grepl()` returns TRUE when a comment contains any of the words, and `case_when()`
+assigns the first theme that matches. Read every comment before writing the
+patterns; the themes are your decision, and a reader should see them.
+
+The table contradicts the telemetry. Build B players took fewer wrong turns, yet
+`r lost_b` of them left a "lost or unclear" comment against `r lost_a` in Build A,
+and `r helped_a` Build A players wrote that "the signposting helped" about the
+build without the new signage.
+
+```{r}
+#| label: demo-themes-enjoy
+table(themed$theme, enjoyed = themed$enjoyment >= 5)
+```
+
+Split by enjoyment instead of build, the themes separate cleanly: every "found the
+way" comment came from a player who rated enjoyment 5 or above, and every "lost or
+unclear" comment from one who rated it lower. These comments record how the
+session *felt*, not where it went wrong. That is a finding in its own right, and it
+is why comments explain the numbers rather than replace them.
+
+---
+
+## Quarto: The Report Is the Analysis
+
+A playtest report is a `.qmd` file: prose, code and output in one document, rendered
+to HTML with `quarto render report.qmd`. The skeleton is the nine parts as
+headings:
+
+````markdown
+---
+title: "Tidebreak Build B: Playtest Report"
+---
+
+## 1. Research question
+
+## 2. Experimental design
+
+```{{r}}
+#| echo: false
+sessions <- readr::read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+```
+
+Each of the `r knitr::inline_expr("nrow(sessions)")` sessions ...
+
+## 3. Descriptive evidence
+````
+
+**Inline code keeps the prose honest.** `` `r knitr::inline_expr("nrow(sessions)")` `` in
+the text is replaced by the number when the report renders. When next week's data
+arrives, you render again and every figure, table and sentence updates together.
+A number typed by hand into the prose is the one that will be wrong. Every page of
+this site is built this way.
+
+**`echo: false`** hides a chunk's code but keeps its output: the reader sees the
+table or figure without the R that made it. Use it for the report; leave the code
+visible in your own working file.
+
+---
+
+## Interpretation Guidance
+
+**What the data shows.** The objective item is the worst-rated of eight and differs
+most between the builds. The comment themes do not follow the build at all; they
+follow enjoyment.
+
+**What the analysis suggests.** Build B's guidance improved how clear the objective
+felt. The comments are a record of mood, so they are weak evidence about navigation
+in either direction.
+
+**What can legitimately be concluded.** Build B made the objective clearer to the
+players who tested it. It did not make players *say* they got lost less, and a
+report that quoted only the comments would have reached the opposite conclusion to
+the telemetry.
+
+**Order the evidence by strength.** In part 9, lead with the conclusion the strongest
+evidence supports, and name any weaker evidence that disagrees with it. A report
+that hides a contradiction invites the reader to find it.
+
+---
+
+## Common Mistakes
+
+**Reporting results in the order you computed them.** The reader needs the order of
+the argument. Use the nine parts.
+
+**Leading with the best-rated item.** It is usually the art, it rarely differs
+between builds, and it is almost never what the playtest was run to find.
+
+**Averaging a rating scale and stopping.** Give the proportion agreeing and
+disagreeing. A mean of 3 can be everyone neutral or half the players furious.
+
+**Counting comments as if they were measurements.** A count of complaints is a
+theme, not a rate. Which comment a player writes depends on how they felt, not only
+on what happened to them.
+
+**An Action that is a sentiment.** "Improve onboarding" is a wish. "Add an on-screen
+objective in the first minute and retest clarity" is an action.
+
+**Copying numbers into the prose by hand.** They go stale the next time the data
+changes, and nobody notices until a meeting.
+
+---
+
+## Short Practice Activities
+
+Each takes two or three minutes. Start from `long`, `sessions` and `themed` in the
+demonstrations.
+
+**1.** Which survey item has the largest share of players answering 1 or 2 in
+Build A?
+
+::: {.callout-note collapse="true" title="Check your answer"}
+
+```{r}
+#| label: practice-disagree-a
+disagree_a <- long |>
+  left_join(select(sessions, session_id, build), by = "session_id") |>
+  filter(build == "A") |>
+  group_by(item) |>
+  summarise(disagree = mean(rating <= 2)) |>
+  arrange(desc(disagree))
+
+head(disagree_a, 3)
+```
+
+The objective item: `r round(100 * disagree_a$disagree[1])`% of Build A players
+answered 1 or 2, against `r round(100 * disagree_a$disagree[2])`% for the next
+item. Filtering after the join keeps the whole
+survey available for the next question.
+:::
+
+**2.** Without running it, how many rows would `pivot_longer()` give if the survey
+had ten items instead of eight?
+
+::: {.callout-note collapse="true" title="Check your answer"}
+
+`r nrow(survey)` × 10 = `r nrow(survey) * 10`. One row per session per item. If a
+reshape gives a row count you did not predict, check which columns you told it to
+stack.
+:::
+
+**3.** Among the frustration quits only, which comment theme is most common?
+
+::: {.callout-note collapse="true" title="Check your answer"}
+
+```{r}
+#| label: practice-themes-frustrated
+fr_themes <- table(themed$theme[themed$quit_reason == "Frustrated"])
+fr_themes
+```
+
+Difficulty, with `r fr_themes[["Difficulty"]]`, ahead of lost or unclear with
+`r fr_themes[["Lost or unclear"]]`. The survey says frustration quitters did not
+know their objective; their comments mostly blame difficulty. Players name the
+symptom they felt, not the cause. Read the counts alongside what they are counts
+of: a handful of one-sentence comments, each chosen by how the session felt. They can illustrate why frustration
+quits happened. They cannot tell you how often each cause occurs.
+:::
+
+---
+
+## Summary
+
+- A report has nine parts, in the order of the argument: question, design,
+  evidence from descriptive to qualitative, limitations, conclusion.
+- Surveys arrive wide. `pivot_longer()` makes them long, so every item can be
+  grouped, filtered, joined and plotted at once. That is the Tidy stage of the R
+  cycle.
+- Comments explain and illustrate. They can contradict the telemetry, and when they
+  do, report both.
+- Write every finding as What → Pattern → Meaning → Action. Meaning is where
+  findings go wrong; Action is where they become useful.
+- A report built in Quarto computes its own numbers, so it cannot quote a stale
+  one.
+
+---
+
+## Links to Relevant Reference Material
+
+- [Ten Rules](ten-rules.qmd): rule 2 (a number without a question attached is
+  decoration), rule 3 (know what kind of number you are holding) and rule 10 (a
+  finding that does not name an action is not finished)
+- [Cleaning and Transforming](cleaning-and-transforming.qmd): the cleaning log that
+  goes in part 2
+- [Comparing Playtest Conditions](comparing-conditions.qmd): statistical against
+  practical significance, parts 5 and 6
+- [Statistics Reference: which tool for which question](../reference/reference-statistics.qmd#which-tool-for-which-question)
+- [R and Quarto Reference: Quarto](../reference/r-quarto-reference.qmd#quarto)
+
+---
+
+## Reflective Questions
+
+- The bad finding uses only true numbers. What, if anything, should stop a true
+  number going into a report?
+- The comments say Build B players got lost more; the telemetry says they took fewer
+  wrong turns. Write the one sentence you would put in part 7, and say why you
+  chose that wording.
+- A producer asks you to cut the limitations section because it "undermines the
+  recommendation". What do you say?
+- Your Action recommends a retest. What would you have to decide before that retest
+  starts, so that its result can change your mind ([rule 1](ten-rules.qmd))?
+
+---

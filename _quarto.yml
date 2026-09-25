@@ -39,6 +39,7 @@ website:
           - notes/cleaning-and-transforming.qmd
           - notes/visualising-with-ggplot2.qmd
           - notes/comparing-conditions.qmd
+          - notes/reporting-evidence.qmd
       - section: "Labs"
         contents:
           - labs/setting-up.qmd
