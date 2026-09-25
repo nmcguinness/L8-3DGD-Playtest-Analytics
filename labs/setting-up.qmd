@@ -142,7 +142,7 @@ code --version
 ```
 
 ::: {.callout-tip collapse="true" title="What you should see"}
-Three version numbers. Quarto should be **1.4 or later** and R **4.3 or later**.
+Three version numbers. Quarto should be **1.4 or later** and R **4.6.0 or later**.
 
 If any command is *not recognized*, go back to Step 4. Do not continue — nothing
 below will work.
