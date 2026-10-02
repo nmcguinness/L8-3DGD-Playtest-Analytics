@@ -160,15 +160,19 @@ Use `Rscript --version` instead, or `R.exe --version` to bypass the alias.
 # Step 5 — Install the R packages
 
 ```powershell
-Rscript -e "install.packages(c('readr','knitr'), repos='https://cloud.r-project.org')"
+Rscript -e "install.packages(c('readr','dplyr','tidyr','ggplot2','knitr'), repos='https://cloud.r-project.org')"
 ```
 
-Those two are all the labs need. Accept any prompt about a personal library.
+Those five are all the labs need: `readr` reads the CSV files, `dplyr` and `tidyr`
+reshape and summarise data (first used in Lab 01, Exercise 13), `ggplot2` draws the
+report figures in Week 3, and `knitr` lets Quarto run R. Installing them all now
+means no lab stops halfway for a download. Accept any prompt about a personal
+library.
 
 ::: {.callout-warning collapse="true" title="PowerShell mangles quotes — use the right ones"}
 Note the quoting above: **double quotes outside, single quotes inside**. PowerShell
 strips double quotes when passing arguments to a program, so the reverse
-arrangement arrives at R as `install.packages(c(readr,knitr), repos=https:/)` and
+arrangement arrives at R as `install.packages(c(readr,dplyr,...), repos=https:/)` and
 fails with `unexpected '/'`.
 :::
 

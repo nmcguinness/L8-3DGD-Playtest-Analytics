@@ -441,8 +441,18 @@ pipe `|>`. In the second version, also count the sessions in each build with `n(
 The pipe passes what is on its left in as the first argument of what is on its
 right: `sessions |> group_by(build)` means `group_by(sessions, build)`.
 
-If `library(dplyr)` says there is no package called `dplyr`, run
+::: {.callout-note title="New syntax: you are not expected to know this yet"}
+`library(dplyr)`, `group_by()`, `summarise()`, `n()` and the pipe `|>` all appear
+here for the first time. Copy the pattern from the Solution if you need to; the aim
+is only to see that it produces the same medians as `tapply()`. Each of these is
+explained properly in the Lab 02 notes,
+[Cleaning and Transforming](../notes/cleaning-and-transforming.qmd), which cover
+the pipe and the core `dplyr` functions one at a time.
+
+`dplyr` was installed in Step 5 of [Setting Up](setting-up.qmd). If
+`library(dplyr)` says there is no package called `dplyr`, run
 `install.packages("dplyr")` once in the Console, then try again.
+:::
 
 ::: {.callout-tip collapse="true" title="Solution"}
 
