@@ -3,12 +3,6 @@ title: "Week 3 Demo"
 subtitle: "Figures, relationships, reshaping and a report that recomputes, live"
 ---
 
-> The lecturer's script for the two 15-minute demo slots in Week 3. Every chunk
-> runs and shows its output. Step through it top to bottom; the bold headings are
-> the places to pause. `ggplot2` from here on.
-
----
-
 ## Demo 1 — A figure, one layer at a time
 
 **Step 1. Data and mapping, no geometry**
@@ -200,7 +194,3 @@ sessions <- sessions[complete.cases(sessions), ]
 
 render_text(part2)
 ```
-
-**Finish here.** Same sentence, nobody retyped a number, and both figures changed.
-The second one also shows why the cleaning log goes in part 2: the report is only
-as honest as the data it was rendered against.

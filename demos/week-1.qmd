@@ -3,12 +3,6 @@ title: "Week 1 Demo"
 subtitle: "Describing playtest data, live"
 ---
 
-> The lecturer's script for the two 15-minute demo slots in Week 1. Every chunk
-> runs and shows its output. Step through it top to bottom; the bold headings are
-> the places to pause. Base R plotting only this week.
-
----
-
 ## Demo 1 — From values to a data frame
 
 **Step 1. A vector is a column**
@@ -111,5 +105,3 @@ frames %>%
             p99    = quantile(ms, 0.99))
 ```
 
-**Finish here.** Same frame rate, one build stutters. The mean could never have
-shown it.
