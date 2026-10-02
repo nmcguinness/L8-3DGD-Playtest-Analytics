@@ -558,8 +558,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="step-5-install-the-r-packages" class="level1">
 <h1>Step 5 — Install the R packages</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Rscript <span class="op">-</span>e <span class="st">"install.packages(c('readr','knitr'), repos='https://cloud.r-project.org')"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Those two are all the labs need. Accept any prompt about a personal library.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Rscript <span class="op">-</span>e <span class="st">"install.packages(c('readr','dplyr','tidyr','ggplot2','knitr'), repos='https://cloud.r-project.org')"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Those five are all the labs need: <code>readr</code> reads the CSV files, <code>dplyr</code> and <code>tidyr</code> reshape and summarise data (first used in Lab 01, Exercise 13), <code>ggplot2</code> draws the report figures in Week 3, and <code>knitr</code> lets Quarto run R. Installing them all now means no lab stops halfway for a download. Accept any prompt about a personal library.</p>
 <div class="callout callout-style-default callout-warning callout-titled" title="PowerShell mangles quotes — use the right ones">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -572,7 +572,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Note the quoting above: <strong>double quotes outside, single quotes inside</strong>. PowerShell strips double quotes when passing arguments to a program, so the reverse arrangement arrives at R as <code>install.packages(c(readr,knitr), repos=https:/)</code> and fails with <code>unexpected '/'</code>.</p>
+<p>Note the quoting above: <strong>double quotes outside, single quotes inside</strong>. PowerShell strips double quotes when passing arguments to a program, so the reverse arrangement arrives at R as <code>install.packages(c(readr,dplyr,...), repos=https:/)</code> and fails with <code>unexpected '/'</code>.</p>
 </div>
 </div>
 </div>
@@ -795,7 +795,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/nmcguinness\.github\.io\/L8-3DGD-Playtest-Analytics\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
