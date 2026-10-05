@@ -38,10 +38,11 @@ code_list  <- function(x) paste0("`", x, "`", collapse = ", ")
 
 ::: {.at-a-glance}
 **Time:** 30 minutes in class; 15 more for the Going further sections.
-**Before this:** [Planning a Playtest](01-planning-a-playtest.qmd).
+**Before this:** [R from First Principles](02-r-first-principles.qmd).
 **Key terms:** observation, variable, tidy data, nominal, ordinal, discrete,
 continuous, binary, Likert item, sample, population.
-**R introduced:** `class()`, `table()`, `factor()` (preview).
+**R introduced:** `factor()` (preview). Uses `class()` and `table()` from
+[R from First Principles](02-r-first-principles.qmd).
 :::
 
 ## Learning Outcomes
@@ -246,8 +247,9 @@ flowchart TD
 
 ### What each type lets you do
 
-The types form a ladder. Each rung allows everything the rung below allows, plus
-something new.
+Broadly, the types form a ladder: each allows what the one before it allows, plus
+something new. The one wrinkle is counting: a continuous variable has almost no
+repeated values, so you count it in ranges, or **bins**, instead.
 
 | You want to... | Nominal | Ordinal | Discrete | Continuous |
 | :- | :-: | :-: | :-: | :-: |
@@ -311,14 +313,15 @@ disagreed that the player always knew their objective, and only
 players did not know what they were meant to be doing".
 
 **In a report you would write:** "`r pct_fmt(obj_dis)` of `r length(obj)`
-respondents disagreed (1 or 2 on a 5-point scale) that they always knew their
+responses disagreed (1 or 2 on a 5-point scale) that they always knew their
 objective; `r pct_fmt(obj_agree)` agreed (4 or 5)."
 
 ---
 
 ## What R Thinks the Type Is
 
-Statistical type and R type are different things. R's type describes **how the
+Statistical type and R type are different things. R's type, introduced in
+[R from First Principles](02-r-first-principles.qmd#types), describes **how the
 value is stored**. The statistical type describes **what the value means**. R
 cannot work out the second from the first.
 

@@ -41,7 +41,7 @@ stopifnot(names(item_means)[1] == "objective_clear")
 **Before this:** nothing. This is the first page.
 **Key terms:** telemetry, performance capture, measure, between-subjects,
 within-subjects, counterbalancing, random assignment, pilot, threshold.
-**R introduced:** none. R starts in [Lab 01](../labs/reading-data.qmd).
+**R introduced:** none. R starts in [R from First Principles](02-r-first-principles.qmd).
 :::
 
 ## Learning Outcomes
@@ -578,7 +578,7 @@ do not release". "If it seems like a lot" is not a threshold.
 - [Statistics Reference: sample and population](../reference/reference-statistics.qmd#describing-data)
 - [Lab 00: Setting Up](../labs/setting-up.qmd) and
   [Lab 01: Reading Data](../labs/reading-data.qmd)
-- Next: [Data, Variables and Types](03-data-and-types.qmd)
+- Next: [R from First Principles](02-r-first-principles.qmd)
 
 ---
 

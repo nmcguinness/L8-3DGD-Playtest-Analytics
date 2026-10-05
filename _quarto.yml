@@ -42,7 +42,7 @@ website:
           - section: "1 · Foundations"
             contents:
               - notes/01-planning-a-playtest.qmd
-              # - notes/02-r-first-principles.qmd        (draft: add in Stage 1)
+              - notes/02-r-first-principles.qmd
               - notes/03-data-and-types.qmd
           - section: "2 · Describing"
             contents:

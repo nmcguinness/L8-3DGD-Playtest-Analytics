@@ -5,8 +5,10 @@ subtitle: "Vectors, types, missing values, data frames, and describing one varia
 
 # Overview
 
-This lab is your first contact with R. You are not expected to have written a line
-of it before today.
+This lab is your first hands-on session with R. You are not expected to have
+written a line of it before this week, but read
+[R from First Principles](../notes/02-r-first-principles.qmd) first: every idea in
+Part A is introduced there.
 
 The work is deliberately unglamorous. Before you can find anything interesting in
 a playtest you have to be able to **load the data, look at it, and describe it**
@@ -74,9 +76,10 @@ nrow(sessions)
 
 # Part A — Values, vectors and missing data
 
-Notes for this part: [Planning a Playtest](../notes/01-planning-a-playtest.qmd)
-and [Data, Variables and Types](../notes/03-data-and-types.qmd). For the R itself,
-keep the [R and Quarto Reference](../reference/r-quarto-reference.qmd) open.
+Notes for this part: [Planning a Playtest](../notes/01-planning-a-playtest.qmd),
+[R from First Principles](../notes/02-r-first-principles.qmd) and
+[Data, Variables and Types](../notes/03-data-and-types.qmd). Keep the
+[R and Quarto Reference](../reference/r-quarto-reference.qmd) open while you work.
 
 ## Exercise 01 — Build a vector and look at it `[Do]`
 
