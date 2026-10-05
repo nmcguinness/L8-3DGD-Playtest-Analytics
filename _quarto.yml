@@ -26,20 +26,42 @@ website:
   sidebar:
     style: docked
     search: true
-    collapse-level: 2
+    collapse-level: 3
     contents:
       - text: "Start here"
         href: index.qmd
+      # Notes are grouped into six parts. Draft pages stay commented out until
+      # their rebuild stage: a draft listed here still gets prev/next and
+      # breadcrumb links pointing at an empty page.
       - section: "Notes"
         contents:
-          - notes/ten-rules.qmd
-          - notes/why-measure.qmd
-          - notes/describing-what-you-have.qmd
-          - notes/distributions-and-variation.qmd
-          - notes/cleaning-and-transforming.qmd
-          - notes/visualising-with-ggplot2.qmd
-          - notes/comparing-conditions.qmd
-          - notes/reporting-evidence.qmd
+          - section: "0 · Start here"
+            contents:
+              # - notes/00-start-here.qmd        (draft: add in Stage 7)
+              - notes/ten-rules.qmd
+          - section: "1 · Foundations"
+            contents:
+              - notes/01-planning-a-playtest.qmd
+              # - notes/02-r-first-principles.qmd        (draft: add in Stage 1)
+              # - notes/03-data-and-types.qmd        (draft: add in Stage 2)
+          - section: "2 · Describing"
+            contents:
+              - notes/04-describing-variables.qmd
+              - notes/05-distributions-and-shape.qmd
+          - section: "3 · Preparing"
+            contents:
+              - notes/06-cleaning-and-transforming.qmd
+          - section: "4 · Comparing"
+            contents:
+              # - notes/07-sample-to-population.qmd        (draft: add in Stage 4)
+              - notes/08-comparing-groups.qmd
+          - section: "5 · Relationships"
+            contents:
+              - notes/09-visualising-with-ggplot2.qmd
+              # - notes/10-relationships-and-regression.qmd        (draft: add in Stage 6)
+          - section: "6 · Communicating"
+            contents:
+              - notes/11-reporting-evidence.qmd
       - section: "Labs"
         contents:
           - labs/setting-up.qmd
@@ -62,6 +84,7 @@ website:
 format:
   html:
     theme: cosmo
+    css: styles.css
     toc: true
     toc-depth: 2
     code-copy: true

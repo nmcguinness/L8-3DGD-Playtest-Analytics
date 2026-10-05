@@ -1,0 +1,21 @@
+---
+title: "From Sample to Population"
+subtitle: "Why the next playtest would give different numbers"
+draft: true
+body-classes: "wf-at-uncertainty"
+---
+
+{{< include _workflow.qmd >}}
+
+::: {.callout-note}
+## In preparation
+
+This page is written in Stage 4 of the notes rebuild. It is a draft, so it does not appear on the published site.
+:::
+
+## Planned contents
+
+- Sampling variability
+- The sampling distribution and the standard error
+- The central limit theorem, without the maths
+- Confidence intervals, and what 95% means

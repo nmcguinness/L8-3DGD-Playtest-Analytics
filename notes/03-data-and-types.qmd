@@ -1,0 +1,24 @@
+---
+title: "Data, Variables and Types"
+subtitle: "What kind of number are you holding?"
+draft: true
+body-classes: "wf-at-clean"
+---
+
+{{< include _workflow.qmd >}}
+
+::: {.callout-note}
+## In preparation
+
+This page is written in Stage 2 of the notes rebuild. It is a draft, so it does not appear on the published site.
+:::
+
+## Planned contents
+
+- Observations and variables
+- Tidy data: one row per observation
+- Types of data: nominal, ordinal, discrete, continuous (with mindmap)
+- What each type allows you to do
+- Statistical type against R type, and the traps
+- Measuring with surveys: Likert items and validated scales
+- Sample and population

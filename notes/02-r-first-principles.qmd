@@ -1,0 +1,26 @@
+---
+title: "R from First Principles"
+subtitle: "What R is, why we use it, and how to read and write it"
+draft: true
+---
+
+{{< include _workflow.qmd >}}
+
+::: {.callout-note}
+## In preparation
+
+This page is written in Stage 1 of the notes rebuild. It is a draft, so it does not appear on the published site.
+:::
+
+## Planned contents
+
+- Why R: against spreadsheets and Python; reproducibility; why base R first
+- The working environment: console, script, Quarto document, project (VS Code and RStudio)
+- Values, objects and assignment; types and coercion
+- Vectors: building, vectorised arithmetic, indexing
+- Functions and arguments: positional, named, defaults, getting help
+- Missing values
+- Data frames: columns, rows, slices, inspection
+- Packages, and reading a CSV
+- Reading error messages
+- Quarto in one page

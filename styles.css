@@ -1,0 +1,91 @@
+/* ==========================================================================
+   Site styles, added on top of the cosmo theme
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Workflow strip (notes/_workflow.qmd)
+   A page highlights its stages by listing them in front matter:
+     body-classes: "wf-at-describe wf-at-visualise"
+   -------------------------------------------------------------------------- */
+
+.wf-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.75rem;
+  margin: 0 0 1.5rem 0;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  background: #f8f9fa;
+  font-size: 0.8rem;
+}
+
+.wf-label {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6c757d;
+}
+
+.wf-strip ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.1rem;          /* column gap leaves room for the arrow */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wf-step {
+  position: relative;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid #ced4da;
+  background: #ffffff;
+  color: #6c757d;
+  white-space: nowrap;
+}
+
+.wf-step:not(:last-child)::after {
+  content: "\2192";           /* right arrow, in the gap after the pill */
+  position: absolute;
+  right: -0.95rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #adb5bd;
+  font-weight: 400;
+}
+
+/* The highlight: one rule per stage */
+.wf-at-ask .wf-ask,
+.wf-at-collect .wf-collect,
+.wf-at-clean .wf-clean,
+.wf-at-visualise .wf-visualise,
+.wf-at-describe .wf-describe,
+.wf-at-uncertainty .wf-uncertainty,
+.wf-at-test .wf-test,
+.wf-at-confounds .wf-confounds,
+.wf-at-interpret .wf-interpret,
+.wf-at-report .wf-report {
+  background: #b22222;          /* firebrick, matches pal$highlight */
+  border-color: #b22222;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   At a glance box (a plain div with class .at-a-glance)
+   -------------------------------------------------------------------------- */
+
+.at-a-glance {
+  margin: 0 0 1.5rem 0;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid #6c757d;
+  background: #f8f9fa;
+}
+
+.at-a-glance p:last-child,
+.at-a-glance ul:last-child {
+  margin-bottom: 0;
+}

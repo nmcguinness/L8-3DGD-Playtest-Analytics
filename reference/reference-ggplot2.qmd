@@ -3,7 +3,7 @@ title: "ggplot2 Reference"
 subtitle: "Structure, geometries, aesthetics and the errors you will meet"
 ---
 
-> A lookup sheet, not a tutorial. [Visualising with ggplot2](../notes/visualising-with-ggplot2.qmd)
+> A lookup sheet, not a tutorial. [Visualising with ggplot2](../notes/09-visualising-with-ggplot2.qmd)
 > teaches the ideas; this page is for finding an argument name or a fix quickly
 > during a lab. Every example draws *Tidebreak* data and runs when the site is
 > built.
@@ -502,7 +502,7 @@ else.
 
 ---
 
-See also: [Visualising with ggplot2](../notes/visualising-with-ggplot2.qmd),
+See also: [Visualising with ggplot2](../notes/09-visualising-with-ggplot2.qmd),
 [Ten Rules](../notes/ten-rules.qmd),
 [R and Quarto Reference](r-quarto-reference.qmd),
 [Statistics Reference](reference-statistics.qmd).

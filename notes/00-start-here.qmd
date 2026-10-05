@@ -1,0 +1,20 @@
+---
+title: "Start Here"
+subtitle: "How these notes work, and the route through them"
+draft: true
+---
+
+{{< include _workflow.qmd >}}
+
+::: {.callout-note}
+## In preparation
+
+This page is written in Stage 7 of the notes rebuild. It is a draft, so it does not appear on the published site.
+:::
+
+## Planned contents
+
+- Who these notes are for: no statistics and no R assumed
+- The analytical workflow and the R analysis cycle, as diagrams
+- The three-week route: which notes, labs and demos go together
+- How the Ten Rules, the exercise tiers and the Reference pages fit together

@@ -79,7 +79,7 @@ session, eight agreement items rated 1 to 5.
 
 # Part A — Visualise and relate
 
-Notes for this part: [Visualising with ggplot2](../notes/visualising-with-ggplot2.qmd).
+Notes for this part: [Visualising with ggplot2](../notes/09-visualising-with-ggplot2.qmd).
 
 ## Exercise 01 — A histogram, rebuilt `[Do]`
 
@@ -256,7 +256,7 @@ say which part of the report this belongs in.
 
 # Part B — Reshape and report
 
-Notes for this part: [Interpreting and Reporting Evidence](../notes/reporting-evidence.qmd).
+Notes for this part: [Interpreting and Reporting Evidence](../notes/11-reporting-evidence.qmd).
 
 Every exercise in this part produces a piece of `report.qmd`. Create the file now,
 in the project folder next to `data/`, and add to it as you go.
@@ -382,7 +382,7 @@ In `report.qmd`, write:
 
 - a YAML header with a title;
 - the nine part headings from
-  [Interpreting and Reporting Evidence](../notes/reporting-evidence.qmd);
+  [Interpreting and Reporting Evidence](../notes/11-reporting-evidence.qmd);
 - a setup chunk, hidden with `echo: false`, that loads the libraries and both CSVs;
 - under part 1, the research question;
 - under part 2, one sentence giving the number of sessions and players, with both

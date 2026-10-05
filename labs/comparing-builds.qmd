@@ -86,7 +86,7 @@ player played both builds.
 
 # Part A — Clean and transform
 
-Notes for this part: [Cleaning and Transforming](../notes/cleaning-and-transforming.qmd).
+Notes for this part: [Cleaning and Transforming](../notes/06-cleaning-and-transforming.qmd).
 
 `raw` is the export the team actually received. Every problem in it is silent:
 nothing throws an error, and every problem changes an answer. Part A finds them,
@@ -303,7 +303,7 @@ what you would have instead.
 
 # Part B — Is the difference real, and does it matter?
 
-Notes for this part: [Comparing Playtest Conditions](../notes/comparing-conditions.qmd).
+Notes for this part: [Comparing Playtest Conditions](../notes/08-comparing-groups.qmd).
 
 ## Exercise 07 — Describe before you test `[Do]`
 

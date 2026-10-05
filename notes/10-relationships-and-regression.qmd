@@ -1,0 +1,24 @@
+---
+title: "Relationships, Correlation and Regression"
+subtitle: "When two things move together, and what that does and does not mean"
+draft: true
+body-classes: "wf-at-describe wf-at-confounds"
+---
+
+{{< include _workflow.qmd >}}
+
+::: {.callout-note}
+## In preparation
+
+This page is written in Stage 6 of the notes rebuild. It is a draft, so it does not appear on the published site.
+:::
+
+## Planned contents
+
+- Scatterplots: direction, form and strength
+- Correlation, and why context decides what counts as strong
+- Correlation is not causation
+- Confounding and Simpson's paradox
+- Simple linear regression: slope, intercept, residuals, R squared
+- Two categorical variables: cross-tabulation
+- Critiquing flawed playtests
