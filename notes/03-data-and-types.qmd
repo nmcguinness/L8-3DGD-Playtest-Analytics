@@ -1,24 +1,634 @@
 ---
 title: "Data, Variables and Types"
 subtitle: "What kind of number are you holding?"
-draft: true
 body-classes: "wf-at-clean"
 ---
 
 {{< include _workflow.qmd >}}
 
-::: {.callout-note}
-## In preparation
+```{r}
+#| label: setup
+#| include: false
+source("notes/_setup.R")
 
-This page is written in Stage 2 of the notes rebuild. It is a draft, so it does not appear on the published site.
+n_sess    <- nrow(sessions)
+n_vars    <- ncol(sessions)
+n_players <- length(unique(sessions$player_id))
+per_player <- unique(as.vector(table(sessions$player_id)))
+stopifnot(length(per_player) == 1)
+
+items      <- survey[, -1]
+n_items    <- ncol(items)
+obj        <- survey$objective_clear
+obj_agree  <- mean(obj >= 4)
+obj_dis    <- mean(obj <= 2)
+item_agree <- sort(sapply(items, function(x) mean(x >= 4)))
+item_dis   <- sapply(items, function(x) mean(x <= 2))
+neg_items  <- names(item_dis)[item_dis > sapply(items, function(x) mean(x >= 4))]
+stopifnot(names(which.max(item_dis)) == "objective_clear",
+          names(which.max(item_agree)) == "visual_style")
+code_list  <- function(x) paste0("`", x, "`", collapse = ", ")
+```
+
+> Before you can summarise a column you have to know what kind of thing is in it.
+> This page sorts every variable you will meet into one of four types, shows what
+> each type lets you do, and explains why R cannot make that decision for you.
+> The playtest question running through it: *"The objective item averages 2.6 out
+> of 5. Is that a finding?"*
+
+::: {.at-a-glance}
+**Time:** 30 minutes in class; 15 more for the Going further sections.
+**Before this:** [Planning a Playtest](01-planning-a-playtest.qmd).
+**Key terms:** observation, variable, tidy data, nominal, ordinal, discrete,
+continuous, binary, Likert item, sample, population.
+**R introduced:** `class()`, `table()`, `factor()` (preview).
 :::
 
-## Planned contents
+## Learning Outcomes
 
-- Observations and variables
-- Tidy data: one row per observation
-- Types of data: nominal, ordinal, discrete, continuous (with mindmap)
-- What each type allows you to do
-- Statistical type against R type, and the traps
-- Measuring with surveys: Likert items and validated scales
-- Sample and population
+By the end of these notes you can:
+
+- say what one row and one column of a playtest table represent, and name the
+  unit of observation;
+- recognise a tidy table, and explain why a survey export usually is not one;
+- classify any variable as **nominal**, **ordinal**, **discrete** or
+  **continuous**, and say which summaries each type allows;
+- explain the difference between the type a variable *is* and the type R
+  *stores* it as, and name the common traps;
+- choose a defensible summary for a rating-scale item, and say what assumption a
+  mean of ratings makes;
+- distinguish a sample from a population, and say why recruitment matters.
+
+---
+
+## Why This Matters for Playtesting
+
+R will compute the mean of anything that is stored as a number. Player IDs,
+difficulty settings, survey ratings, the build number: if it is a number in the
+file, `mean()` returns an answer, and the answer looks exactly as authoritative
+whether it means something or not.
+
+**The type of a variable decides which questions you can ask of it.** You can count
+quit reasons but not average them. You can put difficulty settings in order but
+not say that Hard is twice Normal. You can say one session had twice as many
+deaths as another. None of these rules is enforced by R. They are enforced by you,
+and getting them wrong produces numbers that survive all the way into a design
+meeting ([rule 3](ten-rules.qmd)).
+
+---
+
+## Observations and Variables
+
+A data table has two directions, and each has a name.
+
+An **observation** is one unit you measured: one row. A **variable** is one thing
+you recorded about every observation: one column. A **value** is a single cell.
+
+```{r}
+#| label: obs-var-table
+#| echo: false
+knitr::kable(
+  head(sessions[, c("session_id", "player_id", "cohort", "build",
+                    "deaths", "session_minutes", "quit_reason")], 4),
+  caption = "The first four rows of tidebreak_sessions.csv, seven of its columns."
+)
+```
+
+In `tidebreak_sessions.csv` there are `r n_sess` observations and `r n_vars`
+variables. Each observation is **one player in one session**. That is the file's
+**unit of observation**, and it is worth stating out loud, because it is not the
+same as "one player": the `r n_sess` sessions come from `r n_players` players,
+`r per_player` sessions each.
+
+**Every file has its own unit.** The other *Tidebreak* files record different
+things, and mixing them up is how analyses end up counting the wrong thing:
+
+| File | One row is | Rows |
+| :- | :- | :- |
+| `tidebreak_sessions.csv` | one player in one session | `r nrow(sessions)` |
+| `tidebreak_survey.csv` | one player's survey after one session | `r nrow(survey)` |
+| `tidebreak_paired.csv` | one player who played both builds | `r nrow(paired)` |
+| `tidebreak_frame_times.csv` | one rendered frame | `r format(nrow(frames), big.mark = ",")` |
+
+**In a report you would write:** "`r n_sess` sessions from `r n_players` players",
+never just "`r n_sess` players".
+
+---
+
+## Tidy Data
+
+Data arrives in whatever shape the tool that produced it happened to use. Almost
+every analysis tool, R included, assumes one particular shape, and it has a name.
+
+A table is **tidy** when:
+
+1. each row is one observation;
+2. each column is one variable;
+3. each cell holds one value.
+
+The sessions file is tidy. The survey file is not, quite, and the way it fails is
+the most common failure there is. Here are its first three rows:
+
+```{r}
+#| label: tidy-wide
+#| echo: false
+knitr::kable(head(survey, 3),
+             caption = "Wide: one row per session, one column per question.")
+```
+
+The eight question columns look like eight variables, but they are really values
+of **one** variable, "which question", spread across the column headings. That
+is convenient for reading and awkward for analysis: to ask "which question was
+rated lowest?" you have to handle eight columns separately.
+
+The tidy version has one row per session **per question**:
+
+```{r}
+#| label: tidy-long
+#| echo: false
+wide3 <- as.data.frame(head(survey, 3))
+long3 <- data.frame(
+  session_id = rep(wide3$session_id, each = n_items),
+  item       = rep(names(items), times = 3),
+  rating     = as.vector(t(wide3[, -1]))
+)
+knitr::kable(head(long3, 10),
+             caption = paste0("Long: the same three sessions as ", nrow(long3),
+                              " rows. The first ten are shown."))
+```
+
+Now "item" is a column you can group by, filter on and plot by, and the whole
+survey can be summarised in one operation. Turning wide into long is called
+**reshaping**, and you will do it with `pivot_longer()` in
+[Interpreting and Reporting Evidence](11-reporting-evidence.qmd) and Lab 03.
+
+::: {.callout-tip collapse="true" title="Quick check"}
+A telemetry export has columns `player_id`, `deaths_level1`, `deaths_level2`,
+`deaths_level3`. Is it tidy? What would the tidy version's columns be?
+
+**Answer.** No. "Level" is a variable whose values are hiding in the column names.
+The tidy version has `player_id`, `level` and `deaths`, with three rows per player.
+:::
+
+---
+
+## Types of Data
+
+Every variable is one of two kinds, and each kind splits in two.
+
+**Categorical** variables have values that are **labels**. **Numerical** variables
+have values that are **quantities**, so arithmetic on them means something.
+
+```{mermaid}
+%%| label: fig-types-mindmap
+%%| fig-cap: "The four types of variable, with Tidebreak examples of each."
+mindmap
+  root((Variable))
+    Categorical: values are labels
+      Nominal: no order
+        quit_reason
+        archetype
+        build
+        completed, TRUE or FALSE
+      Ordinal: ordered, unknown gaps
+        cohort
+        survey ratings 1 to 5
+        difficulty rating 1 to 7
+    Numerical: values are quantities
+      Discrete: counts
+        deaths
+        kills
+        wrong_turns
+      Continuous: measurements
+        session_minutes
+        distance_m
+        frame time in ms
+```
+
+**Nominal** variables are labels with no order. `quit_reason`, `archetype` and
+`build` are nominal: Scout is not more or less than Sentinel, just different. You
+can count each category and say which is most common. You cannot average them.
+
+**Ordinal** variables are labels with an order but unknown gaps. `cohort` runs
+Novice, Regular, Veteran, and that order means something, but nobody can say that
+Regular is "halfway" between the other two. You can sort them and find the middle
+one. Adding or averaging them assumes the gaps are equal, which nothing guarantees.
+
+**Discrete** variables are counts of whole things. `deaths`, `kills` and
+`wrong_turns` can be 0, 1, 2 and so on, never 2.4 in a single session. Arithmetic
+works: one session can have twice the deaths of another, and the *average* number
+of deaths across sessions can perfectly well be 2.4.
+
+**Continuous** variables are measurements that can fall anywhere in a range:
+`session_minutes`, `distance_m`, frame time. The only limit on how finely you can
+record them is the precision of the instrument.
+
+**Binary** variables are a special nominal case with exactly two values.
+`completed` is `TRUE` or `FALSE`. They are worth singling out because of a useful
+trick: R counts `TRUE` as 1 and `FALSE` as 0, so `mean(sessions$completed)` is the
+**proportion** of sessions completed, `r pct_fmt(mean(sessions$completed))`.
+
+When you are unsure, ask two questions in order:
+
+```{mermaid}
+%%| label: fig-types-decision
+%%| fig-cap: "Two questions classify any variable."
+flowchart TD
+  A{"Are the values labels<br/>or quantities?"} -->|Labels| B{"Do the labels have<br/>a natural order?"}
+  B -->|No| N["Nominal<br/>quit_reason, build"]
+  B -->|Yes| O["Ordinal<br/>cohort, ratings"]
+  A -->|Quantities| C{"Are they counts<br/>of whole things?"}
+  C -->|Yes| D["Discrete<br/>deaths, wrong_turns"]
+  C -->|"No, measured"| E["Continuous<br/>session_minutes"]
+  classDef out fill:#f8f9fa,stroke:#b22222,color:#212529
+  class N,O,D,E out
+```
+
+### What each type lets you do
+
+The types form a ladder. Each rung allows everything the rung below allows, plus
+something new.
+
+| You want to... | Nominal | Ordinal | Discrete | Continuous |
+| :- | :-: | :-: | :-: | :-: |
+| count each value, find the most common (the **mode**) | yes | yes | yes | in bins |
+| put values in order, find the middle (the **median**) | no | yes | yes | yes |
+| add, subtract, find the **mean** | no | assumed | yes | yes |
+| say "twice as much" | no | no | yes | yes |
+| draw a... | bar chart | bar chart | bar chart or histogram | histogram |
+
+The "assumed" for ordinal is the subject of a long argument, and it gets its own
+section below.
+
+::: {.callout-note collapse="true" title="Going further: interval and ratio"}
+Statistics textbooks often use a second scheme, from the psychologist Stanley
+Stevens: **nominal, ordinal, interval, ratio**. The first two are the same as
+here. The difference between the last two is whether **zero means "none"**.
+
+Deaths and session length are **ratio** variables: zero deaths means no deaths, so
+"twice as many deaths" makes sense. Temperature in Celsius is **interval**: zero
+is an arbitrary point, so 20°C is not "twice as hot" as 10°C. A rating scale, even
+treated as numeric, is at best interval: nobody thinks a 6 out of 7 for enjoyment
+means twice the enjoyment of a 3.
+
+Discrete against continuous is a different question: whether values come in whole
+steps. A variable can be discrete and ratio (deaths) or continuous and ratio
+(session length).
+:::
+
+---
+
+## The Rating-Scale Question
+
+```{r}
+#| label: fig-obj-bar
+#| fig-cap: "Responses to “I always knew what my objective was”, one bar per point on the scale."
+#| fig-alt: "Bar chart of the five response options for the objective item. The bars for 1, 2 and 3 are the tallest; very few players chose 5."
+#| fig-height: 3.5
+par(mar = c(4, 4, 1, 1))
+barplot(table(factor(obj, levels = 1:5)),
+        names.arg = c("1 Strongly disagree", "2", "3", "4", "5 Strongly agree"),
+        col = pal$fill, border = "white", ylab = "Responses", cex.names = 0.8)
+```
+
+The survey asks players to rate statements from 1 (strongly disagree) to 5
+(strongly agree). Is a rating a number?
+
+**Strictly, it is ordinal.** You know 4 is above 3. You do not know that the step
+from 2 to 3 is the same size as the step from 4 to 5, and a player choosing 3 may
+mean "neutral", "don't know" or "didn't think about it".
+
+**In practice, people often average ratings anyway**, especially when a scale has
+five or more points and the responses are spread out. That convention is
+widespread and defensible. It is still an assumption, and you should know when you
+are making it.
+
+**When a finding rests on the mean, show the distribution instead.** The objective
+item averages `r round(mean(obj), 2)`. That number is hard to act on: is 2.6 bad?
+The distribution in @fig-obj-bar is not: `r pct_fmt(obj_dis)` of responses
+disagreed that the player always knew their objective, and only
+`r pct_fmt(obj_agree)` agreed. A designer can act on "almost half the time,
+players did not know what they were meant to be doing".
+
+**In a report you would write:** "`r pct_fmt(obj_dis)` of `r length(obj)`
+respondents disagreed (1 or 2 on a 5-point scale) that they always knew their
+objective; `r pct_fmt(obj_agree)` agreed (4 or 5)."
+
+---
+
+## What R Thinks the Type Is
+
+Statistical type and R type are different things. R's type describes **how the
+value is stored**. The statistical type describes **what the value means**. R
+cannot work out the second from the first.
+
+```{r}
+#| label: r-types
+class(sessions$quit_reason)
+class(sessions$deaths)
+class(sessions$session_minutes)
+class(sessions$completed)
+```
+
+`read_csv()` gives you three storage types for this file: **character** for text,
+**numeric** (printed as `<dbl>`) for every number, and **logical** for
+`TRUE`/`FALSE`. Here is how those line up with the four statistical types:
+
+| Statistical type | How R stores it after `read_csv()` | What R does not know |
+| :- | :- | :- |
+| Nominal | character, e.g. `quit_reason` | nothing missing: `mean()` of text returns `NA` with a warning |
+| Binary | logical, e.g. `completed` | nothing missing: `mean()` gives a proportion |
+| Ordinal | character (`cohort`) **or** numeric (survey ratings) | the order of text labels; that numeric ratings are not measurements |
+| Discrete | numeric, e.g. `deaths` | that the values are whole counts |
+| Continuous | numeric, e.g. `session_minutes` | nothing: this is what numeric storage is for |
+
+**Four traps follow from that table.**
+
+**Ordered labels sort alphabetically.** `table(sessions$cohort)` lists Novice,
+Regular, Veteran, which happens to be right only because the alphabet agrees. For
+an order the alphabet does not know, such as Easy, Normal, Hard, you tell R with a
+**factor**:
+
+```{r}
+#| label: factor-preview
+cohort_f <- factor(sessions$cohort, levels = c("Novice", "Regular", "Veteran"))
+table(cohort_f)
+```
+
+You will use `factor()` properly in [Cleaning and Transforming](06-cleaning-and-transforming.qmd).
+
+**Ratings arrive as plain numbers.** Every survey item is numeric, so `mean()` and
+`sd()` work on them without complaint. Whether they *should* is the decision in the
+previous section, and R cannot make it for you.
+
+**Identifiers can look like numbers.** *Tidebreak* uses text IDs (`P01`,
+`S001`), which is good practice for exactly this reason. A file that numbers its
+players 1 to 30 lets R compute an "average player", which is meaningless. If you
+ever see a mean ID, a summary has run over the wrong columns.
+
+**Whole numbers do not tell you discrete from continuous.** `time_alive_s` is
+recorded in whole seconds, so every value looks like a count. It is a measurement
+of time, rounded by the logger: continuous. The type is decided by what the number
+measures, not by whether it has a decimal point. (Base R's `read.csv()` makes this
+trap visible: it stores `time_alive_s` as **integer**, a storage type for whole
+numbers, which says nothing about whether the variable is a count.)
+
+---
+
+## Measuring with Surveys
+
+The survey is the only source that tells you what players thought, so it deserves
+the same care as the telemetry.
+
+**A Likert item** is a statement with an ordered set of responses, usually five or
+seven points from strongly disagree to strongly agree. *Tidebreak*'s survey uses
+five points; its `difficulty` and `enjoyment` ratings use seven. More points give
+finer distinctions; fewer are quicker to answer and easier to label clearly.
+
+**Good items share a few habits:**
+
+- **One idea per item.** "The controls were responsive and intuitive" asks two
+  things; a player who found them responsive but confusing cannot answer it.
+- **Neutral wording.** "How much did you enjoy the improved lighting?" tells the
+  player what you want to hear.
+- **Labelled anchors.** Say what 1 and 5 mean, and keep the direction the same
+  across items.
+- **Asked straight after play**, before memory rewrites the session.
+
+**Prefer an established questionnaire to an invented one.** Questionnaires such
+as the **System Usability Scale** (SUS, usability), the **Player Experience
+Inventory** (PXI) and the **Game Experience Questionnaire** (GEQ) have been tested
+on many players. That means their items are known to measure something
+consistently, and your results can be compared with other studies. An item you
+wrote last night has none of that. Check the published evidence for any
+questionnaire before adopting it; some widely used ones have been criticised.
+
+**Summarise ordinal items as distributions.** For each item, report the count or
+percentage at each point, or the percentage who agree (4 or 5). Show the whole
+survey at once with a stacked bar per item:
+
+```{r}
+#| label: fig-survey-stacked
+#| fig-cap: "Every survey item as a stacked bar, from 1 (strongly disagree, red) to 5 (strongly agree, blue), ordered by the share who agreed."
+#| fig-alt: "Horizontal stacked bars for the eight survey items, ordered by share agreeing. Visual style is almost entirely agreement; objective clear, death understood and difficulty fair have more red disagreement than blue agreement."
+#| fig-height: 4.5
+props <- sapply(items[names(item_agree)],
+                function(x) prop.table(table(factor(x, levels = 1:5))))
+likert_cols <- c("#b22222", "#e8a3a3", "grey85", "#9bb0c9", "#3a5f8a")
+op <- par(mar = c(4, 11, 3, 1))
+barplot(props, horiz = TRUE, las = 1, border = "white", col = likert_cols,
+        xlab = "Share of responses", cex.names = 0.8)
+legend("top", inset = c(0, -0.13), xpd = TRUE, horiz = TRUE, bty = "n",
+       legend = 1:5, fill = likert_cols, cex = 0.8)
+par(op)
+```
+
+@fig-survey-stacked tells you at a glance what eight means would not.
+`r length(neg_items)` items have more players disagreeing than agreeing
+(`r code_list(neg_items)`), and the objective item has the largest share
+disagreeing, `r pct_fmt(max(item_dis))`. At the other end, `visual_style` is close
+to unanimous: `r pct_fmt(max(item_agree))` agreed. The large neutral share on most
+items, the grey in the middle, is also information: a mean would fold it away.
+
+---
+
+## Sample and Population
+
+The `r n_players` *Tidebreak* players are a **sample**: the people who happened to
+come to this playtest. The **population** is everyone the game is being made for,
+and you never get to measure it.
+
+**Every number you compute describes the sample.** The question you care about is
+always about the population: not "did these players struggle?" but "will players
+struggle?". Run the test again with different players and every figure on this
+page moves. How far it can move is the subject of Part 4 of these notes. Until
+then, report how many players a number came from every time you quote it
+([rule 8](ten-rules.qmd)).
+
+**Who is in the sample matters as much as how many.** A playtest recruited from the
+studio's Discord samples the game's most committed fans, not its audience. A
+playtest of colleagues samples people who already know the controls. No analysis
+afterwards corrects for who walked through the door, which is why recruitment is
+part of [planning the playtest](01-planning-a-playtest.qmd).
+
+---
+
+## Worked Example
+
+**Is a mean of 2.6 a finding?** The *Tidebreak* team summarises its survey with
+`colMeans()` and gets eight numbers. The objective item is lowest at
+`r round(mean(obj), 2)`. The draft report says: "Objective clarity scored 2.6 out
+of 5."
+
+**Step 1: what type is it?** A 1 to 5 agreement rating: ordinal. The mean treats
+the gap from 1 to 2 as equal to the gap from 4 to 5. Possibly defensible, but an
+assumption.
+
+**Step 2: what does the distribution say?** `r sum(obj <= 2)` of
+`r length(obj)` responses were 1 or 2; `r sum(obj >= 4)` were 4 or 5;
+`r sum(obj == 3)` sat at 3.
+
+**Step 3: rewrite the finding.** "`r pct_fmt(obj_dis)` of players disagreed that
+they always knew their objective; `r pct_fmt(obj_agree)` agreed." The mean said the
+item was low. The distribution says *how many players* had the problem, which is
+what a designer needs to decide whether to fix it.
+
+**Step 4: check the unit.** The survey has one row per session, and each player
+completed `r per_player` sessions. "`r pct_fmt(obj_dis)` of players" is really
+"`r pct_fmt(obj_dis)` of responses". The honest version says so.
+
+---
+
+## Interpretation Guidance
+
+**What the data shows.** The type of each variable, read from what it measures.
+`quit_reason` is nominal; `objective_clear` is ordinal; `deaths` is discrete.
+
+**What the analysis suggests.** A summary chosen to fit the type: counts and
+proportions for categories, distributions for ratings, means and medians for
+quantities.
+
+**What can legitimately be concluded.** Only what the type allows. "Quit reasons
+averaged 2.3" is not a conclusion; it is an error. "Players rated the objective 2.6"
+is a conclusion with a hidden assumption; state it, or report the distribution.
+
+---
+
+## Common Mistakes
+
+**Averaging a label.** Code the cohorts as 1, 2 and 3 and R will average them
+happily. The answer means nothing ([rule 3](ten-rules.qmd)).
+
+**Trusting R's type.** `<dbl>` says how a value is stored, not what it means. A
+rating, a count and a measurement can all print as `<dbl>`.
+
+**Reporting a mean of ratings without the distribution.** The mean hides whether
+everyone was lukewarm or half loved it and half hated it.
+
+**Counting sessions as players.** `r n_sess` rows is `r n_players` people. Say both.
+
+**Spreading one variable across columns.** `deaths_level1`, `deaths_level2` and
+`deaths_level3` is one variable, `deaths`, and one more, `level`, wearing a
+disguise.
+
+**Inventing survey items.** A home-made item has no evidence that it measures what
+you think it does. Use an established questionnaire where one exists.
+
+---
+
+## Practice
+
+Each takes two or three minutes.
+
+**1. Classify.** Nominal, ordinal, discrete or continuous: `kills`, `quit_reason`,
+`cohort`, `distance_m`, `visual_style`, `completed`, `difficulty`,
+`time_alive_s`, `session_id`.
+
+::: {.callout-note collapse="true" title="Check your answer"}
+`kills` discrete; `quit_reason` nominal; `cohort` ordinal; `distance_m`
+continuous; `visual_style` ordinal (a 1 to 5 rating); `completed` nominal, and
+binary; `difficulty` ordinal (a 1 to 7 rating); `time_alive_s` continuous,
+although it is recorded in whole seconds; `session_id` is not a variable you
+analyse at all. It is an **identifier**: a label for the row.
+:::
+
+**2. Predict.** What does R print for `class(sessions$cohort)` and
+`class(survey$visual_style)`? Which of the two is R closer to being right about?
+
+::: {.callout-note collapse="true" title="Check your answer"}
+
+```{r}
+#| label: practice-class
+class(sessions$cohort)
+class(survey$visual_style)
+```
+
+Character and numeric. R is closer with `cohort`: `mean()` of text returns `NA`
+with a warning instead of a number. It will average `visual_style` without a murmur, and whether it
+should is your decision.
+:::
+
+**3. Critique.** A teammate's report says: "Average cohort was 1.9, so our testers
+were mostly Regulars." What is wrong, and what should it say instead?
+
+::: {.callout-note collapse="true" title="Check your answer"}
+Cohort is ordinal; the 1.9 comes from coding Novice, Regular, Veteran as 1, 2, 3
+and assuming equal gaps. Report the counts instead:
+
+```{r}
+#| label: practice-cohort
+table(cohort_f)
+```
+
+"`r sum(sessions$cohort == "Regular")` of `r n_sess` sessions were played by
+Regulars" says the same thing without the invented arithmetic.
+:::
+
+**4. Compute.** What proportion of sessions were completed? Do it with one
+function.
+
+::: {.callout-note collapse="true" title="Check your answer"}
+
+```{r}
+#| label: practice-completed
+mean(sessions$completed)
+```
+
+`completed` is logical, so `mean()` treats `TRUE` as 1 and `FALSE` as 0 and
+returns the proportion: `r pct_fmt(mean(sessions$completed))`.
+:::
+
+---
+
+## Summary
+
+- One row is one observation; one column is one variable. Name the unit: here,
+  one player in one session.
+- Tidy data has one observation per row, one variable per column, one value per
+  cell. Survey exports usually are not tidy.
+- Variables are nominal, ordinal, discrete or continuous. The type decides which
+  summaries are legal.
+- A rating is ordinal. Averaging it is an assumption; when the finding depends on
+  it, report the distribution.
+- R's storage type is not the statistical type. Check every column yourself.
+- Use established questionnaires, and summarise ordinal items as distributions.
+- Every number describes the sample. Report how many players it came from.
+
+| Key term | Meaning |
+| :- | :- |
+| **Observation** | One unit measured: one row |
+| **Variable** | One thing recorded about every observation: one column |
+| **Unit of observation** | What one row represents, e.g. one player in one session |
+| **Tidy data** | One observation per row, one variable per column, one value per cell |
+| **Nominal** | Labels with no order |
+| **Ordinal** | Labels with an order but unknown gaps |
+| **Discrete** | Counts of whole things |
+| **Continuous** | Measurements anywhere in a range |
+| **Binary** | A nominal variable with two values, such as TRUE/FALSE |
+| **Likert item** | A statement rated on an ordered agree–disagree scale |
+| **Sample** | The players you actually measured |
+| **Population** | Everyone the conclusion is meant to apply to |
+
+---
+
+## Links
+
+- [Ten Rules](ten-rules.qmd): rule 3 (know what kind of number you are holding)
+  and rule 8 (small samples lie confidently)
+- [Statistics Reference: describing data](../reference/reference-statistics.qmd#describing-data)
+- [Lab 01: Reading Data](../labs/reading-data.qmd), Part B
+- Next: [Describing Variables](04-describing-variables.qmd)
+
+---
+
+## Reflective Questions
+
+- Take a variable from your own project's telemetry. Which of the four types is
+  it, and what would break if you treated it as the type next door?
+- Your survey has a 1 to 7 enjoyment rating. A teammate wants to report the mean;
+  you want to report the distribution. Make the best case for each.
+- Your game logs one row per death, with a timestamp and a player ID. What is the
+  unit of observation, and what would you have to do to answer "how many deaths
+  per session?"
+- Which established questionnaire would you use to evaluate your own project's
+  controls, and what would you lose by writing your own items instead?

@@ -1,12 +1,48 @@
 ---
-title: "Why Developers Measure Anything"
-subtitle: "And what is actually worth measuring"
+title: "Planning a Playtest"
+subtitle: "From a design question to data worth analysing"
 body-classes: "wf-at-ask wf-at-collect"
 aliases:
   - why-measure.html
 ---
 
 {{< include _workflow.qmd >}}
+
+```{r}
+#| label: setup
+#| include: false
+source("notes/_setup.R")
+
+n_players  <- length(unique(sessions$player_id))
+per_player <- unique(as.vector(table(sessions$player_id)))
+builds_per_player <- tapply(sessions$build, sessions$player_id,
+                            function(b) length(unique(b)))
+stopifnot(length(per_player) == 1, all(builds_per_player == 1))
+players_a <- length(unique(sessions$player_id[sessions$build == "A"]))
+players_b <- length(unique(sessions$player_id[sessions$build == "B"]))
+
+n_a    <- sum(sessions$build == "A")
+n_b    <- sum(sessions$build == "B")
+frus_a <- sum(sessions$build == "A" & sessions$quit_reason == "Frustrated")
+frus_b <- sum(sessions$build == "B" & sessions$quit_reason == "Frustrated")
+
+item_means <- sort(colMeans(survey[, -1]))
+stopifnot(names(item_means)[1] == "objective_clear")
+```
+
+> Most of what goes wrong in a playtest analysis went wrong before anyone opened
+> the data: a vague question, the wrong measure, the wrong players, or a design
+> that cannot separate the build from the people playing it. This page is the
+> plan you make before the first tester sits down. The playtest question running
+> through it: *"Is Build A worse than Build B?"*
+
+::: {.at-a-glance}
+**Time:** 30 minutes in class; 15 more for the Going further sections.
+**Before this:** nothing. This is the first page.
+**Key terms:** telemetry, performance capture, measure, between-subjects,
+within-subjects, counterbalancing, random assignment, pilot, threshold.
+**R introduced:** none. R starts in [Lab 01](../labs/reading-data.qmd).
+:::
 
 ## Learning Outcomes
 
@@ -17,9 +53,11 @@ By the end of these notes you can:
   can and cannot tell you;
 - rewrite a vague design question as a measure you could record for a single
   player;
-- write down, before collecting anything, the result that would change your mind;
-- load a playtest CSV into R and take a first look at it with `read_csv()`,
-  `glimpse()` and `summary()`.
+- choose between a between-subjects and a within-subjects design, and say how
+  counterbalancing protects a within-subjects test;
+- explain why a few players are enough to find problems but not to measure them;
+- name the ethical obligations of a playtest that records player data;
+- write down, before collecting anything, the result that would change your mind.
 
 ---
 
@@ -27,7 +65,7 @@ By the end of these notes you can:
 
 Every team makes decisions about their game constantly. Most of those decisions
 are made from memory, taste and the loudest voice in the room, and most of the
-time that is fine — taste is why anyone plays your game rather than a spreadsheet.
+time that is fine. Taste is why anyone plays your game rather than a spreadsheet.
 
 Measurement earns its place in the cases where taste reliably fails. There are
 three of them, and they recur in every project.
@@ -46,39 +84,29 @@ it. Your players will talk about nothing else.
 people who struggled most and the last person you watched. You do not remember the
 distribution, and you will confidently reconstruct one that never existed.
 
----
+A playtest fixes all three, but only if it is planned. The rest of this page is
+the plan, in the order you make it:
 
-## The Three Sources
-
-Almost everything you will analyse in a game project comes from one of three
-places, and they have very different characters.
-
-**Telemetry** is what the game records about itself while it runs: positions,
-events, deaths, times, item pickups. It is objective, it arrives in enormous
-quantities, and it tells you *what* happened and never *why*. Telemetry is cheap
-to collect and easy to collect badly — a log with no session identifier or no
-timestamp is close to worthless.
-
-**Performance capture** is a special case of telemetry with its own conventions
-and its own failure modes. Frame times, memory, draw calls. It is the one area
-where the standard summary — average frame rate — is actively misleading, which is
-why Section 5 spends its time there.
-
-**Asking people** is surveys, interviews and think-aloud sessions. It is the only
-source that tells you *why*, and the least reliable. People misremember, they are
-polite, they rationalise, and they answer the question they think you meant. A
-survey tells you what a player believes about their experience, which is a real
-and useful thing, but it is not the same as what happened.
-
-**The three disagree, and that is the point.** The most valuable finding in any
-playtest is usually the place where telemetry and opinion contradict each other:
-players say the level is fine and the heat map shows nobody finds the side route;
-players say the game runs smoothly and the frame log shows a hitch every two
-seconds. A team with only one source never finds these.
+```{mermaid}
+%%| label: fig-plan-flow
+%%| fig-cap: "The seven decisions of a playtest plan, made before anyone plays."
+flowchart LR
+  Q["1. Design<br/>question"] --> M["2. Measures"]
+  M --> D["3. Design:<br/>who plays what"]
+  D --> N["4. How many<br/>players"]
+  N --> R["5. Who to<br/>recruit"]
+  R --> E["6. Ethics<br/>and consent"]
+  E --> T["7. Threshold<br/>and pilot"]
+  T --> P(["Run the<br/>playtest"])
+  classDef step fill:#f8f9fa,stroke:#6c757d,color:#212529
+  classDef go fill:#b22222,stroke:#b22222,color:#ffffff
+  class Q,M,D,N,R,E,T step
+  class P go
+```
 
 ---
 
-## Turning a Vague Question into a Measurable One
+## 1. Start with a Design Question
 
 The question a designer asks is almost never answerable as asked.
 
@@ -89,126 +117,320 @@ The question a designer asks is almost never answerable as asked.
 | "Is the tutorial working?" | Proportion who use the taught mechanic later, unprompted |
 | "Do people like the art?" | Rated appeal; which screenshots they choose; where they stop to look |
 
-Notice that each right-hand cell names a **specific number you could write down
-after watching one person play**. That is the test. If you cannot describe how you
-would record it for a single player, you have not finished turning the question
-into a measurement.
+Each right-hand cell names a **specific number you could write down after
+watching one person play**. That is the test. If you cannot describe how you would
+record it for a single player, you have not finished turning the question into a
+measurement ([rule 2](ten-rules.qmd)).
 
-Notice also that the right-hand column is often not one measure but several, and
-that they can disagree. This is not a failure of the method. A tutorial that
-everybody completes and nobody learns from is a real and common outcome, and only
-two measures together can find it.
+The right-hand column is often several measures, not one, and they can disagree.
+That is not a failure of the method. A tutorial that everybody completes and nobody
+learns from is a real and common outcome, and only two measures together can find
+it.
 
 ---
 
-## Deciding in Advance
+## 2. Choose Your Measures
 
-Before you collect anything, write down what result would change your mind. "If
-more than a third of testers never find the second key, I will add a light cue."
+Almost everything you will analyse in a game project comes from one of three
+places, and they have very different characters.
+
+**Telemetry** is what the game records about itself while it runs: positions,
+events, deaths, times, item pickups. It is objective, it arrives in enormous
+quantities, and it tells you *what* happened and never *why*.
+
+**Performance capture** is a special case of telemetry with its own conventions:
+frame times, memory, draw calls. It is the one area where the standard summary,
+average frame rate, is actively misleading, which is why
+[Distributions and Shape](05-distributions-and-shape.qmd) spends its worked
+example there.
+
+**Asking people** is surveys, interviews and think-aloud sessions. It is the only
+source that tells you *why*, and the least reliable. People misremember, they are
+polite, they rationalise, and they answer the question they think you meant. A
+survey tells you what a player believes about their experience, which is real and
+useful, but it is not the same as what happened. How to ask well is covered in
+[Data, Variables and Types](03-data-and-types.qmd#measuring-with-surveys).
+
+**The three disagree, and that is the point.** The most valuable finding in any
+playtest is usually the place where telemetry and opinion contradict each other:
+players say the level is fine and the heat map shows nobody finds the side route;
+players say the game runs smoothly and the frame log shows a hitch every two
+seconds. A team with only one source never finds these.
+
+**A measure is only usable if it is defined before you collect it.** For each one,
+write down:
+
+- **what exactly is recorded**, such as "a death event, with its cause";
+- **when**, such as "on every death, timestamped from session start";
+- **in what unit**, such as seconds, metres or a 1 to 5 rating;
+- **with which identifiers**, so that it can be joined to everything else.
+
+The last one is where telemetry most often fails. A death event with no session ID
+cannot be matched to the player's survey; a survey with no session ID cannot be
+matched to the match it describes. *Tidebreak* puts `session_id` and `player_id`
+on every row of every file for exactly this reason.
+
+---
+
+## 3. Choose a Design: Who Plays What
+
+The moment you compare two versions of anything, you have to decide who plays
+which. There are two basic designs.
+
+```{mermaid}
+%%| label: fig-designs
+%%| fig-cap: "Between-subjects: each player sees one build. Within-subjects: every player sees both."
+flowchart LR
+  subgraph BETWEEN["Between-subjects"]
+    direction TB
+    G1["Group 1"] --> BA["Build A"]
+    G2["Group 2"] --> BB["Build B"]
+  end
+  subgraph WITHIN["Within-subjects"]
+    direction TB
+    G3["Every player"] --> WA["Build A"]
+    G3 --> WB["Build B"]
+  end
+  classDef a fill:#f8f9fa,stroke:#6c757d,color:#212529
+  classDef b fill:#fbeaea,stroke:#b22222,color:#212529
+  class BA,WA a
+  class BB,WB b
+```
+
+**Between-subjects:** different players test each version. *Tidebreak*'s main
+file is between-subjects: `r n_players` players each played `r per_player`
+sessions, `r players_a` of them only on Build A and `r players_b` only on
+Build B. Nobody saw both.
+
+**Within-subjects:** every player tests every version. *Tidebreak*'s paired file is
+within-subjects: `r nrow(paired)` players each played both builds, and their wrong
+turns were recorded on each.
+
+| | Between-subjects | Within-subjects |
+| :- | :- | :- |
+| Each player sees | one version | every version |
+| Main strength | no carry-over from one version to the next | each player is compared with themselves, so differences in skill cancel out |
+| Main weakness | differences between the groups can masquerade as differences between builds | order, learning and fatigue effects |
+| Players needed | more | fewer |
+| Use when | playing one version changes how you play the other, such as a puzzle you can only solve once | the versions can be played fresh, such as two control schemes |
+
+**Why within-subjects is so powerful.** Players differ enormously before they
+touch your build: some are better, faster or more patient than others. In a
+between-subjects test, all of that variation sits on top of the difference you
+are trying to see. In a within-subjects test, each player's own skill appears in
+both measurements and cancels out. You will see exactly how much this matters in
+the paired test of [Comparing Groups](08-comparing-groups.qmd).
+
+### Random assignment
+
+In a between-subjects test, **you decide who plays which version, by chance**.
+Never let players choose, and never put the first ten through the door on Build A.
+Players who choose, or who arrive early, differ from the rest in ways that will
+show up in the results and be credited to the build. Random assignment does not
+make the groups identical, but it makes any difference between them an accident
+rather than a pattern.
+
+### Order, learning and fatigue
+
+A within-subjects test has the opposite problem. If every player plays A and then
+B, then B gets players who have **learned** the controls and the map, and who are
+more **tired** and more **bored**. Any of these can make B look better or worse
+than it is. These are **order effects**.
+
+The fix is **counterbalancing**: half the players play A first, half play B first,
+decided at random.
+
+```{mermaid}
+%%| label: fig-counterbalance
+%%| fig-cap: "Counterbalancing: half the players meet each build first, so order effects fall equally on both."
+flowchart LR
+  S(["Players,<br/>split at random"]) --> H1["Half 1"]
+  S --> H2["Half 2"]
+  H1 --> A1["Build A"] --> B1["Build B"]
+  H2 --> B2["Build B"] --> A2["Build A"]
+  classDef a fill:#f8f9fa,stroke:#6c757d,color:#212529
+  classDef b fill:#fbeaea,stroke:#b22222,color:#212529
+  class A1,A2 a
+  class B1,B2 b
+```
+
+Learning and fatigue still happen, but now they happen equally to both builds, so
+they no longer favour either one.
+
+::: {.callout-note collapse="true" title="Going further: more than two versions"}
+With three versions there are six possible orders (ABC, ACB, BAC, BCA, CAB, CBA).
+Using all six equally is **full counterbalancing**. With four versions there are 24
+orders, which quickly becomes impractical; a **Latin square** uses just four
+orders, chosen so that each version appears in each position exactly once. The
+idea is the same: no version is systematically first, or last.
+:::
+
+---
+
+## 4. How Many Players?
+
+There is no single answer, because there are two different jobs a playtest can do.
+
+**Finding problems needs few players.** If a door is hard to find, most players
+will struggle with it, and you will see it in the first handful of sessions. A
+well-known rule of thumb from usability research (Nielsen) is that around five
+testers find most of the *obvious* problems in an interface. Each extra tester
+mostly rediscovers what you already know.
+
+**Measuring how often needs many.** "What proportion of players quit in
+frustration?" is a different question. With five players, one person changes the
+answer by 20 percentage points. The figure below takes *Tidebreak*'s
+`r n_a` Build A sessions, in which `r pct_fmt(frus_a / n_a)` ended in frustration,
+and draws small samples from them over and over to see what a smaller playtest
+would have reported.
+
+```{r}
+#| label: fig-sample-size
+#| echo: false
+#| fig-cap: "The frustration rate a smaller playtest would have reported, from 1,000 random samples of Build A sessions at each size. The dashed line is the rate across all of them."
+#| fig-alt: "Three horizontal strips of points, one per sample size. With 5 sessions the estimates are spread across most of the axis; with 15 they cluster more tightly; with 40 they sit close to the dashed line marking the true rate."
+#| fig-height: 3.5
+frus_flag <- sessions$quit_reason[sessions$build == "A"] == "Frustrated"
+set.seed(2026)
+sizes <- c(5, 15, 40)
+est <- lapply(sizes, function(n) replicate(1000, mean(sample(frus_flag, n))))
+names(est) <- paste(sizes, "sessions")
+mid90 <- sapply(est, function(e) quantile(e, c(0.05, 0.95)))
+
+par(mar = c(4, 7, 1, 1))
+stripchart(est, method = "jitter", jitter = 0.25, pch = 16, cex = 0.5,
+           col = adjustcolor(pal$line, alpha.f = 0.25), las = 1,
+           xlab = "Reported frustration rate", xaxt = "n", xlim = c(0, 1))
+axis(1, at = seq(0, 1, 0.2), labels = paste0(seq(0, 100, 20), "%"))
+abline(v = mean(frus_flag), lty = 2, col = pal$highlight, lwd = 2)
+```
+
+With 5 sessions, the middle 90% of samples reported anything from
+`r pct_fmt(mid90[1, 1])` to `r pct_fmt(mid90[2, 1])`. With 40, from
+`r pct_fmt(mid90[1, 3])` to `r pct_fmt(mid90[2, 3])`. The true rate never changed;
+only the number of sessions did. Part 4 of these notes, *Comparing*, explains why
+the spread shrinks the way it does.
+
+**Count players, not sessions.** *Tidebreak* recorded `r nrow(sessions)` sessions,
+but only `r n_players` people. Four sessions from one unusually skilled player are
+not four independent pieces of evidence. When you plan a sample size, plan the
+number of people.
+
+---
+
+## 5. Who to Recruit
+
+**The players you test should resemble the players you are making the game for.**
+A playtest recruited from the studio's Discord samples its most committed fans. A
+playtest of colleagues samples people who already know the controls. A playtest of
+classmates samples people of one age with one set of habits. Each answers the
+question "what do *these* people think?", which may not be the question you asked.
+
+Decide in advance who your intended players are, and recruit to match. Record the
+things about each player that could affect the results, such as experience with
+the genre, so you can check them later. *Tidebreak* records each player's
+`cohort`: Novice, Regular or Veteran.
+
+No analysis afterwards corrects for who walked through the door. What you can do is
+say who they were, in the report's limitations section.
+
+---
+
+## 6. Ethics and Consent
+
+A playtest collects data from real people, and that comes with obligations. Your
+institution or studio will have its own process; the principles behind it are the
+same everywhere.
+
+**Informed consent.** Before they play, tell testers what you are recording
+(gameplay, screen, voice, survey answers), why, how long you will keep it, and who
+will see it. Get their agreement, in writing.
+
+**The right to stop.** Testers can stop at any time, without giving a reason, and
+can ask for their data to be removed.
+
+**Collect only what you need.** If the question is about navigation, you do not
+need a tester's date of birth. Every extra field is a risk with no benefit.
+
+**Separate identity from data.** Store names and contact details in one place and
+gameplay data in another, linked only by a code such as `P01`. *Tidebreak*'s files
+contain no names for this reason.
+
+**Telemetry is personal data.** Under GDPR, data that can be linked back to an
+identifiable person is personal data, and that includes gameplay logs tied to an
+account or a player code you can decode. Coded data is still personal data while
+the key exists; only data that can never be traced back to a person is anonymous.
+Store it securely and delete it when you no longer need it.
+
+**Take extra care with under-18s.** Testing with children needs a parent's or
+guardian's consent as well as the child's own agreement.
+
+---
+
+## 7. Decide in Advance, then Pilot
+
+**Write down the result that would change your mind**, before you collect anything:
+"If more than a third of testers never find the second key, I will add a light
+cue."
 
 This costs nothing and protects you from the most comfortable mistake in the
 discipline: running the test, getting an ambiguous result, and finding in it
 whatever you already believed. If the threshold is written down beforehand, the
-data gets to answer. If it is not, you will answer and attribute it to the data.
+data gets to answer. If it is not, you will answer and attribute it to the data
+([rule 1](ten-rules.qmd)).
+
+**Then run a pilot**: the whole playtest, start to finish, with one or two people
+who are not on the team. A pilot finds the problems that would otherwise ruin the
+real test: a logger that drops the session ID, a survey question everyone
+misreads, a session that runs twenty minutes over, a build that crashes on the lab
+machines. Fix them, then begin.
+
+::: {.callout-tip collapse="true" title="Quick check"}
+A team wants to know whether a new minimap helps players navigate. They let
+testers choose whether to play with the minimap on or off. What is wrong, and
+what should they do?
+
+**Answer.** Players who choose the minimap probably differ from those who do not:
+perhaps they are less confident navigators. Any difference in wrong turns could be
+the players, not the minimap. Assign the minimap at random, or better, have every
+player try both, counterbalanced.
+:::
 
 ---
 
-## Worked Examples
+## Worked Example
 
-```{r}
-#| label: worked-example-data
-#| include: false
-library(readr)
-sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
-survey   <- read_csv("data/tidebreak_survey.csv", show_col_types = FALSE)
+**The question as asked.** The *Tidebreak* team ran `r nrow(sessions)` sessions,
+`r n_a` on Build A and `r n_b` on Build B. The designer asks "is Build A worse?",
+which cannot be answered as asked: worse at what, for whom, by how much?
 
-n_a    <- sum(sessions$build == "A")
-n_b    <- sum(sessions$build == "B")
-frus_a <- sum(sessions$build == "A" & sessions$quit_reason == "Frustrated")
-frus_b <- sum(sessions$build == "B" & sessions$quit_reason == "Frustrated")
-pct    <- function(k, n) paste0(round(100 * k / n), "%")
+**The measures.** Two, one from each end of the three sources:
 
-item_means <- sort(colMeans(survey[, -1]))
-stopifnot(names(item_means)[1] == "objective_clear")
-```
-
-**The question as asked.** The *Tidebreak* team ran `r nrow(sessions)` playtest
-sessions, `r n_a` on Build A and `r n_b` on Build B. The designer's question is
-"is Build A worse?", which cannot be answered as asked: worse at what, for whom,
-by how much?
-
-**The question as measured.** Two measures bear on it, one from each end of the
-three sources:
-
-| Source | Measure | Recorded per player as |
+| Source | Measure | Recorded per session as |
 | :- | :- | :- |
 | Telemetry | Did the session end in a frustration quit? | `quit_reason` is `Frustrated` |
 | Asking people | "I always knew what my objective was" | A rating from 1 to 5 |
+
+**The design.** Between-subjects: each player was assigned to one build and played
+it `r per_player` times. Different players on each build means differences between
+the two groups of players are a possible explanation for any result, and the
+report will have to say so.
 
 **The threshold, written first.** Before anyone opens the file, the team writes:
 *"If more than a quarter of the sessions on either build end in a frustration
 quit, that build does not ship."*
 
 **The result.** `r frus_a` of `r n_a` Build A sessions ended in a frustration quit
-(`r pct(frus_a, n_a)`), against `r frus_b` of `r n_b` on Build B
-(`r pct(frus_b, n_b)`). Build A crosses the line; Build B does not. Nobody has to
-argue about it, because the argument happened before the data arrived.
+(`r pct_fmt(frus_a / n_a)`), against `r frus_b` of `r n_b` on Build B
+(`r pct_fmt(frus_b / n_b)`). Build A crosses the line; Build B does not. Nobody has
+to argue about it, because the argument happened before the data arrived.
 
-**The second source.** Of the `r ncol(survey) - 1` survey items, the objective item
-is the lowest rated, with a mean of `r round(item_means[["objective_clear"]], 2)`
-on the 1 to 5 scale. Telemetry says *what* happened: players on Build A left in
-frustration. The survey offers a candidate for *why*: players did not know what
-they were meant to be doing. Neither source alone would have pointed a designer at
-the objective marker.
-
----
-
-## R Demonstrations
-
-Everything below runs as written, provided the data files sit in the `data/`
-folder of your project as set up in [Lab 00](../labs/setting-up.qmd).
-
-```{r}
-#| label: demo-load
-library(readr)
-library(dplyr)
-
-sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
-survey   <- read_csv("data/tidebreak_survey.csv", show_col_types = FALSE)
-```
-
-`read_csv()` reads a file into a **tibble**, R's table of rows and columns. The
-path is relative to the project folder, which is why it starts `data/`.
-
-```{r}
-#| label: demo-glimpse
-glimpse(sessions)
-```
-
-`glimpse()` prints one line per column: its name, its type and its first few
-values. `<chr>` is text and `<dbl>` is a number. This is the first check on any
-new file: does every column have the type you expected? Here `cohort` is text,
-which is correct, but R has no idea that Novice, Regular and Veteran come in an
-order. That knowledge is yours to supply ([rule 3](ten-rules.qmd)).
-
-```{r}
-#| label: demo-summary
-summary(survey)
-```
-
-`summary()` gives the minimum, quartiles, median, mean and maximum of every
-numeric column. Read down the `Mean` rows and the weakest survey item stands out
-without any further code.
-
-```{r}
-#| label: demo-count
-sum(sessions$build == "A" & sessions$quit_reason == "Frustrated")
-sum(sessions$build == "B" & sessions$quit_reason == "Frustrated")
-```
-
-A condition such as `sessions$build == "A"` produces one `TRUE` or `FALSE` per row,
-and `sum()` counts the `TRUE`s. Combining two conditions with `&` counts the rows
-where both hold. This is how every number in the worked example was produced.
+**The second source.** Of the `r ncol(survey) - 1` survey items, the objective
+item has the lowest mean, `r round(item_means[["objective_clear"]], 2)` on the 1 to
+5 scale. Telemetry says *what* happened: players on Build A left in frustration.
+The survey offers a candidate for *why*: players did not know what they were meant
+to be doing. Neither source alone would have pointed a designer at the objective
+marker.
 
 ---
 
@@ -226,12 +448,10 @@ candidate.
 
 **What can legitimately be concluded.** Build A fails the threshold the team set
 in advance. That is all. The survey figure is averaged across both builds, so on
-its own it cannot say that the unclear objective belongs to Build A. Linking the
-two is a hypothesis for the next test, not a finding.
-
-Telemetry reports behaviour and surveys report belief. When they agree, you have a
-lead. When they disagree, you have the most valuable finding in the playtest, and
-the disagreement itself is what goes in the report.
+its own it cannot say the unclear objective belongs to Build A. And because the
+design is between-subjects, a skeptic can ask whether Build A's players were
+simply different. Linking the objective to the frustration is a hypothesis for the
+next test, not a finding.
 
 ---
 
@@ -244,51 +464,36 @@ emerges produces large files and no decisions. Write the question down first
 **Trusting one source.** A survey on its own tells you what players believe; a log
 on its own tells you what they did. Treat either alone as half the evidence.
 
-**Setting the threshold after seeing the result.** A threshold chosen after the
-data has been seen is always met by exactly the right margin. If it was not written
-down beforehand, it is not a threshold ([rule 1](ten-rules.qmd)).
+**Letting players choose their condition.** The people who pick an option differ
+from those who do not, and the difference gets credited to the option.
+
+**Running every player in the same order.** Without counterbalancing, the second
+build always gets more practised, more tired players.
+
+**Counting sessions as players.** Four sessions from one player are one person's
+evidence, four times.
+
+**Testing only people you know.** Friends and colleagues are polite, practised and
+unrepresentative.
 
 **Logging without identifiers.** A death event with no session or player ID cannot
-be joined to anything, and a survey response with no session ID cannot be joined
-to the telemetry from the same match.
+be joined to anything.
 
-**Reading `glimpse()` and moving on.** The types it prints are R's guess. A 1 to 5
-rating arrives as `<dbl>`, and R will average it without complaint. Whether it
-should be averaged is a decision R cannot make for you.
+**Skipping the pilot.** The first real session should not be the one where you
+discover the logger is broken.
+
+**Setting the threshold after seeing the result.** A threshold chosen afterwards
+is always met by exactly the right margin. If it was not written down beforehand,
+it is not a threshold ([rule 1](ten-rules.qmd)).
 
 ---
 
-## Short Practice Activities
+## Practice
 
 Each takes two or three minutes.
 
-**1.** Run `glimpse(survey)`. How many survey items are there, and what type has R
-given them?
-
-::: {.callout-note collapse="true" title="Check your answer"}
-There are `r ncol(survey) - 1` items after `session_id`, and every one is `<dbl>`.
-R treats them as ordinary numbers; they are ordinal ratings, and the difference
-matters as soon as you average them.
-:::
-
-**2.** Count the sessions that ended with `quit_reason` equal to
-`"Technical fault"`, then write the threshold that would make you delay a release
-over it.
-
-::: {.callout-note collapse="true" title="Check your answer"}
-
-```{r}
-#| label: practice-fault
-sum(sessions$quit_reason == "Technical fault")
-```
-
-Any threshold is defensible if it was written first and names a number: "if more
-than one session in twenty ends in a technical fault, we do not release". "If it
-seems like a lot" is not a threshold.
-:::
-
-**3.** Rewrite "is the corridor too dangerous?" as one telemetry measure and one
-survey measure, each recordable for a single player.
+**1. Make it measurable.** Rewrite "is the corridor too dangerous?" as one
+telemetry measure and one survey measure, each recordable for a single player.
 
 ::: {.callout-note collapse="true" title="Check your answer"}
 Telemetry: deaths in the corridor per session. Asking people: agreement with "I
@@ -297,29 +502,83 @@ there often *and* do not understand why describe a different problem from player
 who die there often and accept it.
 :::
 
+**2. Choose a design.** You want to compare two control schemes for a racing game,
+and you can recruit 12 players for an afternoon. Between or within? What must you
+do to make it fair?
+
+::: {.callout-note collapse="true" title="Check your answer"}
+Within-subjects. Control schemes can be played fresh, twelve players is too few to
+split into two groups, and comparing each player with themselves cancels out the
+large differences in driving skill. Counterbalance: six players, chosen at random,
+try scheme A first; the other six try B first.
+:::
+
+**3. Critique.** A student team tests their puzzle game on 30 classmates in one
+afternoon. Everyone plays the old version, then the new one. The new version takes
+40% less time to solve. List three reasons the new version might not actually be
+better.
+
+::: {.callout-note collapse="true" title="Check your answer"}
+Any three of: players had already solved the puzzles once, so the second attempt
+was always going to be faster (learning, and no counterbalancing; and puzzles are a
+case for between-subjects); classmates are not the target audience; the team knew
+the testers, who may have tried harder on the version they knew was new; there was
+no threshold written in advance; and nobody piloted the test, so problems in the
+first version's build or logging may have slowed it down.
+:::
+
+**4. Write the threshold.** Count the sessions that ended in a technical fault,
+then write the threshold that would make you delay a release over it.
+
+::: {.callout-note collapse="true" title="Check your answer"}
+`r sum(sessions$quit_reason == "Technical fault")` of `r nrow(sessions)` sessions
+ended in a technical fault. Any threshold is defensible if it was written first and
+names a number: "if more than one session in twenty ends in a technical fault, we
+do not release". "If it seems like a lot" is not a threshold.
+:::
+
 ---
 
 ## Summary
 
 - Measurement earns its place where taste fails: you cannot see your own game, feel
   a rare event, or remember twenty playtests.
-- Telemetry says what happened, performance capture says how the machine coped,
-  and asking people says what players believe. The disagreements are the findings.
 - A question is measurable when you can say how you would record it for one
   player.
-- Write the threshold that would change your mind before you look.
-- `read_csv()`, `glimpse()` and `summary()` are the first three things you run on
-  any new file.
+- Telemetry says what happened, performance capture says how the machine coped,
+  and asking people says what players believe. The disagreements are the findings.
+- Between-subjects designs avoid carry-over; within-subjects designs cancel out
+  differences between players. Assign at random, and counterbalance the order.
+- A few players find problems. Measuring how often needs many more. Count people,
+  not sessions.
+- Recruit players like your audience, get informed consent, collect only what you
+  need, and treat telemetry as personal data.
+- Write the threshold that would change your mind before you look, then pilot.
+
+| Key term | Meaning |
+| :- | :- |
+| **Telemetry** | What the game records about itself while it runs |
+| **Performance capture** | Telemetry about the machine: frame times, memory |
+| **Measure** | A specific value you could record for one player |
+| **Between-subjects** | Each player tests one version |
+| **Within-subjects** | Every player tests every version |
+| **Random assignment** | Deciding by chance who plays which version |
+| **Order effect** | A difference caused by what a player did first, not by the version |
+| **Counterbalancing** | Varying the order so order effects fall equally on every version |
+| **Pilot** | A full rehearsal of the playtest with one or two people |
+| **Threshold** | The result, written in advance, that would change your decision |
 
 ---
 
-## Links to Relevant Reference Material
+## Links
 
-- [Ten Rules](ten-rules.qmd): rule 1 (decide what would change your mind) and
-  rule 2 (a number without a question is decoration)
-- [R and Quarto Reference: getting data in](../reference/r-quarto-reference.qmd#getting-data-in)
-- [Lab 00: setting up](../labs/setting-up.qmd) and
-  [Lab 01: exploring playtest data](../labs/reading-data.qmd), Part B
+- [Ten Rules](ten-rules.qmd): rule 1 (decide what would change your mind),
+  rule 2 (a number without a question is decoration) and rule 8 (small samples lie
+  confidently)
+- [Statistics Reference: sample and population](../reference/reference-statistics.qmd#describing-data)
+- [Lab 00: Setting Up](../labs/setting-up.qmd) and
+  [Lab 01: Reading Data](../labs/reading-data.qmd)
+- Next: [Data, Variables and Types](03-data-and-types.qmd)
 
 ---
 
@@ -330,7 +589,7 @@ who die there often and accept it.
   most and why.
 - Name something about your own game that you can no longer judge, because you
   have played it too often.
-- Your team disagrees about whether a puzzle is too obscure. What number, recorded
-  from a single playtester, would settle it?
-
----
+- Your next playtest compares two versions of a boss fight. Would you run it
+  between or within subjects? What would a skeptic say about your choice?
+- Your team wants to log every input a player makes "in case it is useful". What
+  would you say, as the person responsible for the testers' data?

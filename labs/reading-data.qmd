@@ -74,8 +74,9 @@ nrow(sessions)
 
 # Part A — Values, vectors and missing data
 
-Notes for this part: [Why Developers Measure Anything](../notes/01-planning-a-playtest.qmd)
-and [Describing What You Have](../notes/04-describing-variables.qmd).
+Notes for this part: [Planning a Playtest](../notes/01-planning-a-playtest.qmd)
+and [Data, Variables and Types](../notes/03-data-and-types.qmd). For the R itself,
+keep the [R and Quarto Reference](../reference/r-quarto-reference.qmd) open.
 
 ## Exercise 01 — Build a vector and look at it `[Do]`
 
@@ -196,8 +197,8 @@ do not?
 
 # Part B — Loading and describing real data
 
-Notes for this part: [Describing What You Have](../notes/04-describing-variables.qmd)
-and [Distributions and Variation](../notes/05-distributions-and-shape.qmd).
+Notes for this part: [Describing Variables](../notes/04-describing-variables.qmd)
+and [Distributions and Shape](../notes/05-distributions-and-shape.qmd).
 
 From here on you are working with `sessions`, loaded in the Setup block: 120 real
 playtest sessions from the *Tidebreak* arena.
@@ -253,7 +254,8 @@ has to read, and why?
 ## Exercise 08 — Classify every column `[Apply]`
 
 For each of these columns, state whether it is **nominal**, **ordinal**,
-**discrete** or **continuous**: `cohort`, `archetype`, `build`, `score`, `kills`,
+**discrete** or **continuous** (see
+[Data, Variables and Types](../notes/03-data-and-types.qmd#types-of-data)): `cohort`, `archetype`, `build`, `score`, `kills`,
 `deaths`, `session_minutes`, `quit_reason`.
 
 ::: {.callout-tip collapse="true" title="Solution"}

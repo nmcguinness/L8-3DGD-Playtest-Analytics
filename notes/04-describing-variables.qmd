@@ -12,11 +12,6 @@ aliases:
 
 By the end of these notes you can:
 
-- classify a variable as nominal, ordinal, discrete or continuous, and say which
-  operations that allows;
-- recognise a tidy table and name the most common way data fails to be one;
-- say what a sample is, and why every number you compute describes the sample
-  rather than your audience;
 - choose between mean and median, and read the gap between them as evidence of
   skew;
 - describe spread with the standard deviation, quartiles and IQR, and say why the
@@ -34,56 +29,7 @@ students most often skip and most often get caught by.
 
 ---
 
-## What Kind of Number Is This?
-
-Four types, and the type decides which operations are legal.
-
-**Nominal** — labels with no order. Character class, platform, quit reason. You
-can count them. You cannot average them. The mean of `Scout` and `Sentinel` does
-not exist, and if your code produces one, something has gone wrong upstream.
-
-**Ordinal** — ordered labels with unknown gaps. Difficulty setting, player
-experience level, and every agreement scale ever printed. Novice, Regular and
-Veteran are in an order, but Regular is not "halfway" between the other two in any
-meaningful sense.
-
-**Discrete** — counts. Deaths, kills, items collected. Whole numbers, and there is
-no such thing as 2.4 deaths in a single session — though the *average* number of
-deaths across many sessions is perfectly meaningful at 2.4.
-
-**Continuous** — measurements. Completion time, frame time, distance travelled.
-Any value in a range, limited only by the precision of your instrument.
-
-**The awkward case is the rating scale**, and it is awkward every time. A 1–5
-agreement scale is strictly **ordinal**: you know Agree is above Neutral, but you
-do not know that the step from Disagree to Neutral is the same size as the step
-from Agree to Strongly Agree. In practice, when a scale has five or more points
-and the responses are reasonably spread, people treat it as numeric and average
-it. That convention is defensible and universal, and you should still know you are
-making an assumption. Where it matters — where the whole finding rests on a mean
-of 3.2 against 3.4 — report the distribution instead.
-
----
-
-## Tidy Data: One Row Per Observation
-
-Data arrives in whatever shape the tool that produced it happened to use. Almost
-all analysis assumes one particular shape, and it is worth naming.
-
-A table is **tidy** when each row is one observation, each column is one variable,
-and each cell is one value. For a playtest: one row per player per session, one
-column per thing you recorded.
-
-The most common violation is a survey export, where the eight questions become
-eight columns. That is convenient to read and inconvenient to analyse, because
-"question" is really a variable and its eight values have been spread across the
-column headings. Reshaping it into one row per player *per question* is what makes
-the whole survey analysable in one operation, and you will do exactly that in
-Lab 03.
-
----
-
-## Sample and Population
+## Before You Start
 
 ```{r}
 #| label: data
@@ -93,20 +39,10 @@ sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
 survey   <- read_csv("data/tidebreak_survey.csv", show_col_types = FALSE)
 ```
 
-The `r nrow(sessions)` *Tidebreak* sessions come from
-`r length(unique(sessions$player_id))` players who happened to attend this
-playtest. They are a **sample**. The **population** is everybody you are making
-the game for, and you never get to measure it.
-
-**Every number describes the sample.** The question you care about is always about
-the population: not "did these players struggle?" but "will players struggle?".
-Bring in a different group next week and every figure on this page moves. How far
-it can move is the subject of Week 2; until then, report how many people a number
-came from every time you quote it ([rule 8](ten-rules.qmd)).
-
-**Who is in the sample matters as much as how many.** A playtest recruited from the
-studio's own Discord samples the game's most committed fans, not its audience. No
-amount of analysis afterwards corrects for who walked in the door.
+This page assumes you can already say what type a variable is and what one row of
+the table represents. Both are covered in
+[Data, Variables and Types](03-data-and-types.qmd). Every summary below is for a
+**numerical** variable unless it says otherwise.
 
 ---
 
@@ -206,9 +142,6 @@ sen_median <- rank_word[rank(-arch_median)[["Sentinel"]]]
 
 sentinel <- sessions$score[sessions$archetype == "Sentinel"]
 others   <- arch_sd[names(arch_sd) != "Sentinel"]
-
-obj_low <- sum(survey$objective_clear <= 2)
-obj_top  <- sum(survey$objective_clear == 5)
 ```
 
 **Is the Sentinel underpowered?** Sort the four archetypes by mean score and the
@@ -240,19 +173,8 @@ It is not underpowered; it is inconsistent. A flat buff raises the scores of the
 players already doing well, and the design question becomes what the collapsing
 games have in common ([rule 4](ten-rules.qmd)).
 
-**How clear was the objective?** The survey item "I always knew what my objective
-was" averages `r round(mean(survey$objective_clear), 2)` on a 1 to 5 scale. That is
-a mean of an ordinal rating, and the distribution says more:
-
-```{r}
-#| label: worked-objective
-table(survey$objective_clear)
-```
-
-`r obj_low` of `r nrow(survey)` players chose 1 or 2, and `r obj_top` chose 5.
-"`r round(100 * obj_low / nrow(survey))`% of players disagreed that they always
-knew their objective" is a sentence a designer acts on. "Mean
-`r round(mean(survey$objective_clear), 2)`" is not ([rule 3](ten-rules.qmd)).
+The same mean-against-distribution argument for a survey rating is the worked
+example in [Data, Variables and Types](03-data-and-types.qmd#worked-example).
 
 ---
 
@@ -335,15 +257,6 @@ before it becomes a conclusion.
 
 ## Common Mistakes
 
-**Averaging a label.** `mean(sessions$cohort)` returns `NA` with a warning, which
-is R protecting you. Code the cohorts as 1, 2 and 3 and R will average them
-happily, and the answer will mean nothing.
-
-**Trusting R's idea of the type.** R stores `cohort` as text and every survey item
-as a number. Neither is wrong, but neither tells R that cohorts come in an order or
-that a rating is ordinal. The type R prints is where your checking starts
-([rule 3](ten-rules.qmd)).
-
 **Quoting a mean without looking.** The Sentinel's mean is a correct calculation
 that describes no Sentinel game. Draw the histogram first
 ([rule 4](ten-rules.qmd)).
@@ -363,15 +276,7 @@ the data could make. Redraw it with fewer and more bars.
 
 Each takes two or three minutes.
 
-**1.** Classify each of these as nominal, ordinal, discrete or continuous: `kills`,
-`quit_reason`, `cohort`, `distance_m`, `visual_style`.
-
-::: {.callout-note collapse="true" title="Check your answer"}
-`kills` discrete; `quit_reason` nominal; `cohort` ordinal; `distance_m`
-continuous; `visual_style` ordinal (a 1 to 5 rating), whatever type R gives it.
-:::
-
-**2.** Describe `distance_m` in one sentence with centre, spread and size. Does the
+**1.** Describe `distance_m` in one sentence with centre, spread and size. Does the
 mean sit above or below the median?
 
 ::: {.callout-note collapse="true" title="Check your answer"}
@@ -391,7 +296,7 @@ the median by
 is small against a spread of that size.
 :::
 
-**3.** Use `table()` to find the most common number of deaths in a session. Why is
+**2.** Use `table()` to find the most common number of deaths in a session. Why is
 `table()` sensible for `deaths` but not for `distance_m`?
 
 ::: {.callout-note collapse="true" title="Check your answer"}
@@ -412,10 +317,7 @@ continuous variable needs a histogram instead.
 
 ## Summary
 
-- The type of a variable decides which summaries are legal. A 1 to 5 rating is
-  ordinal, and averaging it is an assumption you should know you are making.
-- Tidy data has one row per observation and one column per variable.
-- Every number describes the sample. Report n every time.
+- Report n with every summary.
 - When mean and median disagree, the data is skewed. Default to the median for
   anything time-like.
 - Describe spread with the IQR for skewed data and the standard deviation for
@@ -426,8 +328,9 @@ continuous variable needs a histogram instead.
 
 ## Links to Relevant Reference Material
 
-- [Ten Rules](ten-rules.qmd): rule 3 (know what kind of number you are holding),
-  rule 4 (look at the shape before you quote the average), rule 5 (the mean is the
+- [Data, Variables and Types](03-data-and-types.qmd): variable types, tidy data,
+  sample and population
+- [Ten Rules](ten-rules.qmd): rule 4 (look at the shape before you quote the average), rule 5 (the mean is the
   wrong summary more often than you think) and rule 8 (small samples lie
   confidently)
 - [R and Quarto Reference: describing one variable](../reference/r-quarto-reference.qmd#describing-one-variable),
@@ -439,8 +342,6 @@ continuous variable needs a histogram instead.
 
 ## Reflective Questions
 
-- Take a variable from your own project's telemetry. Which of the four types is
-  it, and what would break if you treated it as the type next door?
 - Why is the median usually the right summary for completion time, but not for
   something like accuracy percentage?
 - You draw a histogram of level completion times and see two clear humps. List

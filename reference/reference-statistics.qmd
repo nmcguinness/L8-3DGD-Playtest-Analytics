@@ -60,6 +60,9 @@ stopifnot(aw_cohort[["Veteran"]] > aw_cohort[["Novice"]],
 
 ## Describing data
 
+Taught in [Planning a Playtest](../notes/01-planning-a-playtest.qmd) and
+[Data, Variables and Types](../notes/03-data-and-types.qmd).
+
 | Term | What it means | *Tidebreak* example | The common mistake |
 | :- | :- | :- | :- |
 | **Observation** | One unit you measured. Read it as: one row. | One player in one session: `r nrow(sessions)` observations in `tidebreak_sessions.csv`. | Mixing units in one table, such as session rows and per-player totals side by side. |
