@@ -308,8 +308,9 @@ abline(v = mean(frus_flag), lty = 2, col = pal$highlight, lwd = 2)
 With 5 sessions, the middle 90% of samples reported anything from
 `r pct_fmt(mid90[1, 1])` to `r pct_fmt(mid90[2, 1])`. With 40, from
 `r pct_fmt(mid90[1, 3])` to `r pct_fmt(mid90[2, 3])`. The true rate never changed;
-only the number of sessions did. Part 4 of these notes, *Comparing*, explains why
-the spread shrinks the way it does.
+only the number of sessions did.
+[From Sample to Population](07-sample-to-population.qmd) explains why the spread
+shrinks the way it does.
 
 **Count players, not sessions.** *Tidebreak* recorded `r nrow(sessions)` sessions,
 but only `r n_players` people. Four sessions from one unusually skilled player are

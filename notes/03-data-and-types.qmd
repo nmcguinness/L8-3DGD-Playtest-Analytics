@@ -444,8 +444,8 @@ and you never get to measure it.
 **Every number you compute describes the sample.** The question you care about is
 always about the population: not "did these players struggle?" but "will players
 struggle?". Run the test again with different players and every figure on this
-page moves. How far it can move is the subject of Part 4 of these notes. Until
-then, report how many players a number came from every time you quote it
+page moves. How far it can move is the subject of
+[From Sample to Population](07-sample-to-population.qmd). Until then, report how many players a number came from every time you quote it
 ([rule 8](ten-rules.qmd)).
 
 **Who is in the sample matters as much as how many.** A playtest recruited from the

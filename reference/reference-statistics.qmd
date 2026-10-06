@@ -29,6 +29,8 @@ stopifnot(all(sessions$archetype[sessions$score %in% score_out] == "Sentinel"))
 
 batch       <- ceiling(seq_len(nrow(sessions)) / 30)
 batch_means <- round(tapply(sessions$score, batch, mean))
+mins_b_ref  <- mins[sessions$build == "B"]
+se_b_ref    <- sd(mins_b_ref) / sqrt(length(mins_b_ref))
 
 tt_mins  <- t.test(session_minutes ~ build, data = sessions)
 tt_score <- t.test(score ~ build, data = sessions)
@@ -116,9 +118,14 @@ Taught in [Distributions and Shape](../notes/05-distributions-and-shape.qmd).
 
 ## From sample to population
 
+Taught in [From Sample to Population](../notes/07-sample-to-population.qmd).
+
 | Term | What it means | *Tidebreak* example | The common mistake |
 | :- | :- | :- | :- |
 | **Sampling variability** | A different sample gives different numbers, even from the same population. | Split the sessions into four batches of 30 in file order: mean scores `r paste(batch_means, collapse = ", ")`. | Treating one playtest's numbers as fixed facts about the game. |
+| **Sampling distribution** | The distribution of a summary, such as a mean, across every sample you might have drawn. | 1,000 simulated playtests of 30 give 1,000 different mean session lengths, forming a bell. | Confusing it with the distribution of the players. It is the distribution of the *estimate*. |
+| **Standard error** | The SD of the sampling distribution: how far an estimate is typically off. SE = SD / √n. | Build B mean session length: SE `r round(se_b_ref, 2)` minutes, from an SD of `r round(sd(mins_b_ref), 2)` and n = `r length(mins_b_ref)`. | Reporting it as the spread of the players. The SD describes players; the SE describes the estimate. |
+| **Central limit theorem** | Means of reasonably large samples are approximately normal, whatever the shape of the data. | Session length is skewed and two-humped, but means of 30 sessions form a bell. | Assuming it rescues tiny samples, or summaries other than the mean such as the 99th percentile. |
 | **Confidence interval** | A range of plausible values for the population, given the sample. Wider means less certain. | Build B sessions ran between `r round(ci_b[1], 1)` and `r round(ci_b[2], 1)` minutes longer than Build A (95% interval). | Reading "95%" as the chance this particular interval is right. It describes how often the method captures the true value. |
 
 ---

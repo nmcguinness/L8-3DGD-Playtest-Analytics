@@ -129,6 +129,10 @@ about, no p-value changes that ([rule 7](ten-rules.qmd)).
 
 ## Sampling Variability
 
+[From Sample to Population](07-sample-to-population.qmd) introduced sampling
+variability, the standard error and confidence intervals for one group. Here they
+are applied to the gap between two.
+
 **Sampling variability** is the fact that a different sample gives different
 numbers, even when nothing about the game has changed. Some of the difference
 between two groups is the build. Some of it is which players ended up in which
@@ -165,7 +169,9 @@ it is almost certainly not exactly right.
 
 A **confidence interval** is a range of plausible values for the true difference,
 given the sample. A 95% confidence interval is built by a method that captures the
-true value in 95% of the playtests you could have run.
+true value in 95% of the playtests you could have run; the simulation in
+[From Sample to Population](07-sample-to-population.qmd#what-95-means) shows what
+that means.
 
 **Read the interval as a range of sizes.** "Build B's players took
 `r ci_fmt(tt_wt$conf.int)` fewer wrong turns" tells a designer both that the effect

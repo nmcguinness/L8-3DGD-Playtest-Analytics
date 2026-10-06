@@ -11,12 +11,12 @@ aliases:
 ```{r}
 #| label: setup
 #| include: false
-library(readr)
+source("notes/_setup.R")
 library(dplyr)
 
+original <- sessions
 raw      <- read_csv("data/tidebreak_sessions_raw.csv",
                      trim_ws = FALSE, show_col_types = FALSE)
-original <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
 
 deduped <- raw[!duplicated(raw), ]
 fixed   <- tolower(trimws(deduped$cohort))
@@ -24,7 +24,7 @@ mislabelled <- sum(!deduped$cohort %in% c("Novice", "Regular", "Veteran"))
 blank   <- deduped[is.na(deduped$session_minutes), ]
 kept    <- deduped[complete.cases(deduped), ]
 
-frus <- function(d, b) sum(d$build == b & d$quit_reason == "Frustrated")
+frus  <- function(d, b) sum(d$build == b & d$quit_reason == "Frustrated")
 med_a <- function(d) median(d$session_minutes[d$build == "A"], na.rm = TRUE)
 
 stopifnot(sum(duplicated(raw)) == sum(duplicated(raw$session_id)),
@@ -38,7 +38,23 @@ stopifnot(sum(duplicated(raw)) == sum(duplicated(raw$session_id)),
           all(head(deduped$archetype[order(deduped$score)], 5) == "Sentinel"))
 ```
 
----
+> No playtest export arrives ready to analyse. This page has two halves. The first
+> is **cleaning**: finding missing values, duplicates, impossible values and
+> broken labels, and dealing with each without quietly changing the answer. The
+> second is **transforming**: the pipe and the six `dplyr` verbs that reshape a
+> clean table into the one your question needs. The playtest question running
+> through it: *"Which build keeps players longer?"*, and how a single line of
+> cleaning nearly hides the answer.
+
+::: {.at-a-glance}
+**Time:** 30 minutes in class; 20 more to work through the R demonstrations.
+**Before this:** [Distributions and Shape](05-distributions-and-shape.qmd).
+**Key terms:** missing value, duplicate, key, impossible value, factor, cleaning
+log, pipe, verb, split–apply–combine.
+**R introduced:** `is.na()`, `colSums()`, `complete.cases()`, `duplicated()`,
+`trimws()`, `tolower()`, `as.numeric()`, `factor()`, `|>`, `select()`,
+`filter()`, `mutate()`, `arrange()`, `group_by()`, `summarise()`, `n()`.
+:::
 
 ## Learning Outcomes
 
@@ -51,19 +67,19 @@ By the end of these notes you can:
 - repair inconsistent category labels and convert text to numbers without losing
   data silently;
 - keep a cleaning log that records every row dropped and what it did to *n*;
+- explain what the pipe does, and rewrite nested code as a pipeline;
 - use `select()`, `filter()`, `mutate()`, `arrange()`, `group_by()` and
-  `summarise()`, composed with the pipe;
-- explain what `group_by()` + `summarise()` does by writing the same answer with
-  `tapply()`.
+  `summarise()`, and explain `group_by()` + `summarise()` by writing the same
+  answer with `tapply()`.
 
 ---
 
 ## Why This Matters for Playtesting
 
-No playtest export arrives ready. Telemetry drops events when a build crashes.
-Spreadsheets get pasted into twice. Someone types "veteran" where the form said
-"Veteran". Every one of these has to be dealt with before any summary means
-anything, and every way of dealing with it is a choice.
+Telemetry drops events when a build crashes. Spreadsheets get pasted into twice.
+Someone types "veteran" where the form said "Veteran". Every one of these has to be
+dealt with before any summary means anything, and every way of dealing with it is a
+choice.
 
 **Cleaning choices change conclusions.** Dropping the rows with a blank cell is one
 line of R. If the blanks are not scattered at random, that line removes a
@@ -78,6 +94,52 @@ hidden in a script.
 
 ---
 
+# Part 1: Cleaning
+
+The raw *Tidebreak* export is `tidebreak_sessions_raw.csv`. Load it so you see the
+file as delivered:
+
+```{r}
+#| label: load-raw
+raw <- read_csv("data/tidebreak_sessions_raw.csv",
+                trim_ws = FALSE, show_col_types = FALSE)
+nrow(raw)
+```
+
+`read_csv()` normally strips spaces from the edges of text values without telling
+you. `trim_ws = FALSE` switches that off, so you see what a spreadsheet or database
+import would see.
+
+Here is the whole cleaning process for this file, with the number of rows after
+each step. Every step is explained below.
+
+```{r}
+#| label: cleaning-pipeline-gen
+#| echo: false
+#| output: asis
+# Writes a Mermaid block so the row counts are computed, not typed
+cat("```{mermaid}\n",
+    "%%| label: fig-cleaning-pipeline\n",
+    "%%| fig-cap: \"The cleaning pipeline for the raw Tidebreak export, with the number of rows after each step.\"\n",
+    "flowchart LR\n",
+    sprintf('  R["Raw export<br/>%d rows"] --> D["Remove exact<br/>duplicates<br/>%d rows"]\n',
+            nrow(raw), nrow(deduped)),
+    sprintf('  D --> L["Fix cohort<br/>labels<br/>%d rows"]\n', nrow(deduped)),
+    sprintf('  L --> I["Check impossible<br/>values<br/>%d rows"]\n', nrow(deduped)),
+    sprintf('  I --> M["Keep blank<br/>session lengths<br/>%d rows"]\n', nrow(deduped)),
+    sprintf('  M --> C(["Clean data<br/>%d rows"])\n', nrow(deduped)),
+    "  classDef step fill:#f8f9fa,stroke:#6c757d,color:#212529\n",
+    "  classDef done fill:#b22222,stroke:#b22222,color:#ffffff\n",
+    "  class R,D,L,I,M step\n",
+    "  class C done\n",
+    "```\n", sep = "")
+```
+
+Only one step removes rows. The others change values or decide to leave something
+alone, and they belong in the record just as much.
+
+---
+
 ## What `NA` Actually Means
 
 `NA` is R's marker for a **missing value**: a cell with nothing in it. It does not
@@ -85,19 +147,39 @@ mean zero, and it does not mean the event did not happen. It means the export do
 not know. A blank `deaths` cell is not a player who never died.
 
 **`NA` is contagious.** Any calculation that touches an `NA` returns `NA`, because
-R will not guess what the missing value was. `mean(deaths)` on a column with one
-blank returns `NA`. Adding `na.rm = TRUE` tells R to leave the blanks out, which is
-itself a decision: it assumes the missing players look like the ones you can see.
+R will not guess what the missing value was. Adding `na.rm = TRUE` tells R to leave
+the blanks out, which is itself a decision: it assumes the missing players look like
+the ones you can see.
+
+```{r}
+#| label: demo-na
+na_counts <- colSums(is.na(raw))
+na_counts[na_counts > 0]
+
+mean(raw$deaths)
+mean(raw$deaths, na.rm = TRUE)
+```
+
+`is.na()` returns `TRUE` for each blank cell, and `colSums()` counts them per
+column. The first `mean()` shows the contagion; the second is a decision.
 
 Three questions, in this order, before you do anything to a missing value:
 
-1. **How much is missing?** A handful of blanks in 120 rows is different from half
-   a column.
+1. **How much is missing?** A handful of blanks in `r nrow(raw)` rows is different
+   from half a column.
 2. **Where is it missing?** Split the count by build, cohort and outcome. If the
    blanks cluster, something produced them.
 3. **Is the pattern the finding?** A build whose quit path never writes the session
    length has a telemetry bug, and the players on that path are the ones the
    playtest was run to find ([rule 9](ten-rules.qmd)).
+
+`complete.cases()` returns `TRUE` for each row with no blanks anywhere. Count it
+before you ever filter by it:
+
+```{r}
+#| label: demo-complete
+sum(complete.cases(raw))
+```
 
 ---
 
@@ -112,8 +194,20 @@ identifier, here `session_id`, but may differ elsewhere. That is two records
 claiming to be the same session, and you have to work out which one is right before
 you remove either.
 
-**Check both.** If the two counts match, every key duplicate is an exact copy. If
-they do not, look at the rows that differ before deciding.
+```{r}
+#| label: demo-duplicated
+sum(duplicated(raw))
+sum(duplicated(raw$session_id))
+raw$session_id[duplicated(raw)]
+
+clean <- raw[!duplicated(raw), ]
+nrow(clean)
+```
+
+`duplicated()` marks the second and later copies of a row, or of a value when you
+give it one column. Keeping `!duplicated()` keeps the first copy of each. **Check
+both counts.** Here they match, so every key duplicate is an exact copy and removing
+them is safe. If they did not match, you would look at the differing rows first.
 
 ---
 
@@ -131,7 +225,20 @@ deleting the players you most need to hear from.
 **The test is the game's rules, not the chart.** A boxplot flags points by distance
 from the rest. Only you know whether the game allows that value. Write the rule
 down, such as `session_minutes > 0` or `enjoyment` in 1–7, then check the data
-against it.
+against it:
+
+```{r}
+#| label: demo-impossible
+sum(clean$session_minutes <= 0, na.rm = TRUE)
+sum(!clean$enjoyment %in% 1:7)
+head(clean[order(clean$score), c("session_id", "archetype", "score")], 5)
+```
+
+No impossible lengths or ratings. The five lowest scores are all Sentinels: unusual,
+not impossible, and they are the bimodal Sentinel finding from
+[Describing Variables](04-describing-variables.qmd#worked-example). They stay. The
+[outlier decision tree](05-distributions-and-shape.qmd#outliers) is the same
+reasoning in diagram form.
 
 ---
 
@@ -141,21 +248,43 @@ against it.
 `"Veteran "` with a trailing space are three different cohorts to `table()`, and a
 grouped summary will report three groups where the design had one. `trimws()`
 strips leading and trailing spaces and `tolower()` makes the case consistent. Use
-them together, and always check the result with `table()`. `read_csv()` trims
-spaces on import by default, which hides them in R but not in the file anyone else
-opens.
+them together, and always check the result with `table()`:
+
+```{r}
+#| label: demo-labels
+table(clean$cohort)
+
+clean$cohort <- tolower(trimws(clean$cohort))
+table(clean$cohort)
+```
+
+`r length(unique(deduped$cohort))` spellings become three cohorts.
+
+**Factors.** A **factor** is a categorical variable that knows its possible values
+and their order. Setting the levels puts the cohorts in order of experience rather
+than the alphabet, and it makes a misspelled label visible: anything not in
+`levels` becomes `NA` rather than a fourth group ([rule 3](ten-rules.qmd)).
+
+```{r}
+#| label: demo-factor
+clean$cohort <- factor(clean$cohort, levels = c("novice", "regular", "veteran"))
+table(clean$cohort)
+```
 
 **Numbers stored as text.** When one cell in a numeric column contains `"n/a"` or a
 comma decimal, `read_csv()` reads the whole column as text. `as.numeric()` converts
-it back, and turns every value it cannot read into `NA` with only a warning. Count
-the `NA`s before and after converting: any increase is data you just lost.
+it back, and turns every value it cannot read into `NA` with only a warning:
 
-**Factors.** A **factor** is a categorical variable that knows its possible values
-and their order. `factor(cohort, levels = c("novice", "regular", "veteran"))`
-fixes the order to the order of experience, so tables and plots read left to right
-from least to most experienced, not alphabetically. It also makes a misspelled
-label visible: anything not in `levels` becomes `NA` rather than a fourth group
-([rule 3](ten-rules.qmd)).
+```{r}
+#| label: demo-as-numeric
+#| warning: true
+minutes_text <- c("12.9", "24.6", "n/a", "8,6")
+as.numeric(minutes_text)
+```
+
+A constructed example, since this export's numbers all arrived as numbers. Two of
+four values became `NA`, and the only sign was a warning. Count the `NA`s before and
+after converting: any increase is data you just lost.
 
 ---
 
@@ -169,6 +298,7 @@ number of rows before and after. It is short, and it goes in the report.
 | Raw export | `r nrow(raw)` | As delivered |
 | Remove exact duplicates | `r nrow(deduped)` | `r sum(duplicated(raw))` sessions exported twice |
 | Standardise `cohort` labels | `r nrow(deduped)` | `r mislabelled` values re-spaced or re-cased; no rows removed |
+| Check impossible values | `r nrow(deduped)` | None found against the game's rules |
 | Keep blank `session_minutes` | `r nrow(deduped)` | All `r nrow(blank)` are Build A frustration quits; see the worked example |
 
 **A step that removes no rows still goes in the log.** Relabelling changes which
@@ -176,42 +306,17 @@ group a player is counted in, and the reader needs to know that happened.
 
 ---
 
-## The Six Verbs and the Pipe
+## Worked Example: the Blanks Are the Finding
 
-The `dplyr` package, part of the tidyverse, reduces most data manipulation to six
-**verbs**. Each takes a data frame and returns a data frame.
-
-| Verb | What it does | Base R you already know |
-| :- | :- | :- |
-| `select()` | Keep some columns | `sessions[, c("build", "score")]` |
-| `filter()` | Keep some rows | `sessions[sessions$build == "A", ]` |
-| `mutate()` | Add or change a column | `sessions$kd <- sessions$kills / sessions$deaths` |
-| `arrange()` | Sort the rows | `sessions[order(sessions$score), ]` |
-| `group_by()` | Mark the groups | The second argument of `tapply()` |
-| `summarise()` | One row of results per group | The function inside `tapply()` |
-
-The **pipe**, `|>`, passes the result on its left in as the first argument of the
-function on its right. `sessions |> filter(build == "A")` means
-`filter(sessions, build == "A")`. Its value is in chaining: a sequence of verbs
-reads top to bottom, in the order the steps happen, instead of inside out.
-
-**You will also see `%>%`.** It is the older tidyverse pipe and does the same job
-in everything you will write here. [Distributions and Shape](05-distributions-and-shape.qmd)
-used it; these notes use `|>`, which is built into R and needs no package.
-
----
-
-## Worked Examples
-
-**Which build keeps players longer?** The raw export has `r nrow(raw)` rows. After
-removing the `r sum(duplicated(raw))` duplicates, `r nrow(blank)` sessions have a
-blank `session_minutes`. Every one of them is Build A. Every one of them ended in a
+**Which build keeps players longer?** After removing the
+`r sum(duplicated(raw))` duplicates, `r nrow(blank)` sessions have a blank
+`session_minutes`. Every one of them is Build A. Every one of them ended in a
 frustration quit.
 
 ```{r}
 #| label: worked-where-missing
-table(build   = deduped$build,
-      missing = is.na(deduped$session_minutes))
+table(build   = clean$build,
+      missing = is.na(clean$session_minutes))
 ```
 
 That pattern is not random, so both obvious ways of handling it are wrong.
@@ -243,103 +348,160 @@ missing from it, and files a bug against Build A's session logging.
 
 ---
 
-## R Demonstrations
+# Part 2: Transforming
 
-Base R first for each cleaning step, then the six verbs, then `tapply()` and
-`group_by()` answering the same question.
+A clean table is rarely the table your question needs. You need some of the rows,
+some of the columns, a new column computed from others, a different order, or one
+row per group. The `dplyr` package, part of the tidyverse, does each of these with
+one **verb**, and the pipe joins the verbs together.
 
-```{r}
-#| label: demo-load
-library(readr)
-library(dplyr)
+## The Pipe
 
-raw <- read_csv("data/tidebreak_sessions_raw.csv",
-                trim_ws = FALSE, show_col_types = FALSE)
-nrow(raw)
-```
+The **pipe**, `|>`, passes the result on its left in as the **first argument** of
+the function on its right:
 
-`read_csv()` normally strips spaces from the edges of text values without telling
-you. `trim_ws = FALSE` switches that off, so you see the file the way Excel or a
-database import would.
+| With the pipe | Means |
+| :- | :- |
+| `x |> f()` | `f(x)` |
+| `x |> f(y)` | `f(x, y)` |
+| `x |> f() |> g()` | `g(f(x))` |
 
-### Missing values
-
-```{r}
-#| label: demo-na
-na_counts <- colSums(is.na(raw))
-na_counts[na_counts > 0]
-
-mean(raw$deaths)
-mean(raw$deaths, na.rm = TRUE)
-```
-
-`is.na()` returns `TRUE` for each blank cell, and `colSums()` counts them per
-column. Printing only the columns with blanks keeps the output readable. The first
-`mean()` shows the contagion; the second is a decision.
+Its value is in chaining. Here is the same question, "the median session length of
+Build A's frustration quits, to one decimal place", written three ways:
 
 ```{r}
-#| label: demo-complete
-sum(complete.cases(raw))
+#| label: pipe-three-ways
+# 1. Nested: read from the inside out
+round(median(clean$session_minutes[clean$build == "A" &
+                                     clean$quit_reason == "Frustrated"],
+             na.rm = TRUE), 1)
+
+# 2. Intermediate objects: clear, but leaves a trail of names
+a_frus  <- clean[clean$build == "A" & clean$quit_reason == "Frustrated", ]
+a_med   <- median(a_frus$session_minutes, na.rm = TRUE)
+round(a_med, 1)
+
+# 3. Piped: read from top to bottom, in the order things happen
+clean |>
+  filter(build == "A", quit_reason == "Frustrated") |>
+  pull(session_minutes) |>
+  median(na.rm = TRUE) |>
+  round(1)
 ```
 
-`complete.cases()` returns `TRUE` for each row with no blanks anywhere. Count it
-before you ever filter by it.
+```{mermaid}
+%%| label: fig-pipe
+%%| fig-cap: "A pipeline: each step takes the result of the one before it."
+flowchart LR
+  C[("clean")] --> F["filter()<br/>Build A<br/>frustration quits"]
+  F --> P["pull()<br/>session_minutes"]
+  P --> M["median()"]
+  M --> R["round(1)"]
+  R --> A(["answer"])
+  classDef s fill:#f8f9fa,stroke:#6c757d,color:#212529
+  classDef e fill:#b22222,stroke:#b22222,color:#ffffff
+  class F,P,M,R s
+  class A e
+```
 
-### Duplicates
+All three give the same answer. The piped version reads as a sentence: *take the
+clean data, keep Build A's frustration quits, pull out the session lengths, take the
+median, round it.* Each line is one step, and deleting a line deletes one step.
+(`pull()` extracts one column as a vector, the pipe-friendly version of `$`.)
+
+**You will also see `%>%`.** It is the older tidyverse pipe, from the `magrittr`
+package, and does the same job in everything you will write here. These notes use
+`|>`, which is built into R and needs no package. In RStudio, `Ctrl+Shift+M`
+types a pipe; *Tools → Global Options → Code* chooses which one.
+
+---
+
+## The Six Verbs
+
+Each verb takes a data frame first and returns a data frame, which is what makes
+them chain. To see what each one does, here is a small table of six sessions that
+every example below starts from:
 
 ```{r}
-#| label: demo-duplicated
-sum(duplicated(raw))
-sum(duplicated(raw$session_id))
-raw$session_id[duplicated(raw)]
-
-sessions <- raw[!duplicated(raw), ]
-nrow(sessions)
+#| label: verbs-few
+few <- clean |>
+  select(session_id, build, cohort, deaths, kills, session_minutes) |>
+  head(6)
+few
 ```
 
-`duplicated()` marks the second and later copies of a row, or of a value when you
-give it one column. Keeping `!duplicated()` keeps the first copy of each.
+| Verb | What it does | Base R you already know |
+| :- | :- | :- |
+| `select()` | Keep some columns | `few[, c("build", "deaths")]` |
+| `filter()` | Keep some rows | `few[few$build == "A", ]` |
+| `mutate()` | Add or change a column | `few$kd <- few$kills / few$deaths` |
+| `arrange()` | Sort the rows | `few[order(few$deaths), ]` |
+| `group_by()` | Mark the groups | The second argument of `tapply()` |
+| `summarise()` | One row of results per group | The function inside `tapply()` |
 
-### Labels, types and impossible values
+Inside every verb you refer to columns by their bare names, `deaths` rather than
+`few$deaths`: the verb already knows which table it is working on.
+
+### `select()`: keep columns
 
 ```{r}
-#| label: demo-labels
-table(sessions$cohort)
-
-sessions$cohort <- tolower(trimws(sessions$cohort))
-sessions$cohort <- factor(sessions$cohort,
-                          levels = c("novice", "regular", "veteran"))
-table(sessions$cohort)
+#| label: verb-select
+few |> select(session_id, build, deaths)
 ```
 
-`r length(unique(deduped$cohort))` spellings become three cohorts, in order of experience.
+Six rows, three columns. `select(-cohort)` would keep everything *except*
+`cohort`.
+
+### `filter()`: keep rows
 
 ```{r}
-#| label: demo-as-numeric
-#| warning: true
-minutes_text <- c("12.9", "24.6", "n/a", "8,6")
-as.numeric(minutes_text)
+#| label: verb-filter
+few |> filter(build == "A", deaths >= 3)
 ```
 
-A constructed example, since this export's numbers all arrived as numbers. Two of
-four values became `NA`, and the only sign was a warning.
+Only the rows where every condition is `TRUE`. A comma between conditions means
+"and"; use `|` for "or".
+
+### `mutate()`: add a column
 
 ```{r}
-#| label: demo-impossible
-sum(sessions$session_minutes <= 0, na.rm = TRUE)
-sum(!sessions$enjoyment %in% 1:7)
-head(sessions[order(sessions$score), c("session_id", "archetype", "score")], 5)
+#| label: verb-mutate
+few |> mutate(kd = round(kills / pmax(deaths, 1), 2))
 ```
 
-No impossible lengths or ratings. The five lowest scores are all Sentinels. They
-are unusual, not impossible, and they are the bimodal Sentinel finding from
-[Describing Variables](04-describing-variables.qmd). They stay.
+A new column, computed row by row from the others. `pmax(deaths, 1)` replaces a
+zero with 1 so that a player who never died does not divide by zero.
 
-### The six verbs
+### `arrange()`: sort
+
+```{r}
+#| label: verb-arrange
+few |> arrange(desc(session_minutes))
+```
+
+Longest session first. Without `desc()` it sorts smallest first. `arrange()` puts
+`NA` last whichever way you sort.
+
+### `group_by()` and `summarise()`: one row per group
+
+```{r}
+#| label: verb-summarise
+few |>
+  group_by(build) |>
+  summarise(sessions = n(), mean_deaths = mean(deaths))
+```
+
+Six rows in, one row per build out. `group_by()` changes nothing you can see; it
+marks the groups so that `summarise()` computes once for each. `n()` counts the
+rows in each group.
+
+### Chaining them
+
+The verbs earn their keep together:
 
 ```{r}
 #| label: demo-verbs
-sessions |>
+clean |>
   filter(build == "A", quit_reason == "Frustrated") |>
   mutate(logged = !is.na(session_minutes)) |>
   select(session_id, cohort, session_minutes, logged) |>
@@ -347,12 +509,33 @@ sessions |>
   head(4)
 ```
 
-Read it as a sentence: take the sessions, keep Build A's frustration quits, add a
-column saying whether the length was logged, keep four columns, sort by length,
-show the first four. Each line is one step, and removing a line removes one step.
-`arrange()` puts `NA` last, so the shortest *recorded* quits come first.
+Read it as a sentence: take the clean sessions, keep Build A's frustration quits,
+add a column saying whether the length was logged, keep four columns, sort by
+length, show the first four. The shortest *recorded* quits come first, because the
+blank ones are sorted last.
 
-### The same question, twice
+---
+
+## Split–Apply–Combine
+
+`group_by()` with `summarise()` and base R's `tapply()` do the same three things,
+which together are called **split–apply–combine**:
+
+```{mermaid}
+%%| label: fig-split-apply-combine
+%%| fig-cap: "Split the column by group, apply a function to each piece, combine the results into one table."
+flowchart LR
+  D[("wrong_turns<br/>all sessions")] -->|split by build| A["Build A<br/>sessions"]
+  D -->|split by build| B["Build B<br/>sessions"]
+  A -->|"apply mean()"| MA["mean for A"]
+  B -->|"apply mean()"| MB["mean for B"]
+  MA -->|combine| T(["one row<br/>per build"])
+  MB -->|combine| T
+  classDef s fill:#f8f9fa,stroke:#6c757d,color:#212529
+  classDef e fill:#b22222,stroke:#b22222,color:#ffffff
+  class A,B,MA,MB s
+  class T e
+```
 
 *What is the average number of wrong turns in each build?*
 
@@ -360,14 +543,14 @@ show the first four. Each line is one step, and removing a line removes one step
 
 ```{r}
 #| label: demo-tapply-one
-tapply(sessions$wrong_turns,
-       sessions$build,
+tapply(clean$wrong_turns,
+       clean$build,
        mean)
 ```
 
 ```{r}
 #| label: demo-group-one
-sessions |>
+clean |>
   group_by(build) |>
   summarise(mean_wrong = mean(wrong_turns))
 ```
@@ -375,11 +558,9 @@ sessions |>
 :::
 
 Same numbers: the tibble prints three significant figures, but stores the same
-values. Both do the same three things, which together are called
-**split–apply–combine**: split `wrong_turns` into one piece per build, apply
-`mean()` to each piece, combine the results. `tapply()` takes all three as
-arguments in one call and returns a named vector. `group_by()` does the split,
-`summarise()` does the apply, and the combine is a tibble with one row per group.
+values. `tapply()` takes all three steps as arguments in one call and returns a
+named vector. `group_by()` does the split, `summarise()` does the apply, and the
+combine is a tibble with one row per group.
 
 The difference shows when the question grows. *How many sessions does each build
 have, how many are missing a length, and what is the median length of the rest?*
@@ -389,19 +570,19 @@ have, how many are missing a length, and what is the median length of the rest?*
 ```{r}
 #| label: demo-tapply-many
 cbind(
-  n       = tapply(sessions$session_minutes,
-                   sessions$build, length),
-  missing = tapply(is.na(sessions$session_minutes),
-                   sessions$build, sum),
-  median  = tapply(sessions$session_minutes,
-                   sessions$build, median,
+  n       = tapply(clean$session_minutes,
+                   clean$build, length),
+  missing = tapply(is.na(clean$session_minutes),
+                   clean$build, sum),
+  median  = tapply(clean$session_minutes,
+                   clean$build, median,
                    na.rm = TRUE)
 )
 ```
 
 ```{r}
 #| label: demo-group-many
-sessions |>
+clean |>
   group_by(build) |>
   summarise(
     n       = n(),
@@ -424,8 +605,8 @@ beside them is computed without them.
 ## Interpretation Guidance
 
 **What the data shows.** The raw export has `r sum(duplicated(raw))` duplicated
-sessions, `r mislabelled` mislabelled cohorts and
-`r nrow(blank)` blank session lengths, all in Build A frustration quits.
+sessions, `r mislabelled` mislabelled cohorts and `r nrow(blank)` blank session
+lengths, all in Build A frustration quits.
 
 **What the analysis suggests.** Build A's quit path does not write the session
 length. The blanks are a telemetry fault concentrated in the sessions that matter
@@ -459,23 +640,46 @@ not know about survives `tolower()`.
 **Deleting unusual values as if they were impossible.** The game's rules decide
 what is impossible. The chart does not.
 
+**Forgetting to keep the result.** `clean |> filter(build == "A")` prints the
+filtered rows and changes nothing. Assign it, `a_only <- clean |> filter(...)`,
+to keep it.
+
+**Using `=` inside `filter()`.** `filter(build = "A")` is an error; the comparison
+is `==`.
+
 **Cleaning in a spreadsheet.** Edits made by hand cannot be seen, repeated or
 reviewed. Every change belongs in code, where it runs again on the next export.
 
 ---
 
-## Short Practice Activities
+## Practice
 
-Each takes two or three minutes. Start from `sessions`, the de-duplicated data with
-fixed labels from the demonstrations.
+Each takes two or three minutes. Start from `clean`, the de-duplicated data with
+fixed labels from Part 1.
 
-**1.** Which rows would `complete.cases()` remove, split by build and quit reason?
+**1. Predict.** Before running it: how many rows will
+`clean |> filter(build == "B", quit_reason == "Frustrated")` return? Use what you
+know from [Planning a Playtest](01-planning-a-playtest.qmd#worked-example).
+
+::: {.callout-note collapse="true" title="Check your answer"}
+
+```{r}
+#| label: practice-predict
+clean |> filter(build == "B", quit_reason == "Frustrated") |> nrow()
+```
+
+`r frus(deduped, "B")`, the Build B frustration count from the worked example in
+Planning a Playtest. Piping into `nrow()` counts the rows the filter kept.
+:::
+
+**2. Compute.** Which rows would `complete.cases()` remove, split by build and quit
+reason?
 
 ::: {.callout-note collapse="true" title="Check your answer"}
 
 ```{r}
 #| label: practice-incomplete
-dropped <- sessions[!complete.cases(sessions), ]
+dropped <- clean[!complete.cases(clean), ]
 table(dropped$build, dropped$quit_reason)
 ```
 
@@ -485,38 +689,32 @@ scattered across other outcomes. Those two groups need different handling, and
 `complete.cases()` treats them the same.
 :::
 
-**2.** Rewrite `tapply(sessions$score, sessions$archetype, median)` with
-`group_by()` and `summarise()`, and add the number of sessions per archetype.
+**3. Rewrite.** Turn `tapply(clean$score, clean$archetype, median)` into a
+pipeline with `group_by()` and `summarise()`, and add the number of sessions per
+archetype.
 
 ::: {.callout-note collapse="true" title="Check your answer"}
 
 ```{r}
 #| label: practice-archetype
-sessions |>
+clean |>
   group_by(archetype) |>
   summarise(n = n(), median_score = median(score))
 ```
 
 Adding `n = n()` costs one argument in `summarise()` and a second `tapply()` call
-in base R. Always report *n* next to a group summary
-([rule 8](ten-rules.qmd)).
+in base R. Always report *n* next to a group summary ([rule 8](ten-rules.qmd)).
 :::
 
-**3.** Using the pipe, list the sessions with a blank `deaths` cell, showing only
-`session_id`, `build` and `quit_reason`.
+**4. Critique.** A teammate's script starts `clean <- na.omit(raw)` and then
+reports Build A's frustration rate. What is wrong, and what should the first lines
+of the script do instead?
 
 ::: {.callout-note collapse="true" title="Check your answer"}
-
-```{r}
-#| label: practice-deaths
-sessions |>
-  filter(is.na(deaths)) |>
-  select(session_id, build, quit_reason)
-```
-
-No pattern across builds or outcomes: these blanks look scattered, so leaving them
-out of a deaths summary with `na.rm = TRUE` is defensible. That is a conclusion
-about these three rows, not a rule for every blank.
+`na.omit()` drops every row with any blank, which removes all `r nrow(blank)` of
+Build A's unlogged frustration quits, so the reported frustration rate is too low.
+The script should remove duplicates, fix labels, then **count** the missing values
+by build and outcome before deciding anything, and log each step.
 :::
 
 ---
@@ -531,25 +729,40 @@ about these three rows, not a rule for every blank.
 - `trimws()` and `tolower()` fix labels; `factor()` fixes their order; `table()`
   checks the result.
 - Keep a cleaning log with *n* at every step. It goes in the report.
-- The six verbs, chained with `|>`, are split–apply–combine made readable.
-  `tapply()` does the same thing in one call.
+- The pipe passes its left side in as the first argument on its right, so a
+  pipeline reads in the order things happen.
+- The six verbs select columns, filter rows, mutate columns, arrange rows, and
+  group and summarise. `group_by()` + `summarise()` is split–apply–combine, the
+  same thing `tapply()` does in one call.
 - In *Tidebreak*, the `r nrow(blank)` blank cells were the frustration quits.
   Dropping them would have hidden Build A's worst problem.
 
+| Key term | Meaning |
+| :- | :- |
+| **Missing value (`NA`)** | A value that should exist but was not recorded |
+| **Exact duplicate** | A row repeated in every column |
+| **Key** | The column that identifies a row, such as `session_id` |
+| **Impossible value** | A value the game's rules do not allow: an error |
+| **Unusual value** | An extreme but possible value: data |
+| **Factor** | A categorical variable with fixed, ordered levels |
+| **Cleaning log** | Every change to the data, in order, with *n* after each |
+| **Pipe (`|>`)** | Passes the result on its left as the first argument on its right |
+| **Verb** | A `dplyr` function that takes a data frame and returns one |
+| **Split–apply–combine** | Split by group, apply a function to each piece, combine the results |
+
 ---
 
-## Links to Relevant Reference Material
+## Links
 
 - [Ten Rules](ten-rules.qmd): rule 3 (know what kind of number you are holding),
   rule 6 (cleaning is analysis), rule 8 (small samples lie confidently) and rule 9
   (sometimes the rare value is the whole story)
-- [Distributions and Shape](05-distributions-and-shape.qmd): the three kinds of
-  outlier
-- [R and Quarto Reference: getting at parts of a data frame](../reference/r-quarto-reference.qmd#getting-at-parts-of-a-data-frame)
-  and [describing by group](../reference/r-quarto-reference.qmd#describing-by-group)
 - [R and Quarto Reference: cleaning](../reference/r-quarto-reference.qmd#cleaning)
   and [transforming with dplyr](../reference/r-quarto-reference.qmd#transforming-with-dplyr)
-- [Lab 02: cleaning, transforming and comparing](../labs/comparing-builds.qmd#part-a-clean-and-transform), Part A
+- [Lab 02: Comparing Builds](../labs/comparing-builds.qmd#part-a-clean-and-transform),
+  Part A
+- [Week 2 demo](../demos/week-2.qmd)
+- Next: [From Sample to Population](07-sample-to-population.qmd)
 
 ---
 
@@ -563,5 +776,3 @@ about these three rows, not a rule for every blank.
   use to decide which one to keep, and what do you do if there is none?
 - `tapply()` and `group_by()` give the same answer. When would you choose the base R
   version in your own analysis?
-
----

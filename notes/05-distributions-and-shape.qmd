@@ -293,7 +293,8 @@ matter.
 **Why it matters later.** Even when individual values are far from normal, the
 *averages* of samples tend to be close to normal. That fact, the central limit
 theorem, is what makes confidence intervals and t-tests work, and it is the
-subject of Part 4 of these notes, *Comparing*. When those notes ask whether data is
+subject of [From Sample to Population](07-sample-to-population.qmd#the-central-limit-theorem).
+When later notes ask whether data is
 "approximately normal", this is the shape they mean.
 
 ::: {.callout-note collapse="true" title="Going further: Q-Q plots"}

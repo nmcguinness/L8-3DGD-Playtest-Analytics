@@ -122,6 +122,9 @@ Load with `library(tidyr)` for the pivots and `library(dplyr)` for the join.
 | Correlation, −1 to +1 | `cor(d$awareness, d$score)` |
 | Compare two groups of different players | `t.test(wrong_turns ~ build, data = d)` |
 | Compare the same players twice | `t.test(p$before, p$after, paired = TRUE)` |
+| Draw a random sample | `sample(x, 30)`; with replacement: `sample(x, replace = TRUE)` |
+| Repeat a calculation many times | `replicate(1000, mean(sample(x, 30)))` |
+| Confidence interval for one mean | `t.test(x)$conf.int` |
 | Keep the result and pull out parts | `res <- t.test(...)`, then `res$estimate`, `res$conf.int`, `res$p.value` |
 
 ## Plots

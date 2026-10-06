@@ -1,21 +1,522 @@
 ---
 title: "From Sample to Population"
 subtitle: "Why the next playtest would give different numbers"
-draft: true
 body-classes: "wf-at-uncertainty"
 ---
 
 {{< include _workflow.qmd >}}
 
-::: {.callout-note}
-## In preparation
+```{r}
+#| label: setup
+#| include: false
+source("notes/_setup.R")
 
-This page is written in Stage 4 of the notes rebuild. It is a draft, so it does not appear on the published site.
+# Four playtests of 30, in file order
+batch       <- ceiling(seq_len(nrow(sessions)) / 30)
+batch_means <- round(tapply(sessions$score, batch, mean))
+
+# An imaginary population: the 120 session lengths copied 1,000 times
+pop      <- rep(sessions$session_minutes, times = 1000)
+pop_mean <- mean(pop)
+pop_sd   <- sd(pop)
+
+set.seed(7)
+draw_means <- function(n, reps = 1000) replicate(reps, mean(sample(pop, n)))
+means_10  <- draw_means(10)
+means_30  <- draw_means(30)
+means_100 <- draw_means(100)
+
+se_30 <- pop_sd / sqrt(30)
+
+# Twenty playtests of 30, each with a 95% confidence interval
+set.seed(1)
+cis <- t(replicate(20, {
+  x <- sample(pop, 30)
+  t.test(x)$conf.int
+}))
+missed <- sum(cis[, 1] > pop_mean | cis[, 2] < pop_mean)
+stopifnot(missed >= 1, missed <= 3)
+
+# Build B session length: one real interval
+mins_b <- sessions$session_minutes[sessions$build == "B"]
+n_b    <- length(mins_b)
+se_b   <- sd(mins_b) / sqrt(n_b)
+ci_b   <- t.test(mins_b)$conf.int
+```
+
+> Every number in a playtest report describes the players who happened to turn
+> up. Bring in a different group and every number moves. This page is about how
+> far: what **sampling variability** is, how the **standard error** measures it,
+> and how a **confidence interval** turns one playtest's number into an honest
+> range for the population you care about. The playtest question running through
+> it: *"Build B sessions averaged 24 minutes. How sure can we be?"*
+
+::: {.at-a-glance}
+**Time:** 15 minutes in class (the simulation figures); the rest is reading.
+**Before this:** [Distributions and Shape](05-distributions-and-shape.qmd),
+especially the normal distribution.
+**Key terms:** sampling variability, sampling distribution, standard error,
+central limit theorem, confidence interval, margin of error.
+**R introduced:** `sample()`, `replicate()`, `sqrt()`, `qt()`, `t.test()` for one
+group.
 :::
 
-## Planned contents
+## Learning Outcomes
 
-- Sampling variability
-- The sampling distribution and the standard error
-- The central limit theorem, without the maths
-- Confidence intervals, and what 95% means
+By the end of these notes you can:
+
+- explain why a second playtest with different players would give different
+  numbers, even if nothing about the game changed;
+- describe a sampling distribution, and say what the standard error measures;
+- explain how sample size affects the standard error, and why quadrupling the
+  players only halves it;
+- state the central limit theorem in plain English, and say why it matters for
+  data that is not normal;
+- compute and interpret a 95% confidence interval for a mean, and say what the
+  "95%" does and does not mean.
+
+---
+
+## Why This Matters for Playtesting
+
+[Planning a Playtest](01-planning-a-playtest.qmd#how-many-players) showed that a
+five-session playtest can report a frustration rate anywhere from 0% to 60% when
+the true rate is a third. That spread is not a flaw in the method. It is what
+happens whenever you measure some players and draw conclusions about all of them.
+
+**Every comparison in Part 4 rests on this page.** Build B's sessions were longer
+than Build A's. Is that because Build B is better, or because Build B happened to
+get the more patient players? You cannot answer that until you know how much a
+number would move by chance alone. That amount has a name, the standard error, and
+this page shows where it comes from.
+
+---
+
+## Sampling Variability
+
+Split the `r nrow(sessions)` *Tidebreak* sessions into four batches of 30, in the
+order they were recorded, and treat each as a separate playtest. Same game, same
+build mix, same procedure. The mean score of each batch:
+
+```{r}
+#| label: batches
+batch <- ceiling(seq_len(nrow(sessions)) / 30)
+round(tapply(sessions$score, batch, mean))
+```
+
+Four playtests, four different answers, from `r min(batch_means)` to
+`r max(batch_means)`. Nothing changed except which players were in each batch.
+
+**Sampling variability** is this: a different sample gives a different number,
+even from the same population. It is not a mistake and it cannot be avoided. The
+only question is how big it is, and that depends on two things: **how much the
+players differ** (the SD) and **how many of them you measured** (n).
+
+---
+
+## The Sampling Distribution
+
+To see sampling variability properly, you need many playtests, not four. Real
+studios cannot afford that, but a simulation can.
+
+Imagine the population of everyone who will ever play *Tidebreak*, and suppose
+their session lengths look exactly like the `r nrow(sessions)` you recorded. Build
+that population by copying the sessions a thousand times over, then run a thousand
+imaginary playtests of 30 players each, and record each playtest's mean:
+
+```{r}
+#| label: simulate
+pop <- rep(sessions$session_minutes, times = 1000)
+
+set.seed(7)
+means_30 <- replicate(1000, mean(sample(pop, 30)))
+```
+
+`sample(pop, 30)` draws 30 players at random; `mean()` is that playtest's result;
+`replicate(1000, ...)` runs it a thousand times. The thousand means form the
+**sampling distribution**: the distribution of a summary across every playtest you
+might have run.
+
+```{r}
+#| label: fig-sampling-dist
+#| fig-cap: "Left: session length across the imaginary population, lopsided and two-humped. Right: the means of 1,000 playtests of 30 players drawn from it, which form a bell."
+#| fig-alt: "Two histograms. Left: the population of session lengths, piled up near 30 minutes with a second smaller hump around 12 minutes. Right: the distribution of 1,000 sample means, a narrow symmetric bell centred near 23 minutes, with a red normal curve laid over it that fits closely."
+#| fig-height: 3.6
+op <- par(mfrow = c(1, 2), mar = c(4, 3, 2, 1))
+hist(pop, breaks = 26, col = pal$fill, border = "white", main = "Population",
+     xlab = "Session length (minutes)", ylab = "", yaxt = "n", cex.main = 0.9)
+abline(v = pop_mean, col = pal$highlight, lwd = 2)
+hist(means_30, breaks = 30, freq = FALSE, col = pal$fill, border = "white",
+     main = "1,000 playtest means, n = 30", xlim = range(pop),
+     xlab = "Mean session length (minutes)", ylab = "", yaxt = "n", cex.main = 0.9)
+curve(dnorm(x, mean(means_30), sd(means_30)), add = TRUE, lwd = 2,
+      col = pal$highlight)
+par(op)
+```
+
+Two things stand out.
+
+**The means are centred on the truth.** The population mean is
+`r round(pop_mean, 1)` minutes; the average of the thousand playtest means is
+`r round(mean(means_30), 1)`. Any one playtest misses, but not systematically in
+one direction.
+
+**The means are far less spread out than the players.** Individual sessions run
+from `r min(pop)` to `r max(pop)` minutes. Playtest means of 30 players fall almost
+all between `r round(quantile(means_30, 0.025), 1)` and
+`r round(quantile(means_30, 0.975), 1)`. Averaging cancels out most of the
+differences between players.
+
+---
+
+## The Standard Error
+
+The SD of the sampling distribution has its own name: the **standard error** (SE).
+It is the typical distance between one playtest's mean and the population's mean:
+**how far your number is likely to be off**.
+
+You never get to run a thousand playtests, but you do not need to. The standard
+error can be estimated from a single sample:
+
+$$\text{SE} = \frac{\text{SD}}{\sqrt{n}}$$
+
+Check it against the simulation. The population SD is `r round(pop_sd, 2)`, so for
+n = 30 the formula gives `r round(pop_sd, 2)` / √30 = `r round(se_30, 2)`. The SD
+of the thousand simulated means is `r round(sd(means_30), 2)`. The formula works.
+
+**Bigger samples give smaller standard errors, but slowly.** Because n is under a
+square root, you need **four times** the players to **halve** the standard error:
+
+```{r}
+#| label: fig-sample-size-se
+#| fig-cap: "Means of 1,000 simulated playtests at three sizes. Each quadrupling of n roughly halves the spread."
+#| fig-alt: "Three horizontal strips of points. With n = 10 the playtest means spread widely around the dashed true mean; with n = 30 they are tighter; with n = 100 they cluster closely around it."
+#| fig-height: 3.4
+par(mar = c(4, 6, 1, 1))
+stripchart(list("n = 10" = means_10, "n = 30" = means_30, "n = 100" = means_100),
+           method = "jitter", jitter = 0.25, pch = 16, cex = 0.4, las = 1,
+           col = adjustcolor(pal$line, alpha.f = 0.3),
+           xlab = "Playtest mean session length (minutes)")
+abline(v = pop_mean, lty = 2, lwd = 2, col = pal$highlight)
+```
+
+| Players per playtest | SE from the formula | SD of 1,000 simulated means |
+| :-: | :-: | :-: |
+| 10 | `r round(pop_sd / sqrt(10), 2)` | `r round(sd(means_10), 2)` |
+| 30 | `r round(pop_sd / sqrt(30), 2)` | `r round(sd(means_30), 2)` |
+| 100 | `r round(pop_sd / sqrt(100), 2)` | `r round(sd(means_100), 2)` |
+
+**SD and SE answer different questions.** The SD describes the players: how much
+one session differs from another. The SE describes your *estimate*: how much your
+mean would move if you ran the playtest again. More players does not make the
+players less varied, so the SD stays put; it makes your estimate steadier, so the
+SE shrinks.
+
+---
+
+## The Central Limit Theorem
+
+Look again at the left panel of @fig-sampling-dist. Session length is lopsided and
+two-humped, nothing like a bell. Yet the means on the right form a bell almost
+perfectly.
+
+That is the **central limit theorem**: **whatever shape the individual values
+have, the means of reasonably large samples are approximately normal.** The
+individual players can be skewed, bimodal or capped; their averages still pile up
+in a bell around the true mean.
+
+It is why the normal distribution from
+[Distributions and Shape](05-distributions-and-shape.qmd#the-normal-distribution)
+matters even for data that is not normal. The 68–95–99.7 rule does not describe
+the session lengths, but it does describe the sampling distribution of their mean.
+So about 95% of playtest means fall within 2 standard errors of the true mean. That
+single fact is what confidence intervals and t-tests are built on.
+
+**How large is "reasonably large"?** For mildly skewed data, 30 is usually plenty;
+the simulation above uses 30 and the bell is clear. For heavily skewed data, such
+as frame times with rare hitches, it takes more.
+
+---
+
+## Confidence Intervals
+
+If 95% of playtest means fall within about 2 SEs of the true mean, then turning it
+round, the true mean is within about 2 SEs of your playtest's mean 95% of the time.
+That range is a **95% confidence interval**:
+
+$$\text{mean} \pm \text{about } 2 \times \text{SE}$$
+
+The "about 2" is 1.96 for large samples; for smaller ones R uses a slightly larger
+number from the **t distribution**, which allows for the SD itself being estimated
+from the sample. The part after the ± is the **margin of error**.
+
+**For real:** Build B's `r n_b` sessions.
+
+```{r}
+#| label: ci-by-hand
+mins_b <- sessions$session_minutes[sessions$build == "B"]
+
+m  <- mean(mins_b)
+se <- sd(mins_b) / sqrt(length(mins_b))
+multiplier <- qt(0.975, df = length(mins_b) - 1)
+
+c(mean = m, se = se, multiplier = multiplier)
+m + c(-1, 1) * multiplier * se
+```
+
+And the same in one line, which is how you will usually do it:
+
+```{r}
+#| label: ci-t-test
+t.test(mins_b)$conf.int
+```
+
+**In a report you would write:** "Build B sessions averaged
+`r round(mean(mins_b), 1)` minutes (95% CI `r ci_fmt(ci_b)`, n = `r n_b`)." The
+interval says the data is consistent with a population average anywhere from
+`r round(ci_b[1], 1)` to `r round(ci_b[2], 1)` minutes. That honesty is the point:
+a reader now knows how much weight the `r round(mean(mins_b), 1)` can bear.
+
+::: {.callout-note collapse="true" title="Going further: these sessions are not quite independent"}
+The interval treats Build B's `r n_b` sessions as `r n_b` independent
+observations. They are not: they come from `r length(unique(sessions$player_id[sessions$build == "B"]))`
+players who each played `r unique(as.vector(table(sessions$player_id)))` times,
+and one player's sessions resemble each other. The honest effective sample size
+is somewhere between the number of players and the number of sessions, so the true
+interval is somewhat wider than this one. Handling repeated measurements properly
+needs methods beyond this module; the practical lesson is to report both counts
+([rule 8](ten-rules.qmd)).
+:::
+
+### What "95%" means
+
+This is the most misread number in statistics. **The 95% describes the method,
+not this particular interval.** If you ran the playtest many times and computed an
+interval each time, about 95% of those intervals would contain the true population
+mean. Any one interval either contains it or does not; you never know which.
+
+```{r}
+#| label: fig-twenty-cis
+#| fig-cap: "Twenty simulated playtests of 30 players, each with its 95% confidence interval. The dashed line is the true population mean. Red intervals miss it."
+#| fig-alt: "Twenty horizontal line segments stacked vertically, each with a dot at its centre. A vertical dashed line marks the true mean. Most segments cross the dashed line; the ones that do not are drawn in red."
+#| fig-height: 4.6
+miss <- cis[, 1] > pop_mean | cis[, 2] < pop_mean
+par(mar = c(4, 4, 1, 1))
+plot(NA, xlim = range(cis), ylim = c(1, 20), yaxt = "n",
+     xlab = "Mean session length (minutes)", ylab = "Playtest")
+axis(2, at = c(1, 5, 10, 15, 20), las = 1)
+segments(cis[, 1], 1:20, cis[, 2], 1:20, lwd = 2,
+         col = ifelse(miss, pal$highlight, pal$line))
+points(rowMeans(cis), 1:20, pch = 19, cex = 0.7,
+       col = ifelse(miss, pal$highlight, pal$line))
+abline(v = pop_mean, lty = 2, lwd = 2, col = pal$guide)
+```
+
+In this run, `r missed` of the 20 intervals missed the true mean, close to the one
+in twenty the method promises. A playtest that misses has done nothing wrong; it
+drew an unusual set of players, which is exactly what the 5% allows for.
+
+**So do not say** "there is a 95% chance the true mean is between
+`r round(ci_b[1], 1)` and `r round(ci_b[2], 1)`". Say "the method that produced
+this interval captures the true mean 95% of the time", or, in a report, simply
+give the interval and let it stand for "the plausible range".
+
+**Wider means less certain.** An interval narrows with more players (a smaller SE)
+and widens with more varied players (a larger SD). A 99% interval is wider than a
+95% one: more confidence costs precision.
+
+::: {.callout-note collapse="true" title="Going further: the bootstrap"}
+The formula relies on the central limit theorem. The **bootstrap** gets an interval
+without it, by treating your sample as a stand-in for the population and resampling
+it. Draw `r n_b` sessions *with replacement* from Build B's `r n_b`, take the mean,
+and repeat a thousand times; the middle 95% of those means is the interval.
+
+```{r}
+#| label: bootstrap
+set.seed(3)
+boot_means <- replicate(1000, mean(sample(mins_b, replace = TRUE)))
+quantile(boot_means, c(0.025, 0.975))
+```
+
+It agrees closely with `t.test()`'s `r ci_fmt(ci_b)`. The bootstrap earns its keep
+for summaries with no simple formula, such as a median or a 99th percentile:
+replace `mean` with `median` in the line above and it still works.
+:::
+
+---
+
+## Worked Example
+
+**Build B sessions averaged 24 minutes. How sure can we be?** The draft report
+says: "Build B sessions last 24 minutes on average."
+
+**Step 1: what is the sample?** `r n_b` sessions from
+`r length(unique(sessions$player_id[sessions$build == "B"]))` players, one
+playtest. A different group would give a different mean.
+
+**Step 2: how much would it move?** The SD of Build B's session lengths is
+`r round(sd(mins_b), 2)` minutes. The standard error is that divided by
+√`r n_b`: `r round(se_b, 2)` minutes. A second playtest's mean would typically land
+within about `r round(se_b, 1)` minutes of this one.
+
+**Step 3: give the range.** The 95% confidence interval is `r ci_fmt(ci_b)`
+minutes.
+
+**Step 4: rewrite.** "Build B sessions averaged `r round(mean(mins_b), 1)` minutes
+(95% CI `r ci_fmt(ci_b)`; `r n_b` sessions from
+`r length(unique(sessions$player_id[sessions$build == "B"]))` players)." The claim
+is now as strong as the data, and no stronger.
+
+**Step 5: notice what is still missing.** This is one build on its own. Whether
+Build B's sessions are longer than Build A's is a different question, because both
+numbers wobble. Comparing two groups, and asking whether the gap could be chance, is
+[Comparing Groups](08-comparing-groups.qmd).
+
+---
+
+## Interpretation Guidance
+
+**What the data shows.** One playtest's mean: `r round(mean(mins_b), 1)` minutes
+for Build B.
+
+**What the analysis suggests.** The population mean is plausibly anywhere from
+`r round(ci_b[1], 1)` to `r round(ci_b[2], 1)` minutes, with values near the centre
+of that range more plausible than values at its ends.
+
+**What can legitimately be concluded.** A range, not a point. A finding that
+depends on the exact value of a mean, such as "sessions must average 25 minutes",
+cannot be settled by a playtest whose interval spans both sides of 25.
+
+---
+
+## Common Mistakes
+
+**Treating one playtest's number as a fact about the game.** It is a fact about
+those players. Give the interval.
+
+**Confusing the SD and the SE.** The SD describes the players; the SE describes
+your estimate. Reporting an SE as if it were the spread of the players makes the
+players look far more alike than they are.
+
+**Reading "95%" as the chance this interval is right.** It describes how often the
+method works, not this interval.
+
+**Expecting a bigger sample to fix everything.** Four times the players halves the
+SE. Doubling the playtest buys less precision than it seems.
+
+**Forgetting that sessions are not players.** Repeated sessions from the same
+player are not independent, so an interval built on sessions is somewhat too
+narrow. Report both counts.
+
+**Assuming the central limit theorem rescues tiny samples.** With five players and
+skewed data, the sample mean is not reliably normal, and the interval is not
+reliable either.
+
+---
+
+## Practice
+
+Each takes two or three minutes.
+
+**1. Predict.** A playtest of 25 players gives an SE of 2 minutes. Roughly what SE
+would 100 players give? And 400?
+
+::: {.callout-note collapse="true" title="Check your answer"}
+About 1 minute with 100 players (four times the players, half the SE) and about
+0.5 with 400 (sixteen times the players, a quarter of the SE). Each halving costs
+four times as many players.
+:::
+
+**2. Compute.** Find the 95% confidence interval for the mean session length of
+**Build A**, and compare its width with Build B's.
+
+::: {.callout-note collapse="true" title="Check your answer"}
+
+```{r}
+#| label: practice-ci-a
+mins_a <- sessions$session_minutes[sessions$build == "A"]
+ci_a <- t.test(mins_a)$conf.int
+ci_a
+diff(ci_a)
+diff(t.test(mins_b)$conf.int)
+```
+
+Build A's interval is `r ci_fmt(t.test(sessions$session_minutes[sessions$build == "A"])$conf.int)`
+minutes, and it is wider: the same number of sessions, but Build A's session lengths
+are more spread out (SD
+`r round(sd(sessions$session_minutes[sessions$build == "A"]), 1)` against
+`r round(sd(mins_b), 1)`), because of its two groups of players.
+:::
+
+**3. Critique.** A report says: "Mean enjoyment was 4.1 (SE 0.08), so players
+agreed closely about how much they enjoyed it." What is wrong?
+
+::: {.callout-note collapse="true" title="Check your answer"}
+The SE says how precisely the *mean* is known, not how much players agreed. With
+`r nrow(sessions)` sessions, the SE is small even if players disagreed widely. To
+describe agreement, report the SD or the distribution. (Enjoyment is also a 1 to 7
+rating, so the distribution is the better summary anyway; see
+[Data, Variables and Types](03-data-and-types.qmd#the-rating-scale-question).)
+:::
+
+**4. Interpret.** In @fig-twenty-cis, one of the red intervals came from a
+playtest. Did that playtest do anything wrong?
+
+::: {.callout-note collapse="true" title="Check your answer"}
+No. It drew an unusual set of players by chance. A 95% method is designed to miss
+about one time in twenty, and nothing in the data warns you when it is your turn.
+That is why a single surprising result is a reason to run another playtest, not to
+redesign the game.
+:::
+
+---
+
+## Summary
+
+- A different sample gives a different number. That is sampling variability, and
+  it is unavoidable.
+- The sampling distribution is the distribution of a summary across every playtest
+  you might have run. Its SD is the standard error: how far your estimate is
+  typically off.
+- SE = SD / √n. Four times the players halves the SE.
+- The SD describes the players; the SE describes your estimate.
+- The central limit theorem: means of reasonably large samples are approximately
+  normal, whatever the shape of the data.
+- A 95% confidence interval is about mean ± 2 SE. The 95% describes the method: it
+  captures the true value in about 95% of playtests.
+- Report a mean with its interval and n.
+
+| Key term | Meaning |
+| :- | :- |
+| **Sampling variability** | Different samples from the same population give different results |
+| **Sampling distribution** | The distribution of a summary across many possible samples |
+| **Standard error** | The SD of the sampling distribution: how far an estimate is typically off |
+| **Central limit theorem** | Means of reasonably large samples are approximately normal |
+| **Confidence interval** | A range of plausible values for the population, given the sample |
+| **Margin of error** | The part after the ± in a confidence interval |
+| **Bootstrap** | Estimating a sampling distribution by resampling your own sample |
+
+---
+
+## Links
+
+- [Ten Rules](ten-rules.qmd): rule 8 (small samples lie confidently)
+- [Statistics Reference: from sample to population](../reference/reference-statistics.qmd#from-sample-to-population)
+- [Lab 02: Comparing Builds](../labs/comparing-builds.qmd), Part B
+- [Week 2 demo](../demos/week-2.qmd)
+- Next: [Comparing Groups](08-comparing-groups.qmd)
+
+---
+
+## Reflective Questions
+
+- Your playtest found a mean session length of 24 minutes, and your producer wants
+  "the number". Do you give them 24, or the interval? What do you say to justify
+  your choice?
+- Doubling the playtest from 30 to 60 players narrows the interval by less than a
+  third. When is that worth the cost, and when is it not?
+- The central limit theorem rescues means from skewed data. Does it rescue the
+  99th percentile of frame time? What would you do instead?
+- Your interval for Build B is built on sessions, but players played four sessions
+  each. Is the true interval wider or narrower, and why does it matter for a
+  design decision?
