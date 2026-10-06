@@ -95,7 +95,7 @@ ggplot(sessions, aes(x = mobility, y = survivability, colour = archetype)) +
 **Finish here.** Ask: the overall correlation is negative; every archetype's line
 goes up.
 Which one answers "should a Scout lose health as they get faster"? Archetype is the
-confound. This is Lab 03, Exercise 06.
+confound. This is Lab 03, Exercise 07.
 
 ---
 

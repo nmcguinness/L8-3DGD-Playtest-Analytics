@@ -120,6 +120,9 @@ Load with `library(tidyr)` for the pivots and `library(dplyr)` for the join.
 | Task | Code |
 | :- | :- |
 | Correlation, −1 to +1 | `cor(d$awareness, d$score)` |
+| Fit a straight line | `fit <- lm(score ~ awareness, data = d)` |
+| Slope, intercept and their intervals | `coef(fit)`, `confint(fit)` |
+| R² and residuals | `summary(fit)$r.squared`, `resid(fit)` |
 | Compare two groups of different players | `t.test(wrong_turns ~ build, data = d)` |
 | Compare the same players twice | `t.test(p$before, p$after, paired = TRUE)` |
 | Draw a random sample | `sample(x, 30)`; with replacement: `sample(x, replace = TRUE)` |

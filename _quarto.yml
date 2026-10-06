@@ -58,7 +58,7 @@ website:
           - section: "5 · Relationships"
             contents:
               - notes/09-visualising-with-ggplot2.qmd
-              # - notes/10-relationships-and-regression.qmd        (draft: add in Stage 6)
+              - notes/10-relationships-and-regression.qmd
           - section: "6 · Communicating"
             contents:
               - notes/11-reporting-evidence.qmd

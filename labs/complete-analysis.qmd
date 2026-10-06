@@ -24,6 +24,7 @@ lab with a `report.qmd` that renders.
 | `geom_smooth(method = "lm")` | Add a straight-line trend to a scatterplot |
 | `labs()` | Title, axis and legend labels |
 | `cor()` | Strength and direction of a straight-line relationship, −1 to +1 |
+| `lm()`, `coef()`, `confint()` | Fit a straight line and read its slope and interval |
 | `pivot_longer()` | Reshape wide columns into long rows |
 | `table()`, `prop.table()` | Count, then turn counts into proportions |
 | `left_join()` | Add columns from another table, matched on a key |
@@ -35,8 +36,8 @@ By the end of this lab you can:
 
 - rebuild a base R plot in `ggplot2`, and build a figure base R cannot easily
   produce;
-- measure a relationship with `cor()`, draw it with `geom_smooth()`, and check it
-  within groups before trusting it;
+- measure a relationship with `cor()`, describe it as a line with `lm()`, draw it
+  with `geom_smooth()`, and check it within groups before trusting it;
 - identify a confounding variable and say what it does to a conclusion;
 - reshape a survey with `pivot_longer()` and summarise every item at once;
 - assemble a nine-part playtest report in Quarto, with every number computed, and
@@ -79,7 +80,8 @@ session, eight agreement items rated 1 to 5.
 
 # Part A — Visualise and relate
 
-Notes for this part: [Visualising with ggplot2](../notes/09-visualising-with-ggplot2.qmd).
+Notes for this part: [Visualising with ggplot2](../notes/09-visualising-with-ggplot2.qmd)
+and [Relationships, Correlation and Regression](../notes/10-relationships-and-regression.qmd).
 
 ## Exercise 01 — A histogram, rebuilt `[Do]`
 
@@ -174,7 +176,48 @@ the sign gives the direction.
 **Write 2 sentences:** a designer wants to reward players who fire more shots,
 "because they are the ones scoring". What do you tell them?
 
-## Exercise 05 — The trade-off `[Apply]`
+## Exercise 05 — How much score per point of awareness? `[Apply]`
+
+Fit a simple linear regression of `score` on `awareness` with `lm()`. Report the
+slope with its 95% confidence interval and R², then draw the scatterplot with the
+fitted line.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex05
+fit <- lm(score ~ awareness, data = sessions)
+coef(fit)
+confint(fit)
+summary(fit)$r.squared
+
+ggplot(sessions, aes(x = awareness, y = score)) +
+  geom_point(colour = "grey40") +
+  geom_smooth(method = "lm", se = FALSE, colour = "black") +
+  labs(title = "Score against awareness",
+       x = "Awareness rating", y = "Score")
+```
+
+```{r}
+#| label: ex05-numbers
+#| include: false
+b1    <- coef(fit)[["awareness"]]
+b1_ci <- confint(fit)["awareness", ]
+r2    <- summary(fit)$r.squared
+```
+
+Each extra point of awareness goes with about `r round(b1, 1)` more points of
+score on average (95% CI `r round(b1_ci[1], 1)` to `r round(b1_ci[2], 1)`), and
+awareness accounts for `r round(100 * r2)`% of the variation in score: R² is the
+correlation from Exercise 04 squared. The slope describes how score and awareness
+move together across players. It does not say that raising one player's awareness
+would raise their score.
+:::
+
+**Write 2 sentences:** turn the slope into a sentence a balance designer could use,
+then say what the regression cannot tell them.
+
+## Exercise 06 — The trade-off `[Apply]`
 
 Draw `survivability` against `mobility` as a scatterplot with a straight-line
 trend, and measure the relationship with `cor()`.
@@ -182,7 +225,7 @@ trend, and measure the relationship with `cor()`.
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex05
+#| label: ex06
 ggplot(sessions, aes(x = mobility, y = survivability)) +
   geom_point(colour = "grey40") +
   geom_smooth(method = "lm", se = FALSE, colour = "black") +
@@ -200,10 +243,10 @@ relationship, one as a picture and one as a number.
 **Write 1 sentence:** describe the relationship in words a balance designer would
 use.
 
-## Exercise 06 — Faster players are more fragile? `[Decide]`
+## Exercise 07 — Faster players are more fragile? `[Decide]`
 
 ```{r}
-#| label: ex06-setup
+#| label: ex07-setup
 #| include: false
 r_all  <- cor(sessions$mobility, sessions$survivability)
 r_arch <- sapply(split(sessions, sessions$archetype),
@@ -211,7 +254,7 @@ r_arch <- sapply(split(sessions, sessions$archetype),
 stopifnot(r_all < -0.5, all(r_arch > 0))
 ```
 
-The balance designer reads Exercise 05 and proposes a patch: *"Faster players are
+The balance designer reads Exercise 06 and proposes a patch: *"Faster players are
 more fragile, so when a Scout player gets faster, cut their health to match."*
 Redraw the scatterplot with each archetype in its own colour and its own trend
 line, then decide whether the patch follows from the data.
@@ -219,7 +262,7 @@ line, then decide whether the patch follows from the data.
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex06
+#| label: ex07
 ggplot(sessions, aes(x = mobility, y = survivability, colour = archetype)) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
@@ -261,7 +304,7 @@ Notes for this part: [Interpreting and Reporting Evidence](../notes/11-reporting
 Every exercise in this part produces a piece of `report.qmd`. Create the file now,
 in the project folder next to `data/`, and add to it as you go.
 
-## Exercise 07 — Wide to long `[Do]`
+## Exercise 08 — Wide to long `[Do]`
 
 Reshape `survey` so that it has one row per session per item, with columns
 `session_id`, `item` and `rating`. Call it `long`, and check its size.
@@ -269,7 +312,7 @@ Reshape `survey` so that it has one row per session per item, with columns
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex07
+#| label: ex08
 long <- survey |>
   pivot_longer(-session_id, names_to = "item", values_to = "rating")
 
@@ -283,7 +326,7 @@ head(long, 3)
 
 **Write 1 sentence:** why can you not `group_by()` the items in the wide `survey`?
 
-## Exercise 08 — Every item, both builds `[Apply]`
+## Exercise 09 — Every item, both builds `[Apply]`
 
 Use `table()` and `prop.table()` to show the distribution of ratings for every
 item. Then join each session's `build` onto `long` and find the proportion of
@@ -293,7 +336,7 @@ between the builds?
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex08
+#| label: ex09
 round(prop.table(table(long$item, long$rating), margin = 1), 2)
 
 agree_by_build <- long |>
@@ -318,7 +361,7 @@ two builds side by side so the change is one subtraction.
 ::: {.callout-note collapse="true" title="Check your answer"}
 
 ```{r}
-#| label: ex08-check
+#| label: ex09-check
 #| echo: false
 nav <- agree_by_build[agree_by_build$item == "level_navigable", ]
 obj <- agree_by_build[agree_by_build$item == "objective_clear", ]
@@ -332,7 +375,7 @@ cut wrong turns, but what players noticed was knowing where they were meant to g
 That is worth a sentence in the report.
 :::
 
-## Exercise 09 — "Without reducing enjoyment" `[Decide]`
+## Exercise 10 — "Without reducing enjoyment" `[Decide]`
 
 The research question has two halves. Test the second: did Build B reduce
 enjoyment? Use `enjoyment` from `sessions` (1–7) and `would_play_again` from the
@@ -341,7 +384,7 @@ survey, and decide what the report may claim.
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex09
+#| label: ex10
 enjoy <- t.test(enjoyment ~ build, data = sessions)
 enjoy$estimate
 enjoy$conf.int
@@ -350,7 +393,7 @@ agree_by_build[agree_by_build$item == "would_play_again", ]
 ```
 
 ```{r}
-#| label: ex09-check
+#| label: ex10-check
 #| include: false
 wpa <- agree_by_build[agree_by_build$item == "would_play_again", ]
 stopifnot(enjoy$p.value > 0.5, abs(wpa$change) < 0.1)
@@ -376,7 +419,7 @@ interval.
 **Write 2 sentences:** both measures were taken straight after one session. What
 would you need to know before claiming Build B is as enjoyable over a week of play?
 
-## Exercise 10 — Start the report, and render it `[Apply]`
+## Exercise 11 — Start the report, and render it `[Apply]`
 
 In `report.qmd`, write:
 
@@ -447,7 +490,7 @@ ggplot(sessions, aes(x = wrong_turns)) +
 The two inline expressions produce these values when the report renders:
 
 ```{r}
-#| label: ex10
+#| label: ex11
 nrow(sessions)
 length(unique(sessions$player_id))
 ```
@@ -471,7 +514,7 @@ causes are a data path written as `../data/...`, a chunk that uses a package it
 did not load, and a missing closing ```` ``` ````.
 :::
 
-## Exercise 11 — Limitations and the conclusion `[Decide]`
+## Exercise 12 — Limitations and the conclusion `[Decide]`
 
 Write parts 8 and 9 of the report. Part 8 lists what could make your conclusion
 wrong. Part 9 is one finding in **What → Pattern → Meaning → Action** form that
@@ -481,7 +524,7 @@ finished ([rule 10](../notes/ten-rules.qmd)). Every number is inline R.
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex11
+#| label: ex12
 wt <- t.test(wrong_turns ~ build, data = sessions)
 wt$estimate
 wt$conf.int
@@ -491,7 +534,7 @@ table(sessions$cohort, sessions$build)
 ```
 
 ```{r}
-#| label: ex11-check
+#| label: ex12-check
 #| include: false
 per_player <- unique(as.vector(table(sessions$player_id)))
 n_players  <- length(unique(sessions$player_id))
@@ -510,7 +553,7 @@ stopifnot(length(per_player) == 1, wt$conf.int[1] > 0,
   the report so the reader can judge.
 - Comments record how a session felt, and do not agree with the wrong-turn counts
   (see the Challenge).
-- Strong correlations in this data can reverse within archetypes (Exercise 06), so
+- Strong correlations in this data can reverse within archetypes (Exercise 07), so
   no relationship here is reported as a cause without checking within groups.
 
 **One defensible part 9.**
@@ -594,8 +637,8 @@ stopifnot(lost[["B"]] > lost[["A"]],
 > question in the survey rather than relying on free text.
 
 Other contradictions in this data that would serve: `level_navigable` barely moved
-while wrong turns fell (Exercise 08); the mobility–survivability trade-off reverses
-within archetypes (Exercise 06).
+while wrong turns fell (Exercise 09); the mobility–survivability trade-off reverses
+within archetypes (Exercise 07).
 
 **What would make it indefensible.** Leaving the contradiction out because it
 spoils the story, or including it without saying which evidence the reader should

@@ -69,6 +69,21 @@ than one long function call.
 to the mapping and every geometry splits by build in the way that suits it. You
 learn three ideas once instead of learning every chart type separately.
 
+```{mermaid}
+%%| label: fig-grammar
+%%| fig-cap: "A ggplot2 figure is built in layers, each added with +. The first three are required; the rest refine it."
+flowchart LR
+  D[("Data<br/>ggplot(sessions)")] --> M["Aesthetic mapping<br/>aes(x = score)"]
+  M --> G["Geometry<br/>+ geom_histogram()"]
+  G --> F["Facets<br/>+ facet_wrap(~ build)"]
+  F --> L["Labels<br/>+ labs(title = ...)"]
+  L --> P(["Figure"])
+  classDef req fill:#fbeaea,stroke:#b22222,color:#212529
+  classDef opt fill:#f8f9fa,stroke:#6c757d,color:#212529
+  class D,M,G req
+  class F,L opt
+```
+
 ---
 
 ## Mapping and Setting
@@ -90,15 +105,22 @@ Common Mistakes below.
 
 ## Choosing the Geometry
 
-The geometry follows from the kind of variable you are drawing
-([rule 3](ten-rules.qmd)), exactly as in Week 1.
+The geometry follows from the type of the variables you are drawing
+([Data, Variables and Types](03-data-and-types.qmd#types-of-data),
+[rule 3](ten-rules.qmd)), exactly as in Week 1.
 
-| You want to show | Variables | Geometry | Week 1 equivalent |
+| You want to show | Variable types | Geometry | Week 1 equivalent |
 | :- | :- | :- | :- |
-| The shape of one numeric variable | One numeric on x | `geom_histogram()` | `hist()` |
-| Counts of a categorical variable | One categorical on x | `geom_bar()` | `barplot(table())` |
-| A numeric variable compared across groups | Categorical on x, numeric on y | `geom_boxplot()` | `boxplot(y ~ x)` |
-| Two numeric variables together | Numeric on x and y | `geom_point()` | `plot(x, y)` |
+| The shape of one numeric variable | Discrete or continuous | `geom_histogram()` | `hist()` |
+| Counts of one categorical variable | Nominal or ordinal | `geom_bar()` | `barplot(table())` |
+| A numeric variable compared across groups | Categorical and numeric | `geom_boxplot()` | `boxplot(y ~ x)` |
+| Two numeric variables together | Numeric and numeric | `geom_point()`, plus `geom_smooth(method = "lm")` for a trend | `plot(x, y)`, `abline(lm(y ~ x))` |
+| Two categorical variables together | Categorical and categorical | `geom_bar(position = "fill")` | `barplot(table(a, b))` |
+| A value changing over time or order | Numeric against time | `geom_line()` | `plot(x, y, type = "l")` |
+
+The last three rows are the relationships of
+[Relationships, Correlation and Regression](10-relationships-and-regression.qmd),
+which this page is taught alongside.
 
 **`geom_bar()` counts for you.** Give it the raw column and it tallies the
 categories itself. The Week 1 habit of wrapping the column in `table()` first is
@@ -504,6 +526,7 @@ questions.
 - [ggplot2 Reference](../reference/reference-ggplot2.qmd)
 - [Lab 03: complete playtest analysis](../labs/complete-analysis.qmd#part-a-visualise-and-relate),
   Part A
+- Next: [Relationships, Correlation and Regression](10-relationships-and-regression.qmd)
 
 ---
 
