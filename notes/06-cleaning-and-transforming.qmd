@@ -196,7 +196,7 @@ function on its right. `sessions |> filter(build == "A")` means
 reads top to bottom, in the order the steps happen, instead of inside out.
 
 **You will also see `%>%`.** It is the older tidyverse pipe and does the same job
-in everything you will write here. [Distributions and Variation](05-distributions-and-shape.qmd)
+in everything you will write here. [Distributions and Shape](05-distributions-and-shape.qmd)
 used it; these notes use `|>`, which is built into R and needs no package.
 
 ---
@@ -333,7 +333,7 @@ head(sessions[order(sessions$score), c("session_id", "archetype", "score")], 5)
 
 No impossible lengths or ratings. The five lowest scores are all Sentinels. They
 are unusual, not impossible, and they are the bimodal Sentinel finding from
-[Describing What You Have](04-describing-variables.qmd). They stay.
+[Describing Variables](04-describing-variables.qmd). They stay.
 
 ### The six verbs
 
@@ -543,7 +543,7 @@ about these three rows, not a rule for every blank.
 - [Ten Rules](ten-rules.qmd): rule 3 (know what kind of number you are holding),
   rule 6 (cleaning is analysis), rule 8 (small samples lie confidently) and rule 9
   (sometimes the rare value is the whole story)
-- [Distributions and Variation](05-distributions-and-shape.qmd): the three kinds of
+- [Distributions and Shape](05-distributions-and-shape.qmd): the three kinds of
   outlier
 - [R and Quarto Reference: getting at parts of a data frame](../reference/r-quarto-reference.qmd#getting-at-parts-of-a-data-frame)
   and [describing by group](../reference/r-quarto-reference.qmd#describing-by-group)

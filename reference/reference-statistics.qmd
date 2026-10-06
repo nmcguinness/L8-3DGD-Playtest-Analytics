@@ -50,6 +50,10 @@ stopifnot(names(which.max(cors)) == "awareness", abs(cors[["shots_fired"]]) < 0.
 mob_surv <- cor(sessions$mobility, sessions$survivability)
 stopifnot(mob_surv < 0)
 
+deaths_mode <- names(which.max(table(sessions$deaths)))
+aw <- sessions$awareness
+retain_a <- function(m) mean(mins[sessions$build == "A"] >= m)
+
 aw_cohort    <- round(tapply(sessions$awareness, sessions$cohort, mean), 1)
 score_cohort <- round(tapply(sessions$score, sessions$cohort, median))
 stopifnot(aw_cohort[["Veteran"]] > aw_cohort[["Novice"]],
@@ -78,13 +82,17 @@ Taught in [Planning a Playtest](../notes/01-planning-a-playtest.qmd) and
 
 ## Centre and spread
 
+Taught in [Describing Variables](../notes/04-describing-variables.qmd).
+
 | Term | What it means | *Tidebreak* example | The common mistake |
 | :- | :- | :- | :- |
 | **Mean** | The total divided by the count. Read it as: the value if everyone were equal. | Mean session length `r round(mean(mins), 1)` minutes. | Quoting it for skewed data, where a few extreme values drag it away from most players. |
 | **Median** | The middle value when sorted. Half above, half below. | Median session length `r round(median(mins), 1)` minutes. | Assuming it is always better. It ignores how extreme the extremes are, which is sometimes the point. |
+| **Mode** | The most common value. The only centre a nominal variable has. | The most common number of deaths in a session is `r deaths_mode`; the median is `r median(sessions$deaths)`. | Treating it as a substitute for the median on a continuous variable, where almost every value is unique. |
 | **Minimum / maximum** | The smallest and largest values. | Session length from `r min(mins)` to `r max(mins)` minutes. | Skipping them. They are the fastest way to spot an impossible value. |
 | **Range** | Maximum minus minimum. | `r round(max(mins) - min(mins), 1)` minutes for session length. | Using it as the measure of spread. One unusual player sets it. |
 | **Standard deviation** | The typical distance of a value from the mean. | Frame time: `r sprintf("%.2f", sd(a_ms))` ms in Build A, `r sprintf("%.2f", sd(b_ms))` ms in Build B. | Quoting it for skewed data. It inherits every weakness of the mean. |
+| **Variance** | The average squared distance from the mean; the SD squared. | Session length: `r round(var(mins), 1)` square minutes. | Reporting it. Its units are squared, so the SD, its square root, is the one to quote. |
 | **Interquartile range (IQR)** | The width of the middle half of the data. | `r round(IQR(mins), 1)` minutes for session length. | Forgetting it exists. For skewed data, quote the median and IQR together. |
 | **Percentile** | The value with that percentage of the data below it. | 99th percentile frame time: `r round(quantile(a_ms, 0.99), 1)` ms in Build A, `r round(quantile(b_ms, 0.99), 1)` ms in Build B. | Stopping at the 95th, which cannot see a problem rarer than one case in twenty. |
 
@@ -92,10 +100,16 @@ Taught in [Planning a Playtest](../notes/01-planning-a-playtest.qmd) and
 
 ## Shape
 
+Taught in [Distributions and Shape](../notes/05-distributions-and-shape.qmd).
+
 | Term | What it means | *Tidebreak* example | The common mistake |
 | :- | :- | :- | :- |
 | **Distribution** | The full pattern of values: which occur and how often. A histogram draws it. | Sentinel score has two humps: games that anchor the round and games that collapse early. | Summarising a two-humped distribution with one average, which describes neither group ([rule 4](../notes/ten-rules.qmd)). |
 | **Skew** | A distribution with a long tail on one side. The mean is pulled towards the tail. | Session length is left-skewed: mean `r round(mean(mins), 1)` below median `r round(median(mins), 1)`, pulled down by early quits. | Reading the gap between mean and median without comparing it to the size of the variable. |
+| **Bimodal** | A distribution with two humps, usually two groups mixed together. | Build A session length: one group quits around minutes 10 to 14, another plays to the end. | Describing it with one average or one boxplot, neither of which can show two humps. |
+| **Normal distribution** | The symmetric bell curve, defined by its mean and SD. About 68% of values lie within 1 SD of the mean and 95% within 2. | Awareness is close to normal: `r round(100 * mean(abs(aw - mean(aw)) < sd(aw)))`% of sessions within 1 SD. Session length is not: `r round(100 * mean(abs(mins - mean(mins)) < sd(mins)))`%. | Assuming it. Most game measures are bounded and skewed; check by laying the curve over the histogram. |
+| **z-score** | How many SDs a value sits from the mean. | An awareness rating of 90 has z = `r round((90 - mean(aw)) / sd(aw), 1)`. | Reading it with the 68–95–99.7 rule when the data is not roughly normal. |
+| **Retention curve** | The share of sessions still going at each point in time. | Build A: `r round(100 * retain_a(11))`% still playing at minute 11, `r round(100 * retain_a(13))`% at minute 13. | Summarising "how long players stayed" with a mean, which hides when they left. |
 | **Outlier** | A value far from the rest. A boxplot draws each one as a point. | The boxplot of `score` flags `r length(score_out)` low values, all of them Sentinel games. | Deleting it. An outlier is an error, an extreme player or the finding; find out which first ([rule 6](../notes/ten-rules.qmd)). |
 
 ---

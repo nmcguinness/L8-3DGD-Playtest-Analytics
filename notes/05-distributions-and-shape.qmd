@@ -1,5 +1,5 @@
 ---
-title: "Distributions and Variation"
+title: "Distributions and Shape"
 subtitle: "Why the average is never the whole story"
 body-classes: "wf-at-visualise wf-at-describe"
 aliases:
@@ -8,18 +8,77 @@ aliases:
 
 {{< include _workflow.qmd >}}
 
+```{r}
+#| label: setup
+#| include: false
+source("notes/_setup.R")
+
+# Frame times
+a <- frames$ms[frames$build == "A"]
+b <- frames$ms[frames$build == "B"]
+fps <- function(x) round(1000 / mean(x), 1)
+pct <- function(x, q) round(unname(quantile(x, q)), 1)
+slow   <- 1000 / 30
+slow_b <- frames[frames$build == "B" & frames$ms > slow, ]
+gap    <- unique(diff(sort(slow_b$frame)))
+stopifnot(mean(b) < mean(a), median(b) < median(a),
+          quantile(b, 0.95) < quantile(a, 0.95),
+          sum(a > slow) == 0,
+          all(slow_b$zone == "Corridor"),
+          length(gap) == 1)
+corridor_a <- frames$ms[frames$build == "A" & frames$zone == "Corridor"]
+corridor_b <- frames$ms[frames$build == "B" & frames$zone == "Corridor"]
+
+# Normal comparison
+within_sd <- function(x, k) mean(abs(x - mean(x)) < k * sd(x))
+aw <- sessions$awareness
+sm <- sessions$session_minutes
+
+# Session length by build, and retention
+mins_a <- sessions$session_minutes[sessions$build == "A"]
+mins_b <- sessions$session_minutes[sessions$build == "B"]
+still  <- function(x, m) mean(x >= m)
+stopifnot(round(still(mins_a, 11), 2) == 0.88, round(still(mins_a, 13), 2) == 0.68)
+early_a <- sum(mins_a < 15); early_b <- sum(mins_b < 15)
+
+# Outliers
+score_out <- boxplot.stats(sessions$score)$out
+stopifnot(all(sessions$archetype[sessions$score %in% score_out] == "Sentinel"))
+frame_out_a <- length(boxplot.stats(a)$out)
+frame_out_b <- length(boxplot.stats(b)$out)
+```
+
+> A summary is a single number standing in for a whole column. This page is about
+> what it stands in for: the **distribution**, the full pattern of values. It names
+> the shapes you will meet, introduces the normal distribution that later notes
+> rely on, deals with outliers, and shows why the most important number in a
+> performance capture is one that hardly anyone quotes. The playtest question
+> running through it: *"Both builds run at 59 FPS. Which one runs better?"*
+
+::: {.at-a-glance}
+**Time:** 30 minutes in class; 20 more for the Going further sections.
+**Before this:** [Describing Variables](04-describing-variables.qmd).
+**Key terms:** distribution, symmetric, skew, bimodal, floor, ceiling, normal
+distribution, z-score, tail, outlier, retention curve.
+**R introduced:** `dnorm()`, `curve()`, `boxplot.stats()`, `abline()`,
+`lines()`, plus `hist()`, `boxplot()`, `quantile()` and `tapply()` from
+[Describing Variables](04-describing-variables.qmd).
+:::
+
 ## Learning Outcomes
 
 By the end of these notes you can:
 
-- explain why an average on its own cannot describe a playtest;
-- read a standard deviation as the typical distance of a player from the mean;
-- describe a distribution by its centre, spread, skew and outliers;
-- say whether an outlier is an error, an extreme player or the finding itself;
-- read the mean, median, standard deviation and high percentiles together and say
-  what each adds;
-- draw `hist()`, `boxplot()`, `barplot()` and `plot()` in base R and say what each
-  one is for.
+- describe a distribution by its shape: symmetric, skewed left or right, bimodal,
+  bounded by a floor or ceiling;
+- say which way skew pulls the mean, and why game data is rarely symmetric;
+- describe the normal distribution, use the 68–95–99.7 rule, and compute a z-score;
+- check a variable against the normal shape and say whether the match is close
+  enough to matter;
+- say whether an outlier is an error, an extreme player or the finding itself, and
+  what to do in each case;
+- compare two groups' distributions, including with a retention curve;
+- read the mean, median, SD and high percentiles together and say what each adds.
 
 ---
 
@@ -41,61 +100,327 @@ spread has made the experience more consistent, even if the average has not move
 
 ---
 
-## Variation Between Players
+## What a Distribution Is
 
-The **variation** in a variable is how much its values differ from one another.
-Some of it is the game: a harder route produces more deaths. Some of it is the
-player: skill, experience and patience vary before anyone touches your build. You
-cannot remove the second kind, so you have to measure it.
+A **distribution** is the full pattern of a variable's values: which values occur,
+and how often. A histogram draws it. Every summary statistic is an attempt to
+describe a distribution in one number, and every one of them fails for some
+distribution.
 
-The **standard deviation** is the typical distance of a value from the mean. A
-small standard deviation means players cluster tightly around the average; a large
-one means the average is a poor guide to any individual. It is in the same units as
-the data, so a standard deviation of 3 ms on a frame time is directly comparable to
-the 16.7 ms a 60 FPS frame is allowed.
+Describing a distribution means saying four things about its picture:
 
-**Standard deviation belongs to the mean.** It measures distance from the mean, so
-it inherits the mean's weakness: a few extreme values inflate it. For skewed data,
-the interquartile range from the previous notes is the better description of
-spread.
+1. **Centre**: where the bulk sits.
+2. **Spread**: how wide the bulk is.
+3. **Shape**: symmetric or lopsided, one hump or two, cut off at an edge or not.
+4. **Unusual values**: anything sitting apart from the rest.
+
+The first two were [Describing Variables](04-describing-variables.qmd). This page
+is about the last two.
 
 ---
 
-## Distributions and Skew
+## The Shapes You Will Meet
 
-A **distribution** is the full pattern of values: which ones occur, and how often.
-A histogram draws it. Every summary statistic is an attempt to describe a
-distribution in one number, and every one of them fails for some distribution.
+```{r}
+#| label: fig-shapes
+#| echo: false
+#| fig-cap: "Four shapes. Top row: idealised illustrations. Bottom row: the same shape in Tidebreak data. The solid red line is the mean; the dashed line is the median. *The frame-time panel's vertical axis is cut off so that the rare slow frames are visible; the spike near 17 ms runs far off the top."
+#| fig-alt: "Eight histograms in two rows. Top row, simulated: a symmetric bell, a right-skewed shape with a long right tail, a left-skewed shape with a long left tail, and a two-humped shape. Bottom row, Tidebreak: awareness, roughly symmetric with mean and median together; Build B frame times, a spike cut off at the top with a long thin right tail of slow frames; session length, piled up against 32 minutes with a tail to the left; Sentinel score, a small group of low scores and a larger group of high scores. In each skewed panel the mean sits further towards the tail than the median."
+#| fig-height: 5.5
+#| fig-width: 9
+set.seed(42)
+sim <- list(
+  "Symmetric"  = rnorm(2000, 50, 10),
+  "Right skew" = rgamma(2000, shape = 2, scale = 8),
+  "Left skew"  = 60 - rgamma(2000, shape = 2, scale = 8),
+  "Bimodal"    = c(rnorm(700, 30, 6), rnorm(1300, 65, 8))
+)
+real <- list(
+  "Symmetric: awareness"        = aw,
+  "Right skew: Build B frame ms*" = b,
+  "Left skew: session minutes"  = sm,
+  "Bimodal: Sentinel score"     = sessions$score[sessions$archetype == "Sentinel"]
+)
+panel <- function(x, title, breaks = 20, ylim = NULL) {
+  hist(x, breaks = breaks, col = pal$fill, border = "white", main = title,
+       xlab = "", ylab = "", yaxt = "n", cex.main = 0.85, ylim = ylim)
+  abline(v = mean(x), col = pal$highlight, lwd = 2)
+  abline(v = median(x), col = pal$line, lwd = 2, lty = 2)
+}
+op <- par(mfrow = c(2, 4), mar = c(2.5, 0.8, 2.2, 0.8), oma = c(0, 0, 1.2, 0))
+for (n in names(sim)) panel(sim[[n]], n)
+mtext("Illustration: simulated data", side = 3, outer = TRUE, adj = 1,
+      cex = 0.7, col = pal$guide)
+for (n in names(real)) {
+  if (grepl("frame", n)) panel(real[[n]], n, breaks = 60, ylim = c(0, 40))
+  else panel(real[[n]], n, breaks = 12)
+}
+par(op)
+```
 
-**Skew** is a distribution leaning to one side. A **right skew** has a long tail of
-large values: most frames are quick, a few are very slow. A **left skew** has a
-long tail of small values: most players stay for the full session, a few leave
-early. The mean is pulled towards the tail; the median is not. That is why the gap
-between them tells you which way the data leans.
+**Symmetric.** The two sides mirror each other. The mean and median sit together,
+and either describes the centre. *Tidebreak*'s awareness rating is close to
+symmetric: mean `r round(mean(aw), 1)`, median `r median(aw)`.
 
-**Game data is rarely symmetric.** Times have a floor and no ceiling. Match lengths
-have a ceiling set by the timer. Ratings bunch against the ends of the scale. Expect
-skew and check for it, rather than assuming the bell shape from school statistics.
+**Right skew.** A long tail of large values. Most frames are quick and a few are
+very slow; most players finish in a few minutes and a few take far longer. The
+mean is pulled out towards the tail, above the median.
+
+**Left skew.** A long tail of small values. Most *Tidebreak* sessions run close to
+the 32-minute limit and a minority end early: mean `r round(mean(sm), 1)` minutes,
+median `r round(median(sm), 1)`. The mean is pulled down, below the median.
+Look closely and session length also has a small second hump of early quits; where
+it comes from is the subject of [Comparing Distributions](#comparing-distributions).
+
+**Bimodal.** Two humps. Almost always, two groups of players have been mixed
+together: those who found the key and those who did not, sessions that completed
+and sessions that crashed. The mean of a bimodal distribution falls in the valley
+between the humps, where the fewest players are. The Sentinel's scores are the
+example from [Describing Variables](04-describing-variables.qmd#worked-example).
+
+**The mean is always pulled towards the tail; the median is not.** That is why the
+gap between them tells you which way the data leans, and why a large gap is a
+reason to report the median.
+
+### Floors and ceilings
+
+**Game data is rarely symmetric, because it is usually bounded.** Times have a
+**floor**: nobody finishes faster than the fastest possible route, so time data
+often has a long right tail. Many measures also have a **ceiling**: a match timer,
+a maximum score, the top of a rating scale. Values pile up against it and the tail
+runs the other way.
+
+*Tidebreak* has both kinds of bounded time. Frame times have a floor and a long
+right tail. Session length is capped at `r max(sm)` minutes and time alive at
+`r max(sessions$time_alive_s)` seconds, so both pile up on the right with a tail to
+the left. **Expect skew in any bounded measure, and check which way it runs**,
+rather than assuming the bell shape from school statistics.
+
+::: {.callout-tip collapse="true" title="Quick check"}
+Players rate a game's difficulty from 1 to 7, and most choose 6 or 7. Which way is
+the distribution skewed, and is the mean above or below the median?
+
+**Answer.** Left skew: values pile up against the ceiling at 7, with a tail of
+lower ratings to the left. The tail pulls the mean down, below the median.
+:::
+
+---
+
+## The Normal Distribution
+
+One shape has a name of its own, because so much of statistics is built on it.
+
+The **normal distribution** is the symmetric bell curve. It is completely
+described by two numbers: its **mean**, which sets where the centre is, and its
+**SD**, which sets how wide it is. Every normal distribution has the same shape;
+only the centre and width change.
+
+```{r}
+#| label: fig-normal
+#| echo: false
+#| fig-cap: "The 68–95–99.7 rule. In a normal distribution, about 68% of values lie within 1 SD of the mean, 95% within 2 SDs and 99.7% within 3."
+#| fig-alt: "A bell curve with the x axis marked in standard deviations from −3 to +3. The region within 1 SD of the mean is shaded darkest and labelled 68%; the region within 2 SDs is labelled 95%; within 3 SDs, 99.7%."
+#| fig-height: 3.8
+par(mar = c(4, 1, 1.5, 1))
+xs <- seq(-3.6, 3.6, length.out = 400)
+plot(xs, dnorm(xs), type = "n", axes = FALSE, xlab = "Standard deviations from the mean",
+     ylab = "", ylim = c(0, 0.47))
+shade <- function(k, col) {
+  x <- seq(-k, k, length.out = 200)
+  polygon(c(-k, x, k), c(0, dnorm(x), 0), col = col, border = NA)
+}
+shade(3, "grey92"); shade(2, "grey80"); shade(1, "#e8a3a3")
+lines(xs, dnorm(xs), lwd = 2)
+axis(1, at = -3:3, labels = c("−3", "−2", "−1", "mean", "+1", "+2", "+3"))
+arrows(-1, 0.43, 1, 0.43, code = 3, length = 0.05); text(0, 0.45, "68%", cex = 0.85)
+arrows(-2, 0.09, 2, 0.09, code = 3, length = 0.05); text(0, 0.11, "95%", cex = 0.85)
+arrows(-3, 0.02, 3, 0.02, code = 3, length = 0.05); text(2.9, 0.045, "99.7%", cex = 0.8)
+label_illustration("Illustration: the theoretical curve")
+```
+
+**The 68–95–99.7 rule.** In any normal distribution, about 68% of values lie within
+1 SD of the mean, about 95% within 2 SDs, and nearly all, 99.7%, within 3. This is
+what gives the SD its practical meaning: for normal-shaped data, "the mean plus or
+minus 2 SDs" covers almost everyone.
+
+**A z-score** says how many SDs a value sits from the mean:
+
+$$z = \frac{\text{value} - \text{mean}}{\text{SD}}$$
+
+A player with an awareness rating of 90 has
+$z = (90 - `r round(mean(aw), 1)`) / `r round(sd(aw), 1)` = `r round((90 - mean(aw)) / sd(aw), 1)`$:
+nearly 2 SDs above average, which the rule says puts them in roughly the top few
+per cent. z-scores let you compare values measured on different scales: "two SDs
+above average" means the same thing for a score, a time or a rating.
+
+### Is it normal enough?
+
+Real data is never exactly normal. The useful question is whether it is close
+enough for the rule to work. Draw the histogram on a density scale and lay the
+normal curve with the same mean and SD over it:
+
+```{r}
+#| label: fig-normal-check
+#| fig-cap: "The normal curve with each variable's own mean and SD, laid over its histogram. Awareness follows it closely; session length does not."
+#| fig-alt: "Two histograms. Left: awareness, with a bell curve that follows the bars closely. Right: session length, where the bell curve overestimates the middle and misses the tall bars piled up near 30 minutes."
+#| fig-height: 3.5
+op <- par(mfrow = c(1, 2), mar = c(4, 3, 2, 1))
+hist(aw, breaks = 12, freq = FALSE, col = pal$fill, border = "white",
+     main = "Awareness", xlab = "Rating", ylab = "")
+curve(dnorm(x, mean(aw), sd(aw)), add = TRUE, lwd = 2, col = pal$highlight)
+hist(sm, breaks = 12, freq = FALSE, col = pal$fill, border = "white",
+     main = "Session length", xlab = "Minutes", ylab = "")
+curve(dnorm(x, mean(sm), sd(sm)), add = TRUE, lwd = 2, col = pal$highlight)
+par(op)
+```
+
+The rule makes a checkable prediction, so check it:
+
+| Variable | Within 1 SD | Within 2 SDs | Verdict |
+| :- | :-: | :-: | :- |
+| Normal distribution | 68% | 95% | |
+| `awareness` | `r pct_fmt(within_sd(aw, 1))` | `r pct_fmt(within_sd(aw, 2))` | close: the rule works |
+| `distance_m` | `r pct_fmt(within_sd(sessions$distance_m, 1))` | `r pct_fmt(within_sd(sessions$distance_m, 2))` | symmetric but flatter than a bell |
+| `session_minutes` | `r pct_fmt(within_sd(sm, 1))` | `r pct_fmt(within_sd(sm, 2))` | not normal: skewed and capped |
+| Build B frame ms | `r pct_fmt(within_sd(b, 1))` | `r pct_fmt(within_sd(b, 2))` | not normal: a spike and a long tail |
+
+For session length, "mean ± 1 SD" covers only `r pct_fmt(within_sd(sm, 1))` of
+sessions, so quoting the mean and SD as if they described a bell would mislead.
+For frame times, the SD is inflated by a handful of very slow frames, and the
+mean ± 2 SDs covers almost every frame while saying nothing about the ones that
+matter.
+
+**Why it matters later.** Even when individual values are far from normal, the
+*averages* of samples tend to be close to normal. That fact, the central limit
+theorem, is what makes confidence intervals and t-tests work, and it is the
+subject of Part 4 of these notes, *Comparing*. When those notes ask whether data is
+"approximately normal", this is the shape they mean.
+
+::: {.callout-note collapse="true" title="Going further: Q-Q plots"}
+A **Q-Q plot** is a sharper check than a histogram. It plots each value against
+where it would fall if the data were perfectly normal; normal data lies along a
+straight line, and skew bends the ends away from it. In base R:
+
+```{r}
+#| label: qq
+#| fig-height: 3.2
+op <- par(mfrow = c(1, 2), mar = c(4, 4, 2, 1))
+qqnorm(aw, main = "Awareness", pch = 19, cex = 0.6); qqline(aw, col = pal$highlight)
+qqnorm(sm, main = "Session length", pch = 19, cex = 0.6); qqline(sm, col = pal$highlight)
+par(op)
+```
+
+Awareness hugs the line. Session length flattens out at the top, where values pile
+up against the 32-minute cap. You will meet Q-Q plots again when checking the
+assumptions of a t-test.
+:::
 
 ---
 
 ## Outliers
 
-An **outlier** is a value far from the rest. The boxplot's convention is any point
-more than one and a half box-widths beyond the edge of the box, and R draws those
-points individually. That rule is a prompt to look, not a verdict.
+An **outlier** is a value far from the rest. A boxplot flags any value more than
+1.5 IQRs beyond the box, and draws it as a separate point. **That rule is a prompt
+to look, not a verdict.** With large samples it flags plenty of perfectly ordinary
+values: of Build A's `r length(a)` frames, `r frame_out_a` are boxplot outliers,
+and Build A has no performance problem at all.
 
 An outlier is one of three things, and the response to each is different:
 
-| The outlier is | Example | What you do |
+```{mermaid}
+%%| label: fig-outlier-tree
+%%| fig-cap: "What to do about an outlier depends on what it is."
+flowchart TD
+  O["A value sits apart<br/>from the rest"] --> Q1{"Is it possible?"}
+  Q1 -->|"No: a session of −3 minutes,<br/>a rating of 7 on a 1–5 scale"| E["An error<br/>Fix or remove it,<br/>and record that you did"]
+  Q1 -->|Yes| Q2{"Is it one player<br/>or a pattern?"}
+  Q2 -->|"One unusual player"| X["An extreme player<br/>Keep it; report the median<br/>rather than the mean"]
+  Q2 -->|"A cluster, or a<br/>repeating pattern"| F["The finding<br/>Keep it and investigate:<br/>it is why you ran the test"]
+  classDef err fill:#f8f9fa,stroke:#6c757d,color:#212529
+  classDef find fill:#fbeaea,stroke:#b22222,color:#212529
+  class E,X err
+  class F find
+```
+
+| The outlier is | Tidebreak example | What you do |
 | :- | :- | :- |
-| An error | A session length of −3 minutes; a rating of 7 on a 1–5 scale | Fix it or remove it, and record that you did |
-| An extreme but ordinary player | One tester who never died | Keep it; report the median rather than the mean |
-| The finding | A cluster of games that collapse early | Keep it and investigate it; it is why you ran the test |
+| An error | None in the cleaned file; [Cleaning and Transforming](06-cleaning-and-transforming.qmd) finds some in the raw export | Fix it or remove it, and record that you did |
+| An extreme but ordinary player | The `r sum(sessions$time_alive_s == max(sessions$time_alive_s))` sessions where the player never died | Keep it; report the median rather than the mean |
+| The finding | The `r length(score_out)` score outliers, every one a Sentinel game | Keep it and investigate; it is why you ran the test |
 
 **Never delete an outlier because it is inconvenient.** Every row you drop is a
 decision with a consequence ([rule 6](ten-rules.qmd)), and the value most tempting
 to drop is often the one the playtest was run to find ([rule 9](ten-rules.qmd)).
+
+---
+
+## Comparing Distributions
+
+Most design questions compare two distributions: Build A against Build B, Novices
+against Veterans. **Compare the whole distributions, not just their centres**
+([rule 7](ten-rules.qmd)).
+
+The boxplot is the standard tool, and usually a good one. But it has a blind spot:
+
+```{r}
+#| label: fig-box-vs-hist
+#| fig-cap: "Session length by build. The boxplots (left) show that Build A's sessions are more spread out. Only the histograms (right) show why: Build A has two separate groups of sessions."
+#| fig-alt: "Left: two boxplots of session length. Build A's box is wider and lower than Build B's. Right: two stacked histograms. Build A's has two clear humps, one around 10 to 14 minutes and one around 26 to 32. Build B's rises steadily to a single peak near 30 minutes."
+#| fig-height: 4.2
+layout(matrix(c(1, 1, 2, 3), nrow = 2), widths = c(1, 1.6))
+par(mar = c(4, 4, 2, 1))
+boxplot(session_minutes ~ build, data = sessions, col = pal$fill,
+        ylab = "Session length (minutes)", xlab = "Build", main = "Boxplots",
+        cex.main = 0.9)
+par(mar = c(2.5, 3, 2, 1))
+hist(mins_a, breaks = seq(6, 32, 2), col = pal$build_a, border = "white",
+     main = "Build A", xlab = "", ylab = "", cex.main = 0.9, ylim = c(0, 14))
+hist(mins_b, breaks = seq(6, 32, 2), col = pal$build_b, border = "white",
+     main = "Build B", xlab = "", ylab = "", cex.main = 0.9, ylim = c(0, 14))
+layout(1)
+```
+
+The boxplots say Build A's sessions are shorter and more spread out: an IQR of
+`r round(IQR(mins_a), 1)` minutes against `r round(IQR(mins_b), 1)`. True, but it
+misses the point. Build A's histogram has **two humps**: a group of sessions that
+ended between about 10 and 14 minutes, and a group that ran to the end. A boxplot
+compresses every distribution into one box, so it cannot show two humps. Its wide
+box is the two groups averaged into one.
+`r early_a` of `r length(mins_a)` Build A sessions ended before minute 15, against
+`r early_b` of `r length(mins_b)` in Build B.
+
+### The retention curve
+
+When the variable is "how long did players keep playing", there is a picture made
+for the question. A **retention curve** plots, for every minute, the proportion of
+sessions still going:
+
+```{r}
+#| label: fig-retention
+#| fig-cap: "Retention: the share of sessions still going at each minute. Build A loses a fifth of its sessions between minutes 11 and 13."
+#| fig-alt: "Two step lines starting at 100%. Build B's stays above 90% until about minute 14 and then declines. Build A's drops steeply between minutes 11 and 13, from 88% to 68%, then declines slowly. Both fall sharply near 32 minutes, the end of the session."
+#| fig-height: 3.8
+minute <- 0:32
+ret_a <- sapply(minute, function(m) mean(mins_a >= m))
+ret_b <- sapply(minute, function(m) mean(mins_b >= m))
+
+par(mar = c(4, 4, 1, 1))
+plot(minute, ret_a, type = "s", lwd = 2, col = pal$build_a, ylim = c(0, 1),
+     xlab = "Minute", ylab = "Share of sessions still playing", yaxt = "n")
+axis(2, at = seq(0, 1, 0.25), labels = paste0(seq(0, 100, 25), "%"), las = 1)
+lines(minute, ret_b, type = "s", lwd = 2, col = pal$build_b)
+abline(v = c(11, 13), lty = 3, col = pal$guide)
+legend("bottomleft", legend = c("Build A", "Build B"), lwd = 2,
+       col = c(pal$build_a, pal$build_b), bty = "n")
+```
+
+Each point is a single `mean()` of a comparison, the "proportion that pass a test"
+idea from [R from First Principles](02-r-first-principles.qmd#vectors), repeated
+for every minute. Build A drops from `r pct_fmt(still(mins_a, 11))` still playing
+at minute 11 to `r pct_fmt(still(mins_a, 13))` at minute 13. Build B, over the same
+two minutes, goes from `r pct_fmt(still(mins_b, 11))` to
+`r pct_fmt(still(mins_b, 13))`. Something about the first dozen minutes of Build A
+drives players away, and the retention curve says exactly when.
 
 ---
 
@@ -113,73 +438,82 @@ together, usually does.
 | 95th or 99th percentile | How bad the worst few per cent get | The typical case |
 
 **Where the summaries disagree, look at the picture.** Mean and median apart means
-skew. A large standard deviation with a small IQR means a few extreme values. A
-normal median with a bad 99th percentile means a rare problem that the average will
-never show. Each disagreement is a pointer to a specific shape, and the histogram
-confirms which one ([rule 4](ten-rules.qmd)).
+skew. A large SD with a small IQR means a few extreme values. A normal median with
+a bad 99th percentile means a rare problem that the average will never show. Each
+disagreement points at a specific shape, and the histogram confirms which one
+([rule 4](ten-rules.qmd)).
 
 ---
 
-## Worked Examples
-
-```{r}
-#| label: worked-example-data
-#| include: false
-library(readr)
-frames   <- read_csv("data/tidebreak_frame_times.csv", show_col_types = FALSE)
-sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
-
-a <- frames$ms[frames$build == "A"]
-b <- frames$ms[frames$build == "B"]
-
-fps <- function(x) round(1000 / mean(x), 1)
-pct <- function(x, q) round(unname(quantile(x, q)), 1)
-
-slow   <- 1000 / 30
-slow_b <- frames[frames$build == "B" & frames$ms > slow, ]
-gap    <- unique(diff(sort(slow_b$frame)))
-
-stopifnot(mean(b) < mean(a), median(b) < median(a),
-          quantile(b, 0.95) < quantile(a, 0.95),
-          sum(a > slow) == 0,
-          all(slow_b$zone == "Corridor"),
-          length(gap) == 1)
-
-corridor_b <- frames$ms[frames$build == "B" & frames$zone == "Corridor"]
-```
+## Worked Example
 
 **Which build runs better?** The *Tidebreak* team captured `r length(a)` frames
-from each build, split across `r length(unique(frames$zone))` level zones. The frame-rate counter reports
-Build A at `r fps(a)` FPS and Build B at `r fps(b)` FPS. By the number everyone
-quotes, Build B is marginally the faster build.
+from each build, split across `r length(unique(frames$zone))` level zones. The
+frame-rate counter reports Build A at `r fps(a)` FPS and Build B at `r fps(b)` FPS.
+By the number everyone quotes, Build B is marginally the faster build.
 
-The median agrees: `r round(median(a), 2)` ms per frame for Build A,
-`r round(median(b), 2)` ms for Build B. So does the 95th percentile:
+**Step 1: more centres.** The median agrees: `r round(median(a), 2)` ms per frame
+for Build A, `r round(median(b), 2)` ms for Build B. So does the 95th percentile:
 `r pct(a, 0.95)` ms against `r pct(b, 0.95)` ms. Three summaries, one verdict.
 
-The 99th percentile disagrees. Build A's is `r pct(a, 0.99)` ms; Build B's is
-`r pct(b, 0.99)` ms, `r sprintf("%.1f", quantile(b, 0.99) / quantile(a, 0.99))` times
-as long. The standard deviation says the same thing more quietly:
-`r round(sd(a), 2)` ms for Build A, `r round(sd(b), 2)` ms for Build B.
+**Step 2: the tail.** The 99th percentile disagrees. Build A's is `r pct(a, 0.99)`
+ms; Build B's is `r pct(b, 0.99)` ms,
+`r sprintf("%.1f", quantile(b, 0.99) / quantile(a, 0.99))` times as long. The SD
+says the same thing more quietly: `r round(sd(a), 2)` ms for Build A,
+`r round(sd(b), 2)` ms for Build B.
 
-Count the frames slower than 30 FPS (`r round(slow, 1)` ms). Build A has
-`r sum(a > slow)`. Build B has `r nrow(slow_b)`, every one of them in the Corridor
-zone, and exactly `r gap` frames apart: at 60 FPS, a hitch
+```{r}
+#| label: worked-summary
+frame_summary <- function(x) {
+  round(c(mean = mean(x), median = median(x), sd = sd(x),
+          p95 = unname(quantile(x, 0.95)), p99 = unname(quantile(x, 0.99)),
+          fps = 1000 / mean(x)), 2)
+}
+rbind(A = frame_summary(a), B = frame_summary(b))
+```
+
+**Step 3: look.**
+
+```{r}
+#| label: fig-frames-hist
+#| fig-cap: "Build B's frame times, with the 95th and 99th percentiles marked. The vertical axis is cut off at 30 frames so the rare slow frames show. The 95th percentile sits at the edge of the main spike; only the 99th reaches the slow frames out on the right."
+#| fig-alt: "Histogram of Build B frame times. A narrow spike between about 13 and 20 milliseconds runs off the top of the chart. A scatter of short bars lies far to the right, between 30 and 55 milliseconds. A dashed line marks the 95th percentile inside the spike; a red line marks the 99th percentile out among the slow frames."
+#| fig-height: 3.6
+par(mar = c(4, 4, 1, 1))
+hist(b, breaks = 80, col = pal$fill, border = pal$fill, main = "",
+     xlab = "Frame time (ms)", ylab = "Frames", ylim = c(0, 30))
+text(20.5, 26, "<- main spike continues
+    to over 800 frames", pos = 4, cex = 0.75,
+     col = pal$line)
+abline(v = quantile(b, 0.95), lty = 2, lwd = 2, col = pal$line)
+abline(v = quantile(b, 0.99), lwd = 2, col = pal$highlight)
+legend("topright", bty = "n", lwd = 2, lty = c(2, 1),
+       col = c(pal$line, pal$highlight),
+       legend = c("95th percentile", "99th percentile"))
+```
+
+**Step 4: find it.** Count the frames slower than 30 FPS (`r round(slow, 1)` ms).
+Build A has `r sum(a > slow)`. Build B has `r nrow(slow_b)`, every one of them in
+the Corridor zone, and exactly `r gap` frames apart: at 60 FPS, a hitch
 `r round(60 / gap, 1)` times a second for as long as the player is in the corridor.
 
 ```{r}
-#| label: worked-frame-trace
-corridor_a <- frames$ms[frames$build == "A" & frames$zone == "Corridor"]
-
-plot(corridor_b[1:200], type = "l", col = "firebrick",
-     ylim = c(10, 65),
-     main = "Corridor frame times, first 200 frames",
+#| label: fig-frame-trace
+#| fig-cap: "Frame times in the Corridor, first 200 frames. Build B hitches at a fixed interval; Build A does not."
+#| fig-alt: "Two line traces of frame time over 200 frames. Build A's grey line stays flat around 17 milliseconds. Build B's red line also sits around 17 milliseconds but spikes to over 40 at regular intervals."
+#| fig-height: 3.6
+par(mar = c(4, 4, 1, 1))
+plot(corridor_b[1:200], type = "l", col = pal$build_b, ylim = c(10, 65),
      xlab = "Frame", ylab = "Frame time (ms)")
-lines(corridor_a[1:200], col = "grey40")
-abline(h = 1000 / 60, lty = 2)
+lines(corridor_a[1:200], col = pal$build_a)
+abline(h = 1000 / 60, lty = 2, col = pal$guide)
 legend("top", legend = c("Build A", "Build B"), horiz = TRUE,
-       col = c("grey40", "firebrick"), lty = 1, bty = "n")
+       col = c(pal$build_a, pal$build_b), lty = 1, bty = "n")
 ```
+
+`plot()` with `type = "l"` joins the points with a line instead of drawing them
+separately: the right choice when the order of the values matters, as it does for
+frames in time. The dashed line is the 16.7 ms budget for 60 FPS.
 
 **Why the mean cannot see it.** The slow frames are
 `r round(100 * nrow(slow_b) / length(b), 1)`% of Build B's total. Spread across
@@ -189,91 +523,6 @@ because the problem is rarer than one frame in twenty. Only a summary aimed at t
 worst one per cent can see it, which is why the 99th percentile is the standard
 figure in performance capture. The mean is not approximately wrong here. It is
 structurally incapable of showing the thing players experience.
-
----
-
-## R Demonstrations
-
-Base R first, then the tidyverse equivalent for the grouped summary.
-
-```{r}
-#| label: demo-load
-library(readr)
-library(dplyr)
-
-sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
-frames   <- read_csv("data/tidebreak_frame_times.csv", show_col_types = FALSE)
-```
-
-```{r}
-#| label: demo-hist
-hist(sessions$session_minutes, breaks = 20,
-     main = "Session length", xlab = "Minutes",
-     col = "grey85", border = "white")
-```
-
-`hist()` draws the distribution of one numeric variable. Look for the bulk, the
-tails, and any second hump.
-
-```{r}
-#| label: demo-box-build
-boxplot(session_minutes ~ build, data = sessions,
-        main = "Session length by build", ylab = "Minutes", col = "grey85")
-tapply(sessions$session_minutes, sessions$build, sd)
-tapply(sessions$session_minutes, sessions$build, IQR)
-```
-
-`boxplot()` with `y ~ group` puts one box per group on the same axis, which is the
-quickest way to compare distributions. Build A's box is wider: its IQR is
-`r round(IQR(sessions$session_minutes[sessions$build == "A"]), 1)` minutes against
-`r round(IQR(sessions$session_minutes[sessions$build == "B"]), 1)` for Build B.
-`r round(100 * mean(sessions$session_minutes[sessions$build == "A"] >= 11))`% of
-Build A sessions were still going at minute 11, and
-`r round(100 * mean(sessions$session_minutes[sessions$build == "A"] >= 13))`% at
-minute 13. The spread is where Build A loses its players.
-
-```{r}
-#| label: demo-barplot
-barplot(table(sessions$quit_reason),
-        main = "How sessions ended", ylab = "Sessions", col = "grey85")
-```
-
-`barplot()` draws counts of a categorical variable. Give it the output of
-`table()`, not the raw column.
-
-```{r}
-#| label: demo-scatter
-plot(sessions$deaths, sessions$score,
-     main = "Deaths against score", xlab = "Deaths", ylab = "Score",
-     pch = 19, col = "grey40")
-```
-
-`plot()` with two numeric variables draws a scatterplot: one point per session.
-Read it for direction and for scatter. How strongly two variables are related is
-Week 3's subject.
-
-```{r}
-#| label: demo-quantile
-quantile(frames$ms[frames$build == "B"], c(0.5, 0.95, 0.99))
-```
-
-`quantile()` with a vector of proportions returns any percentiles you ask for. For
-performance data, always ask for the 99th.
-
-```{r}
-#| label: demo-summarise
-frames %>%
-  group_by(build) %>%
-  summarise(mean_ms   = mean(ms),
-            median_ms = median(ms),
-            sd_ms     = sd(ms),
-            p99_ms    = quantile(ms, 0.99),
-            fps       = 1000 / mean(ms))
-```
-
-`group_by()` splits the data and `summarise()` computes one row of summaries per
-group. This is the several-summaries-together table from the worked example in six
-lines, and it is the base R `tapply()` repeated five times.
 
 ---
 
@@ -305,30 +554,51 @@ percentile `r round(quantile(b, 0.99))` ms" is a performance report.
 shows and the number least able to show a hitch.
 
 **Comparing groups by their means alone.** Two builds with the same mean can be
-different games ([rule 7](ten-rules.qmd)). Draw the boxplots side by side.
+different games ([rule 7](ten-rules.qmd)). Draw the distributions side by side.
+
+**Trusting a boxplot to show shape.** It cannot show two humps. Draw the histogram
+as well.
+
+**Assuming the bell shape.** Bounded measures, which is most game measures, are
+usually skewed. Check which way.
+
+**Quoting mean ± SD for skewed data.** It assumes a normal shape the data does not
+have. Use the median and IQR, or percentiles.
 
 **Deleting outliers to clean the chart.** Find out which of the three kinds each one
-is first. The Sentinel's low scores in
-[Describing What You Have](04-describing-variables.qmd) are the finding, not the
-noise.
-
-**Quoting a standard deviation for skewed data.** It measures distance from the
-mean, and on skewed data the mean is in the wrong place. Use the IQR.
+is first. The Sentinel's low scores are the finding, not the noise.
 
 **Stopping at the 95th percentile.** A problem affecting one frame in a hundred is
 invisible at the 95th. Match the percentile to how rare the problem could be.
 
-**Reading a scatterplot as proof.** A downward cloud of points shows that two things
-move together in this sample. It does not say which one causes the other.
-
 ---
 
-## Short Practice Activities
+## Practice
 
 Each takes two or three minutes.
 
-**1.** Compute the 99th percentile of frame time for each zone in Build B. Which
-zone is responsible?
+**1. Predict.** Before running anything: will `items_collected` be skewed? Which
+way? Then check with a histogram, the mean and the median.
+
+::: {.callout-note collapse="true" title="Check your answer"}
+
+```{r}
+#| label: practice-items
+#| fig-height: 3
+hist(sessions$items_collected, breaks = 0:9 - 0.5, col = pal$fill,
+     border = "white", main = "", xlab = "Items collected")
+mean(sessions$items_collected)
+median(sessions$items_collected)
+```
+
+Close to symmetric: the mean, `r round(mean(sessions$items_collected), 2)`, sits
+almost on the median, `r median(sessions$items_collected)`. A count with a floor at
+zero *can* be right-skewed, but only when the typical value is near the floor; here
+it is well away from it.
+:::
+
+**2. Compute.** Find the 99th percentile of frame time for each zone in Build B.
+Which zone is responsible?
 
 ::: {.callout-note collapse="true" title="Check your answer"}
 
@@ -338,76 +608,84 @@ frames_b <- frames[frames$build == "B", ]
 tapply(frames_b$ms, frames_b$zone, quantile, 0.99)
 ```
 
-The Corridor, at `r round(quantile(corridor_b, 0.99), 1)` ms. The other two
-zones are at most
-`r round(max(tapply(frames_b$ms, frames_b$zone, quantile, 0.99)[c("Atrium", "Gantry")]), 1)` ms. Splitting a summary by where it happened turns "Build B stutters"
-into "Build B stutters in one place", which is a ticket someone can fix.
+The Corridor, at `r round(quantile(corridor_b, 0.99), 1)` ms. The other two zones
+are at most
+`r round(max(tapply(frames_b$ms, frames_b$zone, quantile, 0.99)[c("Atrium", "Gantry")]), 1)` ms.
+Splitting a summary by where it happened turns "Build B stutters" into "Build B
+stutters in one place", which is a ticket someone can fix.
 :::
 
-**2.** Redraw the quit-reason bar chart with one bar per build side by side. What
-does it add to the single bar chart?
+**3. z-score.** A session scored 2,000. Using the mean and SD of all scores, what
+is its z-score? Is the 68–95–99.7 rule a safe way to say how unusual it is?
 
 ::: {.callout-note collapse="true" title="Check your answer"}
 
 ```{r}
-#| label: practice-quit-build
-barplot(table(sessions$build, sessions$quit_reason),
-        beside = TRUE, legend.text = TRUE,
-        main = "How sessions ended, by build", ylab = "Sessions")
+#| label: practice-z
+(2000 - mean(sessions$score)) / sd(sessions$score)
 ```
 
-`r sum(sessions$build == "A" & sessions$quit_reason == "Frustrated")` Build A
-sessions ended in frustration against
-`r sum(sessions$build == "B" & sessions$quit_reason == "Frustrated")` in Build B.
-The single chart showed how often players left frustrated; the split shows which
-build they left.
+About `r round((2000 - mean(sessions$score)) / sd(sessions$score), 1)` SDs above
+the mean. But score is not normal: the Sentinel collapses give it a left tail,
+which inflates the SD and drags the mean down. The rule would be a rough guide at
+best. The percentile is more honest:
+`r pct_fmt(mean(sessions$score < 2000))` of sessions scored below 2,000.
 :::
 
-**3.** Using `tapply()`, find the median score for each number of deaths. Does the
-pattern in the scatterplot hold up?
+**4. Critique.** "Build A's sessions had a wider spread than Build B's, so Build A
+is less consistent." Is that the best description of what happened?
 
 ::: {.callout-note collapse="true" title="Check your answer"}
-
-```{r}
-#| label: practice-deaths-score
-tapply(sessions$score, sessions$deaths, median)
-```
-
-Broadly, yes: sessions with no deaths have a median score of
-`r median(sessions$score[sessions$deaths == 0])`, and sessions with
-`r max(sessions$deaths)` deaths have
-`r median(sessions$score[sessions$deaths == max(sessions$deaths)])`. Check how
-many sessions sit behind each median with `table(sessions$deaths)` before trusting
-the ends of that list ([rule 8](ten-rules.qmd)).
+It is true but it misses the finding. Build A is not uniformly inconsistent; it
+has two distinct groups, one quitting around minutes 10 to 14 and one playing to
+the end. "A fifth of Build A sessions end between minutes 11 and 13, mostly in
+frustration" names a moment a designer can investigate. The wider spread is a
+symptom of that, and only the histogram or the retention curve shows it.
 :::
 
 ---
 
 ## Summary
 
-- An average describes a group; it does not describe any player in it.
-- The standard deviation is the typical distance from the mean. Use the IQR when
-  the data is skewed.
-- Skew pulls the mean towards the tail. Game data is rarely symmetric.
+- A distribution is the full pattern of values. Describe it by centre, spread,
+  shape and unusual values.
+- Skew pulls the mean towards the tail. Bounded game measures are usually skewed:
+  a floor gives a right tail, a ceiling a left one.
+- Two humps usually mean two groups mixed together. A boxplot cannot show them.
+- The normal distribution is the symmetric bell; 68% of values lie within 1 SD,
+  95% within 2. Check before assuming it, by overlaying the curve.
+- A z-score is the distance from the mean in SDs.
 - An outlier is an error, an extreme player or the finding. Work out which before
   doing anything to it.
-- Read several summaries together, and where they disagree, draw the picture.
+- Compare whole distributions. For "how long did players stay", use a retention
+  curve.
 - For performance data, quote a high percentile. Both builds run at about
   `r round(1000 / mean(frames$ms))` FPS, and only one of them stutters.
 
+| Key term | Meaning |
+| :- | :- |
+| **Distribution** | The full pattern of a variable's values |
+| **Skew** | A long tail on one side; the mean is pulled towards it |
+| **Bimodal** | Two humps, usually two groups mixed together |
+| **Floor, ceiling** | A lower or upper limit values cannot pass |
+| **Normal distribution** | The symmetric bell curve, defined by its mean and SD |
+| **68–95–99.7 rule** | The share of normal values within 1, 2 and 3 SDs of the mean |
+| **z-score** | How many SDs a value sits from the mean |
+| **Tail** | The extreme values at either end of a distribution |
+| **Outlier** | A value far from the rest; an error, an extreme player or the finding |
+| **Retention curve** | The share of sessions still going at each point in time |
+
 ---
 
-## Links to Relevant Reference Material
+## Links
 
 - [Ten Rules](ten-rules.qmd): rule 4 (look at the shape before you quote the
   average), rule 7 (compare distributions, not averages) and rule 9 (sometimes the
   rare value is the whole story)
-- [Describing What You Have](04-describing-variables.qmd): centre, spread and the
-  mean against the median
-- [R and Quarto Reference: describing one variable](../reference/r-quarto-reference.qmd#describing-one-variable),
-  [describing by group](../reference/r-quarto-reference.qmd#describing-by-group)
-  and [plots](../reference/r-quarto-reference.qmd#plots)
-- [Lab 01: exploring playtest data](../labs/reading-data.qmd), Part B
+- [Statistics Reference: shape](../reference/reference-statistics.qmd#shape)
+- [R and Quarto Reference: plots](../reference/r-quarto-reference.qmd#plots)
+- [Lab 01: Reading Data](../labs/reading-data.qmd), Part B
+- Next: [Cleaning and Transforming](06-cleaning-and-transforming.qmd)
 
 ---
 
@@ -420,7 +698,5 @@ the ends of that list ([rule 8](ten-rules.qmd)).
 - You find three sessions with a score of zero. What would you check before
   deciding they are errors, and what would change your mind?
 - The Corridor hitch affects
-  `r round(100 * nrow(slow_b) / length(b), 1)`% of Build B's frames. At what point does a rare
-  problem stop being worth fixing, and who should decide?
-
----
+  `r round(100 * nrow(slow_b) / length(b), 1)`% of Build B's frames. At what point
+  does a rare problem stop being worth fixing, and who should decide?

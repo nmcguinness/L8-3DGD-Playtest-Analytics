@@ -496,7 +496,7 @@ questions.
 - [Ten Rules](ten-rules.qmd): rule 3 (know what kind of number you are holding),
   rule 4 (look at the shape before you quote the average) and rule 7 (compare
   distributions, not averages)
-- [Distributions and Variation](05-distributions-and-shape.qmd): the base R
+- [Distributions and Shape](05-distributions-and-shape.qmd): the base R
   versions of these plots, and what to look for in each
 - [R and Quarto Reference: plots](../reference/r-quarto-reference.qmd#plots)
 - [Lab 01: exploring playtest data](../labs/reading-data.qmd), Exercises 11 and 12:
