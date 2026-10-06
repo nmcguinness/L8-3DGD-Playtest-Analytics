@@ -349,7 +349,7 @@ cohort, an archetype or a route that the new lighting does not reach.
 wrong turns than the testers who played Build A. A figure cannot tell you whether
 another group of players would show the same gap, or whether a gap this size could
 arise by chance. That is what the t-test in
-[Comparing Playtest Conditions](08-comparing-groups.qmd) answers, and it is why
+[Comparing Groups](08-comparing-groups.qmd) answers, and it is why
 the figure comes before the test rather than instead of it.
 
 **Every figure answers one question.** Before you draw, write the question the

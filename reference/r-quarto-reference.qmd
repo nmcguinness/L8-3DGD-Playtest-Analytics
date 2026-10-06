@@ -124,6 +124,9 @@ Load with `library(tidyr)` for the pivots and `library(dplyr)` for the join.
 | Compare the same players twice | `t.test(p$before, p$after, paired = TRUE)` |
 | Draw a random sample | `sample(x, 30)`; with replacement: `sample(x, replace = TRUE)` |
 | Repeat a calculation many times | `replicate(1000, mean(sample(x, 30)))` |
+| Compare two proportions | `prop.test(c(20, 5), c(60, 60))` |
+| Check normality | `qqnorm(x); qqline(x)` |
+| Shuffle labels for a permutation test | `replicate(10000, gap(y, sample(group)))` |
 | Confidence interval for one mean | `t.test(x)$conf.int` |
 | Keep the result and pull out parts | `res <- t.test(...)`, then `res$estimate`, `res$conf.int`, `res$p.value` |
 

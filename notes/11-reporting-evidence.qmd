@@ -539,7 +539,7 @@ quits happened. They cannot tell you how often each cause occurs.
   finding that does not name an action is not finished)
 - [Cleaning and Transforming](06-cleaning-and-transforming.qmd): the cleaning log that
   goes in part 2
-- [Comparing Playtest Conditions](08-comparing-groups.qmd): statistical against
+- [Comparing Groups](08-comparing-groups.qmd): statistical against
   practical significance, parts 5 and 6
 - [Statistics Reference: which tool for which question](../reference/reference-statistics.qmd#which-tool-for-which-question)
 - [R and Quarto Reference: Quarto](../reference/r-quarto-reference.qmd#quarto)

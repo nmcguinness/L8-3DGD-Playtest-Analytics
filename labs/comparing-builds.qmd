@@ -304,7 +304,7 @@ what you would have instead.
 # Part B — Is the difference real, and does it matter?
 
 Notes for this part: [From Sample to Population](../notes/07-sample-to-population.qmd)
-and [Comparing Playtest Conditions](../notes/08-comparing-groups.qmd).
+and [Comparing Groups](../notes/08-comparing-groups.qmd).
 
 ## Exercise 07 — Describe before you test `[Do]`
 

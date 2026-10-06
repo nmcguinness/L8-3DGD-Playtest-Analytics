@@ -30,6 +30,13 @@ stopifnot(all(sessions$archetype[sessions$score %in% score_out] == "Sentinel"))
 batch       <- ceiling(seq_len(nrow(sessions)) / 30)
 batch_means <- round(tapply(sessions$score, batch, mean))
 mins_b_ref  <- mins[sessions$build == "B"]
+wt_gap      <- diff(rev(tapply(sessions$wrong_turns, sessions$build, mean)))
+set.seed(1)
+wt_shuffle  <- replicate(2000, {g <- sample(sessions$build)
+  mean(sessions$wrong_turns[g == "A"]) - mean(sessions$wrong_turns[g == "B"])})
+frus_ref    <- tapply(sessions$quit_reason == "Frustrated", sessions$build, sum)
+pt_ref      <- prop.test(frus_ref, table(sessions$build))
+stopifnot(max(abs(wt_shuffle)) < abs(wt_gap), pt_ref$p.value < 0.01)
 se_b_ref    <- sd(mins_b_ref) / sqrt(length(mins_b_ref))
 
 tt_mins  <- t.test(session_minutes ~ build, data = sessions)
@@ -132,13 +139,23 @@ Taught in [From Sample to Population](../notes/07-sample-to-population.qmd).
 
 ## Testing a difference
 
+Taught in [Comparing Groups](../notes/08-comparing-groups.qmd).
+
 | Term | What it means | *Tidebreak* example | The common mistake |
 | :- | :- | :- | :- |
 | **Null hypothesis** | The claim that there is no difference, which the test tries to find evidence against. | Build A and Build B have the same mean session length. | Believing the test can prove it. Failing to find a difference is not showing there is none. |
 | **Alternative hypothesis** | The claim that there is a difference. | Mean session length differs between the builds. | Choosing a one-sided direction after seeing which way the data went. |
+| **Permutation test** | Shuffle the group labels many times to see what differences chance alone produces; the p-value is the share of shuffles at least as extreme as the real result. | Wrong turns: the real gap is `r round(wt_gap, 1)`; the largest of 2,000 shuffles is `r round(max(abs(wt_shuffle)), 2)`. | Forgetting it works for any summary, including a median or a 99th percentile. |
 | **p-value** | How surprising the data would be if the null hypothesis were true. Small means surprising. | Session length by build: `r p_fmt(tt_mins$p.value)`. | Reading it as the probability that the null hypothesis is true. It is not. |
+| **Significance level (α)** | The p-value threshold, chosen before looking, usually 0.05. It is also the false-alarm rate. | A 0.05 threshold flags about 1 in 20 comparisons of builds that do not really differ. | Choosing it after seeing the p-value. |
+| **Type I error** | A false alarm: concluding there is a difference when there is none. | Rebuilding a level because of a fluke result. | Ignoring that it becomes likely when many tests are run. |
+| **Type II error** | A missed effect: finding no significant difference when there is one. | Shipping a problem because the playtest was too small to see it. | Reading "not significant" as "no difference". |
+| **Power** | The chance a test detects a real effect of a given size. Grows with sample size. | Even *Tidebreak*'s large signposting effect is missed more often than not with five sessions per build. | Running a small playtest and concluding the change did nothing. |
 | **Statistical significance** | A p-value below a threshold set in advance, conventionally 0.05. | Session length differs (`r p_fmt(tt_mins$p.value)`); score does not (`r p_fmt(tt_score$p.value)`). | Treating "significant" as "important". It means "unlikely to be chance alone", nothing more. |
 | **Practical significance** | Whether a difference is big enough to change a design decision. | In the Atrium, Build B's frames are `r round(atr_gap, 2)` ms faster (`r p_fmt(tt_atr$p.value)`): highly significant and imperceptible to any player. | Reporting a tiny, significant difference as a win. Always give the size of the difference too. |
+| **Effect size** | How big the difference is: in the original units with its interval, or standardised (Cohen's d). | `r round(wt_gap, 1)` fewer wrong turns per session in Build B. | Reporting a p-value without it. |
+| **Two-proportion test** | Compares two percentages, such as quit rates. `prop.test(counts, totals)` | Frustration quits: `r frus_ref[["A"]]` of 60 in Build A against `r frus_ref[["B"]]` of 60 in Build B, `r p_fmt(pt_ref$p.value)`. | Using a t-test on a yes/no outcome, or comparing raw counts from groups of different sizes. |
+| **Multiple comparisons** | Running many tests, which raises the chance that at least one is a false alarm. | Eight survey items tested at 0.05: a `r round(100 * (1 - 0.95^8))`% chance of at least one false alarm if nothing differed. | Scanning every column and reporting what came up. Decide the comparisons in advance. |
 | **Independent-samples t-test** | Compares two group means when different people are in each group. `t.test(y ~ group)` | `t.test(session_minutes ~ build)`: every player saw only one build. | Ignoring that each player contributed `r n_per` sessions, so the sessions are not fully independent of one another. |
 | **Paired t-test** | Compares two measurements taken on the same people. `t.test(x, y, paired = TRUE)` | Not possible on the sessions file: `r both_builds` of `r length(unique(sessions$player_id))` players played both builds. In `tidebreak_paired.csv`, `r nrow(paired)` players played both and took `r round(tt_pair$estimate, 1)` fewer wrong turns in Build B (`r p_fmt(tt_pair$p.value)`). | Running a paired test on unpaired data, or an independent test when the same players did both. |
 
