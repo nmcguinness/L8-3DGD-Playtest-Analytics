@@ -1,20 +1,198 @@
 ---
 title: "Start Here"
 subtitle: "How these notes work, and the route through them"
-draft: true
 ---
 
 {{< include _workflow.qmd >}}
 
-::: {.callout-note}
-## In preparation
+> These notes teach you to analyse playtest data in R: to plan a playtest, describe
+> what happened, decide whether a difference between builds is real, and write it up
+> as a finding a designer can act on. They assume **no statistics and no R**. They
+> do assume you build games, and every example comes from one playtest of one game,
+> *Tidebreak*. Read this page first; it takes five minutes.
 
-This page is written in Stage 7 of the notes rebuild. It is a draft, so it does not appear on the published site.
-:::
+## What You Are Learning
 
-## Planned contents
+Three weeks, one question at a time:
 
-- Who these notes are for: no statistics and no R assumed
-- The analytical workflow and the R analysis cycle, as diagrams
-- The three-week route: which notes, labs and demos go together
-- How the Ten Rules, the exercise tiers and the Reference pages fit together
+- **Week 1: what happened?** Plan a playtest, read the data into R, and describe it
+  honestly: centre, spread, shape, and the players at the edges.
+- **Week 2: is it real?** Clean the raw export, then decide whether a difference
+  between two builds is more than chance, and whether it is big enough to matter.
+- **Week 3: what does it mean?** Relate variables to each other without confusing
+  association with cause, draw figures for other people, and write the report.
+
+Every analysis in these notes follows the same **analytical workflow**. The strip at
+the top of each page shows where that page sits in it:
+
+```{mermaid}
+%%| label: fig-workflow
+%%| fig-cap: "The analytical workflow. Every notes page covers one or two of these steps."
+flowchart LR
+  A["Ask a design<br/>question"] --> B["Collect<br/>data"]
+  B --> C["Inspect<br/>and clean"]
+  C --> D["Visualise"]
+  D --> E["Describe"]
+  E --> F["Quantify<br/>uncertainty"]
+  F --> G["Test a<br/>hypothesis"]
+  G --> H["Consider<br/>confounds"]
+  H --> I["Interpret"]
+  I --> J["Report"]
+  classDef s fill:#f8f9fa,stroke:#6c757d,color:#212529
+  class A,B,C,D,E,F,G,H,I,J s
+```
+
+The R work inside it follows the **R analysis cycle**. The middle is a loop, not a
+line: you transform, look, model and look again.
+
+```{mermaid}
+%%| label: fig-r-cycle
+%%| fig-cap: "The R analysis cycle. Import and tidy once; transform, visualise and model in a loop; communicate at the end."
+flowchart LR
+  I["Import<br/>read_csv()"] --> T["Tidy<br/>pivot_longer()"]
+  T --> X["Transform<br/>filter(), mutate()"]
+  X --> V["Visualise<br/>hist(), ggplot()"]
+  V --> M["Model<br/>t.test(), lm()"]
+  M --> X
+  V --> X
+  M --> C["Communicate<br/>Quarto report"]
+  classDef s fill:#f8f9fa,stroke:#6c757d,color:#212529
+  classDef e fill:#fbeaea,stroke:#b22222,color:#212529
+  class I,T,X,V,M s
+  class C e
+```
+
+---
+
+## The Notes
+
+Twelve pages in six parts. Read them in order: each builds on the ones before.
+
+| Part | Notes | The question it answers |
+| :- | :- | :- |
+| **0 Start here** | This page; [Ten Rules](ten-rules.qmd) | How does this work? |
+| **1 Foundations** | [Planning a Playtest](01-planning-a-playtest.qmd) | How do I get data worth analysing? |
+| | [R from First Principles](02-r-first-principles.qmd) | How do I read and write R? |
+| | [Data, Variables and Types](03-data-and-types.qmd) | What kind of number am I holding? |
+| **2 Describing** | [Describing Variables](04-describing-variables.qmd) | What is typical, and how much do players differ? |
+| | [Distributions and Shape](05-distributions-and-shape.qmd) | What does the average hide? |
+| **3 Preparing** | [Cleaning and Transforming](06-cleaning-and-transforming.qmd) | How do I get raw data ready, without changing the answer? |
+| **4 Comparing** | [From Sample to Population](07-sample-to-population.qmd) | How far would the numbers move in another playtest? |
+| | [Comparing Groups](08-comparing-groups.qmd) | Is a difference real, and does it matter? |
+| **5 Relationships** | [Visualising with ggplot2](09-visualising-with-ggplot2.qmd) | How do I draw a figure for someone else? |
+| | [Relationships, Correlation and Regression](10-relationships-and-regression.qmd) | When two things move together, what does it mean? |
+| **6 Communicating** | [Interpreting and Reporting Evidence](11-reporting-evidence.qmd) | What do I tell the team? |
+
+**The [Ten Rules](ten-rules.qmd) are the spine.** Every notes page and every lab
+points back to at least one of them by number. When a lab says "rule 5 again",
+that is the page it means.
+
+---
+
+## The Three-Week Route
+
+Each class is two 90-minute cycles: a framing question, about 30 minutes of
+theory from the notes, a 15-minute demo, then the lab. The notes hold more than one
+theory slot can cover; the class covers each page's core, and the rest is for
+reading afterwards.
+
+| When | In class | Read before or after | Lab | Demo |
+| :- | :- | :- | :- | :- |
+| **Before Week 1** | | [R from First Principles](02-r-first-principles.qmd) | [Lab 00](../labs/setting-up.qmd) | |
+| **Week 1, cycle 1** | [Planning a Playtest](01-planning-a-playtest.qmd), [Data, Variables and Types](03-data-and-types.qmd) | | [Lab 01](../labs/reading-data.qmd) Part A | [Week 1](../demos/week-1.qmd) |
+| **Week 1, cycle 2** | [Describing Variables](04-describing-variables.qmd), [Distributions and Shape](05-distributions-and-shape.qmd) | Going further sections | [Lab 01](../labs/reading-data.qmd) Part B | [Week 1](../demos/week-1.qmd) |
+| **Week 2, cycle 1** | [Cleaning and Transforming](06-cleaning-and-transforming.qmd) | | [Lab 02](../labs/comparing-builds.qmd) Part A | [Week 2](../demos/week-2.qmd) |
+| **Week 2, cycle 2** | [Comparing Groups](08-comparing-groups.qmd), with the simulations from [From Sample to Population](07-sample-to-population.qmd) | [From Sample to Population](07-sample-to-population.qmd) in full | [Lab 02](../labs/comparing-builds.qmd) Part B | [Week 2](../demos/week-2.qmd) |
+| **Week 3, cycle 1** | [Visualising with ggplot2](09-visualising-with-ggplot2.qmd), [Relationships](10-relationships-and-regression.qmd) | The regression section | [Lab 03](../labs/complete-analysis.qmd) Part A | [Week 3](../demos/week-3.qmd) |
+| **Week 3, cycle 2** | [Interpreting and Reporting Evidence](11-reporting-evidence.qmd) | | [Lab 03](../labs/complete-analysis.qmd) Part B | [Week 3](../demos/week-3.qmd) |
+
+**Base R first, then the tidyverse.** Weeks 1 and 2 draw every plot with base R
+(`hist()`, `boxplot()`, `plot()`), the quick plots you make while thinking. Week 3
+introduces `ggplot2` for figures other people will read. The same order runs
+through the data handling: `tapply()` before `group_by()`. The reason is in
+[R from First Principles](02-r-first-principles.qmd#base-r-first-then-the-tidyverse).
+
+---
+
+## How a Notes Page Works
+
+Every notes page has the same shape, so you always know where to look.
+
+| Part | What it is for |
+| :- | :- |
+| **Opening quote** | What the page is for, and the playtest question running through it |
+| **At a glance** | Time, what to read first, key terms, the R it introduces |
+| **Why This Matters** | Why a games team needs the idea at all |
+| **Core sections** | One idea each: a plain-English definition, a figure, the *Tidebreak* example, the R, how you would say it in a report, and the common mistake |
+| **Going further** | Collapsed boxes with extra depth, including "The maths, if you want it". Never needed for the labs |
+| **Quick check** | A collapsed question to test yourself mid-page |
+| **Worked Example** | The page's question answered step by step, usually overturning the obvious answer |
+| **Interpretation Guidance** | What the data shows, what it suggests, and what can legitimately be concluded |
+| **Common Mistakes** | The errors that turn up in real reports |
+| **Practice** | Short exercises with collapsed answers: predict, compute, critique, decide |
+| **Summary and Key Terms** | The page in a few lines, and a glossary for revision |
+
+**Every number is computed.** Each number in the prose is calculated from the data
+when the page is built, so it cannot be out of date or mistyped. Figures stamped
+*Illustration* use simulated data to show an idea cleanly; everything else is
+*Tidebreak*.
+
+**Code is there to be typed.** Every chunk runs as shown, provided the data sits in
+the `data/` folder of your project. Typing it, rather than copying it, is how it
+sticks.
+
+---
+
+## The Labs and Reference Pages
+
+**Four labs**: a setup lab, then one lab per week in two parts, matching the
+week's two cycles. Exercises are tagged by what they ask of you:
+
+| Tier | What it asks | Time |
+| :- | :- | :- |
+| `[Do]` | One function, one result | 2–3 minutes |
+| `[Apply]` | Combine two or three ideas | 5 minutes |
+| `[Decide]` | A judgement call with no single right answer | 5–8 minutes |
+
+The `[Decide]` exercises are the ones that matter most: anyone can run a t-test, and
+the module is about knowing what the result means. Solutions are in collapsed boxes;
+open them after you have tried, even when your attempt worked.
+
+**Three reference pages** for looking things up during a lab:
+
+- [Statistics Reference](../reference/reference-statistics.qmd): every term, in
+  plain English, with a *Tidebreak* example and the common mistake
+- [R and Quarto Reference](../reference/r-quarto-reference.qmd): every function,
+  by task
+- [ggplot2 Reference](../reference/reference-ggplot2.qmd): every geometry and
+  option used in Week 3
+
+---
+
+## The Game: *Tidebreak*
+
+*Tidebreak* is a fictional four-player top-down arena game. Its playtest produced
+the files every page uses:
+
+| File | One row is | Used for |
+| :- | :- | :- |
+| `tidebreak_sessions.csv` | one player in one session | almost everything |
+| `tidebreak_sessions_raw.csv` | the same, as exported, with faults | cleaning |
+| `tidebreak_survey.csv` | one post-session survey | ratings and reporting |
+| `tidebreak_paired.csv` | one player who played both builds | the paired test |
+| `tidebreak_frame_times.csv` | one rendered frame | performance and tails |
+
+The data is synthetic, but it was built so that a careful analysis finds real
+findings, and several of them contradict the obvious first answer. **That is the
+point.** If a result surprises you, you are probably reading the data correctly.
+
+---
+
+## Before Week 1
+
+1. Work through [Lab 00: Setting Up](../labs/setting-up.qmd), and check that the
+   test document renders.
+2. Read [R from First Principles](02-r-first-principles.qmd) with R open beside you.
+3. Skim the [Ten Rules](ten-rules.qmd). You will meet each of them properly later.
+
+Then start with [Planning a Playtest](01-planning-a-playtest.qmd).

@@ -63,6 +63,10 @@ ggplot2, producing plainer, static versions of the plots shown here. The three
 movement questions in View 8 use position data that stays in this showcase. The
 polish on this page is the destination, not the syllabus.
 
+**To begin the notes, go to [Start Here](notes/00-start-here.qmd).** It explains
+how the twelve notes, four labs and three reference pages fit together, and the
+route through them.
+
 ::: {.callout-note}
 ## The data
 *Tidebreak* is a fictional four-player top-down arena, used here so that the

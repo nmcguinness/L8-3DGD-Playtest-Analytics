@@ -9,15 +9,16 @@ published site is static HTML.
 
 ## Requirements
 
-- R 4.3 or later
+- R 4.6 or later
 - Quarto 1.4 or later
 
 ```r
-install.packages(c("readr", "knitr", "dplyr", "tidyr", "ggplot2", "plotly", "DT"))
+install.packages(c("readr", "dplyr", "tidyr", "ggplot2", "knitr", "rmarkdown",
+                   "plotly", "DT"))
 ```
 
-`readr` and `knitr` are all the notes and labs need. The remainder are used only
-by the showcase page.
+The first six are what the notes and labs use. `plotly` and `DT` are used only by
+the showcase page.
 
 ## Build
 
@@ -32,12 +33,14 @@ quarto publish gh-pages   # render and publish to GitHub Pages
 | Path | Contents |
 | :- | :- |
 | `index.qmd` | The showcase — eight worked views, used as the motivator |
-| `notes/` | Principles documents, read before class |
+| `notes/` | Twelve teaching notes in six parts, numbered in reading order; start with `00-start-here.qmd`. `_setup.R` and `_workflow.qmd` are shared by every page |
+| `demos/` | The lecturer's live demo script for each week |
 | `labs/` | Exercise sheets worked in class |
 | `reference/` | Lookup pages |
 | `data/` | Synthetic playtest data, seeded and fixed |
 | `_freeze/` | Execution cache — **committed**, do not delete |
 | `_site/` | Build output — git-ignored |
+| `lecturer/` | Private authoring files — git-ignored and never rendered |
 
 The data in `data/` is synthetic. It describes *Tidebreak*, a fictional
 four-player top-down arena, and exists so that every example is self-contained

@@ -7,15 +7,13 @@ aliases:
 ---
 
 {{< include _workflow.qmd >}}
+
 ```{r}
 #| label: setup
 #| include: false
-library(readr)
+source("notes/_setup.R")
 library(dplyr)
 library(tidyr)
-
-sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
-survey   <- read_csv("data/tidebreak_survey.csv", show_col_types = FALSE)
 
 long   <- pivot_longer(survey, -session_id, names_to = "item", values_to = "rating")
 joined <- left_join(long, select(sessions, session_id, build, quit_reason),
@@ -65,9 +63,34 @@ stopifnot(items$item[1] == "objective_clear",
 
 fr_check <- table(themed$theme[themed$quit_reason == "Frustrated"])
 stopifnot(names(which.max(fr_check)) == "Difficulty")
+
+# For the annotated report and the severity table
+tt_enj  <- t.test(enjoyment ~ build, data = sessions)
+frus_n  <- tapply(sessions$quit_reason == "Frustrated", sessions$build, sum)
+pt_frus <- prop.test(frus_n, table(sessions$build))
+b_ms    <- frames$ms[frames$build == "B"]
+slow_b  <- frames$build == "B" & frames$ms > 1000 / 30
+n_players <- length(unique(sessions$player_id))
+stopifnot(max(abs(tt_enj$conf.int)) < 0.5, pt_frus$p.value < 0.01,
+          all(frames$zone[slow_b] == "Corridor"))
 ```
 
----
+> A playtest ends in a decision, and the report is the only part of your work the
+> decision-maker will read. This page is about turning results into that report:
+> the nine-part structure, reshaping a survey so every item can be reported at
+> once, using players' comments honestly, writing each finding as **What → Pattern
+> → Meaning → Action**, and ranking findings so the most important one leads. The
+> playtest question running through it: *"Build B was meant to be better. What do
+> we tell the team?"*
+
+::: {.at-a-glance}
+**Time:** 30 minutes in class; the R demonstrations support Lab 03 Part B.
+**Before this:** [Relationships, Correlation and Regression](10-relationships-and-regression.qmd).
+**Key terms:** nine-part report, wide, long, `pivot_longer()`, theme, What →
+Pattern → Meaning → Action, severity, limitation.
+**R introduced:** `pivot_longer()`, `pivot_wider()`, `left_join()` (from Week 2),
+`grepl()`, `case_when()`, `knitr::inline_expr()`.
+:::
 
 ## Learning Outcomes
 
@@ -81,6 +104,8 @@ By the end of these notes you can:
   support;
 - write a finding as What → Pattern → Meaning → Action, and diagnose a finding that
   skips a step;
+- rank findings by severity, frequency and cost, so the report leads with the one
+  that matters most;
 - explain why a Quarto report cannot quote a stale number.
 
 ---
@@ -125,8 +150,8 @@ reader should be able to disagree with your conclusion while agreeing with every
 number above it.
 
 **Part 8 is where confounds go.** Anything from
-Relationships and Confounding that you could not rule out belongs here, stated
-plainly. A limitation you name costs you less than one the reader finds.
+[Relationships, Correlation and Regression](10-relationships-and-regression.qmd#confounding-and-simpsons-paradox)
+that you could not rule out belongs here, stated plainly. A limitation you name costs you less than one the reader finds.
 
 ---
 
@@ -137,8 +162,9 @@ that is how a form is filled in. That shape is **wide**. The *Tidebreak* survey 
 `r nrow(survey)` rows and `r ncol(survey)` columns: a session ID and eight
 agreement items, each rated 1 to 5.
 
-**Tidy data** has one row per observation, one column per variable. In the survey,
-an observation is one player's answer to one item. So the tidy shape has three
+**Tidy data**, defined in [Data, Variables and Types](03-data-and-types.qmd#tidy-data),
+has one row per observation and one column per variable. In the survey, an
+observation is one player's answer to one item. So the tidy shape has three
 columns, `session_id`, `item` and `rating`, and one row per answer. That shape is
 **long**: `r nrow(survey)` sessions × 8 items = `r nrow(long)` rows.
 
@@ -184,11 +210,63 @@ Every finding in the report is written in four moves:
 | **Meaning** | What that suggests about the game, and how sure you are | Does it follow from the pattern, and no further? |
 | **Action** | The one change or test you recommend | Could someone start work on it tomorrow? |
 
+```{mermaid}
+%%| label: fig-wpma
+%%| fig-cap: "What → Pattern → Meaning → Action. Facts on the left, judgement on the right; the action is usually the next test, which starts the cycle again."
+flowchart LR
+  W["What<br/>measured, on whom,<br/>how many"] --> P["Pattern<br/>what the data shows,<br/>with its size"]
+  P --> M["Meaning<br/>what it suggests,<br/>and how sure"]
+  M --> A["Action<br/>one change<br/>or test"]
+  A -.->|"the next playtest"| W
+  classDef fact fill:#f8f9fa,stroke:#6c757d,color:#212529
+  classDef judge fill:#fbeaea,stroke:#b22222,color:#212529
+  class W,P fact
+  class M,A judge
+```
+
 **Meaning is where findings go wrong.** What and Pattern are facts. Action is a
 recommendation. Meaning is the step where you connect them, and it is the step most
 often skipped, overstated or quietly replaced by what you hoped to find. A finding
 that does not name an action is not finished ([rule 10](ten-rules.qmd)); a finding
 whose action does not follow from its meaning is worse.
+
+---
+
+## Ranking Findings
+
+A playtest rarely produces one finding. *Tidebreak* produced at least five, and a
+report that lists them in the order they were found buries the one that matters.
+**Rank them, and lead with the top one.**
+
+Rate each finding on three things:
+
+- **Severity**: how badly it hurts the player experience when it happens.
+- **Frequency**: how many players it affects.
+- **Confidence**: how strong the evidence is.
+
+A common severity scale, adapted from usability testing, runs from 4 down to 0:
+
+| Severity | Meaning |
+| :-: | :- |
+| 4 Critical | Stops play or makes players quit |
+| 3 Major | Hurts the experience for many players, but they carry on |
+| 2 Minor | A noticeable irritation |
+| 1 Cosmetic | Fix if there is time |
+| 0 None | Not a problem |
+
+Applied to *Tidebreak*:
+
+| Finding | Severity | Frequency | Evidence | Priority |
+| :- | :-: | :- | :- | :- |
+| Build A frustration quits | 4 | `r frus_n[["A"]]` of `r sum(sessions$build == "A")` Build A sessions, against `r frus_n[["B"]]` in Build B | Strong: `r p_fmt(pt_frus$p.value)`, and Build B already fixes it | Lead the report |
+| Build B Corridor hitch | 3 | `r sum(slow_b)` frames over the 30 FPS budget, every one in the Corridor | Strong: a fixed interval, reproducible | Engineering ticket now |
+| Objective unclear | 3 | `r round(100 * item_row("objective_clear")$disagree)`% of responses disagreed; better in Build B | Strong for the build difference; suggestive for the link to quits | Design change and retest |
+| Build B rated harder | 1 | `r round(abs(diff(t.test(difficulty ~ build, data = sessions)$estimate)), 2)` points on a 1–7 scale | Weak: deaths did not change | Monitor in the next test |
+| Visual style | 0 | `r round(100 * item_row("visual_style")$agree)`% agreed | Strong, but nothing to fix | Mention, do not lead with it |
+
+**Severity is a judgement; write down why.** Two analysts may rate the Corridor hitch
+differently. What matters is that the reasons are visible, so the team can argue
+about the rating rather than about which finding the analyst happened to like.
 
 ---
 
@@ -249,6 +327,76 @@ quits). The Action is specific, testable, and follows from the Meaning.
 - **It misses the finding.** The worst-rated item, the one tied to why players
   quit, is not mentioned. The bad version is not a weaker account of the good one.
   It is an account of a different, more comfortable playtest.
+
+---
+
+## An Annotated Report
+
+What a finished report looks like, in miniature. Each part is one or two sentences
+here; in your report each is a section. The notes in grey say why each part is
+written the way it is.
+
+::: {.callout-note appearance="simple" icon="false"}
+**1. Research question.** Did Build B's environmental guidance improve navigation
+without reducing enjoyment?
+
+[*Stated as a question with a yes or no answer, using the measures that will
+answer it.*]{style="color: #6c757d"}
+
+**2. Experimental design.** `r nrow(sessions)` sessions from `r n_players` players,
+`r unique(as.vector(table(sessions$player_id)))` sessions each; each player was
+assigned to one build. The raw export was cleaned as recorded in the cleaning log
+(Appendix A).
+
+[*Gives both counts, and points to the cleaning log, so the reader can reproduce
+n.*]{style="color: #6c757d"}
+
+**3. Descriptive evidence.** Build A players averaged
+`r round(wt$estimate[[1]], 1)` wrong turns per session; Build B players
+`r round(wt$estimate[[2]], 1)`.
+
+[*The numbers the test will compare, before the test.*]{style="color: #6c757d"}
+
+**4. Visual evidence.** Figure 1 shows wrong turns by build: the middle halves of
+the two distributions do not overlap.
+
+[*Every figure is referred to in the text and earns its place.*]{style="color: #6c757d"}
+
+**5. Statistical evidence.** Build B players took `r round(diff(rev(wt$estimate)), 1)`
+fewer wrong turns per session (95% CI `r ci_fmt(wt$conf.int)`,
+`r p_fmt(wt$p.value)`). Enjoyment did not differ: the 95% interval for the
+difference, `r ci_fmt(tt_enj$conf.int, 2)` points on a 1–7 scale, rules out any
+difference larger than half a point.
+
+[*Size first, then interval, then p-value. The "without reducing enjoyment" half of
+the question is answered with an interval, not with "not significant".*]{style="color: #6c757d"}
+
+**6. Practical significance.** A reduction of `r round(diff(rev(wt$estimate)), 1)`
+wrong turns per session is `r pct_fmt(diff(rev(wt$estimate)) / wt$estimate[[1]])`
+of Build A's average: large enough for players to feel.
+
+[*Translates the statistic into the player's experience.*]{style="color: #6c757d"}
+
+**7. Qualitative evidence.** Comments did not track the builds: more Build B players
+than Build A players said they got lost. Comments tracked enjoyment instead
+(Table 3).
+
+[*Reports the evidence that disagrees, and says what it is evidence of.*]{style="color: #6c757d"}
+
+**8. Limitations.** Each player contributed four sessions, so sessions are not
+independent; the result holds when each player counts once. Players were not
+asked about prior experience with the genre. The separate paired study did not
+record play order, so it cannot separate guidance from practice.
+
+[*Names the weaknesses before the reader finds them, and says which ones were
+checked.*]{style="color: #6c757d"}
+
+**9. Design conclusion.** Keep Build B's guidance. Next: add an on-screen objective
+in the first minute and retest objective clarity and the frustration-quit rate, with
+the success threshold agreed before the test.
+
+[*One decision and one test, following from parts 5 to 8.*]{style="color: #6c757d"}
+:::
 
 ---
 
@@ -458,7 +606,7 @@ changes, and nobody notices until a meeting.
 
 ---
 
-## Short Practice Activities
+## Practice
 
 Each takes two or three minutes. Start from `long`, `sessions` and `themed` in the
 demonstrations.
@@ -514,6 +662,16 @@ of: a handful of one-sentence comments, each chosen by how the session felt. The
 quits happened. They cannot tell you how often each cause occurs.
 :::
 
+**4. Rank.** A colleague's draft report leads with "93% of players liked the visual
+style". Using the severity table above, rewrite the report's first sentence.
+
+::: {.callout-note collapse="true" title="Check your answer"}
+Lead with the highest-priority finding: "One in three Build A sessions
+(`r frus_n[["A"]]` of `r sum(sessions$build == "A")`) ended in a frustration quit,
+against `r frus_n[["B"]]` in Build B; Build B's guidance should be kept." Visual
+style can appear later, as a strength that needs no action.
+:::
+
 ---
 
 ## Summary
@@ -527,12 +685,24 @@ quits happened. They cannot tell you how often each cause occurs.
   do, report both.
 - Write every finding as What → Pattern → Meaning → Action. Meaning is where
   findings go wrong; Action is where they become useful.
+- Rank findings by severity, frequency and strength of evidence, and lead with the
+  top one.
 - A report built in Quarto computes its own numbers, so it cannot quote a stale
   one.
 
+| Key term | Meaning |
+| :- | :- |
+| **Nine-part report** | Question, design, descriptive, visual, statistical, practical and qualitative evidence, limitations, conclusion |
+| **Wide** | One row per respondent, one column per question |
+| **Long** | One row per respondent per question |
+| **Theme** | A category assigned to free-text comments |
+| **What → Pattern → Meaning → Action** | The four moves of a finding |
+| **Severity** | How badly a problem hurts the player experience, 0 to 4 |
+| **Limitation** | Something that could make the conclusion wrong, stated by the author |
+
 ---
 
-## Links to Relevant Reference Material
+## Links
 
 - [Ten Rules](ten-rules.qmd): rule 2 (a number without a question attached is
   decoration), rule 3 (know what kind of number you are holding) and rule 10 (a
@@ -546,6 +716,8 @@ quits happened. They cannot tell you how often each cause occurs.
   and [reshaping and joining](../reference/r-quarto-reference.qmd#reshaping-and-joining)
 - [Lab 03: complete playtest analysis](../labs/complete-analysis.qmd#part-b-reshape-and-report),
   Part B
+- [Week 3 demo](../demos/week-3.qmd)
+- Back to the overview: [Start Here](00-start-here.qmd)
 
 ---
 

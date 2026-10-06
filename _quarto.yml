@@ -28,16 +28,16 @@ website:
     search: true
     collapse-level: 3
     contents:
-      - text: "Start here"
+      - text: "Home"
         href: index.qmd
-      # Notes are grouped into six parts. Draft pages stay commented out until
-      # their rebuild stage: a draft listed here still gets prev/next and
-      # breadcrumb links pointing at an empty page.
+      # Notes are grouped into six parts. A new page marked `draft: true` must
+      # stay out of this list until it is finished: a listed draft still gets
+      # prev/next and breadcrumb links pointing at an empty page.
       - section: "Notes"
         contents:
           - section: "0 · Start here"
             contents:
-              # - notes/00-start-here.qmd        (draft: add in Stage 7)
+              - notes/00-start-here.qmd
               - notes/ten-rules.qmd
           - section: "1 · Foundations"
             contents:
