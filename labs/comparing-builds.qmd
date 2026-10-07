@@ -24,7 +24,10 @@ matter?
 | `|>` | Pass the result on its left into the function on its right |
 | `filter()`, `select()`, `mutate()`, `arrange()` | Keep rows, keep columns, change a column, sort |
 | `group_by()`, `summarise()` | One row of summaries per group |
+| `sample()`, `replicate()` | Shuffle the build labels many times: a permutation test |
 | `t.test()` | Independent-samples and paired t-tests, with confidence intervals |
+| `prop.test()` | Compare two proportions, such as quit rates |
+| `left_join()` | Add columns from another table, matched on a key |
 | `aggregate()` | Collapse several rows per player into one |
 
 # Learning outcomes
@@ -36,8 +39,9 @@ By the end of this lab you can:
 - use `filter()`, `select()`, `mutate()` and `arrange()` to answer a question about
   the data in one readable pipeline;
 - write a cleaning log that records every row dropped, why, and what it did to *n*;
-- run an independent-samples and a paired t-test, and pull the estimate, interval
-  and p-value out of the result;
+- explain a p-value by shuffling the build labels, then run an independent-samples
+  and a paired t-test and pull the estimate, interval and p-value out of the result;
+- join the survey to the sessions and compare two proportions with `prop.test()`;
 - tell "no meaningful difference" apart from "cannot tell" using a confidence
   interval;
 - decide whether a statistically significant difference justifies a design change.
@@ -48,8 +52,8 @@ By the end of this lab you can:
   cleaning log, including changes that remove no rows.
 - Look before you test. Every Part B exercise assumes you have looked at the data
   first.
-- Part A uses the pipe `|>`. Some Part B solutions use `%>%`, the older tidyverse
-  pipe, which does the same job.
+- Both parts use the native pipe `|>`. You will see `%>%`, the older tidyverse
+  pipe, in other people's code; it does the same job.
 - Type the code. Open the solution **after** your attempt, even when your attempt
   worked.
 - Every exercise ends with a short written answer. Write it. The Challenge is
@@ -63,9 +67,9 @@ By the end of this lab you can:
 #| label: setup
 library(readr)
 library(dplyr)
-library(ggplot2)
 
 sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+survey   <- read_csv("data/tidebreak_survey.csv", show_col_types = FALSE)
 paired   <- read_csv("data/tidebreak_paired.csv", show_col_types = FALSE)
 frames   <- read_csv("data/tidebreak_frame_times.csv", show_col_types = FALSE)
 raw      <- read_csv("data/tidebreak_sessions_raw.csv",
@@ -79,8 +83,8 @@ nrow(paired)
 `raw` is the export as delivered, and Part A cleans it. `trim_ws = FALSE` stops
 `read_csv()` quietly stripping spaces from text values, so you see the file the way
 Excel or a database import would. `sessions` has one row per player per session,
-with each player on one build only. `paired` is a separate study in which every
-player played both builds.
+with each player on one build only. `survey` has one post-session survey per
+session. `paired` is a separate study in which every player played both builds.
 
 ---
 
@@ -315,8 +319,8 @@ sessions and the mean, median, standard deviation and IQR of `wrong_turns`.
 
 ```{r}
 #| label: ex07
-sessions %>%
-  group_by(build) %>%
+sessions |>
+  group_by(build) |>
   summarise(n      = n(),
             mean   = mean(wrong_turns),
             median = median(wrong_turns),
@@ -356,7 +360,91 @@ inline R rather than by copying.
 **Write 2 sentences:** is the confidence interval for Build A minus Build B, or
 Build B minus Build A? How can you tell from the output?
 
-## Exercise 09 — The same players, both builds `[Apply]`
+## Exercise 09 — Could it be chance? Shuffle and see `[Apply]`
+
+If the signposting made no difference, the build label on each session would be
+arbitrary. Shuffle the labels 10,000 times with `sample()`, recompute the gap in
+mean wrong turns each time, and count how many shuffled gaps are at least as large
+as the real one. Compare with Exercise 08's p-value.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex09
+gap <- function(y, g) mean(y[g == "A"]) - mean(y[g == "B"])
+
+observed <- gap(sessions$wrong_turns, sessions$build)
+set.seed(1)
+shuffled <- replicate(10000, gap(sessions$wrong_turns, sample(sessions$build)))
+
+observed
+max(abs(shuffled))
+mean(abs(shuffled) >= abs(observed))
+
+hist(shuffled, breaks = 40, col = "grey85", border = "white",
+     xlim = range(c(shuffled, observed)),
+     main = "Gaps from shuffled build labels",
+     xlab = "Difference in mean wrong turns (A - B)")
+abline(v = observed, col = "firebrick", lwd = 3)
+```
+
+The real gap is `r round(observed, 1)` wrong turns; the largest of ten thousand
+shuffled gaps is `r round(max(abs(shuffled)), 2)`. No shuffle came close, so the
+shuffle's p-value is below 1 in 10,000, which agrees with the t-test's tiny
+p-value. The shuffle shows what a p-value *is*: the share of a world without a
+difference that looks at least as extreme as your data.
+:::
+
+**Write 2 sentences:** what does one shuffle represent, and why does the
+proportion of extreme shuffles answer "could this be chance?"
+
+## Exercise 10 — Bring the survey in `[Apply]`
+
+```{r}
+#| label: ex10-setup
+#| include: false
+joined_chk <- left_join(survey, select(sessions, session_id, build), by = "session_id")
+dis_chk    <- tapply(joined_chk$objective_clear <= 2, joined_chk$build, sum)
+pt_chk     <- prop.test(dis_chk, table(joined_chk$build))
+stopifnot(nrow(joined_chk) == nrow(survey), !anyNA(joined_chk$build),
+          dis_chk[["A"]] > dis_chk[["B"]], pt_chk$p.value < 0.01)
+```
+
+The survey does not record the build. Use `left_join()` to add each session's
+`build` to `survey`, matching on `session_id`. Then compare the share of responses
+in each build that **disagreed** (1 or 2) with "I always knew what my objective
+was", using `prop.test()`.
+
+::: {.callout-tip collapse="true" title="Solution"}
+
+```{r}
+#| label: ex10
+joined <- survey |>
+  left_join(select(sessions, session_id, build), by = "session_id")
+
+nrow(joined)
+sum(is.na(joined$build))
+
+disagreed <- tapply(joined$objective_clear <= 2, joined$build, sum)
+responses <- table(joined$build)
+disagreed
+prop.test(disagreed, responses)
+```
+
+`left_join()` keeps every survey row and adds `build` from the matching session;
+checking that the row count is unchanged and that no `build` is `NA` confirms every
+survey found its session. `r dis_chk[["A"]]` of `r table(joined_chk$build)[["A"]]`
+Build A responses disagreed, against `r dis_chk[["B"]]` of
+`r table(joined_chk$build)[["B"]]` in Build B
+(`r if (pt_chk$p.value < 0.001) "p < 0.001" else paste("p =", round(pt_chk$p.value, 3))`).
+`prop.test()` compares the two shares directly, which suits a yes-or-no outcome
+better than a t-test on the ratings.
+:::
+
+**Write 2 sentences:** the telemetry says Build B players took fewer wrong turns;
+what does this survey result add, and what kind of evidence is it?
+
+## Exercise 11 — The same players, both builds `[Apply]`
 
 `paired` records `r nrow(paired)` players who each played both builds. Run the
 paired t-test on `wrong_turns_a` and `wrong_turns_b`, then run the unpaired test on
@@ -365,7 +453,7 @@ the same two columns. Compare the widths of the two confidence intervals.
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex09
+#| label: ex11
 paired_test   <- t.test(paired$wrong_turns_a, paired$wrong_turns_b, paired = TRUE)
 unpaired_test <- t.test(paired$wrong_turns_a, paired$wrong_turns_b)
 
@@ -386,7 +474,7 @@ with themselves, so differences in player skill cancel out.
 played first. Why does that matter, and what would you change about the next
 paired study?
 
-## Exercise 10 — No difference, or cannot tell? `[Apply]`
+## Exercise 12 — No difference, or cannot tell? `[Apply]`
 
 Run the t-test on `enjoyment` by build and on `items_collected` by build. Neither
 is significant. For which one can you say there is **no meaningful difference**,
@@ -395,7 +483,7 @@ and for which can you only say **we cannot tell**?
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex10
+#| label: ex12
 enjoy <- t.test(enjoyment ~ build, data = sessions)
 items <- t.test(items_collected ~ build, data = sessions)
 
@@ -414,15 +502,20 @@ typical player collects about
 `r round(mean(sessions$items_collected))`. Build B's players could be collecting
 up to `r sprintf("%.1f", -items$conf.int[1])` more items each, or up to
 `r sprintf("%.1f", items$conf.int[2])` fewer. That is **cannot tell**.
+
+"Cannot tell" is a question of **power**: with these players, a difference in items
+collected of that size would often be missed. A bigger playtest, or a paired one,
+would narrow the interval enough to decide
+([Comparing Groups](../notes/08-comparing-groups.qmd#two-ways-to-be-wrong)).
 :::
 
 **Write 2 sentences:** why is "not significant" a weaker statement than "the
 confidence interval is narrow and sits around zero"?
 
-## Exercise 11 — "Players play longer in Build B" `[Decide]`
+## Exercise 13 — "Players play longer in Build B" `[Decide]`
 
 ```{r}
-#| label: ex11-setup
+#| label: ex13-setup
 #| include: false
 tt_min  <- t.test(session_minutes ~ build, data = sessions)
 not_fr  <- sessions[sessions$quit_reason != "Frustrated", ]
@@ -443,7 +536,7 @@ players who did **not** quit in frustration.
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex11
+#| label: ex13
 not_frustrated <- sessions[sessions$quit_reason != "Frustrated", ]
 t.test(session_minutes ~ build, data = not_frustrated)
 
@@ -471,10 +564,10 @@ below 0.05. The difference is real; the explanation attached to it is not.
 player shifting a little or from a few players shifting a lot. How do you tell
 which, and why does it change the design conclusion?
 
-## Exercise 12 — Which number goes in the report? `[Decide]`
+## Exercise 14 — Which number goes in the report? `[Decide]`
 
 You have three estimates of how much the signposting reduced wrong turns: the
-session-level test from Exercise 08, the paired study from Exercise 09, and a
+session-level test from Exercise 08, the paired study from Exercise 11, and a
 player-level test that averages each player's `r unique(as.vector(table(sessions$player_id)))`
 sessions first. Run the player-level test, then decide which result leads the
 report.
@@ -482,7 +575,7 @@ report.
 ::: {.callout-tip collapse="true" title="Solution"}
 
 ```{r}
-#| label: ex12
+#| label: ex14
 per_player <- aggregate(wrong_turns ~ player_id + build, data = sessions, FUN = mean)
 player_test <- t.test(wrong_turns ~ build, data = per_player)
 
@@ -528,25 +621,29 @@ enough to matter. `frames` is loaded in the Setup block.
 ```{r}
 #| label: challenge
 # 1. Navigation: the question Build B was built to answer
+boxplot(wrong_turns ~ build, data = sessions, col = "grey85",
+        main = "Wrong turns per session", ylab = "Wrong turns")
 t.test(wrong_turns ~ build, data = sessions)
 
 # 2. Did players stay and finish?
-table(sessions$build, sessions$quit_reason)
-tapply(sessions$completed, sessions$build, mean)
+barplot(table(sessions$build, sessions$quit_reason), beside = TRUE,
+        legend.text = TRUE, main = "How sessions ended", ylab = "Sessions")
+frustrated <- tapply(sessions$quit_reason == "Frustrated", sessions$build, sum)
+completed  <- tapply(sessions$completed, sessions$build, sum)
+prop.test(frustrated, table(sessions$build))
+prop.test(completed, table(sessions$build))
 
 # 3. Did anything get worse?
 t.test(enjoyment ~ build, data = sessions)
 t.test(score ~ build, data = sessions)
 
 # 4. Performance, which nobody asked about
-frames %>%
-  group_by(build) %>%
+frames |>
+  group_by(build) |>
   summarise(fps = 1000 / mean(ms), p99 = quantile(ms, 0.99))
 
-ggplot(frames, aes(x = ms)) +
-  geom_histogram(binwidth = 1, fill = "grey60") +
-  facet_grid(build ~ zone) +
-  labs(title = "Frame times by build and zone", x = "Frame time (ms)", y = "Frames")
+boxplot(ms ~ build + zone, data = frames, col = "grey85", las = 2,
+        main = "Frame times by build and zone", ylab = "Frame time (ms)", xlab = "")
 ```
 
 ```{r}
@@ -559,23 +656,26 @@ comp <- round(100 * tapply(sessions$completed, sessions$build, mean))
 fr   <- table(sessions$build, sessions$quit_reason)[, "Frustrated"]
 p99  <- round(tapply(frames$ms, frames$build, quantile, 0.99), 1)
 fps  <- round(1000 / tapply(frames$ms, frames$build, mean))
+pt_fr   <- prop.test(fr, table(sessions$build))
+pt_comp <- prop.test(tapply(sessions$completed, sessions$build, sum), table(sessions$build))
 slow <- frames[frames$ms > 1000 / 30, ]
 p_fmt <- function(p) if (p < 0.001) "p < 0.001" else paste("p =", round(p, 2))
 
 stopifnot(wt$p.value < 0.001, enj$p.value > 0.5, scr$p.value > 0.5,
           all(slow$build == "B"), all(slow$zone == "Corridor"),
           comp[["B"]] > comp[["A"]], fr[["B"]] < fr[["A"]],
-          fps[["A"]] == fps[["B"]], p99[["B"]] > p99[["A"]])
+          fps[["A"]] == fps[["B"]], p99[["B"]] > p99[["A"]],
+          pt_fr$p.value < 0.01, pt_comp$p.value < 0.01)
 ```
 
 | Measure | Visual | Descriptive | Statistical | Practical |
 | :- | :- | :- | :- | :- |
-| Wrong turns | Build B's histogram sits clearly to the left | Mean `r round(wt$estimate[[1]], 1)` in A, `r round(wt$estimate[[2]], 1)` in B | 95% CI `r round(wt$conf.int[1], 1)` to `r round(wt$conf.int[2], 1)` fewer, `r p_fmt(wt$p.value)` | Large: players get lost far less |
-| Frustration quits | Build A's bar is far taller | `r fr[["A"]]` in A, `r fr[["B"]]` in B | Not tested this week | Large: the main way Build A lost players |
-| Completed the test | — | `r comp[["A"]]`% in A, `r comp[["B"]]`% in B | Not tested this week | Large |
-| Enjoyment | Panels look alike | Means `r round(enj$estimate[[1]], 1)` and `r round(enj$estimate[[2]], 1)` | 95% CI `r round(enj$conf.int[1], 2)` to `r round(enj$conf.int[2], 2)`, `r p_fmt(enj$p.value)` | No cost to enjoyment |
-| Score | Boxes overlap | Means `r round(scr$estimate[[1]])` and `r round(scr$estimate[[2]])` | `r p_fmt(scr$p.value)` | No change |
-| Frame time | A scatter of tiny bars far to the right in Build B's Corridor panel, and nowhere else. Easy to miss, even on the right figure | Both about `r fps[["A"]]` FPS; 99th percentile `r p99[["A"]]` ms in A, `r p99[["B"]]` ms in B | Not a comparison of means | Every one of the `r nrow(slow)` frames slower than 30 FPS is Build B, in the Corridor |
+| Wrong turns | Build B's box sits clearly lower | Mean `r round(wt$estimate[[1]], 1)` in A, `r round(wt$estimate[[2]], 1)` in B | 95% CI `r round(wt$conf.int[1], 1)` to `r round(wt$conf.int[2], 1)` fewer, `r p_fmt(wt$p.value)` | Large: players get lost far less |
+| Frustration quits | Build A's frustrated bar is far taller | `r fr[["A"]]` in A, `r fr[["B"]]` in B | `prop.test()`: `r p_fmt(pt_fr$p.value)` | Large: the main way Build A lost players |
+| Completed the test | Build B's completed bar is taller | `r comp[["A"]]`% in A, `r comp[["B"]]`% in B | `prop.test()`: `r p_fmt(pt_comp$p.value)` | Large |
+| Enjoyment | Not drawn; the interval answers it | Means `r round(enj$estimate[[1]], 1)` and `r round(enj$estimate[[2]], 1)` | 95% CI `r round(enj$conf.int[1], 2)` to `r round(enj$conf.int[2], 2)`, `r p_fmt(enj$p.value)` | No cost to enjoyment |
+| Score | Not drawn; the test shows no change | Means `r round(scr$estimate[[1]])` and `r round(scr$estimate[[2]])` | `r p_fmt(scr$p.value)` | No change |
+| Frame time | A column of outlier points far above Build B's Corridor box, and nowhere else. Easy to miss among the routine outliers in every box | Both about `r fps[["A"]]` FPS; 99th percentile `r p99[["A"]]` ms in A, `r p99[["B"]]` ms in B | Not a comparison of means | Every one of the `r nrow(slow)` frames slower than 30 FPS is Build B, in the Corridor |
 
 **So the defensible answer is: yes for navigation, and not yet for release.** The
 signposting did what it was built to do. Players got lost less, fewer quit in
@@ -624,14 +724,11 @@ t.test(wrong_turns ~ build, data = sessions)
 
 | Message | What it usually means |
 | :- | :- |
-| `could not find function "ggplot"` | You have not run `library(ggplot2)` |
-| ``Cannot use `+` with a single argument`` | A line starts with `+`. Move it to the end of the line above |
-| `object 'build' not found` | A column name used outside `aes()` |
-| ``stat_bin() requires a continuous x aesthetic`` | A histogram of a categorical column. Use `geom_bar()` |
 | `grouping factor must have exactly 2 levels` | `t.test(y ~ group)` needs exactly two groups. Filter to two first |
 | `not enough 'x' observations` | A group is empty, usually a misspelled level such as `"a"` for `"A"` |
 | `could not find function "%>%"` | You have not run `library(dplyr)` |
 | `could not find function "filter"` | You have not run `library(dplyr)` |
+| `'x' and 'n' must have the same length` | `prop.test()` needs one count and one total per group, in the same order |
 | `object 'clean' not found` | You skipped Exercise 03, or ran Part A out of order |
 | `unexpected '>'` on a line with `|>` | Your R is older than 4.1. Update R, or use `%>%` |
 

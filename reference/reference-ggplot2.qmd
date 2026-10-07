@@ -502,7 +502,8 @@ else.
 
 ---
 
-See also: [Visualising with ggplot2](../notes/09-visualising-with-ggplot2.qmd),
+See also: [Lab 03 Part A](../labs/complete-analysis.qmd#part-a-visualise-and-relate), where every geometry here is used;
+[Visualising with ggplot2](../notes/09-visualising-with-ggplot2.qmd),
 [Ten Rules](../notes/ten-rules.qmd),
 [R and Quarto Reference](r-quarto-reference.qmd),
 [Statistics Reference](reference-statistics.qmd).

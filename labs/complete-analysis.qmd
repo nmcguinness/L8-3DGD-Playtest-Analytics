@@ -180,7 +180,8 @@ the sign gives the direction.
 
 Fit a simple linear regression of `score` on `awareness` with `lm()`. Report the
 slope with its 95% confidence interval and R², then draw the scatterplot with the
-fitted line.
+fitted line. Finally, list the seven sessions with the most negative **residuals**:
+the ones that scored furthest below what their awareness predicted.
 
 ::: {.callout-tip collapse="true" title="Solution"}
 
@@ -196,6 +197,9 @@ ggplot(sessions, aes(x = awareness, y = score)) +
   geom_smooth(method = "lm", se = FALSE, colour = "black") +
   labs(title = "Score against awareness",
        x = "Awareness rating", y = "Score")
+
+worst <- order(resid(fit))[1:7]
+sessions[worst, c("session_id", "archetype", "awareness", "score")]
 ```
 
 ```{r}
@@ -204,6 +208,8 @@ ggplot(sessions, aes(x = awareness, y = score)) +
 b1    <- coef(fit)[["awareness"]]
 b1_ci <- confint(fit)["awareness", ]
 r2    <- summary(fit)$r.squared
+n_sen <- sum(sessions$archetype[order(resid(fit))[1:7]] == "Sentinel")
+stopifnot(n_sen >= 5)
 ```
 
 Each extra point of awareness goes with about `r round(b1, 1)` more points of
@@ -212,6 +218,11 @@ awareness accounts for `r round(100 * r2)`% of the variation in score: R² is th
 correlation from Exercise 04 squared. The slope describes how score and awareness
 move together across players. It does not say that raising one player's awareness
 would raise their score.
+
+`resid(fit)` is actual minus predicted, so `order()` puts the biggest
+underperformers first. `r n_sen` of the seven are Sentinels: the collapsing games
+from Lab 01, which awareness does not explain at all. The residuals are where the
+line's misses, and often the findings, are.
 :::
 
 **Write 2 sentences:** turn the slope into a sentence a balance designer could use,

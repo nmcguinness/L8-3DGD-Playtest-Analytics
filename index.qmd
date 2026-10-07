@@ -74,7 +74,7 @@ example is self-contained. The playtest recorded four things:
 
 | File | One row per | Holds |
 | :- | :- | :- |
-| `tidebreak_sessions.csv` | player, per session | Six end-of-match ability ratings, eleven match statistics, session length and quit reason, for 120 sessions |
+| `tidebreak_sessions.csv` | player, per session | Six end-of-match ability ratings, match statistics, wrong turns, items collected, whether the session was completed, session length, quit reason, difficulty and enjoyment ratings, and a one-line comment, for 120 sessions |
 | `tidebreak_survey.csv` | player, per session | Eight agreement items rated 1 to 5 |
 | `tidebreak_frame_times.csv` | rendered frame | Frame time in milliseconds, by build and level zone |
 | `tidebreak_positions.csv` | player, per second | Top-down position for eight players across one 180-second match |
