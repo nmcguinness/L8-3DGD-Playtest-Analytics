@@ -1,0 +1,150 @@
+---
+title: "Stage 1 Demo"
+subtitle: "Describing playtest data, live"
+aliases:
+  - week-1.html
+---
+
+::: {.callout-note appearance="simple" icon="false" title="Get the files"}
+- **Demo code:** [stage-1-demo.qmd](../downloads/stage-1-demo.qmd){download="stage-1-demo.qmd"}, every chunk on this page in one file you can run.
+- **Data:** [tidebreak_sessions.csv](../data/tidebreak_sessions.csv){download="tidebreak_sessions.csv"}, [tidebreak_frame_times.csv](../data/tidebreak_frame_times.csv){download="tidebreak_frame_times.csv"}. Save them in a `data/` folder next to the demo file.
+:::
+
+## Demo 1 — From values to a data frame
+
+**Step 1. A vector is a column**
+
+```{r}
+#| label: d1-vector
+# Five players' deaths, typed in by hand. c() combines values into a vector.
+deaths <- c(2, 0, 5, 3, 1)
+
+deaths          # print it
+length(deaths)  # how many players
+deaths[3]       # the third player: square brackets pick by position
+deaths > 2      # a condition gives one TRUE/FALSE per player
+sum(deaths > 2) # TRUE counts as 1, so this is a count, not a total
+```
+
+**Step 2. A missing value poisons the arithmetic**
+
+```{r}
+#| label: d1-na
+# The fourth player's log was lost. NA means "not recorded", not zero.
+deaths <- c(2, 0, 5, NA, 1)
+
+mean(deaths)               # NA: R will not guess
+mean(deaths, na.rm = TRUE) # say out loud what you are leaving out
+```
+
+**Step 3. Read the real file**
+
+```{r}
+#| label: d1-read
+library(readr)
+library(dplyr)
+
+# The path is relative to the project folder.
+sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+```
+
+**Step 4. Look before you touch**
+
+```{r}
+#| label: d1-look
+glimpse(sessions)            # every column: name, type, first values
+sessions |> count(cohort)    # the pipe reads "and then": take sessions, count cohorts
+mean(sessions$deaths)        # $ pulls out one column as a vector
+```
+
+**Question.** Which columns are text, and is `cohort` just text?
+
+---
+
+## Demo 2 — Describing, then looking
+
+**Step 5. Centre and spread**
+
+```{r}
+#| label: d2-centre
+kills <- sessions$kills
+
+mean(kills)
+median(kills)
+sd(kills)                     # typical distance from the mean
+IQR(kills)                    # width of the middle half
+quantile(kills, c(0.1, 0.9))  # any percentiles you ask for
+```
+
+**Step 6. The shape, the groups, the counts**
+
+```{r}
+#| label: d2-plots
+#| fig-alt:
+#|   - "Histogram of seconds alive per session, from 60 to 180, with the tallest bar at 170 to 180 seconds."
+#|   - "Boxplots of session length by build. Build A's box is lower and wider than Build B's."
+#|   - "Bar chart of how sessions ended. Completed test is by far the most common, followed by frustrated and lost interest."
+hist(sessions$time_alive_s, breaks = 15,
+     main = "Seconds alive", xlab = "Seconds", col = "grey85")
+
+boxplot(session_minutes ~ build, data = sessions,
+        main = "Session length by build", ylab = "Minutes", col = "grey85")
+
+quits <- sessions |> count(quit_reason, sort = TRUE)
+barplot(quits$n, names.arg = quits$quit_reason,
+        main = "How sessions ended", col = "grey85")
+```
+
+**Question.** Which build loses players, and which plot told you?
+
+**Step 7. One summary per group**
+
+```{r}
+#| label: d2-groups
+# group_by() splits the table; summarise() runs each summary once per piece.
+sessions |>
+  group_by(build) |>
+  summarise(n          = n(),               # always say how many
+            median_min = median(session_minutes),
+            frustrated = mean(quit_reason == "Frustrated"))  # a proportion
+```
+
+**Question.** What should the team look at first in Build A?
+
+**Step 8. Three shapes, and what the mean does to each**
+
+```{r}
+#| label: d2-shapes
+#| fig-alt: "Three histograms side by side, each with a solid red mean line and a dashed median line. Awareness is roughly symmetric and the two lines almost coincide. Session length piles up near 32 minutes and its mean sits left of the median. Sentinel score has a separate low group, and its mean sits well left of the median."
+op <- par(mfrow = c(1, 3))
+shape <- function(x, title) {
+  hist(x, breaks = 12, main = title, xlab = "", col = "grey85", border = "white")
+  abline(v = mean(x), col = "firebrick", lwd = 2)       # mean: solid red
+  abline(v = median(x), lty = 2, lwd = 2)               # median: dashed
+}
+shape(sessions$awareness, "Awareness")
+shape(sessions$session_minutes, "Session minutes")
+shape(sessions$score[sessions$archetype == "Sentinel"], "Sentinel score")
+par(op)
+```
+
+**Question.** In which panel would you quote the mean, and in which would it
+mislead? The mean is pulled towards the tail; the median is not.
+
+**Step 9. The frame-rate trap**
+
+```{r}
+#| label: d2-frames
+frames <- read_csv("data/tidebreak_frame_times.csv", show_col_types = FALSE)
+
+# Every summary per build in one table. p99: the frame time 99% of frames beat.
+frames |>
+  group_by(build) |>
+  summarise(fps    = 1000 / mean(ms),
+            median = median(ms),
+            p99    = quantile(ms, 0.99))
+```
+
+**Question.** Both builds run at about 59 FPS. Which one would you ship, and
+which number would you put in the performance report?
+

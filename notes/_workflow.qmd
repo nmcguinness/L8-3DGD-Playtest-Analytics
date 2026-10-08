@@ -1,17 +1,15 @@
 ```{=html}
-<nav class="wf-strip" aria-label="Where this page sits in the analytical workflow">
+<nav class="wf-strip" aria-label="Where this page sits in the evidence workflow">
   <span class="wf-label">Workflow</span>
   <ol>
-    <li class="wf-step wf-ask">Ask</li>
+    <li class="wf-step wf-question">Question</li>
+    <li class="wf-step wf-measure">Measure</li>
     <li class="wf-step wf-collect">Collect</li>
-    <li class="wf-step wf-clean">Inspect &amp; clean</li>
-    <li class="wf-step wf-visualise">Visualise</li>
+    <li class="wf-step wf-clean">Clean</li>
     <li class="wf-step wf-describe">Describe</li>
-    <li class="wf-step wf-uncertainty">Quantify uncertainty</li>
-    <li class="wf-step wf-test">Test</li>
-    <li class="wf-step wf-confounds">Confounds</li>
+    <li class="wf-step wf-compare">Compare/Relate</li>
     <li class="wf-step wf-interpret">Interpret</li>
-    <li class="wf-step wf-report">Report</li>
+    <li class="wf-step wf-act">Act</li>
   </ol>
 </nav>
 ```

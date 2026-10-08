@@ -167,18 +167,21 @@ Taught in [Comparing Groups](../notes/08-comparing-groups.qmd).
 
 ## Relationships
 
-Taught in [Relationships, Correlation and Regression](../notes/10-relationships-and-regression.qmd).
+Taught in [Relationships and Correlation](../notes/10-relationships-and-correlation.qmd).
+Rows marked *(Going further)* are on [Regression](../going-further/regression.qmd).
 
 | Term | What it means | *Tidebreak* example | The common mistake |
 | :- | :- | :- | :- |
 | **Correlation** | How closely two numerical variables move together, from −1 (opposite) through 0 (unrelated) to +1 (together). | Awareness and score: `r round(cors[["awareness"]], 2)`, the strongest of the ability ratings. Shots fired and score: `r round(cors[["shots_fired"]], 2)`. Mobility and survivability: `r round(mob_surv, 2)`, a trade-off. | Calling a correlation "strong" without context. Whether 0.3 matters depends on the question. |
+| **Spearman correlation** | Correlation of the ranks: does one tend to go up when the other does? `cor(x, y, method = "spearman")` | Deaths and difficulty rating: `r round(cor(sessions$deaths, sessions$difficulty, method = "spearman"), 2)` (Pearson gives `r round(cor(sessions$deaths, sessions$difficulty), 2)`). | Using Pearson on 1–7 ratings without checking that the two agree. |
+| **Correlation matrix** | The correlation of every chosen measure with every other. `d \|> select(...) \|> cor()` | Deaths, wrong turns, difficulty, enjoyment and session length: deaths and difficulty go together most; wrong turns go with nothing. | Putting every column in. Choose the 3–5 measures that answer your question, and draw the pairs. |
 | **Confounding variable** | A third variable that drives both of the variables you are comparing. | Veterans average `r aw_cohort[["Veteran"]]` awareness against `r aw_cohort[["Novice"]]` for Novices, and a median score of `r score_cohort[["Veteran"]]` against `r score_cohort[["Novice"]]`. Experience could be driving both. | Reporting a relationship without asking what else differs between the players at each end of it. |
 | **Simpson's paradox** | A relationship that reverses when the data is split into groups. | Mobility and survivability: `r round(mob_surv, 2)` overall, but positive within every archetype (`r round(min(ms_arch), 2)` to `r round(max(ms_arch), 2)`). | Drawing a conclusion about individuals from a trend that only exists between groups. |
-| **Simple linear regression** | The straight line that best predicts one variable from another. `lm(y ~ x)` | `lm(score ~ awareness)`: predicted score = `r round(coef(fit_aw)[1])` + `r round(coef(fit_aw)[2], 1)` × awareness. | Reading the slope as the effect of changing x, rather than how x and y move together. |
-| **Slope** | The average change in y for each one-unit increase in x. | `r round(coef(fit_aw)[2], 1)` points of score per point of awareness. | Quoting it without its confidence interval or units. |
-| **Residual** | Actual minus predicted: how far one observation sits from the line. | The largest negative residuals in the awareness regression are Sentinel collapses. | Ignoring them. The cases the line cannot explain are often the finding. |
-| **R²** | The share of the variation in y that the line accounts for; in simple regression, the correlation squared. | Awareness accounts for `r round(100 * summary(fit_aw)$r.squared)`% of the variation in score. | Reading a low R² as "useless" or a high one as "causal". |
-| **Extrapolation** | Using a line to predict outside the range of the data. | Awareness ratings run from `r min(sessions$awareness)` to `r max(sessions$awareness)`; the line says nothing outside that range. | Interpreting the intercept when x = 0 is impossible. |
+| **Simple linear regression** *(Going further)* | The straight line that best predicts one variable from another. `lm(y ~ x)` | `lm(score ~ awareness)`: predicted score = `r round(coef(fit_aw)[1])` + `r round(coef(fit_aw)[2], 1)` × awareness. | Reading the slope as the effect of changing x, rather than how x and y move together. |
+| **Slope** *(Going further)* | The average change in y for each one-unit increase in x. | `r round(coef(fit_aw)[2], 1)` points of score per point of awareness. | Quoting it without its confidence interval or units. |
+| **Residual** *(Going further)* | Actual minus predicted: how far one observation sits from the line. | The largest negative residuals in the awareness regression are Sentinel collapses. | Ignoring them. The cases the line cannot explain are often the finding. |
+| **R²** *(Going further)* | The share of the variation in y that the line accounts for; in simple regression, the correlation squared. | Awareness accounts for `r round(100 * summary(fit_aw)$r.squared)`% of the variation in score. | Reading a low R² as "useless" or a high one as "causal". |
+| **Extrapolation** *(Going further)* | Using a line to predict outside the range of the data. | Awareness ratings run from `r min(sessions$awareness)` to `r max(sessions$awareness)`; the line says nothing outside that range. | Interpreting the intercept when x = 0 is impossible. |
 | **Correlation versus causation** | Two things moving together does not show that one causes the other. | Buffing awareness would not necessarily raise score; the players with high awareness may simply be better players. | Turning "is associated with" into "causes" between the analysis and the design meeting. |
 
 ---
@@ -191,7 +194,9 @@ Taught in [Relationships, Correlation and Regression](../notes/10-relationships-
 | How bad does the worst case get? | Histogram or trace | 95th and 99th percentiles | — |
 | Do two builds differ, with different players on each? | Side-by-side boxplots | Medians, IQRs, difference in means | Independent-samples t-test |
 | Do two builds differ, with the same players on both? | Each player's difference | Mean difference | Paired t-test |
-| Do two numerical variables move together? | Scatterplot | Correlation | — |
+| Do two numerical variables move together? | Scatterplot | Correlation: Pearson, or Spearman for ratings | — |
+| Which of several measures go together? | `pairs()` | Correlation matrix of 3–5 measures | — |
+| Does a relationship hold within groups? | Scatterplot coloured or faceted by group | Correlation per group with `group_by()` | — |
 | Is a difference worth acting on? | The size of the difference and its confidence interval | — | No test answers this; it is a design judgement |
 
 ---

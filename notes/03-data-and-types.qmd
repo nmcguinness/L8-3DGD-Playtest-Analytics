@@ -1,7 +1,7 @@
 ---
 title: "Data, Variables and Types"
 subtitle: "What kind of number are you holding?"
-body-classes: "wf-at-clean"
+body-classes: "wf-at-measure"
 ---
 
 {{< include _workflow.qmd >}}
@@ -37,12 +37,12 @@ code_list  <- function(x) paste0("`", x, "`", collapse = ", ")
 > of 5. Is that a finding?"*
 
 ::: {.at-a-glance}
+**Stage:** 1 · Core.
 **Time:** 30 minutes in class; 15 more for the Going further sections.
 **Before this:** [R from First Principles](02-r-first-principles.qmd).
 **Key terms:** observation, variable, tidy data, nominal, ordinal, discrete,
-continuous, binary, Likert item, sample, population.
-**R introduced:** `factor()` (preview). Uses `class()` and `table()` from
-[R from First Principles](02-r-first-principles.qmd).
+continuous, binary, Likert item, self-report, sample, population.
+**R you will write:** `class()`, `count()`, `mean()` on a logical column.
 :::
 
 ## Learning Outcomes
@@ -160,16 +160,22 @@ knitr::kable(head(long3, 10),
 
 Now "item" is a column you can group by, filter on and plot by, and the whole
 survey can be summarised in one operation. Turning wide into long is called
-**reshaping**, and you will do it with `pivot_longer()` in
-[Interpreting and Reporting Evidence](11-reporting-evidence.qmd) and Lab 03.
+**reshaping**. **For now,** you only need to recognise when a table is wide. You
+will reshape one with `pivot_longer()` in Stage 4, when you put a whole survey into
+your report.
 
-::: {.callout-tip collapse="true" title="Quick check"}
-A telemetry export has columns `player_id`, `deaths_level1`, `deaths_level2`,
-`deaths_level3`. Is it tidy? What would the tidy version's columns be?
+**Quick check.** A telemetry export has columns `player_id`, `deaths_level1`,
+`deaths_level2`, `deaths_level3`. Is it tidy? What would the tidy version's columns
+be?
 
-**Answer.** No. "Level" is a variable whose values are hiding in the column names.
-The tidy version has `player_id`, `level` and `deaths`, with three rows per player.
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show answer"}
+No. "Level" is a variable whose values are hiding in the column names. The tidy
+version has `player_id`, `level` and `deaths`, with three rows per player.
 :::
+
+**For your project:** before your first playtest, decide what one row of each file
+your game writes will be. One row per death? Per session? Per player? Write it at
+the top of the logging code. Every analysis you do later depends on it.
 
 ---
 
@@ -233,7 +239,7 @@ When you are unsure, ask two questions in order:
 
 ```{mermaid}
 %%| label: fig-types-decision
-%%| fig-cap: "Two questions classify any variable."
+%%| fig-cap: "Two questions classify any variable: labels or quantities, then order or counting."
 flowchart TD
   A{"Are the values labels<br/>or quantities?"} -->|Labels| B{"Do the labels have<br/>a natural order?"}
   B -->|No| N["Nominal<br/>quit_reason, build"]
@@ -241,8 +247,6 @@ flowchart TD
   A -->|Quantities| C{"Are they counts<br/>of whole things?"}
   C -->|Yes| D["Discrete<br/>deaths, wrong_turns"]
   C -->|"No, measured"| E["Continuous<br/>session_minutes"]
-  classDef out fill:#f8f9fa,stroke:#b22222,color:#212529
-  class N,O,D,E out
 ```
 
 ### What each type lets you do
@@ -262,7 +266,7 @@ repeated values, so you count it in ranges, or **bins**, instead.
 The "assumed" for ordinal is the subject of a long argument, and it gets its own
 section below.
 
-::: {.callout-note collapse="true" title="Going further: interval and ratio"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Going further: interval and ratio"}
 Statistics textbooks often use a second scheme, from the psychologist Stanley
 Stevens: **nominal, ordinal, interval, ratio**. The first two are the same as
 here. The difference between the last two is whether **zero means "none"**.
@@ -347,18 +351,18 @@ class(sessions$completed)
 
 **Four traps follow from that table.**
 
-**Ordered labels sort alphabetically.** `table(sessions$cohort)` lists Novice,
-Regular, Veteran, which happens to be right only because the alphabet agrees. For
-an order the alphabet does not know, such as Easy, Normal, Hard, you tell R with a
-**factor**:
+**Ordered labels sort alphabetically.** Count the cohorts:
 
 ```{r}
 #| label: factor-preview
-cohort_f <- factor(sessions$cohort, levels = c("Novice", "Regular", "Veteran"))
-table(cohort_f)
+library(dplyr)
+sessions |> count(cohort)
 ```
 
-You will use `factor()` properly in [Cleaning and Transforming](06-cleaning-and-transforming.qmd).
+Novice, Regular, Veteran: the right order, but only because the alphabet happens
+to agree. For an order the alphabet does not know, such as Easy, Normal, Hard, R
+would list Easy, Hard, Normal. You fix that by telling R the order with a
+**factor**, which you will do in [Cleaning and Transforming](06-cleaning-and-transforming.qmd).
 
 **Ratings arrive as plain numbers.** Every survey item is numeric, so `mean()` and
 `sd()` work on them without complaint. Whether they *should* is the decision in the
@@ -380,8 +384,8 @@ numbers, which says nothing about whether the variable is a count.)
 
 ## Measuring with Surveys
 
-The survey is the only source that tells you what players thought, so it deserves
-the same care as the telemetry.
+A survey is **self-report**: the only source that tells you what players thought
+and felt, so it deserves the same care as the telemetry.
 
 **A Likert item** is a statement with an ordered set of responses, usually five or
 seven points from strongly disagree to strongly agree. *Tidebreak*'s survey uses
@@ -412,7 +416,9 @@ survey at once with a stacked bar per item:
 
 ```{r}
 #| label: fig-survey-stacked
-#| fig-cap: "Every survey item as a stacked bar, from 1 (strongly disagree, red) to 5 (strongly agree, blue), ordered by the share who agreed."
+#| code-fold: true
+#| code-summary: "Show the code"
+#| fig-cap: "Every survey item as a stacked bar, from 1 (strongly disagree, red) to 5 (strongly agree, blue), ordered by the share who agreed. The objective item has the most disagreement."
 #| fig-alt: "Horizontal stacked bars for the eight survey items, ordered by share agreeing. Visual style is almost entirely agreement; objective clear, death understood and difficulty fair have more red disagreement than blue agreement."
 #| fig-height: 4.5
 props <- sapply(items[names(item_agree)],
@@ -426,7 +432,9 @@ legend("top", inset = c(0, -0.13), xpd = TRUE, horiz = TRUE, bty = "n",
 par(op)
 ```
 
-@fig-survey-stacked tells you at a glance what eight means would not.
+You do not need to write the code for this figure; it is here so you can see
+what a whole survey looks like. @fig-survey-stacked tells you at a glance what
+eight means would not.
 `r length(neg_items)` items have more players disagreeing than agreeing
 (`r code_list(neg_items)`), and the objective item has the largest share
 disagreeing, `r pct_fmt(max(item_dis))`. At the other end, `visual_style` is close
@@ -444,9 +452,9 @@ and you never get to measure it.
 **Every number you compute describes the sample.** The question you care about is
 always about the population: not "did these players struggle?" but "will players
 struggle?". Run the test again with different players and every figure on this
-page moves. How far it can move is the subject of
-[From Sample to Population](07-sample-to-population.qmd). Until then, report how many players a number came from every time you quote it
-([rule 8](ten-rules.qmd)).
+page moves. How far it can move is the subject of Stage 2,
+[From Sample to Population](07-sample-to-population.qmd). **For now,** report how
+many players a number came from every time you quote it ([rule 8](ten-rules.qmd)).
 
 **Who is in the sample matters as much as how many.** A playtest recruited from the
 studio's Discord samples the game's most committed fans, not its audience. A
@@ -523,22 +531,24 @@ you think it does. Use an established questionnaire where one exists.
 
 Each takes two or three minutes.
 
-**1. Classify.** Nominal, ordinal, discrete or continuous: `kills`, `quit_reason`,
-`cohort`, `distance_m`, `visual_style`, `completed`, `difficulty`,
-`time_alive_s`, `session_id`.
+1. **Classify.** Nominal, ordinal, discrete or continuous: `kills`, `quit_reason`,
+   `cohort`, `distance_m`, `visual_style`, `completed`, `difficulty`,
+   `time_alive_s`, `session_id`.
+2. **Predict.** What does R print for `class(sessions$cohort)` and
+   `class(survey$visual_style)`? Which of the two is R closer to being right about?
+3. **Critique.** A teammate's report says: "Average cohort was 1.9, so our testers
+   were mostly Regulars." What is wrong, and what should it say instead?
+4. **Compute.** What proportion of sessions were completed? Do it with one
+   function.
 
-::: {.callout-note collapse="true" title="Check your answer"}
-`kills` discrete; `quit_reason` nominal; `cohort` ordinal; `distance_m`
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show answers"}
+**1.** `kills` discrete; `quit_reason` nominal; `cohort` ordinal; `distance_m`
 continuous; `visual_style` ordinal (a 1 to 5 rating); `completed` nominal, and
 binary; `difficulty` ordinal (a 1 to 7 rating); `time_alive_s` continuous,
 although it is recorded in whole seconds; `session_id` is not a variable you
 analyse at all. It is an **identifier**: a label for the row.
-:::
 
-**2. Predict.** What does R print for `class(sessions$cohort)` and
-`class(survey$visual_style)`? Which of the two is R closer to being right about?
-
-::: {.callout-note collapse="true" title="Check your answer"}
+**2.** Character and numeric:
 
 ```{r}
 #| label: practice-class
@@ -546,39 +556,30 @@ class(sessions$cohort)
 class(survey$visual_style)
 ```
 
-Character and numeric. R is closer with `cohort`: `mean()` of text returns `NA`
-with a warning instead of a number. It will average `visual_style` without a murmur, and whether it
-should is your decision.
-:::
+R is closer with `cohort`: `mean()` of text returns `NA` with a warning instead of
+a number. It will average `visual_style` without a murmur, and whether it should is
+your decision.
 
-**3. Critique.** A teammate's report says: "Average cohort was 1.9, so our testers
-were mostly Regulars." What is wrong, and what should it say instead?
-
-::: {.callout-note collapse="true" title="Check your answer"}
-Cohort is ordinal; the 1.9 comes from coding Novice, Regular, Veteran as 1, 2, 3
-and assuming equal gaps. Report the counts instead:
+**3.** Cohort is ordinal; the 1.9 comes from coding Novice, Regular, Veteran as 1,
+2, 3 and assuming equal gaps. Report the counts instead:
 
 ```{r}
 #| label: practice-cohort
-table(cohort_f)
+sessions |> count(cohort)
 ```
 
 "`r sum(sessions$cohort == "Regular")` of `r n_sess` sessions were played by
 Regulars" says the same thing without the invented arithmetic.
-:::
 
-**4. Compute.** What proportion of sessions were completed? Do it with one
-function.
-
-::: {.callout-note collapse="true" title="Check your answer"}
+**4.** `completed` is logical, so `mean()` treats `TRUE` as 1 and `FALSE` as 0 and
+returns the proportion:
 
 ```{r}
 #| label: practice-completed
 mean(sessions$completed)
 ```
 
-`completed` is logical, so `mean()` treats `TRUE` as 1 and `FALSE` as 0 and
-returns the proportion: `r pct_fmt(mean(sessions$completed))`.
+`r pct_fmt(mean(sessions$completed))` of sessions were completed.
 :::
 
 ---
@@ -609,6 +610,7 @@ returns the proportion: `r pct_fmt(mean(sessions$completed))`.
 | **Continuous** | Measurements anywhere in a range |
 | **Binary** | A nominal variable with two values, such as TRUE/FALSE |
 | **Likert item** | A statement rated on an ordered agree–disagree scale |
+| **Self-report** | Evidence from what players tell you: ratings, comments, interviews |
 | **Sample** | The players you actually measured |
 | **Population** | Everyone the conclusion is meant to apply to |
 

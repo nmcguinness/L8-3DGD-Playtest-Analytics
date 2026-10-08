@@ -502,7 +502,7 @@ else.
 
 ---
 
-See also: [Lab 03 Part A](../labs/complete-analysis.qmd#part-a-visualise-and-relate), where every geometry here is used;
+See also: [Lab 03](../labs/clinic-figures.qmd), where the core geometries are used on Tidebreak and on your own data;
 [Visualising with ggplot2](../notes/09-visualising-with-ggplot2.qmd),
 [Ten Rules](../notes/ten-rules.qmd),
 [R and Quarto Reference](r-quarto-reference.qmd),

@@ -1,12 +1,37 @@
 ---
 title: "Visualising with ggplot2"
 subtitle: "From a plot you look at to a figure someone else reads"
-body-classes: "wf-at-visualise"
+body-classes: "wf-at-describe"
 aliases:
   - visualising-with-ggplot2.html
 ---
 
 {{< include _workflow.qmd >}}
+
+```{r}
+#| label: setup
+#| include: false
+source("notes/_setup.R")
+```
+
+> A finding leaves your hands as a figure. This page introduces `ggplot2`, the
+> tool for figures somebody else will read, now that you already know what a
+> histogram, a boxplot and a scatterplot are for. It teaches enough to make one
+> report-quality figure from your own playtest data. The playtest question running
+> through it: *"Did the new signposting reduce wrong turns, and how do we show
+> it?"*
+
+::: {.at-a-glance}
+**Stage:** 3A · Core. Taught in a clinic, November or December.
+**Time:** 30 minutes, then the clinic lab on your own data.
+**Before this:** [Describing Variables](04-describing-variables.qmd) and
+[Distributions and Shape](05-distributions-and-shape.qmd): the base R versions of
+every plot here.
+**Key terms:** aesthetic mapping, geometry, mapping vs setting, fill, colour,
+facet.
+**R you will write:** `ggplot()`, `aes()`, `geom_histogram()`, `geom_bar()`,
+`geom_boxplot()`, `geom_point()`, `facet_wrap()`, `labs()`.
+:::
 
 ## Learning Outcomes
 
@@ -20,8 +45,10 @@ By the end of these notes you can:
   `geom_point()` from the kind of variable you are drawing;
 - use `fill`, `colour` and faceting to split a figure by group, and say which
   comparison each one makes easy;
-- give a figure a title and axis labels a reader outside the team can follow;
-- say when base R is the right tool and when `ggplot2` is.
+- give a figure a title, axis labels and a caption a reader outside the team can
+  follow;
+- produce one figure from your team's own playtest data that is fit for the final
+  report.
 
 ---
 
@@ -36,7 +63,7 @@ reader draws the wrong conclusion, however careful the analysis behind it was.
 Choosing what to compare, and making that comparison the easiest thing on the page
 to see, is part of the analysis rather than decoration added after it.
 
-**The plots in Weeks 1 and 2 were for you.** `hist()` and `boxplot()` answer a question in one
+**The plots in Stages 1 and 2 were for you.** `hist()` and `boxplot()` answer a question in one
 line while you are thinking. They stay useful. What they are not built for is the
 figure that has to survive being pasted into a report, split by three groups and
 read by someone who was not in the room.
@@ -78,10 +105,7 @@ flowchart LR
   G --> F["Facets<br/>+ facet_wrap(~ build)"]
   F --> L["Labels<br/>+ labs(title = ...)"]
   L --> P(["Figure"])
-  classDef req fill:#fbeaea,stroke:#b22222,color:#212529
-  classDef opt fill:#f8f9fa,stroke:#6c757d,color:#212529
-  class D,M,G req
-  class F,L opt
+  class D,M,G accent
 ```
 
 ---
@@ -107,24 +131,22 @@ Common Mistakes below.
 
 The geometry follows from the type of the variables you are drawing
 ([Data, Variables and Types](03-data-and-types.qmd#types-of-data),
-[rule 3](ten-rules.qmd)), exactly as in Week 1.
+[rule 3](ten-rules.qmd)), exactly as in Stage 1.
 
-| You want to show | Variable types | Geometry | Week 1 equivalent |
+| You want to show | Variable types | Geometry | Base R you used before |
 | :- | :- | :- | :- |
 | The shape of one numeric variable | Discrete or continuous | `geom_histogram()` | `hist()` |
-| Counts of one categorical variable | Nominal or ordinal | `geom_bar()` | `barplot(table())` |
+| Counts of one categorical variable | Nominal or ordinal | `geom_bar()` | `barplot()` |
 | A numeric variable compared across groups | Categorical and numeric | `geom_boxplot()` | `boxplot(y ~ x)` |
-| Two numeric variables together | Numeric and numeric | `geom_point()`, plus `geom_smooth(method = "lm")` for a trend | `plot(x, y)`, `abline(lm(y ~ x))` |
-| Two categorical variables together | Categorical and categorical | `geom_bar(position = "fill")` | `barplot(table(a, b))` |
+| Two numeric variables together | Numeric and numeric | `geom_point()` | `plot(x, y)` |
 | A value changing over time or order | Numeric against time | `geom_line()` | `plot(x, y, type = "l")` |
 
-The last three rows are the relationships of
-[Relationships, Correlation and Regression](10-relationships-and-regression.qmd),
-which this page is taught alongside.
+The first three are this page. Scatterplots are the starting point of
+[Relationships and Correlation](10-relationships-and-correlation.qmd), the second
+Stage 3 clinic.
 
 **`geom_bar()` counts for you.** Give it the raw column and it tallies the
-categories itself. The Week 1 habit of wrapping the column in `table()` first is
-not needed here.
+categories itself, so you do not need `count()` first.
 
 ---
 
@@ -172,12 +194,12 @@ run `hist(sessions$wrong_turns)` a dozen times while exploring and build one
 `ggplot2` figure for the report. That is the right division of labour, not a
 failure to commit to one tool.
 
-**That is why Weeks 1 and 2 used base R and this week does not.** For two weeks
-you were inspecting: describing a variable, checking a clean, looking at two builds
-before testing them. Every plot had one reader, you, and one line was all it needed
-to earn. This week the reader changes. The report at the end of Lab 03 is for
-someone who was not in the room, and building that figure is the job `ggplot2` is
-designed for. Base R has not been replaced: you will still reach for `hist()` first.
+**That is why Stages 1 and 2 used base R.** You were inspecting: describing a
+variable, checking a clean, looking at two builds before testing them. Every plot
+had one reader, you, and one line was all it needed to earn. Now the reader
+changes. Your final report is for someone who was not in the room, and building
+that figure is the job `ggplot2` is designed for. Base R has not been replaced: you
+will still reach for `hist()` first.
 
 ---
 
@@ -208,6 +230,7 @@ two distributions, and the three drafts below draw the same data three ways.
 
 ```{r}
 #| label: worked-draft-1
+#| fig-alt: "Default ggplot2 histogram of wrong turns for all sessions: dark grey bars, no title, axes labelled only count and wrong_turns. The bars are broad at low values and peak around 9."
 ggplot(sessions, aes(x = wrong_turns)) +
   geom_histogram(binwidth = 1)
 ```
@@ -220,6 +243,7 @@ describes the playtest as a whole and says nothing about whether Build B helped.
 
 ```{r}
 #| label: worked-draft-2
+#| fig-alt: "The same histogram with bars filled by build, Build A in red stacked on Build B in teal. Build B's bars sit mostly at lower values and Build A's at higher ones, but the stacking makes Build B's shape hard to read."
 ggplot(sessions, aes(x = wrong_turns, fill = build)) +
   geom_histogram(binwidth = 1)
 ```
@@ -233,6 +257,8 @@ Build B's shape. You cannot read Build A's, and you cannot compare the two.
 
 ```{r}
 #| label: worked-draft-3
+#| fig-cap: "Build B's sessions sit further left, and are also more spread out: the signposting helped most players, not all of them."
+#| fig-alt: "Two faceted histograms of wrong turns on the same axis, Build A above and Build B below, titled Wrong turns per session, by build. Build A peaks around 9; Build B sits further left, around 3 to 7."
 #| fig-height: 5
 ggplot(sessions, aes(x = wrong_turns)) +
   geom_histogram(binwidth = 1, fill = "grey60") +
@@ -257,16 +283,21 @@ Note that `fill = "grey60"` is **set**, outside `aes()`. The panels already say
 which build is which, so colour would repeat information the reader has. That is
 the kind of decision that separates a figure from a plot.
 
+**What should the team do?** Keep the signposting, and find out who it did not
+reach: check whether the high-wrong-turn sessions in Build B share a cohort, an
+archetype or a route.
+
 ---
 
-## R Demonstrations
+## Rebuilding the Stage 1 Plots
 
-Each demonstration rebuilds a Week 1 base R plot in `ggplot2`, so you can see what
+Each example rebuilds a base R plot from Stage 1 in `ggplot2`, so you can see what
 changes and what does not.
 
 ```{r}
 #| label: demo-load
 library(readr)
+library(dplyr)
 library(ggplot2)
 
 sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
@@ -274,6 +305,7 @@ sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
 
 ```{r}
 #| label: demo-histogram
+#| fig-alt: "Histogram titled Distribution of session score. Most sessions score between 1,200 and 1,800, with a small separate group around 500 to 700 on the left."
 ggplot(sessions, aes(x = score)) +
   geom_histogram(binwidth = 100, fill = "grey60", colour = "white") +
   labs(title = "Distribution of session score", x = "Score", y = "Sessions")
@@ -286,6 +318,7 @@ bars stay distinct.
 
 ```{r}
 #| label: demo-bar
+#| fig-alt: "Grouped bar chart titled How sessions ended, by build. Build B has more completed tests and more lost-interest endings; Build A has four times as many frustrated endings."
 ggplot(sessions, aes(x = quit_reason, fill = build)) +
   geom_bar(position = "dodge") +
   labs(title = "How sessions ended, by build",
@@ -302,6 +335,7 @@ Build A against
 
 ```{r}
 #| label: demo-boxplot
+#| fig-alt: "Four boxplots of score by archetype. Duelist, Engineer and Scout have similar compact boxes; Sentinel's box is much taller, reaching down to about 1,000, with its lower whisker near 500."
 ggplot(sessions, aes(x = archetype, y = score)) +
   geom_boxplot(fill = "grey85") +
   labs(title = "Score by archetype", x = "Archetype", y = "Score")
@@ -317,6 +351,7 @@ for the other three archetypes.
 
 ```{r}
 #| label: demo-point
+#| fig-alt: "Scatterplot of score against awareness rating with points coloured by cohort. Score rises with awareness; Veterans cluster towards the upper right and Novices towards the lower left, with a few low-scoring points along the bottom."
 ggplot(sessions, aes(x = awareness, y = score, colour = cohort)) +
   geom_point() +
   labs(title = "Awareness rating against score",
@@ -326,11 +361,13 @@ ggplot(sessions, aes(x = awareness, y = score, colour = cohort)) +
 `geom_point()` is `plot(x, y)`. Mapping `colour = cohort` adds a third variable
 without a second chart. The cloud rises from left to right: players rated higher
 for awareness tend to score more. How strong that relationship is, and whether
-awareness is the cause, is the subject of Relationships and Confounding, which
-starts from this scatterplot.
+awareness is the cause, is the subject of
+[Relationships and Correlation](10-relationships-and-correlation.qmd), which starts
+from this scatterplot.
 
 ```{r}
 #| label: demo-facet
+#| fig-alt: "Two faceted histograms of minutes played, Build A above and Build B below. Build A has a cluster of short sessions around 10 to 14 minutes and another near 30; most of Build B's sessions are between 25 and 32 minutes."
 #| fig-height: 5
 ggplot(sessions, aes(x = session_minutes)) +
   geom_histogram(binwidth = 1, fill = "grey60", colour = "white") +
@@ -349,11 +386,52 @@ the overall spread.
 
 ```{r}
 #| label: demo-base-pair
+#| fig-alt: "Base R boxplots of score by archetype: the same four boxes as the ggplot2 version, with Sentinel's box much taller than the others."
 boxplot(score ~ archetype, data = sessions)
 ```
 
 For comparison, the base R version of the boxplot above. One line, no styling, and
 entirely adequate for checking a hunch. Keep it for that.
+
+---
+
+## A Figure for Your Report
+
+The Stage 3A target is **one figure from your team's own playtest data that you
+would put in the final report**. Before it goes in, check it against this list:
+
+1. **One question.** You can write the question the figure answers in one
+   sentence, and the figure makes that comparison the easiest thing to see.
+2. **The right geometry** for the variable types: histogram, bar, boxplot or
+   point.
+3. **Groups split for the comparison you mean**: dodged or faceted, never stacked
+   when the groups are what matters.
+4. **Colour only where it carries information.** Set it, outside `aes()`, if it is
+   only styling.
+5. **Labels for a reader.** A title that states the subject, axis labels in words
+   with units, and no raw column names.
+6. **n is visible** somewhere: in the title, a subtitle or the caption.
+7. **A caption that states the takeaway**, not the name of the chart.
+
+In your Quarto report the caption goes in the chunk options, and the code can be
+hidden from the reader:
+
+````markdown
+```{{r}}
+#| label: fig-wrong-turns
+#| fig-cap: "Players made fewer wrong turns in Build B (n = 60 sessions per build)."
+#| echo: false
+ggplot(sessions, aes(x = wrong_turns)) +
+  geom_histogram(binwidth = 1, fill = "grey60") +
+  facet_wrap(~ build, ncol = 1) +
+  labs(title = "Wrong turns per session, by build",
+       x = "Wrong turns", y = "Sessions")
+```
+````
+
+**For your project:** pick the result your team is most likely to lead the report
+with, and build its figure now. It is much easier to fix a figure in December than
+the night before the deadline.
 
 ---
 
@@ -415,18 +493,32 @@ figure was never meant for them. Two lines of `labs()` fix it.
 
 ---
 
-## Short Practice Activities
+## Practice
 
 Each takes two or three minutes.
 
-**1.** Did the signposting make Build B less enjoyable? Draw the distribution of
-`enjoyment`, a 1–7 rating, for each build. Which geometry fits a 1–7 rating, and
-why?
+1. Did the signposting make Build B less enjoyable? Draw the distribution of
+   `enjoyment`, a 1–7 rating, for each build. Which geometry fits a 1–7 rating,
+   and why?
+2. This code is meant to draw blue points. What does it draw instead, and how do
+   you fix it?
 
-::: {.callout-note collapse="true" title="Check your answer"}
+    ```r
+    ggplot(sessions, aes(x = deaths, y = score)) +
+      geom_point(aes(colour = "blue"))
+    ```
+
+3. Draw the quit reasons by build twice: once with `fill = build` and
+   `position = "dodge"`, once with `facet_wrap(~ build)`. Which version makes it
+   easier to see how Build A's players left, and which makes it easier to compare
+   the builds on one reason?
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show answers"}
+**1.**
 
 ```{r}
 #| label: practice-enjoyment
+#| fig-alt: "Two faceted bar charts of enjoyment rating, Build A above and Build B below. Both peak at 4 and have very similar shapes across ratings 2 to 6."
 ggplot(sessions, aes(x = enjoyment)) +
   geom_bar(fill = "grey60") +
   facet_wrap(~ build, ncol = 1) +
@@ -442,20 +534,12 @@ Build B. Mean enjoyment was
 `r sprintf("%.1f", mean(sessions$enjoyment[sessions$build == "A"]))` in Build A
 and `r sprintf("%.1f", mean(sessions$enjoyment[sessions$build == "B"]))` in Build
 B: fewer wrong turns, and no visible cost to enjoyment.
-:::
 
-**2.** This code is meant to draw blue points. What does it draw instead, and how
-do you fix it?
-
-```r
-ggplot(sessions, aes(x = deaths, y = score)) +
-  geom_point(aes(colour = "blue"))
-```
-
-::: {.callout-note collapse="true" title="Check your answer"}
+**2.**
 
 ```{r}
 #| label: practice-mapping-bug
+#| fig-alt: "Scatterplot of score against deaths in which every point is pinkish red and a legend reads colour: blue, the result of putting a fixed colour inside aes()."
 ggplot(sessions, aes(x = deaths, y = score)) +
   geom_point(aes(colour = "blue"))
 ```
@@ -466,21 +550,16 @@ outside:
 
 ```{r}
 #| label: practice-mapping-fix
+#| fig-alt: "The same scatterplot of score against deaths with every point blue and no legend. Scores tend to fall as deaths rise."
 ggplot(sessions, aes(x = deaths, y = score)) +
   geom_point(colour = "blue")
 ```
 
-:::
-
-**3.** Draw the quit reasons by build twice: once with `fill = build` and
-`position = "dodge"`, once with `facet_wrap(~ build)`. Which version makes it
-easier to see how Build A's players left, and which makes it easier to compare the
-builds on one reason?
-
-::: {.callout-note collapse="true" title="Check your answer"}
+**3.**
 
 ```{r}
 #| label: practice-dodge-facet
+#| fig-alt: "Two horizontal bar charts side by side, one per build, counting how sessions ended. Completed test is the longest bar in both; Build A's frustrated bar is about four times as long as Build B's."
 ggplot(sessions, aes(y = quit_reason)) +
   geom_bar(fill = "grey60") +
   facet_wrap(~ build) +
@@ -488,7 +567,7 @@ ggplot(sessions, aes(y = quit_reason)) +
 ```
 
 The faceted version shows each build's full profile of quit reasons, so it answers
-"how did Build A's players leave?". The dodged version in the R Demonstrations puts
+"how did Build A's players leave?". The dodged version earlier on this page puts
 the two Frustrated bars next to each other, so it answers "which build frustrated
 more players?". Mapping `quit_reason` to `y` instead of `x` turns the bars
 sideways so the long labels fit. Neither version is wrong; they answer different
@@ -513,20 +592,19 @@ questions.
 
 ---
 
-## Links to Relevant Reference Material
+## Links
 
 - [Ten Rules](ten-rules.qmd): rule 3 (know what kind of number you are holding),
   rule 4 (look at the shape before you quote the average) and rule 7 (compare
   distributions, not averages)
 - [Distributions and Shape](05-distributions-and-shape.qmd): the base R
   versions of these plots, and what to look for in each
-- [R and Quarto Reference: plots](../reference/r-quarto-reference.qmd#plots)
-- [Lab 01: exploring playtest data](../labs/reading-data.qmd), Exercises 11 and 12:
-  the base R histogram and boxplot rebuilt in the R Demonstrations above
-- [ggplot2 Reference](../reference/reference-ggplot2.qmd)
-- [Lab 03: complete playtest analysis](../labs/complete-analysis.qmd#part-a-visualise-and-relate),
-  Part A
-- Next: [Relationships, Correlation and Regression](10-relationships-and-regression.qmd)
+- [ggplot2 Reference](../reference/reference-ggplot2.qmd): every geometry, option
+  and polishing step
+- [Lab 03: A Figure for Your Report](../labs/clinic-figures.qmd), the Stage 3A
+  clinic
+- [Stage 3 demo](../demos/stage-3.qmd), Demo 1
+- Next: [Relationships and Correlation](10-relationships-and-correlation.qmd)
 
 ---
 
@@ -542,5 +620,3 @@ questions.
   producer? Would it be the same figure?
 - You have ten minutes before a meeting and one question to check. Do you reach for
   `hist()` or `ggplot()`, and what would change your answer?
-
----

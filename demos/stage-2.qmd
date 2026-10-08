@@ -1,0 +1,222 @@
+---
+title: "Stage 2 Demo"
+subtitle: "Cleaning, the verbs, and whether the change worked, live"
+aliases:
+  - week-2.html
+---
+
+::: {.callout-note appearance="simple" icon="false" title="Get the files"}
+- **Demo code:** [stage-2-demo.qmd](../downloads/stage-2-demo.qmd){download="stage-2-demo.qmd"}, every chunk on this page in one file you can run.
+- **Data:** [tidebreak_sessions_raw.csv](../data/tidebreak_sessions_raw.csv){download="tidebreak_sessions_raw.csv"}, [tidebreak_sessions.csv](../data/tidebreak_sessions.csv){download="tidebreak_sessions.csv"}, [tidebreak_paired.csv](../data/tidebreak_paired.csv){download="tidebreak_paired.csv"}. Save them in a `data/` folder next to the demo file.
+:::
+
+## Demo 1 — Cleaning is analysis
+
+**Step 1. Read the export as delivered**
+
+```{r}
+#| label: d1-read
+library(readr)
+library(dplyr)
+
+# trim_ws = FALSE: see the stray spaces Excel would see. read_csv hides them.
+raw <- read_csv("data/tidebreak_sessions_raw.csv",
+                trim_ws = FALSE, show_col_types = FALSE)
+nrow(raw)   # 120 sessions were played
+```
+
+**Step 2. Rows exported twice**
+
+```{r}
+#| label: d1-dupes
+nrow(raw) - nrow(distinct(raw))              # rows repeating every column
+raw |> count(session_id) |> filter(n > 1)    # keys appearing twice: the same ones
+
+clean <- raw |> distinct()                   # keep the first copy of each
+nrow(clean)
+```
+
+**Step 3. Labels that should match**
+
+```{r}
+#| label: d1-labels
+clean |> count(cohort)   # spaces and capitals make extra "cohorts"
+
+clean <- clean |> mutate(cohort = tolower(trimws(cohort)))
+clean |> count(cohort)   # always check the fix by counting again
+```
+
+**Step 4. Where the gaps are**
+
+```{r}
+#| label: d1-gaps
+colSums(is.na(clean))   # blanks per column
+
+# Split the blank session lengths by something that might explain them.
+clean |>
+  filter(is.na(session_minutes)) |>
+  count(build, quit_reason)
+```
+
+**Question.** Every blank session length is a Build A frustration quit.
+Noise, or a finding?
+
+**Step 5. The one-line fix that removes the finding**
+
+```{r}
+#| label: d1-complete
+kept <- clean[complete.cases(clean), ]   # "just drop the NAs", as people often do
+nrow(kept)
+
+clean |> filter(quit_reason == "Frustrated") |> count(build)   # before
+kept  |> filter(quit_reason == "Frustrated") |> count(build)   # after
+```
+
+**Question.** Nothing warned us. What goes in the cleaning log?
+
+**Step 6. The six verbs, read as a sentence**
+
+```{r}
+#| label: d1-verbs
+# The pipe passes the left-hand result in as the first argument on the right.
+clean |>
+  filter(build == "A", quit_reason == "Frustrated") |>
+  mutate(logged = !is.na(session_minutes)) |>
+  select(session_id, cohort, session_minutes, logged) |>
+  arrange(session_minutes) |>
+  head(4)
+```
+
+**Step 7. Split, apply, combine**
+
+```{r}
+#| label: d1-same
+# Split by build, apply each summary, combine into one row per build.
+clean |>
+  group_by(build) |>
+  summarise(n          = n(),
+            mean_wrong = mean(wrong_turns),
+            missing    = sum(is.na(session_minutes)))
+```
+
+One `group_by()`, as many summaries as you like.
+
+**Question.** Which of these numbers goes in the cleaning log?
+
+---
+
+## Demo 2 — Is the difference real, and does it matter?
+
+**Step 8. Look before you test**
+
+```{r}
+#| label: d2-look
+#| fig-alt: "Boxplots of wrong turns by build. Build A's box sits around 8 to 10; Build B's is lower, around 3 to 7.5."
+# The complete export: same sessions, logging fault fixed.
+sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+
+boxplot(wrong_turns ~ build, data = sessions,
+        main = "Wrong turns by build", ylab = "Wrong turns", col = "grey85")
+```
+
+**Step 9. Another playtest, another answer**
+
+```{r}
+#| label: d2-resample
+# Pretend we could only afford 15 sessions per build. Draw five such playtests.
+set.seed(8015)
+replicate(5, {
+  a <- sample(sessions$wrong_turns[sessions$build == "A"], 15)
+  b <- sample(sessions$wrong_turns[sessions$build == "B"], 15)
+  mean(a) - mean(b)  # the difference this playtest would have reported
+})
+```
+
+```{r}
+#| label: d2-sampling
+#| fig-alt: "Histogram of 1,000 simulated playtest differences in mean wrong turns, each from 15 sessions per build. It is bell-shaped, centred near 3.4, and spreads from about 0.5 to 5.5."
+# Now a thousand of them: the sampling distribution of the difference.
+set.seed(8015)
+diffs <- replicate(1000, {
+  a <- sample(sessions$wrong_turns[sessions$build == "A"], 15)
+  b <- sample(sessions$wrong_turns[sessions$build == "B"], 15)
+  mean(a) - mean(b)
+})
+hist(diffs, breaks = 30, col = "grey85", border = "white",
+     main = "1,000 playtests of 15 per build", xlab = "Difference in mean wrong turns")
+sd(diffs)  # the standard error, seen directly
+```
+
+**Question.** Same builds, a thousand answers. Which one is "the" difference?
+Its spread is the standard error, which the t-test estimates from one sample. The
+students do not write this code; the picture is the point.
+
+**Step 10. Shuffle the labels: what does chance alone produce?**
+
+```{r}
+#| label: d2-shuffle
+#| fig-alt: "Bell-shaped histogram of 10,000 shuffled gaps in mean wrong turns, centred on zero and running from about minus 2 to plus 2, with a red line at the real gap of 3.4 far to the right of every bar."
+# If the build made no difference, its label would be arbitrary. Shuffle it.
+gap <- function(y, g) mean(y[g == "A"]) - mean(y[g == "B"])
+observed <- gap(sessions$wrong_turns, sessions$build)
+
+set.seed(1)
+shuffled <- replicate(10000, gap(sessions$wrong_turns, sample(sessions$build)))
+
+hist(shuffled, breaks = 40, col = "grey85", border = "white",
+     xlim = range(c(shuffled, observed)),
+     main = "Gaps from shuffled build labels", xlab = "Difference (A - B)")
+abline(v = observed, col = "firebrick", lwd = 3)
+
+mean(abs(shuffled) >= abs(observed))  # the p-value: share of shuffles this extreme
+```
+
+**Question.** Not one shuffle in ten thousand got near the real gap. What
+does that say about "it was just the players we happened to get"? That share is
+what every p-value means.
+
+**Step 11. The t-test: size, interval, p-value**
+
+```{r}
+#| label: d2-ttest
+# Different players on each build, so the independent-samples test.
+result <- t.test(wrong_turns ~ build, data = sessions)
+result
+
+result$estimate  # 1-2. what happened, and how large?
+result$conf.int  # 3. how uncertain? read this before the p-value
+result$p.value   # 4. could a gap this big be chance alone?
+```
+
+**Question.** Does a difference this size
+matter to a player, and what should the team do?
+
+**Step 12. Same players, both builds**
+
+```{r}
+#| label: d2-paired
+paired <- read_csv("data/tidebreak_paired.csv", show_col_types = FALSE)
+
+# Paired: each player compared with themselves, so player skill cancels out.
+t.test(paired$wrong_turns_a, paired$wrong_turns_b, paired = TRUE)$conf.int
+
+# Same data, wrongly treated as two separate groups: a much wider interval.
+t.test(paired$wrong_turns_a, paired$wrong_turns_b)$conf.int
+```
+
+**Step 13. Significant is not the same as important**
+
+```{r}
+#| label: d2-difficulty
+# Build B was rated harder, and the result is significant...
+harder <- t.test(difficulty ~ build, data = sessions)
+harder
+
+# ...but the players did not actually die more.
+t.test(deaths ~ build, data = sessions)$p.value
+```
+
+**Question.** Build B was rated under half a point harder on a seven-point
+scale, and deaths did not change. Would you act on it? What would you check in the
+next playtest?
+

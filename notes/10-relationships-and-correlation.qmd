@@ -1,0 +1,756 @@
+---
+title: "Relationships and Correlation"
+subtitle: "When two things move together, and what that does and does not mean"
+body-classes: "wf-at-compare wf-at-interpret"
+aliases:
+  - 10-relationships-and-regression.html
+---
+
+{{< include _workflow.qmd >}}
+
+```{r}
+#| label: setup
+#| include: false
+source("notes/_setup.R")
+library(dplyr)
+library(ggplot2)
+
+abilities <- c("accuracy", "mobility", "survivability", "objective_control",
+               "support", "awareness", "shots_fired")
+cors <- sort(cor(sessions[, abilities], sessions$score)[, 1], decreasing = TRUE)
+stopifnot(names(cors)[1] == "awareness", abs(cors[["shots_fired"]]) < 0.1)
+
+r_dd  <- cor(sessions$deaths, sessions$difficulty)
+rs_dd <- cor(sessions$deaths, sessions$difficulty, method = "spearman")
+
+metrics <- c("deaths", "wrong_turns", "difficulty", "enjoyment", "session_minutes")
+cm <- cor(sessions[, metrics], method = "spearman")
+stopifnot(cm["deaths", "difficulty"] > 0.5,
+          cm["difficulty", "enjoyment"] < -0.25,
+          all(abs(cm["wrong_turns", setdiff(metrics, "wrong_turns")]) < 0.15))
+
+joined <- merge(sessions, survey, by = "session_id")
+r_wt_nav <- cor(joined$wrong_turns, joined$level_navigable, method = "spearman")
+nav_by_build <- tapply(joined$level_navigable, joined$build, mean)
+wt_by_build  <- tapply(joined$wrong_turns, joined$build, mean)
+stopifnot(abs(r_wt_nav) < 0.15, abs(diff(nav_by_build)) < 0.2,
+          wt_by_build[["A"]] - wt_by_build[["B"]] > 2)
+
+r_ms    <- cor(sessions$mobility, sessions$survivability)
+r_ms_ar <- sapply(split(sessions, sessions$archetype),
+                  function(d) cor(d$mobility, d$survivability))
+stopifnot(r_ms < -0.5, all(r_ms_ar > 0))
+
+aw_cohort <- round(tapply(sessions$awareness, sessions$cohort, mean), 1)
+sc_cohort <- round(tapply(sessions$score, sessions$cohort, median))
+r_within_cohort <- sapply(split(sessions, sessions$cohort),
+                          function(d) cor(d$awareness, d$score))
+stopifnot(aw_cohort[["Veteran"]] > aw_cohort[["Novice"]], all(r_within_cohort > 0.3))
+
+ct_cq <- prop.table(table(sessions$cohort, sessions$quit_reason), 1)
+stopifnot(ct_cq["Regular", "Frustrated"] > ct_cq["Novice", "Frustrated"])
+```
+
+> Most playtest questions are about relationships: do players who die more find
+> the game harder? Do players who get lost rate the level as confusing? This page
+> covers how to see a relationship (the scatterplot), how to measure it
+> (correlation), how to scan several at once (a correlation matrix), and the trap
+> underneath all of them: **two things moving together does not mean one causes
+> the other.** The playtest question running through it: *"Awareness is the
+> strongest predictor of score. Should we buff awareness?"*
+
+::: {.at-a-glance}
+**Stage:** 3B · Core. Taught in a clinic, January or February.
+**Time:** 30 minutes, then the clinic lab on your own data.
+**Before this:** [Visualising with ggplot2](09-visualising-with-ggplot2.qmd).
+**Key terms:** scatterplot, direction, form, strength, correlation, Pearson,
+Spearman, correlation matrix, causation, confounding variable.
+**R you will write:** `cor()`, `cor(..., method = "spearman")`, `select()` with
+`cor()` for a matrix, `geom_point()`.
+:::
+
+## Learning Outcomes
+
+By the end of these notes you can:
+
+- read a scatterplot for direction, form and strength;
+- compute and interpret a Pearson correlation, and say why context decides whether
+  it is strong;
+- say when to use Spearman's correlation instead, and compute it;
+- build and read a correlation matrix of 3–5 playtest measures;
+- name what correlation cannot see, and give three explanations other than cause
+  for two things moving together;
+- check a suspected confounder by looking at the relationship within groups;
+- relate telemetry to self-report, and say what it means when they disagree.
+
+---
+
+## Why This Matters for Playtesting
+
+Comparing two builds was a controlled question: the team chose who played which.
+Most of what a playtest records is not controlled. Awareness, deaths, experience,
+difficulty ratings: they all arrive together, and they all move together, because
+they all come from the same players.
+
+**A relationship is a lead, not a finding.** "Players with high awareness scored
+more" is true in the *Tidebreak* data, and it is tempting to read it as "awareness
+causes score, so buff awareness". The data cannot say that. Better players may
+simply be more aware *and* score more. The difference between those two readings
+decides whether a balance patch helps or does nothing, and only careful reasoning,
+not more computation, tells them apart ([rule 7](ten-rules.qmd)).
+
+**For your project:** by now your team has its own playtest data. This page is
+written so that every step works on it. The clinic lab ends with a correlation
+matrix of your own measures.
+
+---
+
+## Seeing a Relationship: the Scatterplot
+
+A **scatterplot** draws one point per observation, with one variable on each axis.
+Do players who die more rate the game as more difficult?
+
+```{r}
+#| label: fig-deaths-difficulty
+#| fig-cap: "Players who died more rated the game as harder, with a lot of variation. Points are jittered slightly because both variables are whole numbers."
+#| fig-alt: "Scatterplot of difficulty rating from 2 to 7 against deaths from 0 to 7. The cloud of points rises from lower left to upper right, with a lot of scatter."
+#| fig-height: 3.8
+ggplot(sessions, aes(x = deaths, y = difficulty)) +
+  geom_jitter(width = 0.15, height = 0.15, colour = pal$line, alpha = 0.6) +
+  labs(x = "Deaths in the session", y = "Difficulty rating (1–7)")
+```
+
+`geom_jitter()` is `geom_point()` with a little random nudge, so that sessions with
+the same values do not sit on top of each other. Read a scatterplot for three
+things:
+
+- **Direction.** Do the points rise from left to right (**positive**: more of one,
+  more of the other) or fall (**negative**)? Here they rise.
+- **Form.** Do they follow a straight line, a curve, or no pattern at all? Here,
+  roughly a line.
+- **Strength.** How tightly do they cluster around that form? Here, loosely:
+  plenty of players died often and still rated the game easy.
+
+**In a report you would write:** "Players who died more rated the game as harder,
+though with wide variation between players."
+
+---
+
+## Measuring a Relationship: Correlation
+
+The **correlation** coefficient, *r*, puts a number on direction and strength for a
+**straight-line** relationship. It runs from −1 to +1:
+
+```{r}
+#| label: fig-r-grid
+#| echo: false
+#| fig-cap: "What correlations look like. At ±0.2 there is barely a pattern; at ±0.9 the points form a tight band."
+#| fig-alt: "Six scatterplots in a row, labelled r = −0.9, −0.5, −0.2, 0.2, 0.5 and 0.9. At −0.9 the points form a tight falling band; at ±0.2 they are an almost shapeless cloud; at 0.9 a tight rising band."
+#| fig-height: 2.6
+#| fig-width: 9
+set.seed(10)
+rs <- c(-0.9, -0.5, -0.2, 0.2, 0.5, 0.9)
+grid <- do.call(rbind, lapply(rs, function(r) {
+  x <- rnorm(150)
+  data.frame(r = sprintf("r = %.1f", r), x = x,
+             y = r * x + sqrt(1 - r^2) * rnorm(150))
+}))
+grid$r <- factor(grid$r, levels = sprintf("r = %.1f", rs))
+ggplot(grid, aes(x, y)) +
+  geom_point(size = 0.7, colour = pal$line, alpha = 0.6) +
+  facet_wrap(~ r, nrow = 1) +
+  labs(x = NULL, y = NULL, caption = "Illustration: simulated data") +
+  theme(axis.text = element_blank(), axis.ticks = element_blank())
+```
+
+- **+1**: a perfect rising line. **−1**: a perfect falling line.
+- **0**: no straight-line relationship.
+- The further from 0, the more tightly the points follow a line.
+
+`cor()` computes it:
+
+```{r}
+#| label: cor-dd
+cor(sessions$deaths, sessions$difficulty)
+```
+
+r = `r round(r_dd, 2)`: a clear positive relationship with a lot of scatter, which
+is what @fig-deaths-difficulty showed.
+
+**Context decides what counts as strong.** There is no universal cut-off. Between
+two measurements of the same thing, such as two raters scoring the same session,
+0.6 would be worryingly low. Between a single rating and a match outcome shaped by
+teammates, opponents and luck, 0.5 is large. Say what the number means for the
+question, not just whether it is "strong".
+
+### Pearson or Spearman?
+
+The correlation above is **Pearson's**, the default. It measures how well the
+points follow a straight line, and a few extreme values can pull it around.
+
+**Spearman's correlation** ranks each variable first, then correlates the ranks.
+It asks a simpler question: *when one goes up, does the other tend to go up?* It
+does not need a straight line, and an outlier is just the highest rank, so it
+cannot drag the result.
+
+```{r}
+#| label: spearman
+cor(sessions$deaths, sessions$difficulty, method = "spearman")
+```
+
+`r round(rs_dd, 2)`, almost the same as Pearson's here, because the relationship is
+roughly straight with no wild values.
+
+**For now,** use this rule:
+
+| Use | When |
+| :- | :- |
+| **Pearson** | Both variables are measurements or counts, the scatterplot looks roughly straight, and nothing sits far from the rest |
+| **Spearman** | Either variable is a rating (ordinal), the relationship curves but keeps going one way, or a few extreme values sit apart |
+
+Playtest data is full of ratings, so Spearman is often the safer choice. If the two
+disagree a lot, draw the scatterplot: something is bending or pulling the line.
+
+---
+
+## Many Relationships at Once: the Correlation Matrix
+
+A playtest records many measures, and the first useful question is often *which of
+them go together?* A **correlation matrix** answers it in one table: the
+correlation of every measure with every other.
+
+Pick **3 to 5 measures that matter to your question**, not every column you have.
+For *Tidebreak*'s navigation and difficulty questions:
+
+```{r}
+#| label: cor-matrix
+sessions |>
+  select(deaths, wrong_turns, difficulty, enjoyment, session_minutes) |>
+  cor(method = "spearman") |>
+  round(2)
+```
+
+`select()` keeps the five columns, `cor()` of a whole table correlates every pair,
+and `round(2)` makes it readable. Spearman, because `difficulty` and `enjoyment`
+are 1–7 ratings.
+
+**How to read it:**
+
+- **The diagonal is all 1s.** Every measure correlates perfectly with itself.
+  Ignore it.
+- **It is symmetric.** The value in row `deaths`, column `difficulty` is the same
+  as row `difficulty`, column `deaths`. Read one triangle.
+- **Read one row at a time** and look for the values furthest from 0.
+
+**What this one says:**
+
+- `deaths` and `difficulty` go together most strongly, `r round(cm["deaths", "difficulty"], 2)`:
+  players who die more rate the game harder. Telemetry and self-report agree.
+- `difficulty` and `enjoyment` move in opposite directions,
+  `r round(cm["difficulty", "enjoyment"], 2)`: players who found it harder
+  enjoyed it less.
+- `wrong_turns` is close to 0 with everything, between
+  `r round(min(cm["wrong_turns", setdiff(metrics, "wrong_turns")]), 2)` and
+  `r round(max(cm["wrong_turns", setdiff(metrics, "wrong_turns")]), 2)`. Getting
+  lost does not go with dying, with rating the game hard, or with enjoying it less.
+
+That last line is the interesting one, and the next section explains why.
+
+**Draw before you trust the matrix.** Each number stands in for a scatterplot you
+have not drawn. Base R's `pairs()` draws them all at once:
+
+```{r}
+#| label: fig-pairs
+#| fig-cap: "Every pair of the five measures as a scatterplot. Deaths against difficulty is the clearest pattern; wrong turns show none against anything."
+#| fig-alt: "A five by five grid of small scatterplots for deaths, wrong turns, difficulty, enjoyment and session minutes. Most panels are shapeless clouds of whole-number points; deaths against difficulty shows a rising band."
+#| fig-height: 6
+pairs(sessions[, c("deaths", "wrong_turns", "difficulty", "enjoyment",
+                   "session_minutes")],
+      pch = 19, cex = 0.4, col = adjustcolor(pal$line, alpha.f = 0.4))
+```
+
+**You do not need to memorise this:** `pairs()` is a quick check, not a figure for
+the report.
+
+**For your project:** choose the 3–5 measures your design question depends on,
+build their matrix, and read it row by row. The strongest relationship is a lead
+to look at, and the one you expected but did not find is often the finding.
+
+---
+
+## Telemetry, Observation and Self-Report Together
+
+The three sources of evidence from
+[Planning a Playtest](01-planning-a-playtest.qmd#choose-your-measures) answer
+different questions, and relating them is where correlation earns its keep.
+
+**When they agree,** the finding is stronger. Deaths (telemetry) and the difficulty
+rating (self-report) go together: what happened and what players felt point the
+same way.
+
+**When they disagree,** there is something to find. Build B cut wrong turns from
+`r round(wt_by_build[["A"]], 1)` to `r round(wt_by_build[["B"]], 1)` per session on
+average. So do players who got lost more rate the level as harder to navigate? The
+survey item "the level was easy to navigate" (`level_navigable`) is in a separate
+file, so join it on first:
+
+```{r}
+#| label: wt-nav
+joined <- sessions |>
+  left_join(survey, by = "session_id")
+
+cor(joined$wrong_turns, joined$level_navigable, method = "spearman")
+
+joined |>
+  group_by(build) |>
+  summarise(mean_wrong_turns = mean(wrong_turns),
+            mean_navigable   = mean(level_navigable))
+```
+
+`left_join()` adds the survey columns to each session, matched on `session_id`.
+
+The correlation is `r round(r_wt_nav, 2)`: no relationship. And the builds rated
+navigation almost identically, `r round(nav_by_build[["A"]], 2)` against
+`r round(nav_by_build[["B"]], 2)`, even though Build A's players got lost far more.
+**Players did not notice that they were lost.** The telemetry saw a navigation
+problem the self-report did not.
+
+That is a finding, and it changes what you do with each source. A navigation
+survey on its own would have said the level was fine. Wrong turns on their own say
+what happened but not whether players minded. **Observation** is what would
+connect them: watching where players hesitate or backtrack, and whether they seem
+to know it.
+
+**In a report you would write:** "Build A players made more wrong turns, but rated
+the level as no harder to navigate (Spearman r = `r round(r_wt_nav, 2)` between
+wrong turns and the navigation rating). Players appear not to notice when they are
+lost, so self-reported navigation is not a reliable check on this level."
+
+---
+
+## What Correlation Cannot See
+
+A single number cannot describe a picture. In 1973 the statistician Francis
+Anscombe published four small datasets that make the point. They have almost
+identical means, SDs and correlations, and they look nothing alike:
+
+```{r}
+#| label: fig-anscombe
+#| code-fold: true
+#| code-summary: "Show the code"
+#| fig-cap: "Anscombe's quartet: four datasets with the same correlation, about 0.82, and four different stories."
+#| fig-alt: "Four scatterplots, each with a straight fitted line of the same slope. Set 1 is a loose linear cloud. Set 2 is a smooth curve. Set 3 is a perfect line with one outlier pulling the fit. Set 4 is a vertical stack of points with one far-right point creating the whole relationship."
+#| fig-height: 4.2
+quartet <- do.call(rbind, lapply(1:4, function(i) {
+  data.frame(set = paste("Set", i),
+             x = anscombe[[paste0("x", i)]], y = anscombe[[paste0("y", i)]])
+}))
+
+ggplot(quartet, aes(x, y)) +
+  geom_point(colour = pal$line, size = 2) +
+  geom_smooth(method = "lm", se = FALSE, colour = pal$highlight, linewidth = 0.8) +
+  facet_wrap(~ set, nrow = 1) +
+  labs(x = NULL, y = NULL)
+```
+
+Only Set 1 is what r = 0.82 suggests. Set 2 is a curve, which r describes badly.
+In Set 3, one outlier drags the line away from an otherwise perfect fit. In Set 4,
+a single point creates the entire relationship.
+
+**Always draw the scatterplot before quoting r** ([rule 4](ten-rules.qmd)).
+Correlation sees only straight lines, is moved by single extreme points, and, as
+the next two sections show, cannot see groups.
+
+---
+
+## Correlation Is Not Causation
+
+When two variables move together, there are always several explanations, and
+"one causes the other" is only one of them:
+
+| Explanation | Awareness and score |
+| :- | :- |
+| **A causes B** | Being aware of the map makes players score more |
+| **B causes A** | Players who are scoring well have more time to look around |
+| **Something else causes both** | Experienced players are both more aware and better at everything |
+| **Chance** | In a small sample, unrelated measures can line up by luck |
+
+A playtest observes; it does not intervene. Only a test in which you *change* one
+variable and watch the other, such as giving half the players a better minimap at
+random, can separate the first explanation from the rest. Until then, write "is
+associated with", never "causes" or "drives".
+
+---
+
+## Confounding: Look Within Groups
+
+A **confounding variable** is a third variable that drives both of the variables
+you are comparing, creating or hiding a relationship between them.
+
+```{mermaid}
+%%| label: fig-confounder
+%%| fig-cap: "A confounder drives both variables. The relationship you see between them may come partly or entirely from it."
+flowchart TD
+  E["Experience<br/>(cohort)"] --> A["Awareness"]
+  E --> S["Score"]
+  A -.->|"what you observe"| S
+  class E accent
+```
+
+**Which abilities go with score?**
+
+```{r}
+#| label: cor-abilities
+sessions |>
+  select(accuracy, mobility, survivability, objective_control, support,
+         awareness, shots_fired) |>
+  cor(sessions$score) |>
+  round(2)
+```
+
+Awareness is the strongest, at `r round(cors[["awareness"]], 2)`. Shots fired, the
+statistic everyone assumes matters, is `r round(cors[["shots_fired"]], 2)`: no
+relationship at all.
+
+**Experience is a candidate confounder for awareness and score.** Veterans average
+`r aw_cohort[["Veteran"]]` awareness against `r aw_cohort[["Novice"]]` for Novices,
+and a median score of `r sc_cohort[["Veteran"]]` against `r sc_cohort[["Novice"]]`.
+Some of the awareness–score relationship is experience. Check within each cohort:
+
+```{r}
+#| label: within-cohort
+sessions |>
+  group_by(cohort) |>
+  summarise(n = n(), r = cor(awareness, score))
+```
+
+From `r round(min(r_within_cohort), 2)` to `r round(max(r_within_cohort), 2)`
+within each cohort: experience is part of the story, not all of it. That is how you
+check a suspected confounder: **split by it, and see whether the relationship
+holds inside each group.** It is `group_by()` and `summarise()` again, with `cor()`
+as the summary.
+
+### When the relationship reverses
+
+Sometimes splitting by the confounder does not just weaken a relationship; it
+reverses it. That is **Simpson's paradox**, and *Tidebreak* has a clear case. You do
+not need to be able to produce this figure; it is here because it is the most
+memorable demonstration of confounding there is.
+
+Across all players, mobility and survivability have a correlation of
+`r round(r_ms, 2)`: faster players are more fragile. Within each archetype:
+
+```{r}
+#| label: fig-simpson
+#| code-fold: true
+#| code-summary: "Show the code"
+#| fig-cap: "Across all players (left) faster means more fragile. Within every archetype (right) the trend rises: the falling line is the gap between archetypes."
+#| fig-alt: "Two scatterplots of survivability against mobility. Left: one black falling trend line through all the points. Right: the points form four separate clusters by archetype, Scout at high mobility and low survivability, Sentinel the reverse, and within each cluster the fitted line rises."
+#| fig-height: 3.8
+both <- rbind(
+  data.frame(sessions[, c("mobility", "survivability", "archetype")], panel = "All players"),
+  data.frame(sessions[, c("mobility", "survivability", "archetype")], panel = "By archetype")
+)
+ggplot(both, aes(mobility, survivability)) +
+  geom_point(aes(colour = ifelse(panel == "All players", "All", archetype)), alpha = 0.7) +
+  geom_smooth(data = subset(both, panel == "All players"), method = "lm",
+              se = FALSE, colour = "black") +
+  geom_smooth(data = subset(both, panel == "By archetype"),
+              aes(colour = archetype), method = "lm", se = FALSE) +
+  scale_colour_manual(values = c(All = "grey60", Duelist = "#3a5f8a",
+                                 Engineer = "#6c9a3c", Scout = "#b22222",
+                                 Sentinel = "#8a5a9c"),
+                      breaks = c("Duelist", "Engineer", "Scout", "Sentinel")) +
+  facet_wrap(~ panel) +
+  labs(x = "Mobility rating", y = "Survivability rating", colour = "Archetype")
+```
+
+```{r}
+#| label: within-archetype
+sessions |>
+  group_by(archetype) |>
+  summarise(r = cor(mobility, survivability))
+```
+
+Within every archetype the correlation is **positive**, from
+`r round(min(r_ms_ar), 2)` to `r round(max(r_ms_ar), 2)`. The overall falling trend
+is the gap *between* archetypes: Scouts are built fast and fragile, Sentinels slow
+and tough. Within any one archetype, better players are better at both.
+**Archetype is the confounder**, and ignoring it reverses the conclusion. A patch
+that "makes fast players more fragile" would punish exactly the players who are
+playing their role well.
+
+**For your project:** before you report any relationship, split it by the one or
+two groupings most likely to matter in your game: build, level, character or
+experience.
+
+---
+
+## Two Categorical Variables {.when-needed}
+
+When both variables are categories, correlation is the wrong tool. Count every
+combination, then turn each group's counts into shares, so that groups of
+different sizes compare fairly. Do more experienced players quit in frustration
+less?
+
+```{r}
+#| label: crosstab
+sessions |>
+  count(cohort, quit_reason) |>
+  group_by(cohort) |>
+  mutate(share = round(n / sum(n), 2))
+```
+
+```{r}
+#| label: fig-crosstab
+#| fig-cap: "Regulars quit in frustration most often; Veterans more often simply lost interest. Each bar is one cohort, scaled to 100%."
+#| fig-alt: "Three stacked bars, one per cohort, each split into completed test, frustrated, lost interest and technical fault. Regulars have the largest frustrated segment; Veterans the largest lost-interest segment."
+#| fig-height: 3.5
+ggplot(sessions, aes(x = cohort, fill = quit_reason)) +
+  geom_bar(position = "fill") +
+  scale_y_continuous(labels = function(x) paste0(x * 100, "%")) +
+  scale_fill_manual(values = c("grey80", "#b22222", "#9bb0c9", "grey40")) +
+  labs(x = "Cohort", y = "Share of sessions", fill = "How the session ended")
+```
+
+`position = "fill"` scales every bar to 100%. Not in a straight line: **Regulars**
+quit in frustration most often, `r pct_fmt(ct_cq["Regular", "Frustrated"])` of
+their sessions, against `r pct_fmt(ct_cq["Novice", "Frustrated"])` for Novices and
+`r pct_fmt(ct_cq["Veteran", "Frustrated"])` for Veterans.
+
+---
+
+## Critiquing a Playtest
+
+Every one of these ideas comes together when a conclusion is drawn from data that
+cannot support it. Two scenarios to take apart.
+
+1. *A team adds an optional minimap. Players who turned it on scored 22% higher
+   than players who left it off. The team makes the minimap mandatory.*
+2. *The new build was tested on Friday evening with fans recruited from the studio
+   Discord; the old build on Monday morning with first-year students. Enjoyment was
+   1.5 points higher for the new build, p < 0.001. The team reports that the new
+   build is more enjoyable.*
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show answers"}
+1. Players chose whether to use the minimap, so the two groups differ in more than
+   the minimap. Experienced, engaged players are more likely to explore the options
+   menu *and* more likely to score well: a confounder. The 22% may be entirely
+   skill. To know what the minimap does, assign it at random, or have every player
+   try both, counterbalanced
+   ([Planning a Playtest](01-planning-a-playtest.qmd#random-assignment)).
+2. Build is confounded with everything else that differed: the players (committed
+   fans against strangers), the time of day, and probably the room and who ran the
+   session. Any of them could produce the gap. The p-value says the gap is unlikely
+   to be chance; it says nothing about *which* of the differences caused it. The
+   fix is to recruit one group and assign builds at random within it, at the same
+   times, in the same room.
+:::
+
+---
+
+## Worked Example
+
+**Should we buff awareness?** The balance designer has seen that awareness is the
+strongest predictor of score and proposes raising every archetype's base awareness.
+
+**Step 1: look.** A scatterplot of score against awareness shows a clear rising
+relationship, with a cluster of sessions far below the rest: the Sentinel
+collapses from [Describing Variables](04-describing-variables.qmd#worked-example).
+
+**Step 2: measure.** r = `r round(cors[["awareness"]], 2)`, the strongest of the
+ability ratings. Shots fired, the obvious candidate, is
+`r round(cors[["shots_fired"]], 2)`.
+
+**Step 3: ask what else could explain it.** Experience: Veterans have more of both.
+Within each cohort the relationship weakens but survives
+(`r round(min(r_within_cohort), 2)` to `r round(max(r_within_cohort), 2)`), so
+experience is part of the story. And a player's awareness *rating* may measure
+skill as much as cause it: good players notice more because they are good.
+
+**Step 4: conclude.** The data shows an association, and a fairly strong one. It
+does not show that raising awareness would raise score.
+
+**What should the team do?** Run a test, not a patch: give half the players a
+feature that raises awareness, such as a clearer minimap or audio cues, at random,
+and compare score between the groups. That turns the relationship into a Stage 2
+comparison, which can show cause.
+
+---
+
+## Interpretation Guidance
+
+**What the data shows.** Score rises with awareness, r =
+`r round(cors[["awareness"]], 2)`, across `r nrow(sessions)` sessions, and the
+relationship survives within each cohort.
+
+**What the analysis suggests.** Awareness, or whatever awareness ratings reflect,
+matters to how a match goes. Experience explains part of the relationship but not
+all of it.
+
+**What can legitimately be concluded.** An association, not a cause. A design
+change aimed at awareness is worth testing; it is not yet supported as a fix.
+
+**Use the right verbs.** "Is associated with", "goes with", "predicts" for
+relationships in observed data. "Causes", "drives", "improves" only after an
+experiment that changed one variable on purpose.
+
+**Going further:** fitting the line itself, with slope, R² and residuals, and
+reading what the residuals tell you, is on
+[Regression](../going-further/regression.qmd).
+
+---
+
+## Common Mistakes
+
+**Quoting r without the scatterplot.** Anscombe's four datasets share a correlation
+and nothing else ([rule 4](ten-rules.qmd)).
+
+**Reading correlation as cause.** Two things moving together has at least four
+explanations. Name the alternatives before choosing one.
+
+**Ignoring groups.** A relationship across groups can vanish or reverse within
+them. Split by the obvious confounders, such as archetype, cohort or build.
+
+**Calling r "strong" or "weak" without context.** Say what it means for the
+question.
+
+**Putting every column in the matrix.** A 20 × 20 matrix has 190 correlations and
+some will look strong by luck. Choose the 3–5 that answer your question.
+
+**Using Pearson on ratings without checking.** For 1–7 ratings, use Spearman, or at
+least check that the two agree.
+
+**Using correlation on categories.** Two categorical variables need counts and
+shares, not `cor()`.
+
+---
+
+## Practice
+
+Each takes two or three minutes.
+
+1. **Predict.** Before computing it: is the correlation between `kills` and
+   `score` closer to 0, 0.5 or 0.9? Then check.
+2. **Compute.** Build a Spearman correlation matrix of `kills`, `deaths`,
+   `time_alive_s` and `score`. Which measure goes with score most strongly?
+3. **Critique.** "Wrong turns correlate at
+   `r round(cor(sessions$wrong_turns, sessions$enjoyment), 2)` with enjoyment, so
+   getting lost does not affect how much players enjoy the game." What is wrong
+   with that conclusion?
+4. **Decide.** The correlation between deaths and difficulty is about the same in
+   both builds. Check it with `group_by()`. Why is that worth knowing before you
+   use deaths as a stand-in for "how hard players found it"?
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show answers"}
+**1.**
+
+```{r}
+#| label: practice-kills
+cor(sessions$kills, sessions$score)
+```
+
+Close to 0, `r round(cor(sessions$kills, sessions$score), 2)`, which surprises
+most people. A number you were sure about is exactly the one to check.
+
+**2.**
+
+```{r}
+#| label: practice-matrix
+sessions |>
+  select(kills, deaths, time_alive_s, score) |>
+  cor(method = "spearman") |>
+  round(2)
+```
+
+```{r}
+#| label: practice-matrix-check
+#| include: false
+pm <- cor(sessions[, c("kills", "deaths", "time_alive_s", "score")], method = "spearman")
+stopifnot(abs(pm["deaths", "score"]) > abs(pm["time_alive_s", "score"]),
+          abs(pm["time_alive_s", "score"]) > abs(pm["kills", "score"]))
+```
+
+Read the `score` row, and look at the size, not the sign. Deaths go with score
+most strongly, `r round(pm["deaths", "score"], 2)`: negative, so fewer deaths, more
+score. Time alive is next, `r round(pm["time_alive_s", "score"], 2)`. Kills barely
+register, `r round(pm["kills", "score"], 2)`. In *Tidebreak*, staying alive is what
+scores, not killing.
+
+**3.** A correlation near zero means no *straight-line* relationship across all
+sessions. It does not rule out a curve, a relationship within one build or cohort
+that is cancelled out by another, or an effect on a different outcome: players who
+got lost may have quit. Draw the scatterplot, split by build, and look at quit
+reason too before concluding anything.
+
+**4.**
+
+```{r}
+#| label: practice-by-build
+sessions |>
+  group_by(build) |>
+  summarise(r = cor(deaths, difficulty, method = "spearman"))
+```
+
+The relationship holds in each build, so it is not produced by mixing two
+different builds together. That makes deaths a more trustworthy stand-in for felt
+difficulty in either build, although it is still only a stand-in: plenty of
+players died often and rated the game easy.
+:::
+
+---
+
+## Summary
+
+- A scatterplot shows a relationship's direction, form and strength. Draw it first.
+- Correlation, from −1 to +1, measures how two things move together. Pearson for
+  straight-line relationships between measurements; Spearman for ratings, curves
+  that keep going one way, or outliers.
+- A correlation matrix of 3–5 chosen measures shows which go together. Read one row
+  at a time, and draw the pairs before trusting it.
+- Telemetry and self-report can disagree: *Tidebreak*'s players got lost without
+  rating the level as harder to navigate. The disagreement is a finding.
+- Correlation is not causation: the reverse direction, a third variable or chance
+  can produce the same pattern.
+- A confounder drives both variables. Check by splitting into groups; Simpson's
+  paradox is when the relationship reverses inside them.
+
+| Key term | Meaning |
+| :- | :- |
+| **Scatterplot** | One point per observation, for two numeric variables |
+| **Correlation (r)** | −1 to +1: how strongly two variables move together |
+| **Pearson** | The default correlation: how well the points follow a straight line |
+| **Spearman** | Correlation of ranks: does one go up when the other does? |
+| **Correlation matrix** | The correlation of every chosen measure with every other |
+| **Causation** | One variable changing another; needs an experiment to show |
+| **Confounding variable** | A third variable that drives both variables you are comparing |
+| **Simpson's paradox** | A relationship that reverses when the data is split into groups |
+
+---
+
+## Links
+
+- [Ten Rules](ten-rules.qmd): rule 4 (look at the shape before you quote the
+  average) and rule 7 (compare distributions, not averages)
+- [Regression](../going-further/regression.qmd): the line, its slope, R² and
+  residuals
+- [Statistics Reference: relationships](../reference/reference-statistics.qmd#relationships)
+- [ggplot2 Reference](../reference/reference-ggplot2.qmd)
+- [Lab 04: Relationships in Your Data](../labs/clinic-relationships.qmd), the
+  Stage 3B clinic
+- [Stage 3 demo](../demos/stage-3.qmd), Demo 2
+- Next, in Stage 4: [Interpreting and Reporting Evidence](11-reporting-evidence.qmd)
+
+---
+
+## Reflective Questions
+
+- Name a relationship in your own game's telemetry that you suspect is confounded.
+  What is the confounder, and how would you check?
+- *Tidebreak*'s players got lost without noticing. Which of your own game's
+  self-report questions might have the same problem, and what telemetry would you
+  check it against?
+- Simpson's paradox reversed the mobility–survivability relationship. What other
+  grouping in a game could hide or reverse a relationship in the same way?
+- Your producer wants a single sentence for the balance meeting about awareness.
+  Write it, using only what the data can support.

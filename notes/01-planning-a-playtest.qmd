@@ -1,7 +1,7 @@
 ---
 title: "Planning a Playtest"
 subtitle: "From a design question to data worth analysing"
-body-classes: "wf-at-ask wf-at-collect"
+body-classes: "wf-at-question wf-at-measure wf-at-collect"
 aliases:
   - why-measure.html
 ---
@@ -37,11 +37,12 @@ stopifnot(names(item_means)[1] == "objective_clear")
 > through it: *"Is Build A worse than Build B?"*
 
 ::: {.at-a-glance}
-**Time:** 30 minutes in class; 15 more for the Going further sections.
+**Stage:** 1 · Core.
+**Time:** 30 minutes in class; 15 more for the sections marked Useful when needed.
 **Before this:** nothing. This is the first page.
-**Key terms:** telemetry, performance capture, measure, between-subjects,
+**Key terms:** telemetry, observation, self-report, measure, between-subjects,
 within-subjects, counterbalancing, random assignment, pilot, threshold.
-**R introduced:** none. R starts in [R from First Principles](02-r-first-principles.qmd).
+**R you will write:** none. R starts in [R from First Principles](02-r-first-principles.qmd).
 :::
 
 ## Learning Outcomes
@@ -49,8 +50,8 @@ within-subjects, counterbalancing, random assignment, pilot, threshold.
 By the end of these notes you can:
 
 - name the three cases where a team's judgement of its own game reliably fails;
-- distinguish telemetry, performance capture and asking people, and say what each
-  can and cannot tell you;
+- distinguish telemetry, observation and self-report, and say what each can and
+  cannot tell you;
 - rewrite a vague design question as a measure you could record for a single
   player;
 - choose between a between-subjects and a within-subjects design, and say how
@@ -85,24 +86,15 @@ people who struggled most and the last person you watched. You do not remember t
 distribution, and you will confidently reconstruct one that never existed.
 
 A playtest fixes all three, but only if it is planned. The rest of this page is
-the plan, in the order you make it:
+the plan: seven decisions, made in this order, before anyone plays.
 
-```{mermaid}
-%%| label: fig-plan-flow
-%%| fig-cap: "The seven decisions of a playtest plan, made before anyone plays."
-flowchart LR
-  Q["1. Design<br/>question"] --> M["2. Measures"]
-  M --> D["3. Design:<br/>who plays what"]
-  D --> N["4. How many<br/>players"]
-  N --> R["5. Who to<br/>recruit"]
-  R --> E["6. Ethics<br/>and consent"]
-  E --> T["7. Threshold<br/>and pilot"]
-  T --> P(["Run the<br/>playtest"])
-  classDef step fill:#f8f9fa,stroke:#6c757d,color:#212529
-  classDef go fill:#b22222,stroke:#b22222,color:#ffffff
-  class Q,M,D,N,R,E,T step
-  class P go
-```
+1. The design question.
+2. The measures.
+3. The design: who plays what.
+4. How many players.
+5. Who to recruit.
+6. Ethics and consent.
+7. The threshold that would change your mind, and a pilot.
 
 ---
 
@@ -127,35 +119,57 @@ That is not a failure of the method. A tutorial that everybody completes and nob
 learns from is a real and common outcome, and only two measures together can find
 it.
 
+**For your project:** write down the one question your next playtest has to
+answer, in the designer's words. Then rewrite it until you could record the answer
+after watching a single player. If you cannot get there, the question is not ready
+and neither is the playtest.
+
 ---
 
 ## 2. Choose Your Measures
 
-Almost everything you will analyse in a game project comes from one of three
-places, and they have very different characters.
+Almost everything you analyse in a game project comes from one of three sources of
+evidence. They answer different questions, so you need to know which one you are
+holding.
 
-**Telemetry** is what the game records about itself while it runs: positions,
-events, deaths, times, item pickups. It is objective, it arrives in enormous
-quantities, and it tells you *what* happened and never *why*.
+| Source | What it tells you | Examples |
+| :- | :- | :- |
+| **Telemetry** | What happened in the game | deaths, completion time, wrong turns, attempts, objectives completed, frame times |
+| **Observation** | How the player's behaviour unfolded | missed a doorway, backtracked, hesitated at an interaction, ignored a prompt |
+| **Self-report** | What the player says they experienced | difficulty and enjoyment ratings, confidence, comments, questionnaires |
 
-**Performance capture** is a special case of telemetry with its own conventions:
-frame times, memory, draw calls. It is the one area where the standard summary,
-average frame rate, is actively misleading, which is why
-[Distributions and Shape](05-distributions-and-shape.qmd) spends its worked
-example there.
+**Telemetry** is what the game records about itself while it runs. It is
+objective, it arrives in large quantities, and it tells you *what* happened but
+never *why*. Performance data (frame times, memory) is telemetry too, and it is the
+one place where the usual summary, the average frame rate, actively misleads you.
+[Distributions and Shape](05-distributions-and-shape.qmd) shows why.
 
-**Asking people** is surveys, interviews and think-aloud sessions. It is the only
-source that tells you *why*, and the least reliable. People misremember, they are
-polite, they rationalise, and they answer the question they think you meant. A
-survey tells you what a player believes about their experience, which is real and
+**Observation** is what you see when you watch someone play: where they hesitate,
+what they miss, where they go back on themselves. You record it as notes against a
+time or a location, ideally against a short list of things to watch for, written
+in advance. It catches what telemetry flattens: a player who took the right route
+after thirty seconds of wandering looks fine in the log.
+
+**Self-report** is surveys, interviews and think-aloud comments. It is the only
+source that tells you how the game *felt*, and the least reliable. People
+misremember, they are polite, and they answer the question they think you meant. A
+rating tells you what a player believes about their experience, which is real and
 useful, but it is not the same as what happened. How to ask well is covered in
 [Data, Variables and Types](03-data-and-types.qmd#measuring-with-surveys).
 
-**The three disagree, and that is the point.** The most valuable finding in any
-playtest is usually the place where telemetry and opinion contradict each other:
-players say the level is fine and the heat map shows nobody finds the side route;
-players say the game runs smoothly and the frame log shows a hitch every two
-seconds. A team with only one source never finds these.
+**The sources disagree, and that is the point.** The most useful finding in a
+playtest is often where they contradict each other: players say the level is fine
+and the log shows nobody finds the side route; players say the game runs smoothly
+and the frame log shows a hitch every two seconds. When they agree, the finding is
+stronger than any one of them:
+
+> Players made more wrong turns **(telemetry)**, observers saw repeated
+> backtracking at the junction **(observation)**, and players rated the level as
+> hard to navigate **(self-report)**.
+
+Checking a finding against more than one source is called **triangulation**. A
+team with one source never finds the contradictions, and cannot back up the
+agreements.
 
 **A measure is only usable if it is defined before you collect it.** For each one,
 write down:
@@ -179,7 +193,7 @@ which. There are two basic designs.
 
 ```{mermaid}
 %%| label: fig-designs
-%%| fig-cap: "Between-subjects: each player sees one build. Within-subjects: every player sees both."
+%%| fig-cap: "Between-subjects compares two groups of players; within-subjects compares each player with themselves."
 flowchart LR
   subgraph BETWEEN["Between-subjects"]
     direction TB
@@ -191,10 +205,7 @@ flowchart LR
     G3["Every player"] --> WA["Build A"]
     G3 --> WB["Build B"]
   end
-  classDef a fill:#f8f9fa,stroke:#6c757d,color:#212529
-  classDef b fill:#fbeaea,stroke:#b22222,color:#212529
-  class BA,WA a
-  class BB,WB b
+  BETWEEN ~~~ WITHIN
 ```
 
 **Between-subjects:** different players test each version. *Tidebreak*'s main
@@ -242,22 +253,18 @@ decided at random.
 
 ```{mermaid}
 %%| label: fig-counterbalance
-%%| fig-cap: "Counterbalancing: half the players meet each build first, so order effects fall equally on both."
+%%| fig-cap: "Counterbalancing gives half the players each build first, so order effects fall equally on both builds instead of favouring one."
 flowchart LR
-  S(["Players,<br/>split at random"]) --> H1["Half 1"]
+  S["Players,<br/>split at random"] --> H1["Half 1"]
   S --> H2["Half 2"]
   H1 --> A1["Build A"] --> B1["Build B"]
   H2 --> B2["Build B"] --> A2["Build A"]
-  classDef a fill:#f8f9fa,stroke:#6c757d,color:#212529
-  classDef b fill:#fbeaea,stroke:#b22222,color:#212529
-  class A1,A2 a
-  class B1,B2 b
 ```
 
 Learning and fatigue still happen, but now they happen equally to both builds, so
 they no longer favour either one.
 
-::: {.callout-note collapse="true" title="Going further: more than two versions"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Going further: more than two versions"}
 With three versions there are six possible orders (ABC, ACB, BAC, BCA, CAB, CBA).
 Using all six equally is **full counterbalancing**. With four versions there are 24
 orders, which quickly becomes impractical; a **Latin square** uses just four
@@ -267,7 +274,7 @@ idea is the same: no version is systematically first, or last.
 
 ---
 
-## 4. How Many Players?
+## 4. How Many Players? {.when-needed}
 
 There is no single answer, because there are two different jobs a playtest can do.
 
@@ -386,15 +393,15 @@ real test: a logger that drops the session ID, a survey question everyone
 misreads, a session that runs twenty minutes over, a build that crashes on the lab
 machines. Fix them, then begin.
 
-::: {.callout-tip collapse="true" title="Quick check"}
-A team wants to know whether a new minimap helps players navigate. They let
-testers choose whether to play with the minimap on or off. What is wrong, and
-what should they do?
+**Quick check.** A team wants to know whether a new minimap helps players
+navigate. They let testers choose whether to play with the minimap on or off. What
+is wrong, and what should they do?
 
-**Answer.** Players who choose the minimap probably differ from those who do not:
-perhaps they are less confident navigators. Any difference in wrong turns could be
-the players, not the minimap. Assign the minimap at random, or better, have every
-player try both, counterbalanced.
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show answer"}
+Players who choose the minimap probably differ from those who do not: perhaps they
+are less confident navigators. Any difference in wrong turns could be the players,
+not the minimap. Assign the minimap at random, or better, have every player try
+both, counterbalanced.
 :::
 
 ---
@@ -405,12 +412,12 @@ player try both, counterbalanced.
 `r n_a` on Build A and `r n_b` on Build B. The designer asks "is Build A worse?",
 which cannot be answered as asked: worse at what, for whom, by how much?
 
-**The measures.** Two, one from each end of the three sources:
+**The measures.** Two, from two different sources:
 
 | Source | Measure | Recorded per session as |
 | :- | :- | :- |
 | Telemetry | Did the session end in a frustration quit? | `quit_reason` is `Frustrated` |
-| Asking people | "I always knew what my objective was" | A rating from 1 to 5 |
+| Self-report | "I always knew what my objective was" | A rating from 1 to 5 |
 
 **The design.** Between-subjects: each player was assigned to one build and played
 it `r per_player` times. Different players on each build means differences between
@@ -463,7 +470,8 @@ emerges produces large files and no decisions. Write the question down first
 ([rule 2](ten-rules.qmd)).
 
 **Trusting one source.** A survey on its own tells you what players believe; a log
-on its own tells you what they did. Treat either alone as half the evidence.
+on its own tells you what they did; your notes tell you what you happened to see.
+Treat any one alone as part of the evidence.
 
 **Letting players choose their condition.** The people who pick an option differ
 from those who do not, and the difference gets credited to the option.
@@ -493,49 +501,40 @@ it is not a threshold ([rule 1](ten-rules.qmd)).
 
 Each takes two or three minutes.
 
-**1. Make it measurable.** Rewrite "is the corridor too dangerous?" as one
-telemetry measure and one survey measure, each recordable for a single player.
+1. **Make it measurable.** Rewrite "is the corridor too dangerous?" as one
+   telemetry measure, one thing an observer would watch for, and one self-report
+   measure, each recordable for a single player.
+2. **Choose a design.** You want to compare two control schemes for a racing game,
+   and you can recruit 12 players for an afternoon. Between or within? What must
+   you do to make it fair?
+3. **Critique.** A student team tests their puzzle game on 30 classmates in one
+   afternoon. Everyone plays the old version, then the new one. The new version
+   takes 40% less time to solve. List three reasons the new version might not
+   actually be better.
+4. **Write the threshold.** Count the sessions that ended in a technical fault,
+   then write the threshold that would make you delay a release over it.
 
-::: {.callout-note collapse="true" title="Check your answer"}
-Telemetry: deaths in the corridor per session. Asking people: agreement with "I
-understood why I died". Either alone is weaker than both together: players who die
-there often *and* do not understand why describe a different problem from players
-who die there often and accept it.
-:::
-
-**2. Choose a design.** You want to compare two control schemes for a racing game,
-and you can recruit 12 players for an afternoon. Between or within? What must you
-do to make it fair?
-
-::: {.callout-note collapse="true" title="Check your answer"}
-Within-subjects. Control schemes can be played fresh, twelve players is too few to
-split into two groups, and comparing each player with themselves cancels out the
-large differences in driving skill. Counterbalance: six players, chosen at random,
-try scheme A first; the other six try B first.
-:::
-
-**3. Critique.** A student team tests their puzzle game on 30 classmates in one
-afternoon. Everyone plays the old version, then the new one. The new version takes
-40% less time to solve. List three reasons the new version might not actually be
-better.
-
-::: {.callout-note collapse="true" title="Check your answer"}
-Any three of: players had already solved the puzzles once, so the second attempt
-was always going to be faster (learning, and no counterbalancing; and puzzles are a
-case for between-subjects); classmates are not the target audience; the team knew
-the testers, who may have tried harder on the version they knew was new; there was
-no threshold written in advance; and nobody piloted the test, so problems in the
-first version's build or logging may have slowed it down.
-:::
-
-**4. Write the threshold.** Count the sessions that ended in a technical fault,
-then write the threshold that would make you delay a release over it.
-
-::: {.callout-note collapse="true" title="Check your answer"}
-`r sum(sessions$quit_reason == "Technical fault")` of `r nrow(sessions)` sessions
-ended in a technical fault. Any threshold is defensible if it was written first and
-names a number: "if more than one session in twenty ends in a technical fault, we
-do not release". "If it seems like a lot" is not a threshold.
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show answers"}
+1. Telemetry: deaths in the corridor per session. Observation: does the player
+   stop, retreat or look around before going in? Self-report: agreement with "I
+   understood why I died". Players who die there often *and* do not understand why
+   describe a different problem from players who die there often and accept it.
+2. Within-subjects. Control schemes can be played fresh, twelve players is too few
+   to split into two groups, and comparing each player with themselves cancels out
+   the large differences in driving skill. Counterbalance: six players, chosen at
+   random, try scheme A first; the other six try B first.
+3. Any three of: players had already solved the puzzles once, so the second
+   attempt was always going to be faster (learning, and no counterbalancing; and
+   puzzles are a case for between-subjects); classmates are not the target
+   audience; the team knew the testers, who may have tried harder on the version
+   they knew was new; there was no threshold written in advance; and nobody
+   piloted the test, so problems in the first version's build or logging may have
+   slowed it down.
+4. `r sum(sessions$quit_reason == "Technical fault")` of `r nrow(sessions)`
+   sessions ended in a technical fault. Any threshold is defensible if it was
+   written first and names a number: "if more than one session in twenty ends in a
+   technical fault, we do not release". "If it seems like a lot" is not a
+   threshold.
 :::
 
 ---
@@ -546,8 +545,9 @@ do not release". "If it seems like a lot" is not a threshold.
   a rare event, or remember twenty playtests.
 - A question is measurable when you can say how you would record it for one
   player.
-- Telemetry says what happened, performance capture says how the machine coped,
-  and asking people says what players believe. The disagreements are the findings.
+- Telemetry says what happened, observation says how it unfolded, and self-report
+  says what players experienced. Where they agree the finding is strong; where
+  they disagree there is something to find.
 - Between-subjects designs avoid carry-over; within-subjects designs cancel out
   differences between players. Assign at random, and counterbalance the order.
 - A few players find problems. Measuring how often needs many more. Count people,
@@ -559,7 +559,9 @@ do not release". "If it seems like a lot" is not a threshold.
 | Key term | Meaning |
 | :- | :- |
 | **Telemetry** | What the game records about itself while it runs |
-| **Performance capture** | Telemetry about the machine: frame times, memory |
+| **Observation** | What you record by watching someone play |
+| **Self-report** | What players tell you about their experience |
+| **Triangulation** | Checking a finding against more than one source of evidence |
 | **Measure** | A specific value you could record for one player |
 | **Between-subjects** | Each player tests one version |
 | **Within-subjects** | Every player tests every version |

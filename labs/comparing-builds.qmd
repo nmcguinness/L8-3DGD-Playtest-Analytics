@@ -1,7 +1,11 @@
 ---
 title: "Lab 02 — Comparing Builds"
-subtitle: "Cleaning, transforming, t-tests, and whether a difference matters"
+subtitle: "Stage 2: cleaning, t-tests, and whether a difference matters"
 ---
+
+::: {.callout-note appearance="simple" icon="false" title="Get the files"}
+- **Data:** [tidebreak_sessions_raw.csv](../data/tidebreak_sessions_raw.csv){download="tidebreak_sessions_raw.csv"}, [tidebreak_sessions.csv](../data/tidebreak_sessions.csv){download="tidebreak_sessions.csv"}, [tidebreak_paired.csv](../data/tidebreak_paired.csv){download="tidebreak_paired.csv"}, [tidebreak_frame_times.csv](../data/tidebreak_frame_times.csv){download="tidebreak_frame_times.csv"}, [tidebreak_survey.csv](../data/tidebreak_survey.csv){download="tidebreak_survey.csv"}. Save them in the `data/` folder of your project.
+:::
 
 # Overview
 
@@ -11,53 +15,46 @@ asks the question the team built it to answer:
 > **Does improved environmental guidance help players navigate the level?**
 
 Part A takes the raw export the team received and gets it into a shape that can
-answer that question, first in base R and then with the pipe, keeping a written
-record of every decision. Part B puts a size, an interval and a p-value on the
-differences, and asks the question no function answers: does this difference
-matter?
+answer that question, keeping a written record of every decision. Part B puts a
+size, an interval and a p-value on the differences, and asks the question no
+function answers: does this difference matter? By the end you will have answered
+the Stage 2 question, *did the change work?*, and written the recommendation.
 
 | Function | What it does |
 | :- | :- |
-| `duplicated()` | TRUE for any row that repeats an earlier row |
-| `is.na()`, `complete.cases()` | Find missing values, and rows with none |
+| `distinct()` | Drop rows that repeat an earlier row exactly |
+| `is.na()` | Find missing values |
 | `trimws()`, `tolower()` | Make text labels consistent |
-| `|>` | Pass the result on its left into the function on its right |
+| `\|>` | Pass the result on its left into the function on its right |
 | `filter()`, `select()`, `mutate()`, `arrange()` | Keep rows, keep columns, change a column, sort |
-| `group_by()`, `summarise()` | One row of summaries per group |
-| `sample()`, `replicate()` | Shuffle the build labels many times: a permutation test |
+| `count()`, `group_by()`, `summarise()` | Counts, and one row of summaries per group |
 | `t.test()` | Independent-samples and paired t-tests, with confidence intervals |
-| `prop.test()` | Compare two proportions, such as quit rates |
-| `left_join()` | Add columns from another table, matched on a key |
-| `aggregate()` | Collapse several rows per player into one |
 
 # Learning outcomes
 
 By the end of this lab you can:
 
 - find duplicates, gaps and inconsistent labels in a raw export, and fix them in
-  base R and again with the pipe;
-- use `filter()`, `select()`, `mutate()` and `arrange()` to answer a question about
-  the data in one readable pipeline;
+  one readable pipeline;
 - write a cleaning log that records every row dropped, why, and what it did to *n*;
-- explain a p-value by shuffling the build labels, then run an independent-samples
-  and a paired t-test and pull the estimate, interval and p-value out of the result;
-- join the survey to the sessions and compare two proportions with `prop.test()`;
+- explain a p-value by reading a shuffle of the build labels;
+- run an independent-samples and a paired t-test, and pull the estimate, interval
+  and p-value out of the result;
 - tell "no meaningful difference" apart from "cannot tell" using a confidence
   interval;
-- decide whether a statistically significant difference justifies a design change.
+- decide whether a statistically significant difference justifies a design change,
+  and write the recommendation.
 
 # Ground rules
 
 - Clean before you describe. Every change you make to the data goes in your
   cleaning log, including changes that remove no rows.
-- Look before you test. Every Part B exercise assumes you have looked at the data
-  first.
-- Both parts use the native pipe `|>`. You will see `%>%`, the older tidyverse
-  pipe, in other people's code; it does the same job.
+- Look at the plot before running the test. Every Part B exercise assumes you have
+  looked at the data first.
 - Type the code. Open the solution **after** your attempt, even when your attempt
   worked.
 - Every exercise ends with a short written answer. Write it. The Challenge is
-  assessed on the writing, not the code.
+  judged on the writing, not the code.
 - When you report a difference, give its size and its interval, not only the
   p-value.
 
@@ -69,7 +66,6 @@ library(readr)
 library(dplyr)
 
 sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
-survey   <- read_csv("data/tidebreak_survey.csv", show_col_types = FALSE)
 paired   <- read_csv("data/tidebreak_paired.csv", show_col_types = FALSE)
 frames   <- read_csv("data/tidebreak_frame_times.csv", show_col_types = FALSE)
 raw      <- read_csv("data/tidebreak_sessions_raw.csv",
@@ -83,48 +79,47 @@ nrow(paired)
 `raw` is the export as delivered, and Part A cleans it. `trim_ws = FALSE` stops
 `read_csv()` quietly stripping spaces from text values, so you see the file the way
 Excel or a database import would. `sessions` has one row per player per session,
-with each player on one build only. `survey` has one post-session survey per
-session. `paired` is a separate study in which every player played both builds.
+with each player on one build only. `paired` is a separate study in which every
+player played both builds.
 
 ---
 
-# Part A — Clean and transform
+# Part A — Clean the export
 
 Notes for this part: [Cleaning and Transforming](../notes/06-cleaning-and-transforming.qmd).
 
 `raw` is the export the team actually received. Every problem in it is silent:
 nothing throws an error, and every problem changes an answer. Part A finds them,
-fixes them in base R, fixes them again with the pipe, and ends with the cleaning
-log that goes in your report.
-
-If you did the cleaning extension to Lab 01, Exercises 01–03 are revision. Do them
-quickly and spend the time on Exercise 06.
+fixes them, and ends with the cleaning log that goes in your report.
 
 ## Exercise 01 — Rows exported twice `[Do]`
 
-Count the rows of `raw` that are exact copies of an earlier row. Then count the
-rows whose `session_id` has appeared before.
+How many rows of `raw` are exact copies of an earlier row? Then list any
+`session_id` that appears more than once.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
 #| label: ex01
-sum(duplicated(raw))
-sum(duplicated(raw$session_id))
+nrow(raw) - nrow(distinct(raw))
+
+raw |> count(session_id) |> filter(n > 1)
 ```
 
-The first counts rows that repeat every column; the second counts rows that repeat
-only the key.
+`distinct()` drops exact repeats, so the difference in rows is the number of
+copies. Counting `session_id` and keeping counts above 1 finds every key that
+appears twice.
 :::
 
-**Write 2 sentences:** the two counts are equal. What would it mean if the second
-were larger, and why could you not simply delete the extra rows?
+**Write 2 sentences:** the number of repeated keys equals the number of exact
+copies. What would it mean if there were more repeated keys, and why could you not
+simply delete the extra rows?
 
 ## Exercise 02 — Where the gaps are `[Do]`
 
 Count the missing values in every column of `raw` at once.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
 #| label: ex02
@@ -138,67 +133,43 @@ colSums(is.na(raw))
 **Write 1 sentence:** which column's gaps would you investigate first, and why
 that one?
 
-## Exercise 03 — Clean it in base R `[Apply]`
+## Exercise 03 — Clean it in one pipeline `[Apply]`
 
-Make a copy of `raw` called `clean` with the duplicated rows removed. Then fix
-`cohort` so that it has exactly three values, and check that it does. Note the
-number of rows after each step.
+Build `clean` from `raw` in one pipeline: drop the duplicated rows, then fix
+`cohort` so that it has exactly three values. Count `cohort` before and after to
+prove the fix worked, and note the number of rows.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
 #| label: ex03
-clean <- raw[!duplicated(raw), ]
-nrow(clean)
+raw |> count(cohort)
 
-table(clean$cohort)
-clean$cohort <- tolower(trimws(clean$cohort))
-table(clean$cohort)
+clean <- raw |>
+  distinct() |>
+  mutate(cohort = tolower(trimws(cohort)))
+
+clean |> count(cohort)
+nrow(clean)
 ```
 
-`!duplicated()` keeps the first copy of every row. `trimws()` removes the stray
-spaces and `tolower()` the inconsistent capitals, and `table()` before and after
-is the only proof that the fix caught every variant.
+`trimws()` removes the stray spaces and `tolower()` the inconsistent capitals.
+Counting before and after is the only proof that the fix caught every variant.
 :::
 
 **Write 2 sentences:** the relabelling removed no rows. Why does it still belong in
 the cleaning log?
 
-## Exercise 04 — The same cleaning, with the pipe `[Apply]`
+## Exercise 04 — Who is missing? `[Apply]`
 
-Rebuild `clean` as `clean_pipe` in one pipeline starting from `raw`: `filter()` out
-the duplicated rows, then `mutate()` the `cohort` column. Confirm the two versions
-are identical.
+List every row of `clean` with a blank `session_minutes` **or** a blank `deaths`.
+Keep only `session_id`, `build`, `quit_reason`, `session_minutes` and `deaths`, and
+sort by `build` then `quit_reason`.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
 #| label: ex04
-clean_pipe <- raw |>
-  filter(!duplicated(raw)) |>
-  mutate(cohort = tolower(trimws(cohort)))
-
-identical(clean, clean_pipe)
-```
-
-`filter()` keeps the rows where its condition is TRUE, which is what `[ , ]` did
-in Exercise 03, and `mutate()` replaces the column in place. Each line is one step,
-read top to bottom in the order it happens.
-:::
-
-**Write 2 sentences:** which version would you rather hand to a teammate who has to
-re-run it on next week's export, and why?
-
-## Exercise 05 — Who is missing? `[Apply]`
-
-Using the pipe, list every row of `clean` with a blank `session_minutes` **or** a
-blank `deaths`. Keep only `session_id`, `build`, `quit_reason`, `session_minutes`
-and `deaths`, and sort by `build` then `quit_reason`.
-
-::: {.callout-tip collapse="true" title="Solution"}
-
-```{r}
-#| label: ex05
 clean |>
   filter(is.na(session_minutes) | is.na(deaths)) |>
   select(session_id, build, quit_reason, session_minutes, deaths) |>
@@ -213,10 +184,10 @@ pattern visible.
 **Write 2 sentences:** describe the pattern in the blank `session_minutes` rows,
 and say how it differs from the pattern in the blank `deaths` rows.
 
-::: {.callout-note collapse="true" title="Check your answer"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show answer"}
 
 ```{r}
-#| label: ex05-check
+#| label: ex04-check
 #| echo: false
 blank_min <- clean[is.na(clean$session_minutes), ]
 blank_dth <- clean[is.na(clean$deaths), ]
@@ -231,29 +202,39 @@ All `r nrow(blank_min)` blank session lengths are Build A frustration quits. The
 something in the game failed to log; the other looks like noise.
 :::
 
-## Exercise 06 — Write the cleaning log `[Decide]`
+## Exercise 05 — Write the cleaning log `[Decide]`
 
 Decide what to do with the rows that have gaps, then write the cleaning log for
 `clean`: every step, the number of rows after it, and why. Your log is the record
 a reader of the report would use to check your *n*
 ([rule 6](../notes/ten-rules.qmd)).
 
-Before you decide, compare Build A's median `session_minutes` with the blanks left
-out against the median of the Build A frustration quits that *were* recorded.
+Before you decide, compare each build's median `session_minutes` with the blanks
+left out, against the median of the Build A frustration quits that *were*
+recorded.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
-#| label: ex06
-tapply(clean$session_minutes, clean$build, median, na.rm = TRUE)
+#| label: ex05
+clean |>
+  group_by(build) |>
+  summarise(median_minutes = median(session_minutes, na.rm = TRUE),
+            missing        = sum(is.na(session_minutes)))
 
-recorded_a_frustrated <- clean |>
-  filter(build == "A", quit_reason == "Frustrated", !is.na(session_minutes))
-median(recorded_a_frustrated$session_minutes)
+clean |>
+  filter(build == "A", quit_reason == "Frustrated") |>
+  summarise(recorded = sum(!is.na(session_minutes)),
+            median_minutes = median(session_minutes, na.rm = TRUE))
 
-nrow(raw)
-nrow(clean)
-nrow(clean[complete.cases(clean), ])
+sum(complete.cases(clean))   # what "drop every incomplete row" would leave
+```
+
+```{r}
+#| label: ex05-numbers
+#| include: false
+recorded_a_frustrated <- clean$session_minutes[clean$build == "A" &
+                                                 clean$quit_reason == "Frustrated"]
 ```
 
 **One defensible answer: keep every row, and handle the gaps per analysis.**
@@ -268,25 +249,24 @@ nrow(clean[complete.cases(clean), ])
 
 **What makes it defensible.** The blank session lengths are not random. Recorded
 Build A frustration quits have a median of
-`r round(median(recorded_a_frustrated$session_minutes), 1)` minutes, so the
+`r round(median(recorded_a_frustrated, na.rm = TRUE), 1)` minutes, so the
 missing ones are almost certainly short, and Build A's median of
 `r round(median(clean$session_minutes[clean$build == "A"], na.rm = TRUE), 1)`
 minutes is an overestimate. Keeping the rows keeps their `quit_reason`, which is
 complete and carries the finding. The log says what every summary of session
 length is missing, so a reader can judge it.
 
-**What would make it indefensible.** Running `complete.cases()` by reflex, which
-silently takes *n* from `r nrow(clean)` to
-`r nrow(clean[complete.cases(clean), ])` and removes the frustration quits the
-comparison is about. Or filling the blanks with 0 or with Build A's average, which
-invents session lengths and hides the logging fault.
+**What would make it indefensible.** Dropping every incomplete row by reflex, which
+silently takes *n* from `r nrow(clean)` to `r sum(complete.cases(clean))` and
+removes the frustration quits the comparison is about. Or filling the blanks with 0
+or with Build A's average, which invents session lengths and hides the logging
+fault.
 :::
 
 **Write 3 sentences:** the blank session lengths are also a bug in Build A's
 telemetry. Who should hear about it, and what goes in the bug report?
 
-::: {.callout-note title="Before Part B"}
-
+::: {.callout-important title="Before Part B"}
 Part B uses `sessions` from the Setup block, not your `clean`. It is the same
 sessions, exported again after the logging fault was fixed: the same rows, with the
 gaps you found filled.
@@ -298,7 +278,7 @@ sum(is.na(sessions$session_minutes))
 sum(is.na(sessions$deaths))
 ```
 
-Everything Part B compares is therefore free of the bias you found in Exercise 06.
+Everything Part B compares is therefore free of the bias you found in Exercise 05.
 In a real playtest you would rarely get that second export. Your cleaning log is
 what you would have instead.
 :::
@@ -308,17 +288,19 @@ what you would have instead.
 # Part B — Is the difference real, and does it matter?
 
 Notes for this part: [From Sample to Population](../notes/07-sample-to-population.qmd)
-and [Comparing Groups](../notes/08-comparing-groups.qmd).
+and [Comparing Groups](../notes/08-comparing-groups.qmd). Report every comparison
+by answering the six questions from Comparing Groups, in order: what happened, how
+large, how uncertain, could it be chance, does it matter, what should the team do.
 
-## Exercise 07 — Describe before you test `[Do]`
+## Exercise 06 — Describe before you test `[Do]`
 
-Using `group_by()` and `summarise()`, produce one row per build with the number of
-sessions and the mean, median, standard deviation and IQR of `wrong_turns`.
+Produce one row per build with the number of sessions and the mean, median,
+standard deviation and IQR of `wrong_turns`. Then draw side-by-side boxplots.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
-#| label: ex07
+#| label: ex06
 sessions |>
   group_by(build) |>
   summarise(n      = n(),
@@ -328,6 +310,13 @@ sessions |>
             iqr    = IQR(wrong_turns))
 ```
 
+```{r}
+#| label: ex06b
+#| fig-alt: "Two boxplots of wrong turns per session. Build A's box sits around 8 to 10; Build B's is lower, around 3 to 7.5."
+boxplot(wrong_turns ~ build, data = sessions, col = "grey85",
+        main = "Wrong turns per session", ylab = "Wrong turns")
+```
+
 `n()` counts the rows in each group. Always report it: a difference means little
 without the number of players behind it.
 :::
@@ -335,15 +324,15 @@ without the number of players behind it.
 **Write 1 sentence:** Build B's standard deviation is larger than Build A's. What
 does that mean for a player?
 
-## Exercise 08 — The independent-samples t-test `[Do]`
+## Exercise 07 — The independent-samples t-test `[Do]`
 
 Run the t-test comparing `wrong_turns` between builds. Store the result, then pull
 out the two means, the confidence interval and the p-value separately.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
-#| label: ex08
+#| label: ex07
 result <- t.test(wrong_turns ~ build, data = sessions)
 result
 
@@ -360,17 +349,17 @@ inline R rather than by copying.
 **Write 2 sentences:** is the confidence interval for Build A minus Build B, or
 Build B minus Build A? How can you tell from the output?
 
-## Exercise 09 — Could it be chance? Shuffle and see `[Apply]`
+## Exercise 08 — Could it be chance? Read the shuffle `[Do]`
 
 If the signposting made no difference, the build label on each session would be
-arbitrary. Shuffle the labels 10,000 times with `sample()`, recompute the gap in
-mean wrong turns each time, and count how many shuffled gaps are at least as large
-as the real one. Compare with Exercise 08's p-value.
-
-::: {.callout-tip collapse="true" title="Solution"}
+arbitrary. This code shuffles the labels 10,000 times, recomputes the gap in mean
+wrong turns each time, and counts how many shuffled gaps are at least as large as
+the real one. You do not need to be able to write it. Run it, and compare the
+result with Exercise 07's p-value.
 
 ```{r}
-#| label: ex09
+#| label: ex08
+#| fig-alt: "Bell-shaped histogram of shuffled gaps in mean wrong turns, centred on zero and running from about minus 2 to plus 2, with a red line at the observed gap of 3.4 far to the right of every bar."
 gap <- function(y, g) mean(y[g == "A"]) - mean(y[g == "B"])
 
 observed <- gap(sessions$wrong_turns, sessions$build)
@@ -379,7 +368,7 @@ shuffled <- replicate(10000, gap(sessions$wrong_turns, sample(sessions$build)))
 
 observed
 max(abs(shuffled))
-mean(abs(shuffled) >= abs(observed))
+mean(abs(shuffled) >= abs(observed))   # the shuffle's p-value
 
 hist(shuffled, breaks = 40, col = "grey85", border = "white",
      xlim = range(c(shuffled, observed)),
@@ -388,6 +377,7 @@ hist(shuffled, breaks = 40, col = "grey85", border = "white",
 abline(v = observed, col = "firebrick", lwd = 3)
 ```
 
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 The real gap is `r round(observed, 1)` wrong turns; the largest of ten thousand
 shuffled gaps is `r round(max(abs(shuffled)), 2)`. No shuffle came close, so the
 shuffle's p-value is below 1 in 10,000, which agrees with the t-test's tiny
@@ -398,62 +388,16 @@ difference that looks at least as extreme as your data.
 **Write 2 sentences:** what does one shuffle represent, and why does the
 proportion of extreme shuffles answer "could this be chance?"
 
-## Exercise 10 — Bring the survey in `[Apply]`
-
-```{r}
-#| label: ex10-setup
-#| include: false
-joined_chk <- left_join(survey, select(sessions, session_id, build), by = "session_id")
-dis_chk    <- tapply(joined_chk$objective_clear <= 2, joined_chk$build, sum)
-pt_chk     <- prop.test(dis_chk, table(joined_chk$build))
-stopifnot(nrow(joined_chk) == nrow(survey), !anyNA(joined_chk$build),
-          dis_chk[["A"]] > dis_chk[["B"]], pt_chk$p.value < 0.01)
-```
-
-The survey does not record the build. Use `left_join()` to add each session's
-`build` to `survey`, matching on `session_id`. Then compare the share of responses
-in each build that **disagreed** (1 or 2) with "I always knew what my objective
-was", using `prop.test()`.
-
-::: {.callout-tip collapse="true" title="Solution"}
-
-```{r}
-#| label: ex10
-joined <- survey |>
-  left_join(select(sessions, session_id, build), by = "session_id")
-
-nrow(joined)
-sum(is.na(joined$build))
-
-disagreed <- tapply(joined$objective_clear <= 2, joined$build, sum)
-responses <- table(joined$build)
-disagreed
-prop.test(disagreed, responses)
-```
-
-`left_join()` keeps every survey row and adds `build` from the matching session;
-checking that the row count is unchanged and that no `build` is `NA` confirms every
-survey found its session. `r dis_chk[["A"]]` of `r table(joined_chk$build)[["A"]]`
-Build A responses disagreed, against `r dis_chk[["B"]]` of
-`r table(joined_chk$build)[["B"]]` in Build B
-(`r if (pt_chk$p.value < 0.001) "p < 0.001" else paste("p =", round(pt_chk$p.value, 3))`).
-`prop.test()` compares the two shares directly, which suits a yes-or-no outcome
-better than a t-test on the ratings.
-:::
-
-**Write 2 sentences:** the telemetry says Build B players took fewer wrong turns;
-what does this survey result add, and what kind of evidence is it?
-
-## Exercise 11 — The same players, both builds `[Apply]`
+## Exercise 09 — The same players, both builds `[Apply]`
 
 `paired` records `r nrow(paired)` players who each played both builds. Run the
 paired t-test on `wrong_turns_a` and `wrong_turns_b`, then run the unpaired test on
 the same two columns. Compare the widths of the two confidence intervals.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
-#| label: ex11
+#| label: ex09
 paired_test   <- t.test(paired$wrong_turns_a, paired$wrong_turns_b, paired = TRUE)
 unpaired_test <- t.test(paired$wrong_turns_a, paired$wrong_turns_b)
 
@@ -467,30 +411,31 @@ diff(unpaired_test$conf.int)
 Same estimate, but the paired interval is
 `r round(diff(paired_test$conf.int), 1)` wrong turns wide against
 `r round(diff(unpaired_test$conf.int), 1)`. The paired test compares each player
-with themselves, so differences in player skill cancel out.
+with themselves, so differences in player skill cancel out. `diff()` of an
+interval is its width.
 :::
 
 **Write 2 sentences:** the paired file does not record which build each player
 played first. Why does that matter, and what would you change about the next
 paired study?
 
-## Exercise 12 — No difference, or cannot tell? `[Apply]`
+## Exercise 10 — No difference, or cannot tell? `[Apply]`
 
 Run the t-test on `enjoyment` by build and on `items_collected` by build. Neither
 is significant. For which one can you say there is **no meaningful difference**,
 and for which can you only say **we cannot tell**?
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
-#| label: ex12
+#| label: ex10
 enjoy <- t.test(enjoyment ~ build, data = sessions)
 items <- t.test(items_collected ~ build, data = sessions)
 
 enjoy$conf.int
 items$conf.int
 
-tapply(sessions$items_collected, sessions$build, mean)
+sessions |> summarise(mean_items = mean(items_collected))
 ```
 
 Read each interval against the size of the variable. Enjoyment's interval runs
@@ -503,19 +448,18 @@ typical player collects about
 up to `r sprintf("%.1f", -items$conf.int[1])` more items each, or up to
 `r sprintf("%.1f", items$conf.int[2])` fewer. That is **cannot tell**.
 
-"Cannot tell" is a question of **power**: with these players, a difference in items
-collected of that size would often be missed. A bigger playtest, or a paired one,
-would narrow the interval enough to decide
-([Comparing Groups](../notes/08-comparing-groups.qmd#two-ways-to-be-wrong)).
+"Cannot tell" means this playtest was too small to see a difference of that size.
+A bigger playtest, or a paired one, would narrow the interval enough to decide
+([Testing in Depth](../going-further/testing-in-depth.qmd#two-ways-to-be-wrong)).
 :::
 
 **Write 2 sentences:** why is "not significant" a weaker statement than "the
 confidence interval is narrow and sits around zero"?
 
-## Exercise 13 — "Players play longer in Build B" `[Decide]`
+## Exercise 11 — "Players play longer in Build B" `[Decide]`
 
 ```{r}
-#| label: ex13-setup
+#| label: ex11-setup
 #| include: false
 tt_min  <- t.test(session_minutes ~ build, data = sessions)
 not_fr  <- sessions[sessions$quit_reason != "Frustrated", ]
@@ -533,15 +477,17 @@ longer on average. The producer wants to put "players play
 let them? Test before you decide: compare session length between the builds for
 players who did **not** quit in frustration.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
-#| label: ex13
-not_frustrated <- sessions[sessions$quit_reason != "Frustrated", ]
+#| label: ex11
+not_frustrated <- sessions |> filter(quit_reason != "Frustrated")
 t.test(session_minutes ~ build, data = not_frustrated)
 
-frustrated <- sessions[sessions$quit_reason == "Frustrated", ]
-tapply(frustrated$session_minutes, frustrated$build, median)
+sessions |>
+  filter(quit_reason == "Frustrated") |>
+  group_by(build) |>
+  summarise(n = n(), median_minutes = median(session_minutes))
 ```
 
 **One defensible answer: no, because the claim describes the wrong thing.** Among
@@ -564,19 +510,21 @@ below 0.05. The difference is real; the explanation attached to it is not.
 player shifting a little or from a few players shifting a lot. How do you tell
 which, and why does it change the design conclusion?
 
-## Exercise 14 — Which number goes in the report? `[Decide]`
+## Exercise 12 — Which number goes in the report? `[Decide]`
 
 You have three estimates of how much the signposting reduced wrong turns: the
-session-level test from Exercise 08, the paired study from Exercise 11, and a
+session-level test from Exercise 07, the paired study from Exercise 09, and a
 player-level test that averages each player's `r unique(as.vector(table(sessions$player_id)))`
 sessions first. Run the player-level test, then decide which result leads the
 report.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
-#| label: ex14
-per_player <- aggregate(wrong_turns ~ player_id + build, data = sessions, FUN = mean)
+#| label: ex12
+per_player <- sessions |>
+  group_by(player_id, build) |>
+  summarise(wrong_turns = mean(wrong_turns), .groups = "drop")
 player_test <- t.test(wrong_turns ~ build, data = per_player)
 
 player_test$conf.int
@@ -611,27 +559,28 @@ stronger evidence than a very small p-value from one?
 The producer asks one question before approving Build B for the next milestone:
 **was it an improvement?**
 
-Build the evidence you would take into that meeting. Use more than one measure,
-and keep four kinds of evidence separate: what the figures show, what the
-descriptive statistics say, what the tests say, and whether each difference is big
-enough to matter. `frames` is loaded in the Setup block.
+Build the evidence you would take into that meeting. Use more than one measure:
+navigation, whether players stayed and finished, whether anything got worse, and
+performance. `frames` is loaded in the Setup block. For each measure, keep the
+evidence separate: what the plot shows, what the summaries say, what the test
+says, and whether the difference is big enough to matter.
 
-::: {.callout-important collapse="true" title="One defensible answer"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
 #| label: challenge
 # 1. Navigation: the question Build B was built to answer
-boxplot(wrong_turns ~ build, data = sessions, col = "grey85",
-        main = "Wrong turns per session", ylab = "Wrong turns")
 t.test(wrong_turns ~ build, data = sessions)
 
-# 2. Did players stay and finish?
-barplot(table(sessions$build, sessions$quit_reason), beside = TRUE,
-        legend.text = TRUE, main = "How sessions ended", ylab = "Sessions")
-frustrated <- tapply(sessions$quit_reason == "Frustrated", sessions$build, sum)
-completed  <- tapply(sessions$completed, sessions$build, sum)
-prop.test(frustrated, table(sessions$build))
-prop.test(completed, table(sessions$build))
+# 2. Did players stay and finish? Rates per build, then a test for each
+outcomes <- sessions |>
+  group_by(build) |>
+  summarise(n          = n(),
+            frustrated = sum(quit_reason == "Frustrated"),
+            completed  = sum(completed))
+outcomes
+prop.test(outcomes$frustrated, outcomes$n)
+prop.test(outcomes$completed, outcomes$n)
 
 # 3. Did anything get worse?
 t.test(enjoyment ~ build, data = sessions)
@@ -641,7 +590,11 @@ t.test(score ~ build, data = sessions)
 frames |>
   group_by(build) |>
   summarise(fps = 1000 / mean(ms), p99 = quantile(ms, 0.99))
+```
 
+```{r}
+#| label: challenge-plot
+#| fig-alt: "Boxplots of frame time for each build and zone. All six boxes sit near 17 ms; only Build B's Corridor has a column of outliers between about 34 and 55 ms."
 boxplot(ms ~ build + zone, data = frames, col = "grey85", las = 2,
         main = "Frame times by build and zone", ylab = "Frame time (ms)", xlab = "")
 ```
@@ -668,20 +621,30 @@ stopifnot(wt$p.value < 0.001, enj$p.value > 0.5, scr$p.value > 0.5,
           pt_fr$p.value < 0.01, pt_comp$p.value < 0.01)
 ```
 
-| Measure | Visual | Descriptive | Statistical | Practical |
-| :- | :- | :- | :- | :- |
-| Wrong turns | Build B's box sits clearly lower | Mean `r round(wt$estimate[[1]], 1)` in A, `r round(wt$estimate[[2]], 1)` in B | 95% CI `r round(wt$conf.int[1], 1)` to `r round(wt$conf.int[2], 1)` fewer, `r p_fmt(wt$p.value)` | Large: players get lost far less |
-| Frustration quits | Build A's frustrated bar is far taller | `r fr[["A"]]` in A, `r fr[["B"]]` in B | `prop.test()`: `r p_fmt(pt_fr$p.value)` | Large: the main way Build A lost players |
-| Completed the test | Build B's completed bar is taller | `r comp[["A"]]`% in A, `r comp[["B"]]`% in B | `prop.test()`: `r p_fmt(pt_comp$p.value)` | Large |
-| Enjoyment | Not drawn; the interval answers it | Means `r round(enj$estimate[[1]], 1)` and `r round(enj$estimate[[2]], 1)` | 95% CI `r round(enj$conf.int[1], 2)` to `r round(enj$conf.int[2], 2)`, `r p_fmt(enj$p.value)` | No cost to enjoyment |
-| Score | Not drawn; the test shows no change | Means `r round(scr$estimate[[1]])` and `r round(scr$estimate[[2]])` | `r p_fmt(scr$p.value)` | No change |
-| Frame time | A column of outlier points far above Build B's Corridor box, and nowhere else. Easy to miss among the routine outliers in every box | Both about `r fps[["A"]]` FPS; 99th percentile `r p99[["A"]]` ms in A, `r p99[["B"]]` ms in B | Not a comparison of means | Every one of the `r nrow(slow)` frames slower than 30 FPS is Build B, in the Corridor |
+| Measure | Descriptive | Statistical | Practical |
+| :- | :- | :- | :- |
+| Wrong turns | Mean `r round(wt$estimate[[1]], 1)` in A, `r round(wt$estimate[[2]], 1)` in B | 95% CI `r round(wt$conf.int[1], 1)` to `r round(wt$conf.int[2], 1)` fewer, `r p_fmt(wt$p.value)` | Large: players get lost far less |
+| Frustration quits | `r fr[["A"]]` in A, `r fr[["B"]]` in B | `prop.test()`: `r p_fmt(pt_fr$p.value)` | Large: the main way Build A lost players |
+| Completed the test | `r comp[["A"]]`% in A, `r comp[["B"]]`% in B | `prop.test()`: `r p_fmt(pt_comp$p.value)` | Large |
+| Enjoyment | Means `r round(enj$estimate[[1]], 1)` and `r round(enj$estimate[[2]], 1)` | 95% CI `r round(enj$conf.int[1], 2)` to `r round(enj$conf.int[2], 2)`, `r p_fmt(enj$p.value)` | No cost to enjoyment |
+| Score | Means `r round(scr$estimate[[1]])` and `r round(scr$estimate[[2]])` | `r p_fmt(scr$p.value)` | No change |
+| Frame time | Both about `r fps[["A"]]` FPS; 99th percentile `r p99[["A"]]` ms in A, `r p99[["B"]]` ms in B | Not a comparison of means | Every one of the `r nrow(slow)` frames slower than 30 FPS is Build B, in the Corridor |
 
-**So the defensible answer is: yes for navigation, and not yet for release.** The
-signposting did what it was built to do. Players got lost less, fewer quit in
-frustration, more finished, and none of it cost enjoyment or score. But Build B
-also introduced a hitch in the Corridor that the frame-rate average cannot see.
-Keep the signposting; fix the hitch before Build B goes forward.
+**The headline, in the six steps.**
+
+1. **What happened?** Build B's players took fewer wrong turns, fewer quit in
+   frustration, and more finished.
+2. **How large?** `r round(wt$estimate[[1]] - wt$estimate[[2]], 1)` fewer wrong
+   turns per session; `r fr[["A"]]` frustration quits against `r fr[["B"]]`.
+3. **How uncertain?** The wrong-turns interval runs from
+   `r round(wt$conf.int[1], 1)` to `r round(wt$conf.int[2], 1)` fewer.
+4. **Could it be chance?** Not plausibly: `r p_fmt(wt$p.value)`, and the same for
+   frustration and completion.
+5. **Does it matter?** Yes. Even the smallest plausible reduction is noticeable,
+   and none of it cost enjoyment or score. But the frame-time plot shows a hitch
+   in Build B's Corridor that the average frame rate cannot see.
+6. **What should the team do?** Keep the signposting; fix the Corridor hitch
+   before Build B goes forward.
 
 **What would make it indefensible.** Answering from wrong turns alone, because that
 is the measure the build was designed to move. Or quoting average FPS as proof
@@ -692,15 +655,69 @@ both miss what a player would actually experience.
 **Write 4 sentences**, using **What → Pattern → Meaning → Action**:
 
 - **What** did you measure?
-- **Pattern** — what does the evidence show, across more than one measure?
-- **Meaning** — what does that mean for the build?
-- **Action** — what exactly do you recommend to the producer?
+- **Pattern**: what does the evidence show, across more than one measure? Give
+  the size and the interval for the main one.
+- **Meaning**: what does that mean for the player?
+- **Action**: what exactly do you recommend to the producer?
+
+---
+
+# Extension — Bring the survey in `[Apply]`
+
+For anyone who finishes the Challenge with time to spare. It uses one new
+function, `left_join()`, which you will meet properly in Stage 4.
+
+```{r}
+#| label: ext-setup
+#| include: false
+survey     <- read_csv("data/tidebreak_survey.csv", show_col_types = FALSE)
+joined_chk <- left_join(survey, select(sessions, session_id, build), by = "session_id")
+dis_chk    <- tapply(joined_chk$objective_clear <= 2, joined_chk$build, sum)
+pt_chk     <- prop.test(dis_chk, table(joined_chk$build))
+stopifnot(nrow(joined_chk) == nrow(survey), !anyNA(joined_chk$build),
+          dis_chk[["A"]] > dis_chk[["B"]], pt_chk$p.value < 0.01)
+```
+
+The survey does not record the build. Load `data/tidebreak_survey.csv`, then use
+`left_join()` to add each session's `build` to it, matching on `session_id`. Then
+compare the share of responses in each build that **disagreed** (1 or 2) with "I
+always knew what my objective was", using `prop.test()`.
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
+
+```{r}
+#| label: ext
+survey <- read_csv("data/tidebreak_survey.csv", show_col_types = FALSE)
+
+joined <- survey |>
+  left_join(select(sessions, session_id, build), by = "session_id")
+
+nrow(joined)
+sum(is.na(joined$build))
+
+disagreed <- joined |>
+  group_by(build) |>
+  summarise(disagreed = sum(objective_clear <= 2), n = n())
+disagreed
+prop.test(disagreed$disagreed, disagreed$n)
+```
+
+`left_join()` keeps every survey row and adds `build` from the matching session;
+checking that the row count is unchanged and that no `build` is `NA` confirms every
+survey found its session. `r dis_chk[["A"]]` of `r table(joined_chk$build)[["A"]]`
+Build A responses disagreed, against `r dis_chk[["B"]]` of
+`r table(joined_chk$build)[["B"]]` in Build B
+(`r if (pt_chk$p.value < 0.001) "p < 0.001" else paste("p =", round(pt_chk$p.value, 3))`).
+:::
+
+**Write 2 sentences:** the telemetry says Build B players took fewer wrong turns;
+what does this survey result add, and what kind of evidence is it?
 
 ---
 
 # Appendix — Reading `t.test()` output
 
-::: {.callout-note collapse="true" title="Show the annotated output"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show the annotated output"}
 
 ```{r}
 #| label: appendix-ttest
@@ -726,10 +743,9 @@ t.test(wrong_turns ~ build, data = sessions)
 | :- | :- |
 | `grouping factor must have exactly 2 levels` | `t.test(y ~ group)` needs exactly two groups. Filter to two first |
 | `not enough 'x' observations` | A group is empty, usually a misspelled level such as `"a"` for `"A"` |
-| `could not find function "%>%"` | You have not run `library(dplyr)` |
-| `could not find function "filter"` | You have not run `library(dplyr)` |
+| `could not find function "filter"` (or `distinct`, `count`) | You have not run `library(dplyr)` |
 | `'x' and 'n' must have the same length` | `prop.test()` needs one count and one total per group, in the same order |
 | `object 'clean' not found` | You skipped Exercise 03, or ran Part A out of order |
-| `unexpected '>'` on a line with `|>` | Your R is older than 4.1. Update R, or use `%>%` |
+| `unexpected '>'` on a line with `\|>` | Your R is older than 4.1. Update R |
 
 :::

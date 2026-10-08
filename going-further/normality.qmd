@@ -1,0 +1,174 @@
+---
+title: "Is It Normal Enough?"
+subtitle: "z-scores, checking the bell shape, and Q-Q plots"
+---
+
+```{r}
+#| label: setup
+#| include: false
+source("notes/_setup.R")
+
+within_sd <- function(x, k) mean(abs(x - mean(x)) < k * sd(x))
+aw <- sessions$awareness
+sm <- sessions$session_minutes
+b  <- frames$ms[frames$build == "B"]
+```
+
+> **Going further.** This page extends
+> [Distributions and Shape](../notes/05-distributions-and-shape.qmd#the-normal-distribution).
+> Nothing here is needed for the labs or the assessment. Read it if you want to
+> know how to check a shape properly, or when a later page or a paper you are
+> reading assumes data is "approximately normal".
+
+---
+
+## z-scores
+
+A **z-score** says how many standard deviations a value sits from the mean:
+
+$$z = \frac{\text{value} - \text{mean}}{\text{SD}}$$
+
+A player with an awareness rating of 90 has
+$z = (90 - `r round(mean(aw), 1)`) / `r round(sd(aw), 1)` = `r round((90 - mean(aw)) / sd(aw), 1)`$:
+nearly 2 SDs above average. If awareness is normal-shaped, the 68–95–99.7 rule
+puts that in roughly the top few per cent.
+
+z-scores let you compare values measured on different scales: "two SDs above
+average" means the same thing for a score, a time or a rating.
+
+**The catch** is the "if". For a skewed variable the SD is inflated by the tail, and
+the rule no longer tells you how unusual a value is. Score is a good example:
+
+```{r}
+#| label: z-score
+(2000 - mean(sessions$score)) / sd(sessions$score)
+mean(sessions$score < 2000)
+```
+
+A score of 2,000 is about `r round((2000 - mean(sessions$score)) / sd(sessions$score), 1)`
+SDs above the mean. But the Sentinel collapses give score a left tail, which
+inflates the SD and drags the mean down. The percentile is more honest:
+`r pct_fmt(mean(sessions$score < 2000))` of sessions scored below 2,000.
+
+---
+
+## Checking the Bell Shape
+
+Real data is never exactly normal. The useful question is whether it is close
+enough for the 68–95–99.7 rule to work. Draw the histogram on a density scale and
+lay the normal curve with the same mean and SD over it:
+
+```{r}
+#| label: fig-normal-check
+#| fig-cap: "Awareness follows the normal curve closely; session length, piled up against its 32-minute cap, does not."
+#| fig-alt: "Two histograms. Left: awareness, with a bell curve that follows the bars closely. Right: session length, where the bell curve overestimates the middle and misses the tall bars piled up near 30 minutes."
+#| fig-height: 3.5
+op <- par(mfrow = c(1, 2), mar = c(4, 3, 2, 1))
+hist(aw, breaks = 12, freq = FALSE, col = pal$fill, border = "white",
+     main = "Awareness", xlab = "Rating", ylab = "")
+curve(dnorm(x, mean(aw), sd(aw)), add = TRUE, lwd = 2, col = pal$highlight)
+hist(sm, breaks = 12, freq = FALSE, col = pal$fill, border = "white",
+     main = "Session length", xlab = "Minutes", ylab = "")
+curve(dnorm(x, mean(sm), sd(sm)), add = TRUE, lwd = 2, col = pal$highlight)
+par(op)
+```
+
+`freq = FALSE` draws the histogram as a density, so the bars and the curve share a
+scale. `curve()` draws a function of `x`; `dnorm()` is the normal curve.
+
+The rule makes a checkable prediction, so check it. `abs(x - mean(x)) < k * sd(x)`
+is `TRUE` for every value within `k` SDs of the mean, and its `mean()` is the
+proportion:
+
+```{r}
+#| label: within-sd
+within_sd <- function(x, k) mean(abs(x - mean(x)) < k * sd(x))
+within_sd(sessions$awareness, 1)
+within_sd(sessions$session_minutes, 1)
+```
+
+| Variable | Within 1 SD | Within 2 SDs | Verdict |
+| :- | :-: | :-: | :- |
+| Normal distribution | 68% | 95% | |
+| `awareness` | `r pct_fmt(within_sd(aw, 1))` | `r pct_fmt(within_sd(aw, 2))` | close: the rule works |
+| `distance_m` | `r pct_fmt(within_sd(sessions$distance_m, 1))` | `r pct_fmt(within_sd(sessions$distance_m, 2))` | symmetric but flatter than a bell |
+| `session_minutes` | `r pct_fmt(within_sd(sm, 1))` | `r pct_fmt(within_sd(sm, 2))` | not normal: skewed and capped |
+| Build B frame ms | `r pct_fmt(within_sd(b, 1))` | `r pct_fmt(within_sd(b, 2))` | not normal: a spike and a long tail |
+
+For session length, "mean ± 1 SD" covers only `r pct_fmt(within_sd(sm, 1))` of
+sessions, so quoting the mean and SD as if they described a bell would mislead.
+For frame times, the SD is inflated by a handful of very slow frames, and the
+mean ± 2 SDs covers almost every frame while saying nothing about the ones that
+matter.
+
+---
+
+## Q-Q Plots
+
+A **Q-Q plot** is a sharper check than a histogram. It plots each value against
+where it would fall if the data were perfectly normal. Normal data lies along a
+straight line; skew bends the ends away from it.
+
+```{r}
+#| label: fig-qq
+#| fig-cap: "Awareness hugs the line; session length flattens out at the top, where values pile up against the 32-minute cap."
+#| fig-alt: "Two Q-Q plots. Left, awareness: the points lie close to the straight reference line. Right, session length: the points follow the line in the middle but flatten out along the top."
+#| fig-height: 3.2
+op <- par(mfrow = c(1, 2), mar = c(4, 4, 2, 1))
+qqnorm(aw, main = "Awareness", pch = 19, cex = 0.6); qqline(aw, col = pal$highlight)
+qqnorm(sm, main = "Session length", pch = 19, cex = 0.6); qqline(sm, col = pal$highlight)
+par(op)
+```
+
+You will see Q-Q plots in discussions of the assumptions behind a t-test.
+
+---
+
+## Why It Matters Later
+
+Even when individual values are far from normal, the *averages* of samples tend to
+be close to normal. That fact, the **central limit theorem**, is what makes
+confidence intervals and t-tests work on data like session length. It is why the
+Stage 2 notes can use a t-test on skewed playtest data, as long as the sample is
+not tiny and there is no extreme tail. For the Stage 2 version, see
+[From Sample to Population](../notes/07-sample-to-population.qmd).
+
+**Formal normality tests** (Shapiro–Wilk and others) exist, and you will see them in
+papers. They are not used in this course. With small samples they rarely detect
+anything; with large ones they flag differences too small to matter. The
+histogram and the Q-Q plot tell you more.
+
+---
+
+## Try It
+
+Check the 68–95 rule against `kills` and `distance_m`, then draw a Q-Q plot of each.
+Which one would you describe with a mean and SD, and which with a median and IQR?
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show answer"}
+
+```{r}
+#| label: try-it
+#| fig-alt: "Two Q-Q plots, for kills and distance travelled."
+#| fig-height: 3.2
+within_sd(sessions$kills, 1)
+within_sd(sessions$distance_m, 1)
+op <- par(mfrow = c(1, 2), mar = c(4, 4, 2, 1))
+qqnorm(sessions$kills, main = "Kills", pch = 19, cex = 0.6)
+qqline(sessions$kills, col = pal$highlight)
+qqnorm(sessions$distance_m, main = "Distance", pch = 19, cex = 0.6)
+qqline(sessions$distance_m, col = pal$highlight)
+par(op)
+```
+
+Neither matches the rule exactly. `kills` puts
+`r pct_fmt(within_sd(sessions$kills, 1))` within 1 SD: it is a small count, so
+its values bunch on a few whole numbers and its Q-Q plot is a staircase. `distance_m`
+puts `r pct_fmt(within_sd(sessions$distance_m, 1))` there: symmetric, but flatter
+than a bell, so the points follow the line in the middle and bend at the ends.
+
+Distance is the one to describe with a mean and SD: it is symmetric, its mean and
+median almost coincide, and the SD is a fair guide to spread. For kills, report the
+median and IQR, or simply the count at each value: with so few possible values, the
+counts are the clearest description.
+:::

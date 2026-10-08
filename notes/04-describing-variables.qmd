@@ -1,7 +1,7 @@
 ---
 title: "Describing Variables"
 subtitle: "Centre, spread, and the pictures that keep them honest"
-body-classes: "wf-at-describe wf-at-visualise"
+body-classes: "wf-at-describe"
 aliases:
   - describing-what-you-have.html
 ---
@@ -42,24 +42,27 @@ n_cap   <- sum(ta == ta_cap)
 
 deaths_mode <- as.numeric(names(which.max(table(sessions$deaths))))
 stopifnot(deaths_mode != median(sessions$deaths))
+
+n_frus <- sum(sessions$quit_reason == "Frustrated")
 ```
 
 > Before you compare anything to anything, you have to be able to say what one
 > variable looks like. This page gives you the vocabulary for that, centre and
 > spread, and the three pictures that check it: the bar chart, the histogram and
-> the boxplot. It ends with a first look at describing two variables together.
+> the boxplot. It ends with describing a variable group by group, which is where
+> most playtest questions live.
 > The playtest question running through it: *"The Sentinel has the lowest average
 > score. Is it underpowered?"*
 
 ::: {.at-a-glance}
-**Time:** 30 minutes in class; 20 more for the Going further sections.
+**Stage:** 1 · Core.
+**Time:** 30 minutes in class; 20 more for the sections marked Useful when needed.
 **Before this:** [Data, Variables and Types](03-data-and-types.qmd).
-**Key terms:** frequency table, mode, mean, median, range, variance, standard
-deviation, quartile, IQR, percentile, five-number summary, histogram, bin,
-boxplot, outlier, scatterplot, cross-tabulation.
-**R introduced:** `table()`, `prop.table()`, `barplot()`, `median()`, `var()`,
-`sd()`, `range()`, `IQR()`, `quantile()`, `fivenum()`, `hist()`, `boxplot()`,
-`stripchart()`, `tapply()`, `plot()`, `cor()`.
+**Key terms:** frequency table, proportion, mode, mean, median, range, standard
+deviation, quartile, IQR, percentile, histogram, bin, boxplot, outlier.
+**R you will write:** `count()`, `mutate()`, `group_by()`, `summarise()`, `n()`,
+`mean()`, `median()`, `sd()`, `IQR()`, `quantile()`, `barplot()`, `hist()`,
+`boxplot()`.
 :::
 
 ## Learning Outcomes
@@ -69,13 +72,14 @@ By the end of these notes you can:
 - describe a categorical variable with counts, proportions and its mode, and draw
   it as a bar chart;
 - choose between the mean and the median, and read the gap between them;
-- describe spread with the range, IQR and standard deviation, compute a standard
-  deviation by hand, and say why the range is rarely enough;
+- describe spread with the range, IQR and standard deviation, say in words what a
+  standard deviation measures, and say why the range is rarely enough;
 - read percentiles and a five-number summary;
 - draw and read a histogram and a boxplot, and say what each shows that a summary
   hides;
-- describe a variable in one sentence that gives its centre, spread, shape and size;
-- choose the right picture and summary for two variables together.
+- summarise a variable for each group with `group_by()` and `summarise()`, and
+  compare the groups with side-by-side boxplots;
+- describe a variable in one sentence that gives its centre, spread, shape and size.
 
 ---
 
@@ -96,33 +100,49 @@ a picture that checks it ([rule 4](ten-rules.qmd)).
 
 A categorical variable has only one kind of summary: **how many of each**.
 
-A **frequency table** counts each category. `table()` builds one, and
-`prop.table()` turns the counts into **proportions**:
+A **frequency table** counts each category. `count()` builds one, and
+`sort = TRUE` puts the biggest first. A **proportion** is each count divided by the
+total; `mutate()` adds it as a new column:
 
 ```{r}
 #| label: cat-table
-quit_counts <- table(sessions$quit_reason)
+library(dplyr)
+quit_counts <- sessions |>
+  count(quit_reason, sort = TRUE) |>
+  mutate(prop = round(n / sum(n), 2))
 quit_counts
-round(prop.table(quit_counts), 2)
 ```
 
-The most common category is the **mode**: here, `r names(which.max(quit_counts))`.
+Read the pipe aloud: take the sessions, count them by quit reason, and then add a
+column that divides each count by the total. The most common category is the
+**mode**: here, `r quit_counts$quit_reason[1]`.
+
+**One proportion on its own** is quicker with the trick from
+[R from First Principles](02-r-first-principles.qmd#vectors): the mean of a
+condition is the proportion of rows where it is true.
+
+```{r}
+#| label: cat-one-prop
+mean(sessions$quit_reason == "Frustrated")
+```
 
 The picture is a **bar chart**: one bar per category, height proportional to the
 count. Sort the bars by height unless the categories have their own order.
 
 ```{r}
 #| label: fig-cat-bar
-#| fig-cap: "How the 120 Tidebreak sessions ended, sorted by count."
+#| fig-cap: "Most Tidebreak sessions ended with the test completed; frustration was the most common way to leave early."
 #| fig-alt: "Bar chart of quit reasons. Completed test is by far the tallest bar, followed by Frustrated, Lost interest, and a short Technical fault bar."
 #| fig-height: 3.5
-barplot(sort(quit_counts, decreasing = TRUE),
+barplot(quit_counts$n, names.arg = quit_counts$quit_reason,
         col = pal$fill, border = "white", ylab = "Sessions")
 ```
 
-**In a report you would write:** "`r quit_counts[["Frustrated"]]` of
-`r nrow(sessions)` sessions (`r pct_fmt(quit_counts[["Frustrated"]] / nrow(sessions))`)
-ended in a frustration quit."
+**In a report you would write:** "`r n_frus` of `r nrow(sessions)` sessions
+(`r pct_fmt(n_frus / nrow(sessions))`) ended in a frustration quit."
+
+**You will also see** `table()` and `prop.table()` doing the same job in older
+code. You do not need to write them.
 
 ---
 
@@ -193,7 +213,8 @@ misleading, because a single unusual player sets it on their own.
 Small means players cluster tightly around the average; large means the average is
 a poor guide to any individual. It is in the same units as the data.
 
-Here it is worked by hand for the six death counts from
+You do not need to calculate it by hand, but seeing it once makes the number
+make sense. Here it is for the six death counts from
 [R from First Principles](02-r-first-principles.qmd):
 
 | Step | Values |
@@ -220,15 +241,14 @@ segments(seq_along(d), d, seq_along(d), mean(d), col = pal$guide, lwd = 2)
 text(4.5, mean(d), paste("mean =", mean(d)), pos = 3, cex = 0.8, col = pal$highlight)
 ```
 
-In R it is one line:
+In R it is one function:
 
 ```{r}
 #| label: sd-r
-var(d)
 sd(d)
 ```
 
-::: {.callout-note collapse="true" title="The maths, if you want it"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="The maths, if you want it"}
 For values $x_1, \dots, x_n$ with mean $\bar{x}$:
 
 $$\text{variance} = \frac{\sum (x_i - \bar{x})^2}{n - 1} \qquad \text{SD} = \sqrt{\text{variance}}$$
@@ -334,7 +354,7 @@ The seven points at the left are scores more than 1.5 IQRs below Q1. An outlier
 rule is a prompt to look, not a verdict; what to do about outliers is in
 [Distributions and Shape](05-distributions-and-shape.qmd#outliers).
 
-### The strip chart
+### The strip chart {.when-needed}
 
 With a small group, a **strip chart** shows every value as a point, so nobody
 mistakes five players for a distribution:
@@ -354,22 +374,58 @@ stripchart(deaths ~ cohort, data = sessions, vertical = TRUE,
 
 ## Describing by Group
 
-Most playtest questions compare groups: builds, cohorts, archetypes. `tapply()`
-applies a summary to one variable, split by a group, and a boxplot with the formula
-`y ~ group` draws the same split:
+Most playtest questions compare groups: builds, cohorts, archetypes. Two verbs do
+the work. `group_by()` splits the table into one piece per group, and `summarise()`
+calculates the same summaries for each piece:
+
+```{r}
+#| label: by-group
+sessions |>
+  group_by(cohort) |>
+  summarise(n             = n(),
+            median_alive  = median(time_alive_s),
+            iqr_alive     = IQR(time_alive_s))
+```
+
+One row per cohort, one column per summary. `n()` counts the rows in each group:
+always include it, because a summary from five players and one from fifty are not
+the same evidence ([rule 8](ten-rules.qmd)).
+
+A boxplot with the formula `y ~ group` draws the same split. Read `~` as "split
+by":
 
 ```{r}
 #| label: fig-by-group
-#| fig-cap: "Time alive by cohort. Each box is one cohort's distribution."
+#| fig-cap: "Veterans survive longest on average, but the boxes overlap heavily: plenty of Novices outlasted plenty of Veterans."
 #| fig-alt: "Three boxplots of time alive in seconds for Novice, Regular and Veteran. The medians rise from Novice to Veteran, and all three boxes overlap substantially."
 #| fig-height: 3.5
-tapply(sessions$time_alive_s, sessions$cohort, median)
 boxplot(time_alive_s ~ cohort, data = sessions, col = pal$fill,
         ylab = "Time alive (s)", xlab = "Cohort")
 ```
 
 Read the boxes, not only the medians: Veterans have the highest median, but the
-three boxes overlap heavily, so plenty of Novices outlasted plenty of Veterans.
+three boxes overlap heavily.
+
+**A proportion per group** is a mean of a condition inside `summarise()`. How
+often did each build's sessions end in frustration?
+
+```{r}
+#| label: prop-by-group
+sessions |>
+  group_by(build) |>
+  summarise(n = n(),
+            frustrated = mean(quit_reason == "Frustrated"))
+```
+
+Comparing proportions, not counts, is what makes groups of different sizes
+comparable.
+
+**You will also see** `tapply()` and `aggregate()` doing this job in older code.
+You do not need to write them.
+
+**For your project:** almost every question your team asks will be "is it
+different for this group?": this build, this level, these players. Write the
+`group_by()` and `summarise()` for it before you write anything else.
 
 ---
 
@@ -377,48 +433,29 @@ three boxes overlap heavily, so plenty of Novices outlasted plenty of Veterans.
 
 The right picture and summary depend on the types of the two variables:
 
-| The two variables | Picture | Summary |
-| :- | :- | :- |
-| Numeric and numeric | Scatterplot: `plot(x, y)` | Correlation: `cor(x, y)` |
-| Numeric and categorical | Boxplots side by side: `boxplot(y ~ group)` | Median and IQR per group: `tapply()` |
-| Categorical and categorical | Grouped bar chart | Cross-tabulation: `table(a, b)` |
+| The two variables | Picture | Summary | Where |
+| :- | :- | :- | :- |
+| Numeric and categorical | Boxplots side by side: `boxplot(y ~ group)` | Median, IQR and n per group | this page |
+| Categorical and categorical | Bar chart per group | Counts, then a proportion per group | this page |
+| Numeric and numeric | Scatterplot | Correlation | Stage 3, [Relationships](10-relationships-and-correlation.qmd) |
 
-**Two numeric variables.** A **scatterplot** draws one point per session. Read it
-for **direction** (do the points rise or fall?) and **strength** (how tightly do
-they follow a line?).
-
-```{r}
-#| label: fig-scatter
-#| fig-cap: "Deaths against score, one point per session. Sessions with more deaths tend to score less."
-#| fig-alt: "Scatterplot with deaths from 0 to 7 on the x axis and score on the y axis. The cloud of points slopes downward from upper left to lower right, with a lot of scatter."
-#| fig-height: 3.8
-plot(sessions$deaths, sessions$score, pch = 19,
-     col = adjustcolor(pal$line, alpha.f = 0.5),
-     xlab = "Deaths", ylab = "Score")
-cor(sessions$deaths, sessions$score)
-```
-
-The **correlation**, from −1 to +1, puts a number on it: negative means one rises
-as the other falls, 0 means no straight-line relationship, and the further from 0
-the tighter the pattern. Here it is `r round(cor(sessions$deaths, sessions$score), 2)`:
-a clear downward relationship with plenty of scatter. What correlation can and
-cannot tell you, including why it is not evidence of cause, is the subject of
-Part 5 of these notes, *Relationships*.
-
-**Two categorical variables.** A **cross-tabulation** counts every combination.
-Row proportions, with `prop.table(..., 1)`, compare groups of different sizes
-fairly:
+You have already done the first two in the section above. **Two categorical
+variables** start with `count()` on both, which counts every combination:
 
 ```{r}
 #| label: crosstab
-build_quit <- table(sessions$build, sessions$quit_reason)
-build_quit
-round(prop.table(build_quit, 1), 2)
+sessions |> count(build, quit_reason)
 ```
 
-`r pct_fmt(prop.table(build_quit, 1)["A", "Frustrated"])` of Build A sessions ended
-in frustration, against `r pct_fmt(prop.table(build_quit, 1)["B", "Frustrated"])`
-of Build B.
+Then turn the one you care about into a proportion per group, as above:
+`r pct_fmt(mean(sessions$quit_reason[sessions$build == "A"] == "Frustrated"))` of
+Build A sessions ended in frustration, against
+`r pct_fmt(mean(sessions$quit_reason[sessions$build == "B"] == "Frustrated"))` of
+Build B.
+
+**For now,** leave two numeric variables alone. Whether deaths go with difficulty,
+or awareness with score, is the subject of Stage 3, once you have your own data to
+ask it of.
 
 ---
 
@@ -432,6 +469,10 @@ all: **centre, spread, shape and size**.
 > a pile-up on the right: `r n_cap` sessions sit at exactly `r ta_cap` seconds, the
 > full match, because those players never died.
 
+**For your project:** pick the one number your playtest question depends on and
+write its four-part sentence. If you cannot fill in all four parts, you have not
+looked at it properly yet.
+
 Notice what that sentence does *not* say. The mean, `r round(mean(ta), 1)`, is only
 `r round(abs(mean(ta) - median(ta)), 1)` seconds from the median, which might
 suggest a symmetric distribution. It is not symmetric: the left tail pulls the mean
@@ -441,7 +482,7 @@ does not prove symmetry**; only the histogram can show you that.
 
 ```{r}
 #| label: fig-time-alive
-#| fig-cap: "Time alive per session. A tail of short sessions on the left, and a tall final bar where the match timer cut off sessions in which the player never died."
+#| fig-cap: "Time alive has a tail of short sessions on the left and a tall final bar where the match timer cut off sessions in which the player never died."
 #| fig-alt: "Histogram of time alive from 60 to 180 seconds. Short bars on the left rise to a broad bulk between 100 and 170 seconds, with the tallest bar at the right edge, 180 seconds."
 #| fig-height: 3.5
 hist(ta, breaks = 12, col = pal$fill, border = "white",
@@ -466,16 +507,21 @@ with the mean below: something is dragging the mean down without moving the midd
 `r round(max(others_sd))` for the other three archetypes.
 
 ```{r}
-#| label: worked-tapply
-round(tapply(sessions$score, sessions$archetype, mean))
-round(tapply(sessions$score, sessions$archetype, median))
-round(tapply(sessions$score, sessions$archetype, sd))
+#| label: worked-by-archetype
+sessions |>
+  group_by(archetype) |>
+  summarise(n      = n(),
+            mean   = round(mean(score)),
+            median = round(median(score)),
+            sd     = round(sd(score)))
 ```
 
 **Step 3: look.** The histogram answers it, but only at the right bin setting:
 
 ```{r}
 #| label: fig-sentinel-bins
+#| code-fold: true
+#| code-summary: "Show the code"
 #| fig-cap: "The same 30 Sentinel scores at three bin settings. With three bins the low cluster merges into the first bar; with more, it stands apart."
 #| fig-alt: "Three histograms of Sentinel score side by side. With breaks = 3 there are three wide bars. With breaks = 5 and breaks = 12, a separate group of low scores is visible at the left, with an empty gap before the main body of scores."
 #| fig-height: 3
@@ -494,9 +540,11 @@ below the next-lowest Sentinel game. They are the seven outliers in the boxplot
 above. With `breaks = 3`, the clump disappears into the first bar.
 
 **Step 4: rewrite the finding.** The Sentinel either anchors the round or collapses
-early. It is not underpowered; it is inconsistent. A flat buff raises the scores of
-the players already doing well, and the design question becomes what the
-collapsing games have in common ([rule 4](ten-rules.qmd)).
+early. It is not underpowered; it is inconsistent ([rule 4](ten-rules.qmd)).
+
+**What should the team do?** Not a flat buff: that raises the scores of the
+players already doing well. Watch the collapsing games and find what they have in
+common, then design for that.
 
 ---
 
@@ -548,11 +596,19 @@ not the same as 20 out of 100. Use row proportions.
 
 Each takes two or three minutes.
 
-**1. Predict.** For frame times, where most frames are quick and a few are very
-slow, will the mean be above or below the median? Check with `mean(frames$ms)` and
-`median(frames$ms)`.
+1. **Predict.** For frame times, where most frames are quick and a few are very
+   slow, will the mean be above or below the median? Check with `mean(frames$ms)`
+   and `median(frames$ms)`.
+2. **Compute.** Describe `distance_m` in one sentence with centre, spread and size.
+   Does the mean sit above or below the median, and does it matter?
+3. **Critique.** A teammate writes: "Average deaths per session was 3.0, with a
+   range of 0 to 7." What would you add or change?
+4. **Compute.** Use `count()` to find the most common number of deaths. Why is
+   counting sensible for `deaths` but not for `distance_m`?
 
-::: {.callout-note collapse="true" title="Check your answer"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show answers"}
+**1.** Above. A few very slow frames pull the mean up; the median ignores how slow
+they are.
 
 ```{r}
 #| label: practice-predict
@@ -560,21 +616,18 @@ mean(frames$ms)
 median(frames$ms)
 ```
 
-Above. A few very slow frames pull the mean up; the median ignores how slow they
-are. The gap is small here only because the slow frames are rare, which is the
-subject of the worked example in [Distributions and Shape](05-distributions-and-shape.qmd).
-:::
+The gap is small here only because the slow frames are rare, which is the subject
+of the worked example in [Distributions and Shape](05-distributions-and-shape.qmd).
 
-**2. Compute.** Describe `distance_m` in one sentence with centre, spread and size.
-Does the mean sit above or below the median, and does it matter?
-
-::: {.callout-note collapse="true" title="Check your answer"}
+**2.**
 
 ```{r}
 #| label: practice-distance
-median(sessions$distance_m)
-IQR(sessions$distance_m)
-mean(sessions$distance_m)
+sessions |>
+  summarise(n = n(),
+            median = median(distance_m),
+            iqr = IQR(distance_m),
+            mean = mean(distance_m))
 ```
 
 Median distance was `r median(sessions$distance_m)` m (IQR
@@ -582,36 +635,27 @@ Median distance was `r median(sessions$distance_m)` m (IQR
 `r if (mean(sessions$distance_m) > median(sessions$distance_m)) "above" else "below"`
 the median by
 `r round(abs(mean(sessions$distance_m) - median(sessions$distance_m)), 1)` m, which
-is tiny against a spread of that size. The histogram earlier in this page confirms
+is tiny against a spread of that size. The histogram earlier on this page confirms
 the distribution is roughly symmetric, so the mean and SD would be fine too.
-:::
 
-**3. Critique.** A teammate writes: "Average deaths per session was 3.0, with a
-range of 0 to 7." What would you add or change?
-
-::: {.callout-note collapse="true" title="Check your answer"}
-Add n (`r nrow(sessions)` sessions from
+**3.** Add n (`r nrow(sessions)` sessions from
 `r length(unique(sessions$player_id))` players). Replace the range with a spread
 that is not set by single sessions: SD `r round(sd(sessions$deaths), 1)` if the
 distribution is roughly symmetric, which the strip chart suggests it is, or the
 IQR. The most common count, `r deaths_mode`, is also worth a mention, because it is
 not the same as the average.
-:::
 
-**4. Compute.** Use `table()` to find the most common number of deaths. Why is
-`table()` sensible for `deaths` but not for `distance_m`?
-
-::: {.callout-note collapse="true" title="Check your answer"}
+**4.**
 
 ```{r}
 #| label: practice-deaths
-table(sessions$deaths)
+sessions |> count(deaths)
 ```
 
 The mode is `r deaths_mode` deaths. Deaths is discrete with only a handful of
 possible values, so counting each one is informative.
 `r length(unique(sessions$distance_m))` of the `r nrow(sessions)` `distance_m`
-values are different, so its table is mostly a list of ones; a continuous variable
+values are different, so counting it gives a list of ones; a continuous variable
 needs a histogram instead.
 :::
 
@@ -627,14 +671,15 @@ needs a histogram instead.
   half. Pair mean with SD and median with IQR. The range is rarely enough.
 - A histogram shows the shape; try several bin settings. A boxplot compares groups;
   its separate points are outliers to investigate, not to delete.
+- `group_by()` then `summarise()` gives one row of summaries per group. Always
+  include `n()`. Compare groups with proportions, not counts.
 - A full description gives centre, spread, shape and n. A small mean–median gap
   does not prove symmetry.
-- Two numeric variables: scatterplot and correlation. Two categorical variables:
-  cross-tabulation with row proportions.
 
 | Key term | Meaning |
 | :- | :- |
 | **Frequency table** | Count of each category |
+| **Proportion** | A count divided by the total |
 | **Mode** | The most common value |
 | **Mean** | The sum divided by the count |
 | **Median** | The middle value when sorted |
@@ -647,8 +692,6 @@ needs a histogram instead.
 | **Five-number summary** | Minimum, Q1, median, Q3, maximum |
 | **Histogram** | Bars counting values in equal-width bins |
 | **Boxplot** | Median, quartiles, whiskers and outliers in one picture |
-| **Scatterplot** | One point per observation, for two numeric variables |
-| **Correlation** | A number from −1 to +1 for the strength of a straight-line relationship |
 | **Cross-tabulation** | Counts of every combination of two categorical variables |
 
 ---

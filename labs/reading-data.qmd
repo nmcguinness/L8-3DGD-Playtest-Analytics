@@ -1,49 +1,47 @@
 ---
 title: "Lab 01 — Reading Data"
-subtitle: "Vectors, types, missing values, data frames, and describing one variable"
+subtitle: "Stage 1: vectors, missing values, loading a playtest, and describing what happened"
 ---
+
+::: {.callout-note appearance="simple" icon="false" title="Get the files"}
+- **Data:** [tidebreak_sessions.csv](../data/tidebreak_sessions.csv){download="tidebreak_sessions.csv"}. Save them in the `data/` folder of your project.
+:::
 
 # Overview
 
 This lab is your first hands-on session with R. You are not expected to have
-written a line of it before this week, but read
+written a line of it before, but read
 [R from First Principles](../notes/02-r-first-principles.qmd) first: every idea in
 Part A is introduced there.
 
 The work is deliberately unglamorous. Before you can find anything interesting in
 a playtest you have to be able to **load the data, look at it, and describe it**
-without making a fool of yourself. That is what this sheet trains.
-
-Everything here uses **base R** — the functions that ship with the language —
-except the last exercise of Part B, which gives you a first look at the tidyverse
-you will use in Lab 02. Learning base R first means you will understand what the
-tidyverse is doing for you rather than treating it as magic.
+without making a fool of yourself. That is what this lab trains. By the end you
+will have answered the Stage 1 question, *what happened?*, for a real playtest, and
+said what it means for the game.
 
 | Function | What it does |
 | :- | :- |
-| `c()` | Builds a vector from individual values |
-| `length()`, `class()` | How many, and what type |
-| `read_csv()` | Reads a CSV file into a data frame |
-| `str()`, `head()`, `nrow()`, `names()` | Look at a data frame without printing all of it |
-| `$`, `[ , ]` | Pull out a column, or a slice of rows and columns |
-| `mean()`, `median()`, `sd()`, `range()` | Describe a numeric variable |
-| `quantile()`, `IQR()` | Describe the spread and the tails |
-| `table()` | Count a categorical variable |
+| `c()`, `length()`, `class()` | Build a vector; how many values, and what type |
+| `is.na()`, `na.rm = TRUE` | Find missing values; leave them out of a calculation |
+| `read_csv()`, `glimpse()` | Read a CSV; look at it without printing every row |
+| `$` | Pull out one column as a vector |
+| `count()` | Count each value of a categorical variable |
+| `mean()`, `median()`, `sd()`, `IQR()`, `quantile()` | Describe a numeric variable |
+| `group_by()`, `summarise()`, `n()`, `\|>` | The same summaries, once per group |
 | `hist()`, `boxplot()` | See the shape of a variable |
-| `tapply()` | Apply a summary to a variable, one group at a time |
-| `sapply()`, `plot(type = "s")` | Repeat a calculation for every minute, and draw it as steps |
-| `group_by()`, `summarise()`, `|>` | The tidyverse version of `tapply()`, first seen in Exercise 13 |
 
 # Learning outcomes
 
 By the end of this lab you can:
 
 - create and index vectors, and explain what `NA` does to a calculation
-- load a CSV into a data frame and inspect it without printing 120 rows
+- load a CSV and inspect it without printing 120 rows
 - classify any column as **nominal**, **ordinal**, **discrete** or **continuous**
-- describe a numeric variable with an appropriate measure of centre and spread
-- check a variable against the normal curve, and read a retention curve
-- state, in one sentence, when the mean is the wrong summary and why
+- describe a numeric variable with an appropriate centre and spread, and draw it
+- summarise a variable for each group with `group_by()` and `summarise()`
+- read a retention curve, and say in one sentence when the mean is the wrong
+  summary and why
 
 # Ground rules
 
@@ -52,7 +50,7 @@ By the end of this lab you can:
 - Open the solution **after** your attempt, even when your attempt worked. The
   solution sometimes does it a better way.
 - Every exercise ends with a short written answer. Write it. The writing is the
-  part that gets assessed later, not the code.
+  part that matters; the code is how you get there.
 - If a line of code fails, read the error before doing anything else. Most R
   errors name the exact problem.
 
@@ -60,8 +58,8 @@ By the end of this lab you can:
 
 ```{r}
 #| label: setup
-# readr gives us read_csv(), which is better behaved than base R's read.csv()
-library(readr)
+library(readr)   # read_csv()
+library(dplyr)   # count(), group_by(), summarise() and the rest
 
 csv_file <- "data/tidebreak_sessions.csv"
 
@@ -90,7 +88,7 @@ sessions: 4, 2, 7, 3, 0, 5.
 
 Report how many values it holds and what type R thinks it is.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
 #| label: ex01
@@ -101,27 +99,25 @@ length(deaths)
 class(deaths)
 ```
 
-R stores plain numbers as doubles unless you force an integer with `4L`.
+R stores plain numbers as numeric, whether or not they have a decimal point.
 :::
 
 **Write 1 sentence:** why does a vector have to hold values of a single type?
 
 ## Exercise 02 — Pull values out by position `[Do]`
 
-Using `deaths` from Exercise 01, extract the first value, the third and fifth
-values, and everything except the first value.
+Using `deaths` from Exercise 01, extract the first value, then the third and fifth
+values together.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
 #| label: ex02
 deaths[1]
 deaths[c(3, 5)]
-deaths[-1]
 ```
 
-Square brackets take a position, a vector of positions, or a negative position
-meaning "all except this".
+Square brackets take a position, or a vector of positions built with `c()`.
 :::
 
 **Write 1 sentence:** R counts from 1, not 0. If you have written C# or C++, what
@@ -132,7 +128,7 @@ is the one mistake this will cause you?
 A seventh tester's death count was not recorded. Add `NA` to the end of `deaths`
 and take the mean. Then take it again so that the result is a number.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
 #| label: ex03
@@ -147,52 +143,53 @@ containing an unknown value is itself unknown. R tells you that rather than
 quietly guessing.
 :::
 
-**Write 2 sentences:** `na.rm = TRUE` makes the error message go away. Explain why
-that is not the same thing as fixing the problem.
+**Write 2 sentences:** `na.rm = TRUE` makes the `NA` go away. Explain why that is
+not the same thing as fixing the problem.
 
-## Exercise 04 — Filter a vector with a condition `[Apply]`
+## Exercise 04 — Count with a condition `[Apply]`
 
 Using the seven-value `deaths` vector, produce a TRUE/FALSE vector showing which
 sessions had more than 3 deaths, use it to extract those death counts, then count
-how many sessions that is.
+how many sessions that is and what proportion of the recorded sessions it is.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
 #| label: ex04
 deaths > 3
 deaths[deaths > 3]
 sum(deaths > 3, na.rm = TRUE)
+mean(deaths > 3, na.rm = TRUE)
 ```
 
 Two things worth noticing. `deaths[deaths > 3]` keeps the `NA`, because R does not
 know whether the unknown value is above 3 or not. And `sum()` on a TRUE/FALSE
-vector counts the TRUEs, because TRUE is 1 and FALSE is 0.
+vector counts the TRUEs, because TRUE is 1 and FALSE is 0, so `mean()` gives the
+proportion.
 :::
 
 **Write 1–2 sentences:** why is `sum(x > 3)` a count rather than a total?
 
 ## Exercise 05 — Build a small table of related vectors `[Apply]`
 
-Create two more vectors the same length as `deaths` — `player` (P01 to P07) and
+Create two more vectors the same length as `deaths`: `player` (P01 to P07) and
 `build` (alternating `"A"` and `"B"`, starting with A). Combine all three into a
-data frame called `mini`, then show its structure and first three rows.
+data frame called `mini`, then look at it with `glimpse()`.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
 #| label: ex05
 player <- c("P01", "P02", "P03", "P04", "P05", "P06", "P07")
-build  <- rep(c("A", "B"), length.out = 7)
+build  <- c("A", "B", "A", "B", "A", "B", "A")
 
 mini <- data.frame(player, build, deaths)
 
-str(mini)
-head(mini, 3)
+glimpse(mini)
 ```
 
-`rep()` with `length.out` repeats a pattern until it reaches the length you asked
-for — useful for generating alternating conditions.
+Each vector becomes a column, and the column takes the vector's name. They must
+all be the same length: one value per session.
 :::
 
 **Write 1 sentence:** what does a data frame give you that three separate vectors
@@ -205,25 +202,23 @@ do not?
 Notes for this part: [Describing Variables](../notes/04-describing-variables.qmd)
 and [Distributions and Shape](../notes/05-distributions-and-shape.qmd).
 
-From here on you are working with `sessions`, loaded in the Setup block: 120 real
+From here on you are working with `sessions`, loaded in the Setup block: 120
 playtest sessions from the *Tidebreak* arena.
 
 ## Exercise 06 — Look at a data frame without drowning in it `[Do]`
 
 Answer these without printing the whole table: how many rows and columns, what the
-column names are, and what the first four rows look like.
+columns are called, and what type each one is.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
 #| label: ex06
-dim(sessions)
-names(sessions)
-head(sessions, 4)
+glimpse(sessions)
 ```
 
-`str(sessions)` gives you dimensions, names and types all at once, and is usually
-the first thing to run on unfamiliar data.
+`glimpse()` gives you the size, every column's name, its type and its first few
+values in one go. It is the first thing to run on any new data.
 :::
 
 **Write 1 sentence:** why is printing a whole data frame a bad habit, even when it
@@ -231,39 +226,34 @@ is small?
 
 ## Exercise 07 — Get at a single column `[Do]`
 
-Extract the `score` column three different ways: with `$`, with `[[ ]]`, and with
-`[ , ]`. Confirm all three give the same thing.
+Pull out the `score` column with `$`. How many values does it hold, and what are
+the lowest and highest scores?
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
 #| label: ex07
-by_dollar  <- sessions$score
-by_bracket <- sessions[["score"]]
-by_comma   <- sessions[, "score", drop = TRUE]
-
-identical(by_dollar, by_bracket)
-identical(by_dollar, by_comma)
+length(sessions$score)
+min(sessions$score)
+max(sessions$score)
 ```
 
-`drop = TRUE` matters: without it, `[ , ]` on a tibble hands you back a one-column
-table rather than a plain vector, and the identical check fails.
-
-Note the variable names. Never call a variable `c` — you would be shadowing `c()`,
-the function you used to build every vector in Part A.
+`sessions$score` is an ordinary vector, so everything from Part A works on it. You
+will also see `sessions[["score"]]` in other people's code; it does the same job.
 :::
 
-**Write 1 sentence:** which of the three would you use in a script another person
-has to read, and why?
+**Write 1 sentence:** the lowest score is far below the rest. What would you want
+to know about that session before you trusted any average of `score`?
 
 ## Exercise 08 — Classify every column `[Apply]`
 
 For each of these columns, state whether it is **nominal**, **ordinal**,
 **discrete** or **continuous** (see
-[Data, Variables and Types](../notes/03-data-and-types.qmd#types-of-data)): `cohort`, `archetype`, `build`, `score`, `kills`,
-`deaths`, `session_minutes`, `quit_reason`.
+[Data, Variables and Types](../notes/03-data-and-types.qmd#types-of-data)):
+`cohort`, `archetype`, `build`, `score`, `kills`, `deaths`, `session_minutes`,
+`quit_reason`.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 | Column | Type | Why |
 | :- | :- | :- |
@@ -276,7 +266,7 @@ For each of these columns, state whether it is **nominal**, **ordinal**,
 | `session_minutes` | Continuous | Measured time, one decimal place |
 | `quit_reason` | Nominal | Four labels, no order |
 
-The interesting one is `cohort`. R has loaded it as `chr` — plain text — and will
+The interesting one is `cohort`. R has loaded it as `chr`, plain text, and will
 sort it alphabetically as Novice, Regular, Veteran, which happens to be the right
 order by accident. Never rely on that.
 :::
@@ -299,17 +289,19 @@ stopifnot(round(fr_all / nrow(sessions), 1) == 0.2, fr_a > 3 * fr_b)
 
 The producer counts the quit reasons and says: *"Only one in five players quit in
 frustration. Most players are fine, so frustration is not a priority."* Count
-`quit_reason` with `table()`, then cross-tabulate `build` against `quit_reason`,
-and decide whether the producer's reading is defensible.
+`quit_reason`, then find the share of frustration quits in each build, and decide
+whether the producer's reading is defensible.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
 #| label: ex09
-table(sessions$quit_reason)
-table(sessions$quit_reason) / nrow(sessions)
+sessions |> count(quit_reason)
 
-table(sessions$build, sessions$quit_reason)
+sessions |>
+  group_by(build) |>
+  summarise(n = n(),
+            frustrated = mean(quit_reason == "Frustrated"))
 ```
 
 **One defensible answer: no, because "one in five" averages two different
@@ -335,33 +327,35 @@ you want to check next?
 ## Exercise 10 — Describe a numeric variable properly `[Apply]`
 
 For `score` and for `session_minutes`, compute the mean, median, standard
-deviation, range, quartiles and IQR.
+deviation, quartiles and IQR.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
 #| label: ex10
 mean(sessions$score)
 median(sessions$score)
 sd(sessions$score)
-range(sessions$score)
 quantile(sessions$score)
 IQR(sessions$score)
 
-summary(sessions$session_minutes)
-IQR(sessions$session_minutes)
+sessions |>
+  summarise(mean   = mean(session_minutes),
+            median = median(session_minutes),
+            sd     = sd(session_minutes),
+            iqr    = IQR(session_minutes))
 ```
 
-`summary()` gives minimum, quartiles, median, mean and maximum in one call, which
-is usually where to start. `quantile()` is there for when you need a specific
-percentile rather than the standard five.
+Both ways work. The first is quick for one variable; `summarise()` puts every
+summary in one table, which is what you want once there is more than one.
+`quantile()` with no second argument gives the five-number summary.
 :::
 
 **Write 2 sentences:** express the gap between mean and median as a percentage of
 the median, for both variables. Which one is more skewed, and does its tail run
 left or right?
 
-::: {.callout-note collapse="true" title="Check your answer"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show answer"}
 
 ```{r}
 #| label: ex10-check
@@ -371,9 +365,9 @@ g_score <- gap(sessions$score)
 g_mins  <- gap(sessions$session_minutes)
 ```
 
-Score sits `r sprintf("%.1f%%", abs(g_score))` below its median. Session minutes
-sits `r sprintf("%.1f%%", abs(g_mins))` below. Both are **left-skewed** — the mean
-falls below the median because a group of short sessions drags it down — but
+Score's mean sits `r sprintf("%.1f%%", abs(g_score))` below its median. Session
+minutes sits `r sprintf("%.1f%%", abs(g_mins))` below. Both are **left-skewed**:
+the mean falls below the median because a group of low values drags it down. But
 session minutes is far more so.
 
 Comparing the raw gaps (`r round(mean(sessions$score) - median(sessions$score))`
@@ -387,10 +381,11 @@ always has to come into it.
 Draw a histogram of `score` and a boxplot of `session_minutes`. Give both a title
 and a sensible axis label.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
 #| label: ex11
+#| fig-alt: "Histogram titled Distribution of session score: most sessions between 1,200 and 1,800, with a separate small group around 500 to 700."
 hist(sessions$score,
      breaks = 20,
      main   = "Distribution of session score",
@@ -401,9 +396,10 @@ hist(sessions$score,
 
 ```{r}
 #| label: ex11b
+#| fig-alt: "Horizontal boxplot titled How long testers played, running from about 8 to 32 minutes, with the median near 26 and a long lower whisker."
 boxplot(sessions$session_minutes,
         main       = "How long testers played",
-        ylab       = "Minutes",
+        xlab       = "Minutes",
         horizontal = TRUE,
         col        = "grey85")
 ```
@@ -415,12 +411,25 @@ happens to the story the histogram tells. See [rule 4](../notes/ten-rules.qmd).
 
 ## Exercise 12 — Split a numeric variable by a group `[Apply]`
 
-Draw boxplots of `score` split by `archetype`, in one plot.
+Is one archetype's score less predictable than the others? Summarise `score` for
+each archetype (n, median, IQR and SD), then draw boxplots of `score` split by
+`archetype`, in one plot.
 
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
 #| label: ex12
+sessions |>
+  group_by(archetype) |>
+  summarise(n      = n(),
+            median = median(score),
+            iqr    = IQR(score),
+            sd     = round(sd(score)))
+```
+
+```{r}
+#| label: ex12b
+#| fig-alt: "Four boxplots of score by archetype. Sentinel's box is much taller than the other three and stretches down to about 950."
 boxplot(score ~ archetype,
         data = sessions,
         main = "Score by archetype",
@@ -428,108 +437,51 @@ boxplot(score ~ archetype,
         col  = "grey85")
 ```
 
-The `y ~ x` notation reads as "score **as explained by** archetype". You will meet
-it again in every modelling function R has.
+`group_by()` splits the table by archetype and `summarise()` computes each summary
+once per piece. In the boxplot, `score ~ archetype` reads as "score, split by
+archetype".
 :::
 
 **Write 2 sentences:** one archetype has a much larger spread than the others.
 Which one, and why is "larger spread" a more useful observation here than "lower
 average"?
 
-## Exercise 13 — The same question, two ways `[Apply]`
+## Exercise 13 — Which build keeps players longer? `[Apply]`
 
-Every summary on this sheet is base R. Lab 02 uses the tidyverse, which does the
-same work with different syntax. This is your first look at it.
+Summarise `session_minutes` for each build: the number of sessions, the median, the
+IQR and the share of sessions that lasted at least 20 minutes. Then draw the two
+builds' session lengths as side-by-side boxplots.
 
-Find the median `session_minutes` for each build twice: once with `tapply()`, and
-once with `group_by()` and `summarise()` from the `dplyr` package, joined with the
-pipe `|>`. In the second version, also count the sessions in each build with `n()`.
-
-The pipe passes what is on its left in as the first argument of what is on its
-right: `sessions |> group_by(build)` means `group_by(sessions, build)`.
-
-::: {.callout-note title="New syntax: you are not expected to know this yet"}
-`library(dplyr)`, `group_by()`, `summarise()`, `n()` and the pipe `|>` all appear
-here for the first time. Copy the pattern from the Solution if you need to; the aim
-is only to see that it produces the same medians as `tapply()`. Each of these is
-explained properly in the Lab 02 notes,
-[Cleaning and Transforming](../notes/06-cleaning-and-transforming.qmd), which cover
-the pipe and the core `dplyr` functions one at a time.
-
-`dplyr` was installed in Step 5 of [Setting Up](setting-up.qmd). If
-`library(dplyr)` says there is no package called `dplyr`, run
-`install.packages("dplyr")` once in the Console, then try again.
-:::
-
-::: {.callout-tip collapse="true" title="Solution"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
 #| label: ex13
-tapply(sessions$session_minutes, sessions$build, median)
+sessions |>
+  group_by(build) |>
+  summarise(n              = n(),
+            median_minutes = median(session_minutes),
+            iqr_minutes    = IQR(session_minutes),
+            share_20_plus  = mean(session_minutes >= 20))
 ```
 
 ```{r}
 #| label: ex13b
-library(dplyr)
-
-sessions |>
-  group_by(build) |>
-  summarise(sessions       = n(),
-            median_minutes = median(session_minutes))
+#| fig-alt: "Two boxplots of session length. Build A's box is wider and lower than Build B's."
+boxplot(session_minutes ~ build, data = sessions,
+        main = "Session length by build", ylab = "Minutes", col = "grey85")
 ```
 
-The medians match because both do the same three things: split `session_minutes`
-by build, apply `median()` to each piece, and combine the results. `tapply()`
-returns a named vector; `summarise()` returns a table with one row per build and
-room for as many more columns as you ask for. The tibble shows
-`r round(median(sessions$session_minutes[sessions$build == "A"]), 1)` where
-`tapply()` shows `r median(sessions$session_minutes[sessions$build == "A"])`
-only because tibbles print three significant figures; the stored value is the same.
+`mean(session_minutes >= 20)` is the proportion trick from Part A, run once per
+build inside `summarise()`.
 :::
 
-**Write 2 sentences:** which of the two outputs would you put in a report for the
-design lead, and why? What would you have to add to each version to report the IQR
-as well?
+**Write 2 sentences:** what does the IQR tell you about Build A that the median
+does not? Which number would you put in front of the design lead?
 
-## Exercise 14 — Is it normal enough? `[Do]`
-
-[Distributions and Shape](../notes/05-distributions-and-shape.qmd#the-normal-distribution)
-says that in a normal distribution about 68% of values lie within 1 SD of the mean
-and 95% within 2. Check that rule against `awareness` and against
-`session_minutes`. Then work out the z-score of a session with an awareness rating
-of 90.
-
-::: {.callout-tip collapse="true" title="Solution"}
+## Exercise 14 — When do we lose them? `[Decide]`
 
 ```{r}
-#| label: ex14
-within <- function(x, k) mean(abs(x - mean(x)) < k * sd(x))
-
-within(sessions$awareness, 1)
-within(sessions$awareness, 2)
-within(sessions$session_minutes, 1)
-within(sessions$session_minutes, 2)
-
-(90 - mean(sessions$awareness)) / sd(sessions$awareness)
-```
-
-`abs(x - mean(x)) < k * sd(x)` is `TRUE` for every value within `k` SDs of the
-mean, and `mean()` of that is the proportion. Awareness puts
-`r round(100 * mean(abs(sessions$awareness - mean(sessions$awareness)) < sd(sessions$awareness)))`%
-within 1 SD, close to the rule's 68%; session length puts only
-`r round(100 * mean(abs(sessions$session_minutes - mean(sessions$session_minutes)) < sd(sessions$session_minutes)))`%
-there. A z-score of
-`r round((90 - mean(sessions$awareness)) / sd(sessions$awareness), 1)` means the
-session sits nearly 2 SDs above the average awareness.
-:::
-
-**Write 2 sentences:** for which of the two variables would "mean ± 2 SD" be an
-honest description of where most sessions fall, and why not for the other?
-
-## Exercise 15 — When do we lose them? `[Decide]`
-
-```{r}
-#| label: ex15-setup
+#| label: ex14-setup
 #| include: false
 mins_a <- sessions$session_minutes[sessions$build == "A"]
 mins_b <- sessions$session_minutes[sessions$build == "B"]
@@ -541,15 +493,19 @@ stopifnot(drop_a > 2 * drop_b)
 The producer has the two mean session lengths, `r round(mean(mins_a), 1)` minutes
 for Build A and `r round(mean(mins_b), 1)` for Build B, and says: *"Build A
 sessions are about three minutes shorter. Players drift off a bit sooner, that's
-all."* Draw a **retention curve** for each build, the share of sessions still going
-at every minute from 0 to 32, and decide whether "drift off a bit sooner" is a fair
-description.
+all."*
 
-::: {.callout-tip collapse="true" title="Solution"}
+A **retention curve** shows the share of sessions still going at every minute. Run
+this code to draw one for each build; you do not need to be able to write it. Then
+decide whether "drift off a bit sooner" is a fair description.
 
 ```{r}
-#| label: ex15
-minute <- 0:32
+#| label: ex14-curve
+#| fig-alt: "Two step lines showing the share of sessions still playing at each minute. Build A's grey line drops sharply between minutes 11 and 13; Build B's red line stays higher until the late twenties."
+mins_a <- sessions$session_minutes[sessions$build == "A"]
+mins_b <- sessions$session_minutes[sessions$build == "B"]
+
+minute  <- 0:32
 still_a <- sapply(minute, function(m) mean(mins_a >= m))
 still_b <- sapply(minute, function(m) mean(mins_b >= m))
 
@@ -562,8 +518,9 @@ legend("bottomleft", legend = c("Build A", "Build B"), lwd = 2,
 ```
 
 `mean(mins_a >= m)` is the share of Build A sessions that lasted at least `m`
-minutes; `sapply()` repeats it for every minute. `type = "s"` draws steps.
+minutes, the proportion trick again; `sapply()` repeats it for every minute.
 
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 **One defensible answer: no. Build A does not drift; it drops.** Between minutes
 11 and 13, Build A loses `r round(100 * drop_a)`% of its sessions; Build B loses
 `r round(100 * drop_b)`% over the same two minutes. Something in the first dozen
@@ -590,65 +547,34 @@ what number would tell you, in the next playtest, that the fix worked?
 You have been asked a real question by the design lead: **is Tidebreak too hard
 for novice players?**
 
-Using only what is on this sheet, produce the evidence you would take into that
+Using only what is in this lab, produce the evidence you would take into that
 conversation. There is no single correct answer. There is a defensible one and an
 indefensible one.
 
-::: {.callout-important collapse="true" title="One defensible answer"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
 
 ```{r}
 #| label: challenge
-# 1. How many people are we talking about?
-table(sessions$cohort)
-
-# 2. Centre and spread of score, per cohort
-tapply(sessions$score, sessions$cohort, summary)
-
-# 3. Deaths, which is closer to "difficulty" than score is
-tapply(sessions$deaths, sessions$cohort, mean)
-
-# 4. And did they leave early?
-table(sessions$cohort, sessions$quit_reason)
-
-# 5. Show the shape, not just the numbers
-boxplot(score ~ cohort,
-        data = sessions,
-        main = "Score by player cohort",
-        ylab = "Score",
-        col  = "grey85")
+# One table: size, score, deaths, session length and frustration, per cohort
+sessions |>
+  group_by(cohort) |>
+  summarise(n              = n(),
+            mean_score     = round(mean(score)),
+            mean_deaths    = round(mean(deaths), 2),
+            median_minutes = median(session_minutes),
+            frustrated     = round(mean(quit_reason == "Frustrated"), 2))
 ```
-
-**What the evidence actually shows.**
 
 ```{r}
-#| label: challenge-table
-#| echo: false
-cohorts <- c("Novice", "Regular", "Veteran")
-frustrated <- tapply(sessions$quit_reason == "Frustrated", sessions$cohort, mean)
-
-knitr::kable(
-  data.frame(
-    Measure = c("Mean score", "Mean deaths",
-                "Median session length (min)", "Quit in frustration"),
-    Novice  = c(round(tapply(sessions$score, sessions$cohort, mean)[["Novice"]]),
-                round(tapply(sessions$deaths, sessions$cohort, mean)[["Novice"]], 2),
-                round(tapply(sessions$session_minutes, sessions$cohort, median)[["Novice"]], 1),
-                sprintf("%.0f%%", 100 * frustrated[["Novice"]])),
-    Regular = c(round(tapply(sessions$score, sessions$cohort, mean)[["Regular"]]),
-                round(tapply(sessions$deaths, sessions$cohort, mean)[["Regular"]], 2),
-                round(tapply(sessions$session_minutes, sessions$cohort, median)[["Regular"]], 1),
-                sprintf("%.0f%%", 100 * frustrated[["Regular"]])),
-    Veteran = c(round(tapply(sessions$score, sessions$cohort, mean)[["Veteran"]]),
-                round(tapply(sessions$deaths, sessions$cohort, mean)[["Veteran"]], 2),
-                round(tapply(sessions$session_minutes, sessions$cohort, median)[["Veteran"]], 1),
-                sprintf("%.0f%%", 100 * frustrated[["Veteran"]]))
-  ),
-  align = c("l", "r", "r", "r")
-)
+#| label: challenge-plot
+#| fig-alt: "Three boxplots of score by cohort, rising from Novice to Regular to Veteran, with a few low outliers in the Regular and Veteran groups."
+# Show the shape, not just the numbers
+boxplot(score ~ cohort, data = sessions,
+        main = "Score by player cohort", ylab = "Score", col = "grey85")
 ```
 
-Novices do score lower, and that is the finding everyone expects. On its own it
-looks like a difficulty problem.
+**What the evidence shows.** Novices do score lower, and that is the finding
+everyone expects. On its own it looks like a difficulty problem.
 
 Every other measure contradicts it. Novices die at almost exactly the same rate as
 everyone else, they play for *longer* than either other cohort, and they are less
@@ -656,8 +582,8 @@ likely to quit in frustration than regular players. A game that was too hard for
 novices would show them dying more and leaving sooner. This one does not.
 
 **So the defensible answer is: no.** The score gap looks like inexperience rather
-than difficulty — novices are playing the game safely and slowly and scoring less
-for it. The genuinely odd number on that table is the frustration rate among
+than difficulty: novices are playing the game safely and slowly and scoring less
+for it. The genuinely odd number in that table is the frustration rate among
 *regular* players, which nobody asked about and which is the thing worth chasing
 next.
 
@@ -669,175 +595,14 @@ and the conclusion does not follow from it.
 **Write 3–4 sentences**, using **What → Pattern → Meaning → Action**:
 
 - **What** did you measure?
-- **Pattern** — what does the evidence show?
-- **Meaning** — what might that mean for the design?
-- **Action** — what is the one change or the one further test you would recommend?
+- **Pattern**: what does the evidence show?
+- **Meaning**: what might that mean for the design?
+- **Action**: what is the one change or the one further test you would recommend?
 
----
-
-# Extension — Cleaning a raw export
-
-For anyone who finishes the Challenge with time to spare, or as practice at home.
-Allow about 25 minutes.
-
-The `sessions` file you have used all lab has already been cleaned. This section
-hands you the export it was cleaned *from*: `data/tidebreak_sessions_raw.csv`, the
-same sessions before anyone checked them. Nothing in it throws an error. Every
-problem in it quietly changes an answer.
-
-| Function | What it does |
-| :- | :- |
-| `duplicated()` | TRUE for any row that repeats an earlier row |
-| `trimws()` | Strips spaces from the start and end of text |
-| `tolower()` | Converts text to lower case |
-| `is.na()` | TRUE wherever a value is missing |
-| `complete.cases()` | TRUE for each row with no missing value in any column |
-
-```{r}
-#| label: ext-setup
-raw <- read_csv("data/tidebreak_sessions_raw.csv",
-                trim_ws = FALSE, show_col_types = FALSE)
-
-nrow(raw)
-```
-
-`read_csv()` normally strips spaces from the edges of every text value without
-telling you. `trim_ws = FALSE` switches that off so you see the file as it really
-is — the way Excel, a database import or your own C# parser would see it.
-
-## Exercise 16 — Rows exported twice `[Do]`
-
-The raw file has `r nrow(raw)` rows, but only `r nrow(sessions)` sessions were
-played. Count the repeated rows, look at them, and make a copy of the data called
-`clean` without them.
-
-::: {.callout-tip collapse="true" title="Solution"}
-
-```{r}
-#| label: ex16
-sum(duplicated(raw))
-raw[duplicated(raw), 1:5]
-
-clean <- raw[!duplicated(raw), ]
-nrow(clean)
-```
-
-`duplicated()` marks the second and later copies of a row, never the first, so
-`!duplicated(raw)` keeps exactly one of each.
-:::
-
-**Write 2 sentences:** name one result from Part B that a duplicated row would
-change, and one that it could not change.
-
-## Exercise 17 — Categories that should match `[Apply]`
-
-Count the values of `cohort` in `clean`. There should be three. Fix the column
-with `trimws()` and `tolower()` so that there are, then count again.
-
-::: {.callout-tip collapse="true" title="Solution"}
-
-```{r}
-#| label: ex17
-table(clean$cohort)
-
-clean$cohort <- tolower(trimws(clean$cohort))
-
-table(clean$cohort)
-```
-
-`trimws()` removes the spaces that make `"Novice "` a different value from
-`"Novice"`, and `tolower()` makes `"REGULAR"` and `"regular"` the same word. The
-labels end up in lower case, which does not matter; consistency does.
-:::
-
-**Write 2 sentences:** why is this problem invisible if the only thing you run on
-the data is `summary(clean)`?
-
-## Exercise 18 — Find the gaps `[Do]`
-
-Count the missing values in `deaths`, then in every column at once.
-
-::: {.callout-tip collapse="true" title="Solution"}
-
-```{r}
-#| label: ex18
-sum(is.na(clean$deaths))
-
-colSums(is.na(clean))
-```
-
-`is.na()` on a whole data frame gives a TRUE/FALSE table the same shape as the
-data, and `colSums()` counts the TRUEs in each column.
-:::
-
-**Write 1 sentence:** why does `clean$deaths == NA` not find the missing values?
-Exercise 03 has the answer.
-
-## Exercise 19 — Who is missing? `[Apply]`
-
-Count how many rows of `clean` are complete. Then, for the rows that are *not*
-complete, cross-tabulate `build` against `quit_reason`.
-
-::: {.callout-tip collapse="true" title="Solution"}
-
-```{r}
-#| label: ex19
-sum(complete.cases(clean))
-
-incomplete <- clean[!complete.cases(clean), ]
-table(incomplete$build, incomplete$quit_reason)
-```
-
-`complete.cases()` gives one TRUE/FALSE per row, so putting `!` in front of it
-selects the rows with at least one gap.
-:::
-
-**Write 2 sentences:** are the missing values scattered at random, or do they have
-a pattern? What does the pattern suggest about why they are missing?
-
-## Exercise 20 — Drop the incomplete rows? `[Decide]`
-
-A teammate suggests starting every analysis with
-`clean <- clean[complete.cases(clean), ]` "so the NAs never cause trouble". You are
-about to compare frustration quits between the two builds. Do you accept the
-suggestion?
-
-::: {.callout-tip collapse="true" title="Solution"}
-
-```{r}
-#| label: ex20
-kept <- clean[complete.cases(clean), ]
-
-all_rows      <- table(clean$build[clean$quit_reason == "Frustrated"])
-complete_only <- table(kept$build[kept$quit_reason == "Frustrated"])
-
-all_rows
-complete_only
-```
-
-**One defensible answer: no.** Keeping every row, Build A has
-`r all_rows[["A"]]` frustration quits against Build B's `r all_rows[["B"]]`. After
-the filter it has `r complete_only[["A"]]` against `r complete_only[["B"]]`. The
-filter removed `r all_rows[["A"]] - complete_only[["A"]]` frustration quits from
-Build A and `r all_rows[["B"]] - complete_only[["B"]]` from Build B, and the
-headline difference between the builds shrank for a reason that has nothing to do
-with the game.
-
-**What makes it defensible.** The missing column is `session_minutes`, which this
-comparison does not use, and a row only needs dropping from an analysis that needs
-the value it is missing. Exercise 19 also showed the gaps are not random: every
-missing session length belongs to a Build A frustration quit, exactly the sessions
-this comparison is about, so dropping them removes evidence, not noise. The gaps
-are themselves a finding — Build A sometimes fails to log session length when a
-player rage-quits, and that is a bug report.
-
-**What would make it indefensible.** Applying the filter, reporting the smaller
-gap, and never checking what the removed rows had in common.
-:::
-
-**Write 3 sentences:** describe one analysis where dropping incomplete rows is the
-right call and one where it is not. What is the question you ask to tell them
-apart?
+**Going further:** Distributions and Shape says a normal distribution puts about
+68% of values within 1 SD of the mean. If you want to check that against real
+columns, try the exercise at the end of
+[Is It Normal Enough?](../going-further/normality.qmd).
 
 ---
 
@@ -845,7 +610,7 @@ apart?
 
 If the CSV files are not available, use this in place of `sessions`.
 
-::: {.callout-note collapse="true" title="Show the mini dataset"}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show the mini dataset"}
 
 ```{r}
 #| label: appendix-mini
@@ -864,7 +629,7 @@ mini_sessions <- data.frame(
                       "Frustrated", "Technical fault")
 )
 
-str(mini_sessions)
+glimpse(mini_sessions)
 ```
 
 :::
@@ -876,11 +641,12 @@ str(mini_sessions)
 | Message | What it usually means |
 | :- | :- |
 | `could not find function "read_csv"` | You forgot `library(readr)` |
+| `could not find function "count"` (or `group_by`, `summarise`, `glimpse`) | You forgot `library(dplyr)` |
 | `object 'sessions' not found` | You have not run the Setup block, or you restarted R |
 | `object 'Score' not found` | Wrong capitalisation. R is case-sensitive |
 | `$ operator is invalid for atomic vectors` | You used `$` on a vector instead of a data frame |
 | `argument "x" is missing, with no default` | You called a function with no argument, usually a stray `()` |
-| `unexpected symbol` / `unexpected ')'` | A typo — nearly always a missing comma or an unclosed bracket on the line above |
-| The console shows `+` instead of `>` | R is waiting for you to finish an expression. Press **Esc** |
+| `unexpected symbol` / `unexpected ')'` | A typo: nearly always a missing comma or an unclosed bracket on the line above |
+| The console shows `+` instead of `>` | R is waiting for you to finish an expression, often a pipe `\|>` at the end of the last line. Press **Esc** |
 
 :::

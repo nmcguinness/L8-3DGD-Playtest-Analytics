@@ -1,0 +1,97 @@
+---
+title: "Stage 4 Demo"
+---
+
+<!-- The code from the demo page, ready to run. Put any CSV files it reads
+     in a data/ folder next to this file, then render or run it chunk by chunk. -->
+
+## Demo 1 — From evidence to a report that recomputes
+
+**Step 1. The survey arrives wide**
+
+```{r}
+#| label: d2-wide
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+
+sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+survey <- read_csv("data/tidebreak_survey.csv", show_col_types = FALSE)
+head(survey, 2)   # one column per question: the item is a column NAME
+```
+
+**Step 2. Pivot it long**
+
+```{r}
+#| label: d2-long
+# Stack every column except the key: names into item, values into rating.
+long <- survey |>
+  pivot_longer(-session_id, names_to = "item", values_to = "rating")
+
+dim(survey)
+dim(long)   # 120 sessions x 8 items = 960 rows
+```
+
+**Step 3. Every item at once, now that item is a column**
+
+```{r}
+#| label: d2-items
+long |>
+  group_by(item) |>
+  summarise(agree = mean(rating >= 4)) |>   # TRUE counts as 1
+  arrange(agree)
+```
+
+**Step 4. Code the comments, then ask whether the sources agree**
+
+```{r}
+#| label: d2-code
+coded <- sessions |>
+  mutate(code = case_when(
+    grepl("lost|circles|meant to go|objective", comment) ~ "Lost or unclear",
+    grepl("route|exit|signposting", comment)             ~ "Found the way",
+    grepl("Died|hard", comment)                          ~ "Difficulty",
+    TRUE                                                 ~ "General"
+  ))
+
+coded |> count(code, build)                      # against the telemetry...
+coded |> count(code, enjoyed = enjoyment >= 5)   # ...and against enjoyment
+```
+
+**Step 5. The report skeleton**
+
+**Step 6. Watch the inline numbers recompute**
+
+```{r}
+#| label: d2-render-helper
+#| include: false
+# Replaces each inline `r ...` in some text with its value, as quarto render does.
+# knit_child() moves the working directory, so put it back afterwards.
+render_text <- function(text) {
+  env <- parent.frame()
+  wd  <- getwd()
+  on.exit(setwd(wd))
+  cat(knitr::knit_child(text = text, quiet = TRUE, envir = env))
+}
+```
+
+```{r}
+#| label: d2-recompute
+# One sentence of the Methodology, with its numbers as inline R.
+part2 <- paste(
+  "We analysed `r nrow(sessions)` sessions. Build A's median session lasted",
+  "`r median(sessions$session_minutes[sessions$build == 'A'], na.rm = TRUE)` minutes."
+)
+
+# render_text() does to this sentence what quarto render does to the report.
+render_text(part2)   # against the full data...
+
+# ...then against Stage 2's raw export with incomplete rows dropped.
+raw <- read_csv("data/tidebreak_sessions_raw.csv", show_col_types = FALSE)
+sessions <- raw[!duplicated(raw), ]
+sessions <- sessions[complete.cases(sessions), ]
+
+render_text(part2)
+```
+

@@ -1,0 +1,92 @@
+---
+title: "Reshaping and Joining"
+subtitle: "pivot_longer, pivot_wider, and joins that do what you meant"
+---
+
+```{r}
+#| label: setup
+#| include: false
+source("notes/_setup.R")
+library(dplyr)
+library(tidyr)
+```
+
+> **Going further.** This page extends
+> [Interpreting and Reporting Evidence](../notes/11-reporting-evidence.qmd#reporting-a-whole-survey).
+> You need it when your data arrives in more than one file, or in a shape that
+> does not suit the question. Nothing here is required for the labs.
+
+---
+
+## Long and Back Again
+
+`pivot_longer()` stacks columns into rows; `pivot_wider()` spreads rows back into
+columns. Long suits `group_by()` and `ggplot2`; wide suits a table a reader
+compares across.
+
+```{r}
+#| label: pivot
+long <- survey |>
+  pivot_longer(-session_id, names_to = "item", values_to = "rating")
+
+# Long: one row per item per build. Wide: builds side by side for reading.
+long |>
+  left_join(select(sessions, session_id, build), by = "session_id") |>
+  group_by(item, build) |>
+  summarise(agree = round(mean(rating >= 4), 2), .groups = "drop") |>
+  pivot_wider(names_from = build, values_from = agree) |>
+  mutate(change = B - A) |>
+  arrange(desc(abs(change)))
+```
+
+`names_from` says which column's values become the new column names;
+`values_from` says what fills them. With the builds side by side, the change is one
+subtraction. `objective_clear` moved most; `level_navigable`, the item you might
+expect Build B's signage to move, barely changed.
+
+---
+
+## Joins
+
+A **join** adds columns from one table to another by matching on a **key**, a
+column both tables share, such as `session_id`.
+
+| Join | Keeps | Use when |
+| :- | :- | :- |
+| `left_join(x, y)` | Every row of `x`, with `y`'s columns where there is a match, `NA` where not | Adding information to your main table. The usual choice |
+| `inner_join(x, y)` | Only rows with a match in both | You only want sessions that have both a log and a survey |
+| `anti_join(x, y)` | Rows of `x` with **no** match in `y` | Finding what is missing: sessions with no survey |
+
+```{r}
+#| label: joins
+nrow(sessions)
+nrow(survey)
+
+sessions |> left_join(survey, by = "session_id") |> nrow()
+sessions |> anti_join(survey, by = "session_id") |> nrow()
+```
+
+Every session has a survey here, so the join keeps all `r nrow(sessions)` rows and
+the anti-join finds none. Real exports are rarely that tidy.
+
+### Checking a join
+
+Run these three checks every time you join:
+
+1. **Did the row count change?** A `left_join()` should keep the rows of `x`. If it
+   gains rows, the key is repeated in `y`.
+2. **Are there new `NA`s?** Rows of `x` with no match get `NA` in every new column.
+   Count them, and find them with `anti_join()`.
+3. **Is the key really unique?** `count(key) |> filter(n > 1)` on each table.
+
+```{r}
+#| label: join-checks
+survey |> count(session_id) |> filter(n > 1)   # no repeated keys: good
+
+joined <- sessions |> left_join(survey, by = "session_id")
+sum(is.na(joined$objective_clear))             # no unmatched sessions: good
+```
+
+**A join that silently duplicates rows** is one of the commonest ways for a
+playtest analysis to go wrong without an error. Two survey rows for one session
+double that session in every summary. The checks take a minute.

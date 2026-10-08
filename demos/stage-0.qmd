@@ -1,0 +1,334 @@
+---
+title: "Stage 0 Demo"
+subtitle: "Our class, in numbers: a first look at real data, live"
+---
+
+::: {.callout-note appearance="simple" icon="false" title="Get the files"}
+- **Demo code:** [stage-0-demo.qmd](../downloads/stage-0-demo.qmd){download="stage-0-demo.qmd"}, every chunk on this page in one file you can run.
+- **Data:** none to download. The demo types its invented survey in; Step 1 shows how to load your own class's CSV instead.
+:::
+
+The data is a four-question class survey: height, MBTI personality type,
+favourite game genre and preferred drink. The 20 students below are invented, so
+that nobody's answers end up on a public website, but they are messy in the same
+ways real answers are: a few blanks, a typo, an impossible value. To run the demo
+on your own class's answers, see Step 1. Everything here uses the Stage 1 toolkit:
+tidyverse for handling the data, base R for the plots.
+
+## Demo — Our class, in numbers
+
+**Step 1. Read it and look at it**
+
+```{r}
+#| label: d0-read
+library(readr)
+library(dplyr)
+
+# To use your own class's answers: save them as a CSV in your project's data/
+# folder, with the columns id, height, mbti_type, genre and beverage. Then remove
+# the # from the next line and delete the invented data below it.
+# class <- read_csv("data/class_survey.csv", show_col_types = FALSE)
+
+# Invented answers from 20 students: one vector per column, side by side.
+class <- data.frame(
+  id        = c(1, 2, 3, 4, 5, 7, 8, 9, 10, 11,
+                12, 13, 14, 15, 16, 17, 18, 19, 20, 22),
+  height    = c(171, 182, 166, 148, 177, 174, 186, 169, 175, 180,
+                163, 172, NA, 1.78, 168, 183, 159, 176, 170, 179),
+  mbti_type = c("INFP - Mediator", "INTP - Logician", "ENFP - Campaigner",
+                "ISFJ - Defender", "INTJ - Architect", "INFP-Mediator",
+                "ESTP - Entrepreneur", "INFJ - Advocate", "ISTP - Virtuoso",
+                "INTP - Logician", "ENTJ - Commander", "INFP - Mediator",
+                "INTJ - Architect", "ISTP - Virtuoso", "INFJ - Advocate",
+                "ENTP - Debater", "ISFP - Adventurer", "INTP - Logician",
+                "ESFJ - Consul", "INFP - Mediator"),
+  genre     = c("Role-Playing Game", "First-Person Shooter", "Platformer",
+                "Visual Novel", "Role-Playing Game", "Horror",
+                "First-Person Shooter", "Survival Horror", "Action-Adventure",
+                "Adventure", "Role-Playing Game", "Roguelike", "Strategy",
+                "First-Person Shooter", "Role-Playing Game", "Sandbox",
+                "Platformer", NA, "Role-Playing Game", "Metroidvania"),
+  beverage  = c("Tea", "Coffee", "Coffee", "Tea", "Neither", "Coffee", "Coffee",
+                "Tea", "Neither", "Cofee", "Tea", "Coffee", "Tea", "Coffee",
+                "Tea", "Coffee", "Neither", "Coffee", "Tea", "Coffee")
+)
+
+glimpse(class)   # how many rows, what each column is, what type R thinks it is
+```
+
+**Question.** What is one row? Is every column the right type? Why does `id`
+skip 6 and 21? *(One student each. `id` is a label, not a number to average. Two
+students are missing, and no `NA` will tell you.)*
+
+**Step 2. Is anything missing?**
+
+```{r}
+#| label: d0-missing
+colSums(is.na(class))   # blanks per column
+
+class |> filter(is.na(height) | is.na(genre))   # who are they?
+```
+
+**Question.** Delete these two rows? *(No. Each student still answered three
+questions. Keep the rows; leave the blank out with `na.rm = TRUE`.)*
+
+**Step 3. Labels that should match**
+
+```{r}
+#| label: d0-labels
+class |> count(mbti_type, sort = TRUE)   # look closely at the INFP rows
+class |> count(beverage)                 # and at the drinks
+```
+
+Two problems. One student typed `INFP-Mediator` without the spaces, so R counts it
+as a different type. Another typed `Cofee`. Fix both inside `mutate()`:
+
+```{r}
+#| label: d0-fix
+class <- class |>
+  mutate(type     = substr(mbti_type, 1, 4),                       # keep "INFP"
+         beverage = if_else(beverage == "Cofee", "Coffee", beverage))  # fix typo
+
+class |> count(type, sort = TRUE)
+class |> count(beverage)
+```
+
+`substr(x, 1, 4)` keeps characters 1 to 4. `if_else(test, yes, no)` gives `yes`
+where the test is TRUE and `no` where it is not, so only the typo changes.
+
+**Question.** What goes in the cleaning log? *(Two lines: INFP-Mediator recoded,
+Cofee recoded. No rows removed, but two students changed group.)*
+
+**Step 4. A value that cannot be right**
+
+```{r}
+#| label: d0-impossible
+class |>
+  summarise(min = min(height, na.rm = TRUE),
+            max = max(height, na.rm = TRUE))
+
+class |> filter(height < 100)   # nobody is under a metre tall
+```
+
+One student is 1.78 cm tall. Nobody is. They answered in metres, not centimetres,
+so the fix is to multiply by 100:
+
+```{r}
+#| label: d0-impossible-fix
+class <- class |>
+  mutate(height = if_else(height < 3, height * 100, height))
+
+class |> summarise(min = min(height, na.rm = TRUE),
+                   max = max(height, na.rm = TRUE))
+```
+
+**Question.** Why fix 1.78 but keep 148? *(1.78 is impossible and the meaning
+is clear: 178 cm. 148 cm is unusual but possible.)*
+
+**Step 5. New columns from old ones**
+
+```{r}
+#| label: d0-dimensions
+# Each letter of the type is one dimension. With this few students, the 16 types
+# are too thin to compare, but each letter splits the class in two.
+class <- class |>
+  mutate(mind   = if_else(substr(type, 1, 1) == "E", "Extravert", "Introvert"),
+         nature = if_else(substr(type, 3, 3) == "T", "Thinking", "Feeling"))
+
+class |> count(mind)
+class |> count(nature)
+```
+
+**Step 6. Describe one number: height**
+
+```{r}
+#| label: d0-height
+class |>
+  summarise(answered = sum(!is.na(height)),   # how many heights we actually have
+            mean     = mean(height, na.rm = TRUE),
+            median   = median(height, na.rm = TRUE),
+            sd       = sd(height, na.rm = TRUE),
+            iqr      = IQR(height, na.rm = TRUE),
+            min      = min(height, na.rm = TRUE),
+            max      = max(height, na.rm = TRUE))
+```
+
+```{r}
+#| label: d0-hist
+#| fig-alt: "Histogram of class heights in centimetres, with a dashed line at the median and a red line at the mean. Most heights sit between about 160 and 190, with one student well below the rest."
+hist(class$height, breaks = seq(140, 200, by = 5),
+     col = "grey85", border = "white",
+     main = "Height of the class", xlab = "Height (cm)", ylab = "Students")
+abline(v = median(class$height, na.rm = TRUE), lty = 2, lwd = 2)        # median
+abline(v = mean(class$height, na.rm = TRUE), col = "firebrick", lwd = 2) # mean
+legend("topleft", legend = c("median", "mean"), lty = c(2, 1),
+       col = c("black", "firebrick"), lwd = 2, bty = "n")
+```
+
+**Question.** Why `answered`, not `n()`? Which way did 148 cm pull the mean?
+*(One row has no height. Down: the mean is below the median.)*
+
+**Step 7. Describe a category: counts and proportions**
+
+```{r}
+#| label: d0-counts
+drinks <- class |>
+  count(beverage, sort = TRUE) |>
+  mutate(prop = round(n / sum(n), 2))   # each count as a share of the class
+drinks
+```
+
+```{r}
+#| label: d0-drinks-bar
+#| fig-alt: "Bar chart of preferred drink, sorted from most to least common: coffee, tea, then neither."
+barplot(drinks$n, names.arg = drinks$beverage,
+        col = c("tan4", "darkseagreen", "grey70"), border = NA,
+        main = "What the class drinks", ylab = "Students")
+```
+
+```{r}
+#| label: d0-genre-bar
+#| fig-alt: "Horizontal bar chart of favourite game genre, longest bar at the top. Role-playing games are the most common, then first-person shooters; most other genres were chosen by one student, and one student gave no genre."
+#| fig-height: 5
+genres <- class |> count(genre, sort = TRUE)
+
+par(mar = c(4, 11, 3, 1))                       # room for long labels on the left
+barplot(rev(genres$n), names.arg = rev(genres$genre), horiz = TRUE, las = 1,
+        col = "steelblue", border = NA,
+        main = "Favourite game genre", xlab = "Students")
+par(mar = c(5, 4, 4, 2))                        # back to the default margins
+```
+
+**Question.** Merge Horror with Survival Horror? What is the unlabelled bar?
+*(Your call, but write it down. The bar is the student with no genre.)*
+
+**Step 8. Filter: ask about some of the class**
+
+```{r}
+#| label: d0-filter
+# Who are the coffee drinkers?
+class |>
+  filter(beverage == "Coffee") |>
+  select(height, type, genre)
+
+# Everyone 180 cm or taller: what do they play?
+class |>
+  filter(height >= 180) |>
+  count(genre)
+```
+
+**Step 9. Groups: does height differ by drink?**
+
+```{r}
+#| label: d0-groups
+class |>
+  group_by(beverage) |>
+  summarise(n             = sum(!is.na(height)),
+            median_height = median(height, na.rm = TRUE),
+            iqr_height    = IQR(height, na.rm = TRUE))
+```
+
+```{r}
+#| label: d0-box
+#| fig-alt: "Boxplots of height for coffee, neither and tea, with every student drawn as a point on top. The three groups overlap heavily."
+boxplot(height ~ beverage, data = class,
+        col = c("tan", "grey80", "darkseagreen"), outline = FALSE,  # groups sort A-Z: Coffee, Neither, Tea
+        main = "Height by preferred drink", xlab = NULL, ylab = "Height (cm)")
+stripchart(height ~ beverage, data = class, vertical = TRUE, add = TRUE,
+           method = "jitter", jitter = 0.1, pch = 19,
+           col = adjustcolor("grey20", alpha.f = 0.6))
+```
+
+**Question.** Coffee drinkers' median is about 10 cm taller. Real? *(Check `n`
+first: 10, 6 and 3. Too few to say. That is the Stage 2 question.)*
+
+**Step 10. Two categories together**
+
+```{r}
+#| label: d0-two-way
+#| fig-alt: "Grouped bar chart of preferred drink for introverts and extraverts. The introvert bars are much taller than the extravert bars, because most of the class are introverts."
+class |>
+  count(mind, beverage)
+
+# barplot() wants a table with groups in rows; table() builds one.
+drink_by_mind <- table(class$beverage, class$mind)
+
+barplot(drink_by_mind, beside = TRUE,
+        col = c("tan", "grey80", "darkseagreen"), border = NA,  # Coffee, Neither, Tea
+        legend.text = TRUE, args.legend = list(x = "topleft", bty = "n"),
+        main = "Preferred drink, by introvert or extravert", ylab = "Students")
+```
+
+The same table as a **mosaic plot**: each tile's area is its share of the class, so
+the size of each group is part of the picture.
+
+```{r}
+#| label: d0-mosaic
+#| fig-alt: "Mosaic plot. The introvert column is about three times as wide as the extravert column; each column is split into coffee, neither and tea tiles."
+mosaicplot(table(class$mind, class$beverage),
+           color = c("tan", "grey80", "darkseagreen"),   # Coffee, Neither, Tea
+           main = "Drink by introvert or extravert", xlab = "", ylab = "")
+```
+
+**Question.** Which chart shows the 15 to 5 split better? *(The mosaic. And with
+5 extraverts, one person moves their whole picture.)*
+
+**Step 11. Pictures for a small class**
+
+With twenty students, the best pictures show every student, or every answer,
+rather than a distribution. First, the whole class's personality profile: the
+share holding the first letter of each pair.
+
+```{r}
+#| label: d0-balance
+#| fig-alt: "Four horizontal 100 percent bars, one per MBTI letter pair. Each bar is split at the share of the class holding the first letter, with a dashed line at 50 percent. Some pairs are close to even; others are lopsided."
+# One summary per letter pair: the share of the class with the first letter.
+balance <- class |>
+  summarise(E = mean(substr(type, 1, 1) == "E"),
+            N = mean(substr(type, 2, 2) == "N"),
+            T = mean(substr(type, 3, 3) == "T"),
+            J = mean(substr(type, 4, 4) == "J"))
+balance
+
+first  <- unlist(balance)           # the four shares as a plain vector
+shares <- rbind(first, 1 - first)   # row 1: first letter, row 2: the other letter
+
+par(mar = c(4, 12, 3, 1))   # room for the long labels on the left
+bars <- barplot(shares, horiz = TRUE, las = 1, border = NA,
+                col = c("steelblue", "grey85"),
+                names.arg = c("Extravert / Introvert", "Intuitive / Sensing",
+                              "Thinking / Feeling", "Judging / Perceiving"),
+                main = "The class's personality profile", xlab = "Share of the class")
+abline(v = 0.5, lty = 2)
+text(first / 2, bars, c("E", "N", "T", "J"), col = "white", font = 2)
+text(first + (1 - first) / 2, bars, c("I", "S", "F", "P"), font = 2)
+par(mar = c(5, 4, 4, 2))
+```
+
+**Question.** Which pair is most even, which most lopsided? *(Thinking /
+Feeling is even; Extravert / Introvert is one to three. Four pairs work because 16
+types are too thin.)*
+
+Second, every student's height, shortest to tallest, coloured by drink:
+
+```{r}
+#| label: d0-dotchart
+#| fig-alt: "Dot chart with one row per student who gave a height, sorted from shortest to tallest, each dot coloured by preferred drink. One student sits well to the left of everyone else."
+#| fig-height: 6
+by_height <- class |>
+  filter(!is.na(height)) |>   # a student with no height has no dot to draw
+  arrange(height)
+
+# A named vector works as a lookup: drink_col["Tea"] gives "darkseagreen".
+drink_col <- c(Coffee = "tan4", Tea = "darkseagreen", Neither = "grey60")
+
+dotchart(by_height$height, labels = paste("Student", by_height$id),
+         pch = 19, cex = 0.8, col = drink_col[by_height$beverage],
+         main = "Every student, shortest to tallest", xlab = "Height (cm)")
+legend("bottomright", legend = names(drink_col), col = drink_col,
+       pch = 19, bty = "n")
+```
+
+**Question.** What does this show that the histogram hid? *(Every student, and
+the tall end is mostly coffee.)* Everything you just did is Stage 1. Next: a
+playtest.

@@ -1,0 +1,449 @@
+---
+title: "Combining Evidence"
+subtitle: "Telemetry, observation and self-report, coded, compared and reported honestly"
+body-classes: "wf-at-interpret wf-at-act"
+---
+
+{{< include _workflow.qmd >}}
+
+```{r}
+#| label: setup
+#| include: false
+source("notes/_setup.R")
+library(dplyr)
+
+coded <- sessions |>
+  mutate(code = case_when(
+    grepl("lost|circles|meant to go|objective", comment) ~ "Lost or unclear",
+    grepl("route|exit|signposting", comment)             ~ "Found the way",
+    grepl("Died|hard", comment)                          ~ "Difficulty",
+    TRUE                                                 ~ "General"
+  ))
+lost_a   <- sum(coded$code == "Lost or unclear" & coded$build == "A")
+lost_b   <- sum(coded$code == "Lost or unclear" & coded$build == "B")
+found_a  <- sum(coded$code == "Found the way" & coded$build == "A")
+found_b  <- sum(coded$code == "Found the way" & coded$build == "B")
+helped_a <- sum(sessions$comment == "The signposting helped." & sessions$build == "A")
+n_comments <- length(unique(sessions$comment))
+
+fr_codes <- table(coded$code[coded$quit_reason == "Frustrated"])
+
+joined   <- merge(sessions, survey, by = "session_id")
+wt_build <- tapply(sessions$wrong_turns, sessions$build, mean)
+nav_build <- tapply(joined$level_navigable, joined$build, mean)
+obj_build <- tapply(joined$objective_clear, joined$build, mean)
+r_wt_nav <- cor(joined$wrong_turns, joined$level_navigable, method = "spearman")
+
+stopifnot(lost_b > lost_a, found_b < found_a, helped_a > 0,
+          all(coded$enjoyment[coded$code == "Found the way"] >= 5),
+          all(coded$enjoyment[coded$code == "Lost or unclear"] < 5),
+          names(which.max(fr_codes)) == "Difficulty",
+          wt_build[["A"]] - wt_build[["B"]] > 2,
+          abs(diff(nav_build)) < 0.2, obj_build[["B"]] > obj_build[["A"]],
+          abs(r_wt_nav) < 0.15)
+```
+
+> A single measure can mislead you. This page is about putting the three sources
+> of playtest evidence side by side: what the game recorded, what you saw, and
+> what the players said. It covers turning free-text comments into codes you can
+> count, checking a finding against more than one source, and writing honest
+> limitations. The playtest question running through it: *"The telemetry says
+> Build B fixed navigation. Do the players agree?"*
+
+::: {.at-a-glance}
+**Stage:** 4 · Core. Read before the March workshop.
+**Time:** 25 minutes, then the workshop lab on your own data.
+**Before this:** [Planning a Playtest](01-planning-a-playtest.qmd#choose-your-measures)
+for the three sources, and
+[Relationships and Correlation](10-relationships-and-correlation.qmd) for the
+navigation-rating finding.
+**Key terms:** telemetry, observation, self-report, triangulation, code, codebook,
+limitation.
+**R you will write:** `case_when()` with `grepl()` inside `mutate()`, then
+`count()`.
+:::
+
+## Learning Outcomes
+
+By the end of these notes you can:
+
+- say what each of telemetry, observation and self-report can and cannot tell you;
+- turn free-text comments into a small set of codes with a written codebook, and
+  count them;
+- use quotes as evidence without letting one quote become the finding;
+- triangulate a finding across sources, and say what it means when they disagree;
+- write limitations that are specific to your playtest.
+
+---
+
+## Why This Matters for Playtesting
+
+By the end of a project your team has numbers from the game, notes from watching
+people play, survey ratings and a pile of comments. It is tempting to report the
+source that tells the best story. The reader cannot see what you left out.
+
+**The strongest findings use more than one source.** "Players got lost less" from
+telemetry alone is a count. Add an observer who saw players stop backtracking at
+the junction, and players who wrote that the route was obvious, and it is a
+finding nobody will argue with.
+
+**The most interesting findings are where the sources disagree.** *Tidebreak* has
+one. It is the worked example at the end of this page.
+
+---
+
+## Three Sources, Three Questions
+
+| Source | Answers | Strength | Weakness |
+| :- | :- | :- | :- |
+| **Telemetry** | What happened in the game? | Complete, precise, cheap at scale | Says nothing about why, or how it felt |
+| **Observation** | How did the player's behaviour unfold? | Sees hesitation, confusion and workarounds that leave no trace in a log | Slow; one observer sees one player; observers see what they expect |
+| **Self-report** | What does the player say they experienced? | The only source for feelings, intentions and opinions | Players misremember, are polite, and do not notice everything |
+
+**Choose measures from at least two sources for every question that matters.**
+That decision is made when you plan the playtest, not when you write the report
+([Planning a Playtest](01-planning-a-playtest.qmd)).
+
+### Recording observation
+
+Observation is only evidence if it is recorded the same way for every player. Write
+a short **observation sheet** before the playtest, with the behaviours you expect
+to matter, and tick or time-stamp them as they happen:
+
+| Time | Location | Behaviour | Note |
+| :- | :- | :- | :- |
+| 02:10 | First junction | Backtracked | Went left, returned |
+| 02:45 | First junction | Hesitated > 5 s | Looked at the ceiling lights |
+| 06:30 | Corridor | Asked a question | "Where am I meant to go?" |
+
+Fix the behaviour list in advance: *backtracked*, *hesitated more than 5 seconds*,
+*asked for help*, *ignored a prompt*. Then observations can be counted per player,
+exactly like telemetry, and joined to it on the player ID.
+
+**For your project:** if your team watched playtests but did not write anything
+down, say so in the limitations. Next time, take an observation sheet with three to
+five behaviours on it.
+
+---
+
+## Coding Comments
+
+Free text is the richest self-report you have, and the hardest to use. **Coding**
+turns it into something you can count: read the comments, decide on a small set of
+**codes**, and give each comment one.
+
+### Step 1: read everything first
+
+Before writing a single code, read every comment. *Tidebreak* has
+`r nrow(sessions)` comments, but only `r n_comments` different sentences:
+
+```{r}
+#| label: read-comments
+sessions |> count(comment, sort = TRUE)
+```
+
+Real comments will be messier, longer and more varied. Read them anyway.
+
+### Step 2: write a codebook
+
+A **codebook** lists each code, what counts as that code, and an example. Keep it
+to four to six codes; more than that and nobody can apply them consistently.
+
+| Code | Use when the comment... | Example |
+| :- | :- | :- |
+| **Lost or unclear** | says the player did not know where to go or what to do | "Ran in circles for a while." |
+| **Found the way** | says navigation or guidance worked | "Lighting made the exit easy to spot." |
+| **Difficulty** | is about dying, challenge or fairness | "Too hard for a first attempt." |
+| **General** | is anything else | "Enjoyed it, would play again." |
+
+**The codebook goes in an appendix.** A reader needs to see your codes to judge
+your counts, exactly as they need your cleaning log to judge your *n*.
+
+### Step 3: apply the codes in R
+
+`grepl()` returns TRUE when a comment contains any of the words you give it, and
+`case_when()` gives each comment the first code that matches:
+
+```{r}
+#| label: code-comments
+coded <- sessions |>
+  mutate(code = case_when(
+    grepl("lost|circles|meant to go|objective", comment) ~ "Lost or unclear",
+    grepl("route|exit|signposting", comment)             ~ "Found the way",
+    grepl("Died|hard", comment)                          ~ "Difficulty",
+    TRUE                                                 ~ "General"
+  ))
+
+coded |> count(code)
+```
+
+`|` inside the quotes means "or". `TRUE ~ "General"` catches everything left over.
+
+### Step 4: check by hand
+
+Keyword matching is fast and blunt. Read a sample of comments next to their codes,
+and fix the codebook or the keywords until they agree with what you would have
+decided:
+
+```{r}
+#| label: check-codes
+coded |> distinct(comment, code)
+```
+
+With real comments, check at least twenty. **If two people on the team code the
+same twenty comments separately and disagree often, the codebook is not clear
+enough yet.**
+
+### Step 5: count by group, then read what you counted
+
+```{r}
+#| label: codes-by-build
+coded |> count(code, build)
+```
+
+Codes are counts of *what players chose to write*, not rates of what happened.
+Report them as "`r lost_b` of `r sum(sessions$build == "B")` Build B comments
+mentioned being lost or unclear", not as
+"`r round(100 * lost_b / sum(sessions$build == "B"))`% of Build B players got lost".
+
+### Quotes as evidence
+
+**Quote a comment to show a pattern, never to be the pattern.** One vivid quote
+beside a chart of frustration quits makes the chart human. One vivid quote instead
+of the chart is an anecdote. Pick quotes that are typical of their code, say how
+many comments the code covers, and never quote only the comments that agree with
+you.
+
+---
+
+## Triangulation
+
+**Triangulation** means checking a finding against more than one source. Three
+outcomes are possible, and each tells you something different:
+
+| The sources... | What it means | What to write |
+| :- | :- | :- |
+| **Agree** | The finding is strong | Lead with it, and cite every source |
+| **Disagree** | One source is measuring something different from what you thought | Report both, and explain which to trust for which question |
+| **Only one source has anything** | The finding rests on one kind of evidence | Report it with that caveat, and plan the missing source for the next test |
+
+```{mermaid}
+%%| label: fig-triangulation
+%%| fig-cap: "Agreement makes a finding strong. Disagreement is not a failure: it tells you what each source is really measuring."
+flowchart TD
+  F["One finding"] --> T["Telemetry"]
+  F --> O["Observation"]
+  F --> S["Self-report"]
+  T --> Q{"Do they agree?"}
+  O --> Q
+  S --> Q
+  Q -->|Yes| A(["Strong finding"])
+  Q -->|No| D(["Explain the gap"])
+  class D accent
+```
+
+---
+
+## Worked Example
+
+**The telemetry says Build B fixed navigation. Do the players agree?** Put every
+source on the navigation question side by side.
+
+**Telemetry.** Build A players averaged `r round(wt_build[["A"]], 1)` wrong turns
+per session; Build B players `r round(wt_build[["B"]], 1)`. Large, and very
+unlikely to be chance ([Comparing Groups](08-comparing-groups.qmd)).
+
+**Self-report, ratings.** "The level was easy to navigate" averaged
+`r round(nav_build[["A"]], 2)` in Build A and `r round(nav_build[["B"]], 2)` in
+Build B: no change. Across sessions it does not correlate with wrong turns at all
+(Spearman r = `r round(r_wt_nav, 2)`). "I always knew what my objective was" did
+improve, from `r round(obj_build[["A"]], 2)` to `r round(obj_build[["B"]], 2)`.
+
+**Self-report, comments.** `r lost_b` Build B comments were coded *lost or
+unclear*, against `r lost_a` in Build A: the opposite of the telemetry. And
+`r helped_a` Build A players wrote that "the signposting helped", about the build
+without the new signage. Split by enjoyment instead of build, the codes separate
+cleanly:
+
+```{r}
+#| label: codes-by-enjoyment
+coded |> count(code, enjoyed = enjoyment >= 5)
+```
+
+Every *found the way* comment came from a player who rated enjoyment 5 or above,
+and every *lost or unclear* comment from one who rated it lower. The comments
+record how the session *felt*, not where the player went.
+
+**Observation.** *Tidebreak* did not record any. That is the gap this example
+exposes.
+
+**Putting it together.**
+
+- What happened: Build B cut wrong turns. Only telemetry measured it directly, and
+  it is the source to trust for *what happened*.
+- What players noticed: not much. The navigation rating did not move, and players
+  appear not to know when they are lost.
+- What the comments measure: mood. Useful for knowing how the session felt; weak
+  evidence about navigation in either direction.
+- What is missing: someone watching the junctions, to see whether players hesitate
+  and backtrack, and whether they seem aware of it.
+
+**What should the team do?** Keep Build B's guidance on the strength of the
+telemetry. Stop relying on the navigation rating to check navigation on this
+level. In the next playtest, add an observation sheet for the first two junctions,
+so the telemetry and the observation can be compared directly.
+
+**In the Discussion you would write:** "The reduction in wrong turns was not
+reflected in players' navigation ratings or comments. The comments tracked
+enjoyment rather than build, which suggests they describe how the session felt
+rather than where the player went. We treat the telemetry as the evidence for
+navigation, and recommend structured observation at the junctions in the next
+playtest to check whether players notice when they are lost."
+
+---
+
+## Writing Limitations
+
+Every playtest has weaknesses. Naming them is not an admission of failure: it is
+what lets the reader trust everything else. **A limitation you name costs you less
+than one the reader finds.**
+
+A good limitation is **specific** to your playtest, says **what it might change**,
+and says **whether you checked it**.
+
+| Kind | Generic (weak) | Specific (useful) |
+| :- | :- | :- |
+| Sample | "The sample was small." | "`r length(unique(sessions$player_id))` players; how they were recruited was not recorded, so we cannot say how closely they match the game's audience." |
+| Design | "There may be confounds." | "Each player played one build, so differences between the two groups of players could explain part of the gap. The cohort mix in each build is in Appendix C." |
+| Independence | "Data may not be independent." | "Each player contributed `r unique(as.vector(table(sessions$player_id)))` sessions. The result holds when each player counts once." |
+| Measurement | "Surveys are subjective." | "The navigation rating did not track wrong turns, so it is not a reliable check on navigation for this level." |
+| Coding | "Comments were interpreted." | "Comments were coded by keyword into four codes (Appendix B); a second coder was not used." |
+| Not measured | "More research is needed." | "No observation was recorded, so we cannot say whether players noticed when they were lost." |
+
+**Limitations go in the Discussion**, close to the claims they qualify. The
+Conclusion should already take them into account.
+
+**For your project:** write your limitations as you go, not on the last night. Each
+time you make a decision you are not sure about (a row dropped, a code merged, a
+measure you could not collect), add a line.
+
+---
+
+## Common Mistakes
+
+**Reporting only the source that tells the best story.** The reader cannot see what
+you left out. Report every source you collected on the question.
+
+**Treating a count of comments as a rate.** A comment is what a player chose to
+write. "Ten players mentioned the lighting" is not "ten players noticed the
+lighting".
+
+**Coding without a codebook.** If the reader cannot see what each code means, they
+cannot judge the counts.
+
+**Too many codes.** Fifteen codes on sixty comments gives counts of two and three.
+Four to six is plenty.
+
+**One quote as the finding.** A quote illustrates a pattern; it cannot be one.
+
+**Explaining away a disagreement.** When telemetry and self-report disagree, the
+disagreement is a finding. Report it and say what each source is measuring.
+
+**Generic limitations.** "The sample was small" tells the reader nothing they can
+use.
+
+---
+
+## Practice
+
+Each takes two or three minutes.
+
+1. **Classify.** Which source is each of these? (a) A death count. (b) "Player
+   paused for 20 seconds at the bridge." (c) A 1–7 enjoyment rating. (d) The time
+   at which a player first opened the map. (e) "I didn't know I could sprint."
+2. **Compute.** Among frustration quits only, which comment code is most common?
+3. **Critique.** "12 of 60 players complained about the camera, so the camera is a
+   problem for 20% of players." What is wrong?
+4. **Rewrite.** Make this limitation specific: "There may be other factors that
+   affected the results."
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show answers"}
+**1.** (a) Telemetry. (b) Observation. (c) Self-report. (d) Telemetry. (e)
+Self-report.
+
+**2.**
+
+```{r}
+#| label: practice-frustrated
+coded |>
+  filter(quit_reason == "Frustrated") |>
+  count(code, sort = TRUE)
+```
+
+Difficulty, with `r fr_codes[["Difficulty"]]`, ahead of lost or unclear with
+`r fr_codes[["Lost or unclear"]]`. Yet the survey says frustration quitters did
+not know their objective. Players name the symptom they felt, not the cause, which
+is why comments illustrate a finding rather than measure it.
+
+**3.** A comment is what a player chose to write, not a measurement. Players who
+did not mention the camera may still have had trouble with it, and players who
+mentioned it may have been mildly irritated. Report "12 of 60 comments mentioned
+the camera", and check it against telemetry or observation, such as how often the
+camera was reset.
+
+**4.** Name the factor, what it might change, and whether you checked it. For
+example: "Experienced players may navigate better whichever build they play. We
+checked the wrong-turns result within each cohort." Any specific factor, checked or
+not, is better than "other factors".
+:::
+
+---
+
+## Summary
+
+- Telemetry says what happened, observation how it unfolded, self-report what
+  players experienced. Choose measures from at least two for every question that
+  matters.
+- Observation is evidence only when it is recorded the same way for every player:
+  use an observation sheet with a fixed list of behaviours.
+- Code comments with a short, written codebook; apply it in R with `case_when()`
+  and `grepl()`; check a sample by hand; report counts as counts of comments.
+- Quote to illustrate a pattern, never to be the pattern.
+- Triangulate. Agreement makes a finding strong; disagreement tells you what each
+  source is really measuring.
+- Write limitations that are specific, say what they might change, and say whether
+  you checked.
+
+| Key term | Meaning |
+| :- | :- |
+| **Triangulation** | Checking a finding against more than one source of evidence |
+| **Observation sheet** | A fixed list of behaviours recorded the same way for every player |
+| **Code** | A category given to a piece of free text |
+| **Codebook** | The list of codes, what each means, and an example of each |
+| **Limitation** | A specific weakness that could change the conclusion, stated by the author |
+
+---
+
+## Links
+
+- [Planning a Playtest](01-planning-a-playtest.qmd#choose-your-measures): the three
+  sources, chosen before the playtest
+- [Relationships and Correlation](10-relationships-and-correlation.qmd#telemetry-observation-and-self-report-together):
+  the navigation rating that did not track wrong turns
+- [Interpreting and Reporting Evidence](11-reporting-evidence.qmd): where all of
+  this goes in the report
+- [Lab 05: From Evidence to Report](../labs/complete-analysis.qmd)
+- Back to the overview: [Start Here](00-start-here.qmd)
+
+---
+
+## Reflective Questions
+
+- Which of your team's measures would you trust most for *what happened*, and which
+  for *how it felt*? Are they the same?
+- Your comments say players loved a feature that the telemetry says almost nobody
+  used. Write the sentence you would put in the Discussion.
+- What three behaviours would you put on an observation sheet for your next
+  playtest, and why those?
+- Which of your own limitations would most change your Conclusion if it turned out
+  to matter?

@@ -1,0 +1,151 @@
+---
+title: "Sampling Theory"
+subtitle: "The standard error formula, the central limit theorem, and the bootstrap"
+---
+
+```{r}
+#| label: setup
+#| include: false
+source("notes/_setup.R")
+
+pop      <- rep(sessions$session_minutes, times = 1000)
+pop_mean <- mean(pop)
+pop_sd   <- sd(pop)
+
+set.seed(7)
+draw_means <- function(n, reps = 1000) replicate(reps, mean(sample(pop, n)))
+means_10  <- draw_means(10)
+means_30  <- draw_means(30)
+means_100 <- draw_means(100)
+se_30 <- pop_sd / sqrt(30)
+
+mins_b <- sessions$session_minutes[sessions$build == "B"]
+n_b    <- length(mins_b)
+ci_b   <- t.test(mins_b)$conf.int
+```
+
+> **Going further.** This page extends
+> [From Sample to Population](../notes/07-sample-to-population.qmd). Nothing here is
+> needed for the labs or the assessment. Read it if you want to know *why* the
+> standard error and the confidence interval work, or if you need an interval for
+> something other than a mean.
+
+---
+
+## The Standard Error Formula
+
+The standard error can be estimated from a single sample:
+
+$$\text{SE} = \frac{\text{SD}}{\sqrt{n}}$$
+
+Check it against the simulation on the notes page. The population SD is
+`r round(pop_sd, 2)`, so for n = 30 the formula gives `r round(pop_sd, 2)` / √30 =
+`r round(se_30, 2)`. The SD of a thousand simulated playtest means is
+`r round(sd(means_30), 2)`. The formula works.
+
+**Bigger samples give smaller standard errors, but slowly.** Because n is under a
+square root, you need **four times** the players to **halve** the standard error:
+
+```{r}
+#| label: fig-sample-size-se
+#| fig-cap: "Means of 1,000 simulated playtests at three sizes. Each quadrupling of n roughly halves the spread."
+#| fig-alt: "Three horizontal strips of points. With n = 10 the playtest means spread widely around the dashed true mean; with n = 30 they are tighter; with n = 100 they cluster closely around it."
+#| fig-height: 3.4
+par(mar = c(4, 6, 1, 1))
+stripchart(list("n = 10" = means_10, "n = 30" = means_30, "n = 100" = means_100),
+           method = "jitter", jitter = 0.25, pch = 16, cex = 0.4, las = 1,
+           col = adjustcolor(pal$line, alpha.f = 0.3),
+           xlab = "Playtest mean session length (minutes)")
+abline(v = pop_mean, lty = 2, lwd = 2, col = pal$highlight)
+```
+
+| Players per playtest | SE from the formula | SD of 1,000 simulated means |
+| :-: | :-: | :-: |
+| 10 | `r round(pop_sd / sqrt(10), 2)` | `r round(sd(means_10), 2)` |
+| 30 | `r round(pop_sd / sqrt(30), 2)` | `r round(sd(means_30), 2)` |
+| 100 | `r round(pop_sd / sqrt(100), 2)` | `r round(sd(means_100), 2)` |
+
+---
+
+## The Central Limit Theorem
+
+Session length is lopsided and two-humped, nothing like a bell. Yet the means of
+playtests drawn from it form a bell almost perfectly:
+
+```{r}
+#| label: fig-clt
+#| fig-cap: "The means of 1,000 playtests of 30, with a normal curve laid over them. The individual sessions are far from normal; their means are not."
+#| fig-alt: "Histogram of 1,000 sample means of session length, a narrow symmetric bell centred near 23 minutes, with a red normal curve that follows it closely."
+#| fig-height: 3.4
+par(mar = c(4, 3, 1, 1))
+hist(means_30, breaks = 30, freq = FALSE, col = pal$fill, border = "white",
+     main = "", xlab = "Mean session length (minutes)", ylab = "", yaxt = "n")
+curve(dnorm(x, mean(means_30), sd(means_30)), add = TRUE, lwd = 2,
+      col = pal$highlight)
+```
+
+That is the **central limit theorem**: **whatever shape the individual values
+have, the means of reasonably large samples are approximately normal.**
+
+It is why the normal distribution matters even for data that is not normal. The
+68–95–99.7 rule does not describe the session lengths, but it does describe the
+sampling distribution of their mean. So about 95% of playtest means fall within 2
+standard errors of the true mean. That single fact is what confidence intervals and
+t-tests are built on.
+
+**How large is "reasonably large"?** For mildly skewed data, 30 is usually plenty.
+For heavily skewed data, such as frame times with rare hitches, it takes more. And
+it applies to *means*: it does not rescue a 99th percentile.
+
+---
+
+## The Interval by Hand
+
+The "about 2" in "mean ± about 2 SE" is 1.96 for large samples. For smaller ones R
+uses a slightly larger number from the **t distribution**, which allows for the SD
+itself being estimated from the sample. The part after the ± is the **margin of
+error**.
+
+```{r}
+#| label: ci-by-hand
+m  <- mean(mins_b)
+se <- sd(mins_b) / sqrt(length(mins_b))
+multiplier <- qt(0.975, df = length(mins_b) - 1)
+
+c(mean = m, se = se, multiplier = multiplier)
+m + c(-1, 1) * multiplier * se
+```
+
+The same as `t.test(mins_b)$conf.int`: `r ci_fmt(ci_b)`.
+
+$$\text{95\% CI} = \bar{x} \pm t_{0.975,\,n-1} \times \frac{s}{\sqrt{n}}$$
+
+A 99% interval uses a larger multiplier, so it is wider: more confidence costs
+precision.
+
+---
+
+## The Bootstrap
+
+The formula relies on the central limit theorem. The **bootstrap** gets an interval
+without it, by treating your sample as a stand-in for the population and resampling
+it. Draw `r n_b` sessions *with replacement* from Build B's `r n_b`, take the mean,
+and repeat a thousand times; the middle 95% of those means is the interval.
+
+```{r}
+#| label: bootstrap
+set.seed(3)
+boot_means <- replicate(1000, mean(sample(mins_b, replace = TRUE)))
+quantile(boot_means, c(0.025, 0.975))
+```
+
+It agrees closely with `t.test()`'s `r ci_fmt(ci_b)`. The bootstrap earns its keep
+for summaries with no simple formula, such as a median or a 99th percentile:
+replace `mean` with `median` in the line above and it still works.
+
+```{r}
+#| label: bootstrap-median
+set.seed(3)
+boot_medians <- replicate(1000, median(sample(mins_b, replace = TRUE)))
+quantile(boot_medians, c(0.025, 0.975))
+```

@@ -41,8 +41,8 @@ engine can already record. The only thing missing is the ability to read it.
 ## Before you read any code
 
 This document is a **showcase**, not a lesson. Nothing here is examinable and you
-are not expected to understand the code yet. Its only job is to show you what three
-weeks of R can do to a pile of raw playtest numbers.
+are not expected to understand the code yet. Its only job is to show you what a few
+months of R can do to a pile of raw playtest numbers.
 
 ```{r line-counts}
 #| include: false
@@ -51,7 +51,7 @@ starts <- grep("^```\\{r view-", src)
 ends   <- grep("^```$", src)
 view_lines <- sapply(starts, function(s) {
   body <- src[(s + 1):(min(ends[ends > s]) - 1)]
-  sum(!grepl("^\\s*$|^#\\|", body))
+  sum(!grepl("^\\s*$|^\\s*#", body))  # skip blanks, options and comments
 })
 n_csv <- length(grep('read_csv\\("data/', src))
 ```
@@ -64,8 +64,8 @@ movement questions in View 8 use position data that stays in this showcase. The
 polish on this page is the destination, not the syllabus.
 
 **To begin the notes, go to [Start Here](notes/00-start-here.qmd).** It explains
-how the twelve notes, four labs and three reference pages fit together, and the
-route through them.
+the four stages of the course, from October to March, and how the notes, labs and
+reference pages fit together.
 
 ::: {.callout-note}
 ## The data
@@ -89,24 +89,25 @@ library(tidyverse)
 library(plotly)
 library(DT)
 
+# Five files from one playtest. Everything below comes from these.
 sessions    <- read_csv("data/tidebreak_sessions.csv")
 survey      <- read_csv("data/tidebreak_survey.csv")
 frame_times <- read_csv("data/tidebreak_frame_times.csv")
 positions   <- read_csv("data/tidebreak_positions.csv")
 level       <- read_csv("data/tidebreak_level.csv")
 
-# A small, fixed palette used by every figure in this document.
+# A handful of colours, used everywhere. Fewer colours, fewer things to learn.
 pal <- c(blue = "#2a78d6", orange = "#eb6834", aqua = "#1baf7a", yellow = "#eda100")
 ink <- c(primary = "#0b0b0b", secondary = "#52514e", grid = "#e6e5e1")
 
-# Each archetype keeps the same colour in every figure, so that a colour always
-# means the same thing no matter which chart you are looking at.
+# Each archetype keeps its colour in every view, so blue always means Scout.
 arch_pal <- c(Scout = pal[["blue"]],  Sentinel = pal[["orange"]],
               Engineer = pal[["aqua"]], Duelist = pal[["yellow"]])
 
-# Likewise for the two builds, which appear in Views 5 and 7.
+# Same idea for the two builds, which come back in Views 5 and 7.
 build_pal <- c(A = pal[["orange"]], B = pal[["blue"]])
 
+# One shared look for every chart, so the views read as one document.
 theme_tb <- function() {
   theme_minimal(base_size = 12) +
     theme(
@@ -134,15 +135,18 @@ see the finding that View 2 makes formal.
 
 ```{r view-1}
 sessions %>%
+  # Keep the ten columns a designer asks about first, with readable names.
   select(Session = session_id, Player = player_id, Cohort = cohort,
          Archetype = archetype, Build = build, Score = score,
          Kills = kills, Deaths = deaths, `Alive (s)` = time_alive_s,
          Awareness = awareness) %>%
+  # datatable() turns it into a table you can search, sort and page through.
   datatable(
     rownames = FALSE,
     options  = list(pageLength = 8, dom = "ftip", scrollX = TRUE),
     caption  = "Tidebreak playtest: 120 sessions"
   ) %>%
+  # A bar inside each Score cell, so high and low scores jump out as you scroll.
   formatStyle("Score",
     background = styleColorBar(range(sessions$score), "#cde2fb"),
     backgroundSize = "98% 60%", backgroundRepeat = "no-repeat",
@@ -164,13 +168,17 @@ is a balance problem an average would have hidden completely.
 
 ```{r view-2}
 sessions %>%
+  # Order the archetypes by median score, weakest to strongest.
   mutate(archetype = fct_reorder(archetype, score, .fun = median)) %>%
   ggplot(aes(archetype, score, fill = archetype)) +
+  # The violin is the whole distribution. Look at the Sentinel: two humps,
+  # where an average would show you one.
   geom_violin(colour = NA, alpha = 0.85, width = 0.9) +
   geom_boxplot(width = 0.12, fill = "white", colour = ink[["secondary"]],
                outlier.shape = NA, linewidth = 0.4) +
   scale_fill_manual(values = arch_pal) +
   scale_y_continuous(labels = scales::comma) +
+  # Put the finding in the title, so nobody has to work it out.
   labs(
     title    = "Sentinel is bimodal: it either anchors the round or dies in it",
     subtitle = "Score distribution by archetype, 30 sessions each. Box shows median and interquartile range.",
@@ -201,21 +209,25 @@ pretty <- c(accuracy = "Accuracy", mobility = "Mobility",
             survivability = "Survival", objective_control = "Objective",
             support = "Support", awareness = "Awareness")
 
+# One row per archetype per ability, so every ability can sit on the same circle.
 long <- sessions %>%
   select(archetype, all_of(metrics)) %>%
   pivot_longer(-archetype, names_to = "metric", values_to = "value") %>%
   mutate(metric = factor(pretty[metric], levels = unname(pretty)))
 
+# The average for each archetype, and for everyone, to draw against.
 by_arch <- long %>% group_by(archetype, metric) %>% summarise(value = mean(value))
 overall <- long %>% group_by(metric) %>% summarise(value = mean(value))
 
 ggplot() +
+  # Grey outline: the all-player average. Coloured shape: one archetype.
   geom_polygon(data = overall, aes(metric, value, group = 1),
                fill = NA, colour = ink[["grid"]], linewidth = 0.8) +
   geom_polygon(data = by_arch,
                aes(metric, value, group = archetype, fill = archetype, colour = archetype),
                alpha = 0.35, linewidth = 0.9) +
   geom_point(data = by_arch, aes(metric, value, colour = archetype), size = 1.8) +
+  # coord_polar() bends the axis into a circle. That is all a radar chart is.
   coord_polar(clip = "off") +
   facet_wrap(~archetype, nrow = 1) +
   scale_fill_manual(values = arch_pal) +
@@ -262,7 +274,9 @@ nice <- c(accuracy = "Accuracy", mobility = "Mobility", survivability = "Surviva
           distance_m = "Distance", kills = "Kills", deaths = "Deaths",
           objectives = "Objectives", score = "Score")
 
+# Every measure correlated with every other one.
 cm <- cor(sessions[vars])
+# Sit measures that move together next to each other, so the clusters stand out.
 ord <- hclust(as.dist(1 - cm))$order
 lv  <- nice[vars[ord]]
 
@@ -270,10 +284,11 @@ cm_long <- as.data.frame(as.table(cm)) %>%
   setNames(c("a", "b", "r")) %>%
   mutate(a = factor(nice[as.character(a)], levels = lv),
          b = factor(nice[as.character(b)], levels = lv)) %>%
-  filter(as.integer(a) < as.integer(b))   # lower triangle only; the diagonal is always 1
+  filter(as.integer(a) < as.integer(b))   # keep one half: the other is a mirror image
 
 ggplot(cm_long, aes(a, b, fill = r)) +
   geom_tile(colour = "white", linewidth = 1.2) +
+  # Print each value. White text on the dark squares, so it stays readable.
   geom_text(aes(label = sprintf("%.2f", r),
                 colour = abs(r) > 0.55), size = 2.9) +
   scale_fill_gradient2(low = "#e34948", mid = "#f0efec", high = "#2a78d6",
@@ -312,8 +327,10 @@ curve shows something else — one specific, fixable moment where a fifth of the
 Build A testers gave up.
 
 ```{r view-5, fig.height=5}
+# Check every quarter-minute of the 32-minute session.
 minutes <- seq(0, 32, by = 0.25)
 
+# For each build and each moment: what share of sessions were still going?
 retention <- map_dfr(c("A", "B"), function(b) {
   lengths <- sessions %>% filter(build == b) %>% pull(session_minutes)
   tibble(build = b, minute = minutes,
@@ -323,11 +340,13 @@ retention <- map_dfr(c("A", "B"), function(b) {
 ends <- retention %>% group_by(build) %>% slice_max(minute, n = 1)
 
 ggplot(retention, aes(minute, pct, colour = build)) +
+  # Shade minutes 11 to 13. That's where Build A loses its players.
   annotate("rect", xmin = 11, xmax = 13, ymin = 0, ymax = 100,
            fill = ink[["grid"]], alpha = 0.55) +
   annotate("text", x = 13.4, y = 24, hjust = 0, size = 3.2,
            colour = ink[["secondary"]],
            label = "88% to 68% in two minutes,\nalmost all frustration quits") +
+  # Steps, not a smooth line: players leave at a moment, not gradually.
   geom_step(linewidth = 1.1, direction = "hv") +
   geom_text(data = ends, aes(label = paste0("Build ", build)),
             hjust = 0, nudge_x = 0.6, size = 3.6, fontface = "bold",
@@ -373,14 +392,14 @@ item_label <- c(
 
 resp_label <- c("Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree")
 
+# One row per answer, then the share of each rating for every question.
 props <- survey %>%
   pivot_longer(-session_id, names_to = "item", values_to = "resp") %>%
   count(item, resp) %>%
   complete(item, resp = 1:5, fill = list(n = 0)) %>%
   group_by(item) %>% mutate(pct = 100 * n / sum(n)) %>% ungroup()
 
-# Net agreement decides the order; the neutral block is split so the bars
-# pivot on a true zero rather than on the left edge.
+# Sort the questions by net agreement, agree minus disagree. Worst at the bottom.
 ranking <- props %>%
   group_by(item) %>%
   summarise(net = sum(pct[resp >= 4]) - sum(pct[resp <= 2])) %>%
@@ -388,6 +407,7 @@ ranking <- props %>%
 
 item_levels <- unname(item_label[ranking$item])
 
+# Split the neutral answers in half, so each bar balances on zero.
 as_bars <- function(d, sign) {
   d %>%
     mutate(signed = sign * if_else(resp == 3, pct / 2, pct),
@@ -395,8 +415,7 @@ as_bars <- function(d, sign) {
            resp   = factor(resp_label[resp], levels = resp_label))
 }
 
-# The two sides stack in opposite directions, so that the strongest opinion
-# always sits furthest from the centre line.
+# Disagreement goes left, agreement goes right, strongest answers on the outside.
 bars_neg <- props %>% filter(resp <= 3) %>% as_bars(-1)
 bars_pos <- props %>% filter(resp >= 3) %>% as_bars(+1)
 
@@ -415,8 +434,8 @@ ggplot(mapping = aes(signed, item, fill = resp)) +
                                "Neutral"           = "#d9d8d4",
                                "Agree"             = "#9ec5f4",
                                "Strongly agree"    = "#2a78d6")) +
-  # coord_cartesian zooms; scale limits would DROP the segments that fall
-  # outside them, silently truncating the longest bars.
+  # Zoom with coord_cartesian(), not scale limits. Limits quietly drop any
+  # bar that pokes past the edge.
   scale_x_continuous(breaks = seq(-60, 90, 30),
                      labels = function(x) paste0(abs(x), "%")) +
   coord_cartesian(xlim = c(-68, 112)) +
@@ -447,8 +466,10 @@ The trace shows it. The table shows why the FPS readout missed it: the two build
 are separated by 0.05 ms at the mean and by 20 ms at the 99th percentile.
 
 ```{r view-7, fig.height=4.2}
+# The first 400 frames of the Corridor, one panel per build.
 ggplot(frame_times %>% filter(zone == "Corridor", frame <= 400),
        aes(frame, ms, colour = build)) +
+  # Dashed line: the 60 FPS budget, 16.7 ms a frame.
   geom_hline(yintercept = 1000 / 60, linetype = "22",
              colour = ink[["secondary"]], linewidth = 0.4) +
   geom_line(linewidth = 0.45) +
@@ -466,6 +487,7 @@ ggplot(frame_times %>% filter(zone == "Corridor", frame <= 400),
 ```
 
 ```{r view-7-table}
+# The usual summaries side by side. Watch which columns finally tell the builds apart.
 frame_times %>%
   group_by(Build = build) %>%
   summarise(
@@ -501,7 +523,7 @@ Three readings, all of them actionable:
   paying for and not using.
 
 ```{r view-8, fig.height=6}
-# Time spent per 2m x 2m cell, for the background field.
+# How long players spent in each 2 m square of the map: the heat underneath.
 gx_seq <- seq(1, 59, 2)
 gy_seq <- seq(1, 39, 2)
 
@@ -513,24 +535,26 @@ field <- positions %>%
 
 z <- matrix(field$n, nrow = length(gy_seq), ncol = length(gx_seq), byrow = TRUE)
 
-# Level geometry drawn as rectangles behind the data.
+# The level's walls and raised areas, drawn as rectangles on top.
 shapes <- pmap(level, function(block, xmin, xmax, ymin, ymax, kind) {
   list(type = "rect", x0 = xmin, x1 = xmax, y0 = ymin, y1 = ymax,
        fillcolor = if (kind == "elevated") "#6f6e6a" else "#2f2e2c",
-       # The gantry is walkable, so it stays translucent and the dwell field
-       # underneath it still reads.
+       # The gantry is walkable, so keep it see-through: you can still
+       # read the heat underneath.
        opacity = if (kind == "elevated") 0.35 else 0.92,
        line = list(width = 0), layer = "above")
 })
 
-# The animated layer starts at the first second where all three states occur, so
-# that the legend is complete from the first frame.
+# Start the animation at the first second where all three player states
+# appear, so the legend is complete from the start.
 first_full <- positions %>%
   group_by(t) %>% summarise(k = n_distinct(state)) %>%
   filter(k == 3) %>% slice_min(t) %>% pull(t)
 
+# Every death, to mark with a red cross.
 deaths <- positions %>% filter(event == "death")
 
+# plotly makes it interactive: hover for detail, press play to watch the match.
 plot_ly(height = 560) %>%
   add_heatmap(
     x = gx_seq, y = gy_seq, z = z, zmin = 0, zmax = 60,
@@ -581,6 +605,7 @@ shuttles up and down the same corridor for the whole match. P01 and P02 manage 5
 and 35 m between them across three minutes.
 
 ```{r view-8b-overview, fig.width=9, fig.height=4.6}
+# Walls and the raised gantry, split so they can be shaded differently.
 walls <- level %>% filter(kind != "elevated")
 raised <- level %>% filter(kind == "elevated")
 
@@ -589,7 +614,9 @@ ggplot() +
             fill = "#2f2e2c", alpha = 0.9) +
   geom_rect(data = raised, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
             fill = "#6f6e6a", alpha = 0.55) +
+  # Each player's route, darkening as the match goes on.
   geom_path(data = positions, aes(x, y, colour = t), linewidth = 0.7) +
+  # One small panel per player, so you can compare routes side by side.
   facet_wrap(~player_id, nrow = 2) +
   scale_colour_gradient(low = "#cde2fb", high = "#104281",
                         name = "Time (s)", breaks = c(1, 90, 180)) +
@@ -614,12 +641,13 @@ second this player spent holding position, so you can see where they will stop
 before they get there.
 
 ```{r view-8b-animated, fig.height=6}
+# Follow one player. Change this to any ID from P01 to P08.
 focus_player <- "P06"
 
 path <- positions %>% filter(player_id == focus_player) %>% arrange(t)
 
-# For each second, every position up to that second: this is what makes the
-# trail grow rather than jump.
+# For each second, every position so far. That's what makes the trail grow
+# instead of jumping.
 trail <- map_dfr(path$t, function(k) path %>% filter(t <= k) %>% mutate(f = k))
 
 plot_ly(height = 560) %>%
@@ -635,6 +663,7 @@ plot_ly(height = 560) %>%
                   line = list(width = 2.5)),
     hoverinfo = "text", text = "start"
   ) %>%
+  # The growing trail, then the player's current position on top.
   add_paths(
     data = trail, x = ~x, y = ~y, frame = ~f,
     line = list(color = pal[["blue"]], width = 2.5),

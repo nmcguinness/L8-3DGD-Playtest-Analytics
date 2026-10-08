@@ -1,0 +1,177 @@
+---
+title: "Regression"
+subtitle: "The line through a scatterplot: slope, R² and residuals"
+---
+
+```{r}
+#| label: setup
+#| include: false
+source("notes/_setup.R")
+library(ggplot2)
+
+aw_cohort <- round(tapply(sessions$awareness, sessions$cohort, mean), 1)
+r_aw  <- cor(sessions$awareness, sessions$score)
+fit   <- lm(score ~ awareness, data = sessions)
+b0    <- unname(coef(fit)[1]); b1 <- unname(coef(fit)[2])
+b1_ci <- confint(fit)["awareness", ]
+r2    <- summary(fit)$r.squared
+res   <- resid(fit)
+worst <- sessions$archetype[order(res)][1:7]
+stopifnot(sum(worst == "Sentinel") >= 5,
+          isTRUE(all.equal(r2, r_aw^2)))
+```
+
+> **Going further.** This page extends
+> [Relationships and Correlation](../notes/10-relationships-and-correlation.qmd).
+> Nothing here is needed for the labs or the assessment. Read it if your team wants
+> to say *how much* one measure changes with another, or if a residual might be
+> hiding your finding.
+
+---
+
+## Simple Linear Regression
+
+Correlation says how tightly two variables follow a line. **Simple linear
+regression** finds that line, and so answers a more useful question: *how much does
+one variable change, on average, for each unit of the other?*
+
+```{r}
+#| label: lm
+fit <- lm(score ~ awareness, data = sessions)
+coef(fit)
+confint(fit)
+```
+
+`lm()` stands for *linear model*. `score ~ awareness` reads "score as explained by
+awareness", the same formula style as `boxplot(y ~ group)`. The result describes a
+straight line:
+
+$$\text{predicted score} = `r round(b0)` + `r round(b1, 1)` \times \text{awareness}$$
+
+**The slope** is the number that matters: each extra point of awareness goes with
+`r round(b1, 1)` more points of score, on average (95% CI
+`r round(b1_ci[1], 1)` to `r round(b1_ci[2], 1)`). It is in the units of the
+question, so a designer can use it: the
+`r round(aw_cohort[["Veteran"]] - aw_cohort[["Novice"]])`-point gap in average
+awareness between Novices and Veterans goes with about
+`r round((aw_cohort[["Veteran"]] - aw_cohort[["Novice"]]) * b1, -1)` points of
+score.
+
+**The intercept** is the predicted score at awareness zero: `r round(b0)`. No player
+has an awareness anywhere near zero (the lowest is `r min(sessions$awareness)`), so
+it means nothing on its own; it just anchors the line.
+
+---
+
+## Residuals
+
+```{r}
+#| label: fig-regression
+#| fig-cap: "Score against awareness, with the regression line. Each grey segment is a residual; the sessions furthest below the line are mostly Sentinel collapses."
+#| fig-alt: "Scatterplot of score against awareness with a rising red line. Short grey vertical segments join each point to the line. A handful of points sit far below the line at the bottom, with long segments, coloured differently from the rest."
+#| fig-height: 4.2
+sessions$predicted <- fitted(fit)
+sessions$residual  <- resid(fit)
+ggplot(sessions, aes(awareness, score)) +
+  geom_segment(aes(xend = awareness, yend = predicted), colour = "grey75") +
+  geom_point(aes(colour = residual < -600), size = 2) +
+  geom_smooth(method = "lm", se = FALSE, colour = pal$highlight) +
+  scale_colour_manual(values = c(`FALSE` = pal$line, `TRUE` = "#8a5a9c"),
+                      labels = c("Other sessions", "Residual below −600"), name = NULL) +
+  labs(x = "Awareness rating", y = "Score") +
+  theme(legend.position = "bottom")
+```
+
+**A residual** is the gap between what actually happened and what the line
+predicted: actual minus predicted. The line is chosen to make the residuals, taken
+together, as small as possible (it minimises the sum of their squares, hence
+"least squares"). `geom_smooth(method = "lm")` draws the same line.
+
+**Residuals are where the findings hide.** The seven sessions furthest *below* the
+line, the ones that scored far less than their awareness predicted, include
+`r sum(worst == "Sentinel")` Sentinels. The regression has found the Sentinel
+collapses from [Describing Variables](../notes/04-describing-variables.qmd#worked-example)
+on its own: those games are not explained by awareness at all.
+
+```{r}
+#| label: worst-residuals
+sessions[order(resid(fit))[1:7], c("session_id", "archetype", "awareness", "score")]
+```
+
+---
+
+## R²
+
+**R²**, the **coefficient of determination**, is the share of the variation in
+score that the line accounts for: `r round(r2, 2)`, or `r pct_fmt(r2)`. For a simple
+regression it is exactly the correlation squared
+(`r round(r_aw, 2)`² = `r round(r2, 2)`). Awareness accounts for about a third of the
+differences in score; the other two thirds are everything else.
+
+---
+
+## Predicting, Carefully
+
+The line predicts a score of about
+`r round(predict(fit, data.frame(awareness = 80)), -1)` for awareness 80. That
+prediction is an average for players like that, not a promise for any one player,
+whose residual could easily be `r round(sd(res), -1)` points either way. And
+**never predict outside the data**: the line knows nothing about awareness below
+`r min(sessions$awareness)` or above `r max(sessions$awareness)`. Using it there is
+**extrapolation**, and the straight line may not continue.
+
+**A regression is still a correlation.** A steep, significant slope says awareness
+and score move together, by this much. It does not say that raising a player's
+awareness would raise their score. Every warning about confounding applies
+unchanged.
+
+---
+
+## Reading the Full Summary
+
+`summary(fit)` prints everything at once:
+
+```{r}
+#| label: lm-summary
+summary(fit)
+```
+
+The `awareness` row of the **Coefficients** table gives the slope, its standard
+error and a p-value testing whether the true slope could be zero. **Multiple
+R-squared** is R². Regression with several predictors at once (multiple
+regression) can adjust for a confounder such as cohort, but it is beyond this
+course, and adjusting for the confounders you measured does not protect you from
+the ones you did not.
+
+---
+
+## Try It
+
+1. Fit a regression of `score` on `deaths`. Interpret the slope in one sentence a
+   designer could use, and compare its R² with awareness's.
+2. A designer reads the awareness regression and says: "If we raise a Novice's
+   awareness by 20 points, they will score about `r round(20 * b1, -1)` more." Give
+   two reasons to doubt it.
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show answers"}
+**1.**
+
+```{r}
+#| label: try-deaths
+fit_d <- lm(score ~ deaths, data = sessions)
+coef(fit_d)
+summary(fit_d)$r.squared
+```
+
+Each extra death goes with about
+`r abs(round(coef(lm(score ~ deaths, data = sessions))[2]))` fewer points of score,
+on average. R² is `r round(summary(lm(score ~ deaths, data = sessions))$r.squared, 2)`,
+a little below awareness's `r round(r2, 2)`. The same caution applies: dying more
+and scoring less may both come from being outplayed.
+
+**2.** First, the slope is an association across players, not the effect of
+changing one player: awareness ratings may reflect skill rather than cause it.
+Second, it is an average: individual players scatter around the line by about
+`r round(sd(res), -1)` points. A third reason, if the Novice starts low: their
+raised awareness may still be in a range where the data is thin.
+:::

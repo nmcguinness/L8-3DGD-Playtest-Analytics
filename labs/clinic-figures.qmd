@@ -1,0 +1,309 @@
+---
+title: "Lab 03 — A Figure for Your Report"
+subtitle: "Stage 3A clinic: ggplot2 on Tidebreak, then on your own playtest data"
+---
+
+::: {.callout-note appearance="simple" icon="false" title="Get the files"}
+- **Data:** [tidebreak_sessions.csv](../data/tidebreak_sessions.csv){download="tidebreak_sessions.csv"}. Save them in the `data/` folder of your project.
+:::
+
+# Overview
+
+This is a clinic, not a full lab. It is short, and it ends with your team's own
+data. The aim is one thing:
+
+> **One figure from your own playtest data that you would put in the final
+> report.**
+
+Part A is a warm-up on *Tidebreak*: rebuild two plots you already know in
+`ggplot2`, then build and fix the kind of figure a report needs. Part B is your
+project. Bring your team's latest playtest export, in your project's `data/`
+folder.
+
+| Function | What it does |
+| :- | :- |
+| `ggplot()`, `aes()` | Start a figure: the data, and which column drives which axis or colour |
+| `geom_histogram()`, `geom_bar()`, `geom_boxplot()`, `geom_point()` | The marks: bars, boxes, points |
+| `facet_wrap()` | One panel per group, on shared axes |
+| `labs()` | Title, axis and legend labels |
+
+# Learning outcomes
+
+By the end of this clinic you can:
+
+- rebuild a base R plot in `ggplot2`, and point to the data, mapping and geometry;
+- split a figure by group in the way that makes the intended comparison easiest;
+- tell mapping an aesthetic from setting one, and fix a figure that confuses them;
+- produce one report-quality figure from your own playtest data, with a caption
+  that states the takeaway.
+
+# Ground rules
+
+- One figure, one question. Write the question before you write the code.
+- Look with base R first if you need to; build the report figure in `ggplot2`.
+- Type the code. Open the solution **after** your attempt.
+- Check your own figure against the list in
+  [A Figure for Your Report](../notes/09-visualising-with-ggplot2.qmd#a-figure-for-your-report).
+
+# Setup (run this first)
+
+```{r}
+#| label: setup
+library(readr)
+library(dplyr)
+library(ggplot2)
+
+sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+nrow(sessions)
+```
+
+If `library(ggplot2)` fails, run `install.packages("ggplot2")` once in the Console.
+
+---
+
+# Part A — Warm-up on Tidebreak
+
+Notes for this part: [Visualising with ggplot2](../notes/09-visualising-with-ggplot2.qmd).
+
+## Exercise 01 — A histogram, rebuilt `[Do]`
+
+Redraw Lab 01's histogram of `score` in `ggplot2`, with bins 100 points wide and a
+title and axis labels a reader could follow.
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
+
+```{r}
+#| label: ex01
+#| fig-alt: "ggplot2 histogram of score per session: most sessions between 1,200 and 1,800, with a small separate group near 500 to 700."
+ggplot(sessions, aes(x = score)) +
+  geom_histogram(binwidth = 100, fill = "grey60", colour = "white") +
+  labs(title = "Score per session", x = "Score", y = "Sessions")
+```
+
+`binwidth` is in the units of the variable: 100 points of score per bar.
+:::
+
+**Write 1 sentence:** point to the data, the mapping and the geometry in your code.
+
+## Exercise 02 — A boxplot, rebuilt `[Do]`
+
+Redraw Lab 01's boxplot of `score` by `archetype` in `ggplot2`, with labels.
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
+
+```{r}
+#| label: ex02
+#| fig-alt: "ggplot2 boxplots of score by archetype. Sentinel's box is much taller than the others, reaching down to about 1,000."
+ggplot(sessions, aes(x = archetype, y = score)) +
+  geom_boxplot(fill = "grey85") +
+  labs(title = "Score by archetype", x = NULL, y = "Score")
+```
+
+Group on x, numeric on y: the mapping replaces base R's `score ~ archetype`.
+:::
+
+**Write 2 sentences:** the Sentinel box is the widest. Draw the Sentinel scores as a
+histogram and say what the box was hiding.
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show answer"}
+
+```{r}
+#| label: ex02-check
+#| fig-alt: "Histogram of Sentinel scores only: a group of low scores between about 500 and 700, an empty gap, then the main group between 1,200 and 1,900."
+sessions |>
+  filter(archetype == "Sentinel") |>
+  ggplot(aes(x = score)) +
+  geom_histogram(binwidth = 100, fill = "grey60", colour = "white") +
+  labs(title = "Sentinel score", x = "Score", y = "Sessions")
+```
+
+Two humps, not one wide spread: Sentinels either anchor the round or collapse
+early. A boxplot summarises one distribution and cannot show two. Note that a pipe
+can feed straight into `ggplot()`.
+:::
+
+## Exercise 03 — The navigation figure `[Apply]`
+
+Build a report figure for the navigation result: the distribution of `wrong_turns`
+in each build, in panels stacked so the x axes line up, labelled for a level
+designer.
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
+
+```{r}
+#| label: ex03
+#| fig-alt: "Faceted histograms of wrong turns per session. Build A, above, peaks around 9; Build B, below, sits around 3 to 7."
+#| fig-height: 5
+ggplot(sessions, aes(x = wrong_turns)) +
+  geom_histogram(binwidth = 1, fill = "grey60", colour = "white") +
+  facet_wrap(~ build, ncol = 1) +
+  labs(title = "Wrong turns per session, by build",
+       x = "Wrong turns", y = "Sessions")
+```
+
+`facet_wrap(~ build, ncol = 1)` gives one panel per build on a shared x axis, so
+the shift between builds is the first thing the reader sees. The fill is set, not
+mapped, because the panel labels already name the builds.
+:::
+
+**Write 2 sentences:** what does this figure show that the two means from Lab 02
+did not?
+
+## Exercise 04 — Fix this figure `[Apply]`
+
+A teammate made this figure for the report to show how sessions ended in each
+build. Find three things wrong with it, then fix them.
+
+```{r}
+#| label: ex04-bad
+#| fig-alt: "A stacked bar chart of quit reasons with build stacked inside each bar, bars filled in a single salmon colour with a legend reading grey, and raw column names as axis labels."
+ggplot(sessions, aes(x = quit_reason)) +
+  geom_bar(aes(fill = "grey")) +
+  labs(x = "quit_reason")
+```
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
+
+```{r}
+#| label: ex04
+#| fig-alt: "Two panels side by side, one per build, of horizontal bars counting how sessions ended. Build A's frustrated bar is about four times as long as Build B's."
+ggplot(sessions, aes(y = quit_reason)) +
+  geom_bar(fill = "grey60") +
+  facet_wrap(~ build) +
+  labs(title = "How sessions ended, by build",
+       x = "Sessions", y = NULL)
+```
+
+Three problems, three fixes:
+
+1. **It does not split by build**, so it cannot answer the question it is for.
+   `facet_wrap(~ build)` puts the builds side by side.
+2. **`fill = "grey"` is inside `aes()`**, so `ggplot2` treats "grey" as data: the
+   bars come out in a default colour, with a meaningless legend. A fixed colour
+   goes outside `aes()`.
+3. **The labels are for R, not for a reader.** There is no title and the axis says
+   `quit_reason`. `y = NULL` removes a label that would only repeat the category
+   names, and putting the categories on `y` makes the long names readable.
+:::
+
+**Write 1 sentence:** which of the three problems would most mislead a producer who
+glanced at the figure for five seconds?
+
+## Exercise 05 — Which figure leads? `[Decide]`
+
+The report has room for one figure about enjoyment. Draw two candidates: a boxplot
+of `enjoyment` by build, and a bar chart of `enjoyment` faceted by build. Decide
+which one goes in the report.
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show solution"}
+
+```{r}
+#| label: ex05a
+#| fig-alt: "Two boxplots of enjoyment rating by build, almost identical, both with medians at 4."
+ggplot(sessions, aes(x = build, y = enjoyment)) +
+  geom_boxplot(fill = "grey85") +
+  labs(title = "Enjoyment by build", x = "Build", y = "Enjoyment (1-7)")
+```
+
+```{r}
+#| label: ex05b
+#| fig-alt: "Two faceted bar charts of enjoyment rating, Build A above and Build B below, with very similar shapes peaking at 4."
+ggplot(sessions, aes(x = enjoyment)) +
+  geom_bar(fill = "grey60") +
+  facet_wrap(~ build, ncol = 1) +
+  labs(title = "Enjoyment rating, by build", x = "Enjoyment (1-7)", y = "Sessions")
+```
+
+**One defensible answer: the faceted bar chart.** Enjoyment is a 1–7 rating, so it
+has only seven possible values. The bars show exactly how many players chose each
+one, and the two builds' shapes can be compared directly. The boxplot reduces a
+seven-value rating to five numbers, several of which land on the same value, and
+looks more precise than the data is.
+
+**What makes it defensible.** It matches the geometry to the variable type
+([rule 3](../notes/ten-rules.qmd)) and to the comparison the reader is meant to
+make.
+
+**What would make it indefensible.** Choosing the boxplot because it looks more
+"statistical", or putting both in the report so the reader has to work out which
+one matters.
+:::
+
+**Write 2 sentences:** write the caption for the figure you chose. State the
+takeaway, not the name of the chart.
+
+---
+
+# Part B — Your project `[Decide]`
+
+This is the part that matters. Allow at least half the clinic for it.
+
+Work through these steps on your team's own playtest data. Do it in a Quarto
+document in your project, so the figure is already in the format the report needs.
+
+1. **Write the question** the figure will answer, in one sentence a designer would
+   recognise.
+2. **Load your data** with `read_csv()` and look at it with `glimpse()`. Check the
+   types of the columns you need ([rule 3](../notes/ten-rules.qmd)).
+3. **Look first, quickly.** One `hist()` or `boxplot()` to see the shape before you
+   design anything.
+4. **Draft the figure** in `ggplot2`: data, mapping, geometry.
+5. **Split it for the comparison you mean**: facet or dodge by build, level or
+   player group.
+6. **Label it for a reader**: title, axis labels with units, n somewhere visible.
+7. **Put it in a chunk with a caption** that states the takeaway, and render the
+   document.
+
+````markdown
+```{{r}}
+#| label: fig-our-finding
+#| fig-cap: "The takeaway, as a sentence, with n."
+#| echo: false
+ggplot(our_data, aes(x = ...)) +
+  geom_...() +
+  labs(title = "...", x = "...", y = "...")
+```
+````
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show answer"}
+There is no single right figure: it depends on your game and your question. Check
+yours against this list before you show it to your team.
+
+- [ ] I can say the question in one sentence, and the figure makes that comparison
+  the easiest thing to see.
+- [ ] The geometry suits the variable types.
+- [ ] Groups are faceted or dodged, not stacked, when the groups are the point.
+- [ ] Every colour carries information; styling colours are set outside `aes()`.
+- [ ] Title, axis labels and units are in words a reader understands; no raw
+  column names.
+- [ ] n is visible.
+- [ ] The caption states the takeaway.
+- [ ] The document renders.
+
+Exercise 03 is a worked version of the whole process on *Tidebreak*.
+:::
+
+**Write 3–4 sentences**, using **What → Pattern → Meaning → Action**, for the
+finding your figure shows:
+
+- **What** did you measure, on whom, and how many?
+- **Pattern**: what does the figure show?
+- **Meaning**: what might that mean for the player?
+- **Action**: what will the team change, keep or test next?
+
+---
+
+# Appendix — Common ggplot2 errors
+
+::: {.callout-warning collapse="true" title="Show the error guide"}
+
+| Message or symptom | What it usually means |
+| :- | :- |
+| `could not find function "ggplot"` | You have not run `library(ggplot2)` |
+| ``Cannot use `+` with a single argument`` | A line starts with `+`. Move it to the end of the line above |
+| `object 'build' not found` | A column name used outside `aes()` |
+| A legend that names a colour, such as "grey" | A fixed colour inside `aes()`. Move it outside |
+| A smooth colour gradient where you wanted two colours | You mapped a number to colour. Make it a category first |
+| `stat_bin() using bins = 30` message | You did not set `binwidth`. Choose one in the variable's units |
+
+:::

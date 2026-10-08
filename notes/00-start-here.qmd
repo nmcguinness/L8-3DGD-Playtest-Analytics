@@ -1,116 +1,83 @@
 ---
 title: "Start Here"
-subtitle: "How these notes work, and the route through them"
+subtitle: "How the course works, and the route through it"
 ---
 
 {{< include _workflow.qmd >}}
 
-> These notes teach you to analyse playtest data in R: to plan a playtest, describe
-> what happened, decide whether a difference between builds is real, and write it up
-> as a finding a designer can act on. They assume **no statistics and no R**. They
-> do assume you build games, and every example comes from one playtest of one game,
-> *Tidebreak*. Read this page first; it takes five minutes.
+> This course teaches you to use playtest evidence to make better design decisions.
+> You will plan a playtest, describe what happened, decide whether a change worked,
+> and write it up as a finding your team can act on. It assumes **no statistics and
+> no R**. It does assume you build games. Read this page first; it takes five
+> minutes.
 
 ## What You Are Learning
 
-Three weeks, one question at a time:
+You are not training to be a statistician. You are learning to answer four
+questions about your own game, with evidence instead of opinion:
 
-- **Week 1: what happened?** Plan a playtest, read the data into R, and describe it
-  honestly: centre, spread, shape, and the players at the edges.
-- **Week 2: is it real?** Clean the raw export, then decide whether a difference
-  between two builds is more than chance, and whether it is big enough to matter.
-- **Week 3: what does it mean?** Relate variables to each other without confusing
-  association with cause, draw figures for other people, and write the report.
-
-Every analysis in these notes follows the same **analytical workflow**. The strip at
-the top of each page shows where that page sits in it:
-
-```{mermaid}
-%%| label: fig-workflow
-%%| fig-cap: "The analytical workflow. Every notes page covers one or two of these steps."
-flowchart LR
-  A["Ask a design<br/>question"] --> B["Collect<br/>data"]
-  B --> C["Inspect<br/>and clean"]
-  C --> D["Visualise"]
-  D --> E["Describe"]
-  E --> F["Quantify<br/>uncertainty"]
-  F --> G["Test a<br/>hypothesis"]
-  G --> H["Consider<br/>confounds"]
-  H --> I["Interpret"]
-  I --> J["Report"]
-  classDef s fill:#f8f9fa,stroke:#6c757d,color:#212529
-  class A,B,C,D,E,F,G,H,I,J s
-```
-
-The R work inside it follows the **R analysis cycle**. The middle is a loop, not a
-line: you transform, look, model and look again.
-
-```{mermaid}
-%%| label: fig-r-cycle
-%%| fig-cap: "The R analysis cycle. Import and tidy once; transform, visualise and model in a loop; communicate at the end."
-flowchart LR
-  I["Import<br/>read_csv()"] --> T["Tidy<br/>pivot_longer()"]
-  T --> X["Transform<br/>filter(), mutate()"]
-  X --> V["Visualise<br/>hist(), ggplot()"]
-  V --> M["Model<br/>t.test(), lm()"]
-  M --> X
-  V --> X
-  M --> C["Communicate<br/>Quarto report"]
-  classDef s fill:#f8f9fa,stroke:#6c757d,color:#212529
-  classDef e fill:#fbeaea,stroke:#b22222,color:#212529
-  class I,T,X,V,M s
-  class C e
-```
-
----
-
-## The Notes
-
-Twelve pages in six parts. Read them in order: each builds on the ones before.
-
-| Part | Notes | The question it answers |
+| Question | What you do | Where you learn it |
 | :- | :- | :- |
-| **0 Start here** | This page; [Ten Rules](ten-rules.qmd) | How does this work? |
-| **1 Foundations** | [Planning a Playtest](01-planning-a-playtest.qmd) | How do I get data worth analysing? |
-| | [R from First Principles](02-r-first-principles.qmd) | How do I read and write R? |
-| | [Data, Variables and Types](03-data-and-types.qmd) | What kind of number am I holding? |
-| **2 Describing** | [Describing Variables](04-describing-variables.qmd) | What is typical, and how much do players differ? |
-| | [Distributions and Shape](05-distributions-and-shape.qmd) | What does the average hide? |
-| **3 Preparing** | [Cleaning and Transforming](06-cleaning-and-transforming.qmd) | How do I get raw data ready, without changing the answer? |
-| **4 Comparing** | [From Sample to Population](07-sample-to-population.qmd) | How far would the numbers move in another playtest? |
-| | [Comparing Groups](08-comparing-groups.qmd) | Is a difference real, and does it matter? |
-| **5 Relationships** | [Visualising with ggplot2](09-visualising-with-ggplot2.qmd) | How do I draw a figure for someone else? |
-| | [Relationships, Correlation and Regression](10-relationships-and-regression.qmd) | When two things move together, what does it mean? |
-| **6 Communicating** | [Interpreting and Reporting Evidence](11-reporting-evidence.qmd) | What do I tell the team? |
+| **What happened?** | Clean the data, describe it, look at it | Stage 1 |
+| **Is the pattern credible?** | Compare builds or groups; relate one measure to another | Stages 2 and 3 |
+| **What does it mean for the game?** | Interpret the result in terms of the player's experience | every stage |
+| **What should we do next?** | Recommend a change, a fix, or the next test | every stage, written up in Stage 4 |
 
-**The [Ten Rules](ten-rules.qmd) are the spine.** Every notes page and every lab
-points back to at least one of them by number. When a lab says "rule 5 again",
-that is the page it means.
+The strip at the top of every notes page is the same idea as a process. Start with
+a question, decide what to measure, collect it, clean it, describe it, compare or
+relate, interpret, act. The highlighted steps are the ones that page covers.
+
+**Start with the question.** Every technique in these notes is here because it
+answers a question a design team actually asks. If you cannot say what question a
+number answers, you do not need the number yet ([rule 2](ten-rules.qmd)).
 
 ---
 
-## The Three-Week Route
+## The Four Stages
 
-Each class is two 90-minute cycles: a framing question, about 30 minutes of
-theory from the notes, a 15-minute demo, then the lab. The notes hold more than one
-theory slot can cover; the class covers each page's core, and the rest is for
-reading afterwards.
+The course runs from October to March, alongside your group project.
 
-| When | In class | Read before or after | Lab | Demo |
-| :- | :- | :- | :- | :- |
-| **Before Week 1** | | [R from First Principles](02-r-first-principles.qmd) | [Lab 00](../labs/setting-up.qmd) | |
-| **Week 1, cycle 1** | [Planning a Playtest](01-planning-a-playtest.qmd), [Data, Variables and Types](03-data-and-types.qmd) | | [Lab 01](../labs/reading-data.qmd) Part A | [Week 1](../demos/week-1.qmd) |
-| **Week 1, cycle 2** | [Describing Variables](04-describing-variables.qmd), [Distributions and Shape](05-distributions-and-shape.qmd) | Going further sections | [Lab 01](../labs/reading-data.qmd) Part B | [Week 1](../demos/week-1.qmd) |
-| **Week 2, cycle 1** | [Cleaning and Transforming](06-cleaning-and-transforming.qmd) | | [Lab 02](../labs/comparing-builds.qmd) Part A | [Week 2](../demos/week-2.qmd) |
-| **Week 2, cycle 2** | [Comparing Groups](08-comparing-groups.qmd), with the simulations from [From Sample to Population](07-sample-to-population.qmd) | [From Sample to Population](07-sample-to-population.qmd) in full | [Lab 02](../labs/comparing-builds.qmd) Part B | [Week 2](../demos/week-2.qmd) |
-| **Week 3, cycle 1** | [Visualising with ggplot2](09-visualising-with-ggplot2.qmd), [Relationships](10-relationships-and-regression.qmd) | The regression section | [Lab 03](../labs/complete-analysis.qmd) Part A | [Week 3](../demos/week-3.qmd) |
-| **Week 3, cycle 2** | [Interpreting and Reporting Evidence](11-reporting-evidence.qmd) | | [Lab 03](../labs/complete-analysis.qmd) Part B | [Week 3](../demos/week-3.qmd) |
+| Stage | Question | When | What it gives you |
+| :- | :- | :- | :- |
+| **1 Foundations** | What happened? | October, one 3-hour class | Plan a playtest, read a dataset into R, describe it, plot it |
+| **2 Comparing Evidence** | Did the change work? | October, one 3-hour class | Clean the raw data, compare two builds, judge whether the difference is real and whether it matters |
+| **3 Relationships & Visual Evidence** | What else does the data tell us? | November to February, short clinics | Report-quality figures with `ggplot2`; how measures relate to each other, on your own project's data |
+| **4 Evidence to Decision** | What should we do, and how do we report it? | March, one workshop | Combine your evidence into findings and recommendations, written up in Quarto |
 
-**Base R first, then the tidyverse.** Weeks 1 and 2 draw every plot with base R
-(`hist()`, `boxplot()`, `plot()`), the quick plots you make while thinking. Week 3
-introduces `ggplot2` for figures other people will read. The same order runs
-through the data handling: `tapply()` before `group_by()`. The reason is in
-[R from First Principles](02-r-first-principles.qmd#base-r-first-then-the-tidyverse).
+Stages 1 and 2 use *Tidebreak*, a playtest dataset built for teaching. By Stage 3
+your team will have its own playtest data, and the clinics work on that.
+
+**For your project:** the final assessment report has the headings Executive
+Summary, Introduction, Methodology, Results, Discussion, Conclusion, References and
+Appendices. Everything in Stages 1–3 produces something that goes under one of them.
+Stage 4 puts it together.
+
+---
+
+## The Route
+
+Stages 1 and 2 are two 90-minute cycles each: a framing question, about 30 minutes
+of theory from the notes, a 15-minute demo, then the lab. The notes hold more than
+the theory slot covers. In class we cover each page's core; the rest is there for
+when you need it.
+
+| When | Notes | Lab | Demo |
+| :- | :- | :- | :- |
+| **Before Stage 1** | [R from First Principles](02-r-first-principles.qmd), with R open | [Lab 00](../labs/setting-up.qmd) | |
+| **Stage 1, cycle 1** | [Planning a Playtest](01-planning-a-playtest.qmd), [Data, Variables and Types](03-data-and-types.qmd) | [Lab 01](../labs/reading-data.qmd) Part A | [Stage 1](../demos/stage-1.qmd) |
+| **Stage 1, cycle 2** | [Describing Variables](04-describing-variables.qmd), [Distributions and Shape](05-distributions-and-shape.qmd) | [Lab 01](../labs/reading-data.qmd) Part B | [Stage 1](../demos/stage-1.qmd) |
+| **Stage 2, cycle 1** | [Cleaning and Transforming](06-cleaning-and-transforming.qmd) | [Lab 02](../labs/comparing-builds.qmd) Part A | [Stage 2](../demos/stage-2.qmd) |
+| **Stage 2, cycle 2** | [From Sample to Population](07-sample-to-population.qmd), [Comparing Groups](08-comparing-groups.qmd) | [Lab 02](../labs/comparing-builds.qmd) Part B | [Stage 2](../demos/stage-2.qmd) |
+| **Stage 3 clinics** | [Visualising with ggplot2](09-visualising-with-ggplot2.qmd), [Relationships and Correlation](10-relationships-and-correlation.qmd) | [Lab 03](../labs/clinic-figures.qmd), [Lab 04](../labs/clinic-relationships.qmd) | [Stage 3](../demos/stage-3.qmd) |
+| **Stage 4 workshop** | [Interpreting and Reporting Evidence](11-reporting-evidence.qmd), [Combining Evidence](12-combining-evidence.qmd) | [Lab 05](../labs/complete-analysis.qmd) | [Stage 4](../demos/stage-4.qmd) |
+
+**The R you will write.** You handle data with the tidyverse: `read_csv()` to load
+it, then `filter()`, `select()`, `group_by()` and `summarise()` joined with the pipe,
+`|>`. In Stages 1 and 2 you plot with base R (`hist()`, `boxplot()`, `plot()`),
+which is quick and good for looking at data while you think. Stage 3 introduces
+`ggplot2`, for figures other people will read. There is one way to do each job.
+Where you will meet other ways in code you find online, the notes say so, and you
+only need to recognise them.
 
 ---
 
@@ -121,32 +88,38 @@ Every notes page has the same shape, so you always know where to look.
 | Part | What it is for |
 | :- | :- |
 | **Opening quote** | What the page is for, and the playtest question running through it |
-| **At a glance** | Time, what to read first, key terms, the R it introduces |
+| **At a glance** | The stage, the time it takes, what to read first, key terms, the R you will write |
 | **Why This Matters** | Why a games team needs the idea at all |
-| **Core sections** | One idea each: a plain-English definition, a figure, the *Tidebreak* example, the R, how you would say it in a report, and the common mistake |
-| **Going further** | Collapsed boxes with extra depth, including "The maths, if you want it". Never needed for the labs |
-| **Quick check** | A collapsed question to test yourself mid-page |
-| **Worked Example** | The page's question answered step by step, usually overturning the obvious answer |
-| **Interpretation Guidance** | What the data shows, what it suggests, and what can legitimately be concluded |
+| **Core sections** | One idea each: what it is and why you need it, a figure, the *Tidebreak* example, the R, how you would say it in a report, and the common mistake |
+| **Worked Example** | The page's question answered step by step, often overturning the obvious answer |
+| **Interpretation Guidance** | What the data shows, what it suggests, and what you can legitimately conclude |
 | **Common Mistakes** | The errors that turn up in real reports |
-| **Practice** | Short exercises with collapsed answers: predict, compute, critique, decide |
+| **Practice** | A few short questions, with the answers in one collapsed box underneath |
 | **Summary and Key Terms** | The page in a few lines, and a glossary for revision |
+
+**Not everything is core.** Sections are marked when they are not:
+
+- No label: **core**. You need to understand this and be able to use it.
+- **Useful when needed**: depends on your game and your data. Read it when your
+  project needs it.
+- **Going further**: depth and background. Interesting, sometimes useful, never
+  required. Collapsed boxes titled "Going further" and "The maths, if you want it"
+  are the same.
 
 **Every number is computed.** Each number in the prose is calculated from the data
 when the page is built, so it cannot be out of date or mistyped. Figures stamped
 *Illustration* use simulated data to show an idea cleanly; everything else is
 *Tidebreak*.
 
-**Code is there to be typed.** Every chunk runs as shown, provided the data sits in
-the `data/` folder of your project. Typing it, rather than copying it, is how it
-sticks.
+**Type the code.** Every chunk runs as shown, provided the data sits in the `data/`
+folder of your project. Typing it, rather than copying it, is how it sticks.
 
 ---
 
 ## The Labs and Reference Pages
 
-**Four labs**: a setup lab, then one lab per week in two parts, matching the
-week's two cycles. Exercises are tagged by what they ask of you:
+**The labs** are where you do the analysis. Each exercise is tagged by what it asks
+of you:
 
 | Tier | What it asks | Time |
 | :- | :- | :- |
@@ -154,33 +127,39 @@ week's two cycles. Exercises are tagged by what they ask of you:
 | `[Apply]` | Combine two or three ideas | 5 minutes |
 | `[Decide]` | A judgement call with no single right answer | 5–8 minutes |
 
-The `[Decide]` exercises are the ones that matter most: anyone can run a t-test, and
-the module is about knowing what the result means. Solutions are in collapsed boxes;
-open them after you have tried, even when your attempt worked.
+Every exercise ends by asking you to write a sentence or two about what the result
+means. That is the part that matters. Anyone can run a t-test; the course is about
+knowing what the result means for the game. Solutions are collapsed under each
+exercise. Open them after you have tried, even when your attempt worked.
 
-**Three reference pages** for looking things up during a lab:
+**The reference pages** are for looking things up during a lab or in your project:
 
-- [Statistics Reference](../reference/reference-statistics.qmd): every term, in
-  plain English, with a *Tidebreak* example and the common mistake
-- [R and Quarto Reference](../reference/r-quarto-reference.qmd): every function,
-  by task
-- [ggplot2 Reference](../reference/reference-ggplot2.qmd): every geometry and
-  option used in Week 3
+- [Statistics Reference](../reference/reference-statistics.qmd): every term in plain
+  English, with an example and the common mistake
+- [R and Quarto Reference](../reference/r-quarto-reference.qmd): every function, by
+  task
+- [ggplot2 Reference](../reference/reference-ggplot2.qmd): the figures you need from
+  Stage 3
+
+**The [Ten Rules](ten-rules.qmd)** are ten things to check every time you read
+playtest data. Pages and labs point to them by number: "rule 5 again" means that
+page.
 
 ---
 
 ## The Game: *Tidebreak*
 
-*Tidebreak* is a fictional four-player top-down arena game. Its playtest produced
-the files every page uses:
+*Tidebreak* is a fictional four-player top-down arena game. Two builds were
+playtested: Build B added signposting to help players find their way. The playtest
+produced the files every page uses:
 
 | File | One row is | Used for |
 | :- | :- | :- |
 | `tidebreak_sessions.csv` | one player in one session | almost everything |
 | `tidebreak_sessions_raw.csv` | the same, as exported, with faults | cleaning |
 | `tidebreak_survey.csv` | one post-session survey | ratings and reporting |
-| `tidebreak_paired.csv` | one player who played both builds | the paired test |
-| `tidebreak_frame_times.csv` | one rendered frame | performance and tails |
+| `tidebreak_paired.csv` | one player who played both builds | the paired comparison |
+| `tidebreak_frame_times.csv` | one rendered frame | performance |
 
 The data is synthetic, but it was built so that a careful analysis finds real
 findings, and several of them contradict the obvious first answer. **That is the
@@ -188,7 +167,7 @@ point.** If a result surprises you, you are probably reading the data correctly.
 
 ---
 
-## Before Week 1
+## Before Stage 1
 
 1. Work through [Lab 00: Setting Up](../labs/setting-up.qmd), and check that the
    test document renders.

@@ -1,0 +1,163 @@
+---
+title: "Stage 3 Demo"
+subtitle: "Figures and relationships, live"
+aliases:
+  - week-3.html
+---
+
+::: {.callout-note appearance="simple" icon="false" title="Get the files"}
+- **Demo code:** [stage-3-demo.qmd](../downloads/stage-3-demo.qmd){download="stage-3-demo.qmd"}, every chunk on this page in one file you can run.
+- **Data:** [tidebreak_sessions.csv](../data/tidebreak_sessions.csv){download="tidebreak_sessions.csv"}, [tidebreak_survey.csv](../data/tidebreak_survey.csv){download="tidebreak_survey.csv"}. Save them in a `data/` folder next to the demo file.
+:::
+
+Two short demos, one per clinic. Demo 1 opens the 3A figures clinic; Demo 2 opens
+the 3B relationships clinic.
+
+## Demo 1 — A figure, one layer at a time (3A)
+
+**Step 1. Data and mapping, no geometry**
+
+```{r}
+#| label: d1-empty
+#| fig-alt: "An empty grey ggplot2 panel with an x axis labelled wrong_turns and no data drawn."
+library(readr)
+library(dplyr)
+library(ggplot2)
+
+sessions <- read_csv("data/tidebreak_sessions.csv", show_col_types = FALSE)
+
+# Data plus mapping gives axes and nothing else: no geometry, no marks.
+ggplot(sessions, aes(x = wrong_turns))
+```
+
+**Step 2. Add a geometry**
+
+```{r}
+#| label: d1-geom
+#| fig-alt: "Default dark grey ggplot2 histogram of wrong turns for all sessions."
+# + adds a layer. binwidth = 1 because wrong turns are whole numbers.
+ggplot(sessions, aes(x = wrong_turns)) +
+  geom_histogram(binwidth = 1)
+```
+
+**Question.** This is correct. Why does it not answer "did Build B help"?
+
+**Step 3. Map a group, and watch it mislead**
+
+```{r}
+#| label: d1-fill
+#| fig-alt: "Histogram of wrong turns with bars filled by build, Build A in red stacked on Build B in teal."
+# fill = build inside aes() is a MAPPING: colour follows the data, legend appears.
+# But histograms stack by default, so Build A floats on top of Build B.
+ggplot(sessions, aes(x = wrong_turns, fill = build)) +
+  geom_histogram(binwidth = 1)
+```
+
+**Step 4. Facet instead, and label it for a reader**
+
+```{r}
+#| label: d1-facet
+#| fig-alt: "Faceted histograms of wrong turns per session, Build A above and Build B below. Build B's sessions sit further to the left."
+#| fig-height: 5
+# One panel per build, stacked so the x axes line up.
+# fill = "grey60" OUTSIDE aes() is SETTING: fixed colour, no legend needed.
+ggplot(sessions, aes(x = wrong_turns)) +
+  geom_histogram(binwidth = 1, fill = "grey60", colour = "white") +
+  facet_wrap(~ build, ncol = 1) +
+  labs(title = "Wrong turns per session, by build",
+       x = "Wrong turns", y = "Sessions")
+```
+
+**Question.** Build B is lower. What else is different about its shape?
+What caption would you write under this in the report?
+
+**Step 5. The mapping bug, on purpose**
+
+```{r}
+#| label: d1-bug
+#| fig-alt: "Scatterplot of score against awareness in which every point is pinkish red and a legend reads colour: blue, the mapping bug."
+# "blue" inside aes() is treated as data: salmon points, and a legend saying "blue".
+ggplot(sessions, aes(x = awareness, y = score)) +
+  geom_point(aes(colour = "blue"))
+```
+
+Move `colour = "blue"` outside `aes()` live, then open your own data. That is the
+rest of the clinic.
+
+---
+
+## Demo 2 — Relationships, and when to distrust them (3B)
+
+**Step 6. The scatterplot, then the number**
+
+```{r}
+#| label: d2-scatter
+#| fig-alt: "Scatterplot of score against awareness rating with a rising black straight-line fit."
+# colour SET outside aes(); geom_smooth(method = "lm") adds a straight-line trend.
+ggplot(sessions, aes(x = awareness, y = score)) +
+  geom_point(colour = "grey40") +
+  geom_smooth(method = "lm", se = FALSE, colour = "black") +
+  labs(title = "Awareness against score", x = "Awareness rating", y = "Score")
+
+cor(sessions$awareness, sessions$score)    # the picture, as one number
+cor(sessions$shots_fired, sessions$score)  # the stat everyone assumes matters
+```
+
+**Question.** So should we buff awareness? Hold the answer until Step 9.
+
+**Step 7. Many at once: the correlation matrix**
+
+```{r}
+#| label: d2-matrix
+# Spearman, because difficulty and enjoyment are 1-7 ratings.
+sessions |>
+  select(deaths, wrong_turns, difficulty, enjoyment, session_minutes) |>
+  cor(method = "spearman") |>
+  round(2)
+```
+
+**Question.** Read the `deaths` row. Which pair goes together most? Which
+measure goes with nothing at all?
+
+**Step 8. Telemetry against self-report**
+
+```{r}
+#| label: d2-nav
+survey <- read_csv("data/tidebreak_survey.csv", show_col_types = FALSE)
+
+joined <- sessions |> left_join(survey, by = "session_id")
+
+# Did players who got lost rate the level as harder to navigate?
+cor(joined$wrong_turns, joined$level_navigable, method = "spearman")
+
+joined |>
+  group_by(build) |>
+  summarise(wrong_turns = mean(wrong_turns), navigable = mean(level_navigable))
+```
+
+**Question.** Build A's players got lost far more, and rated navigation the
+same. What does that say about asking players whether they got lost?
+
+**Step 9. A strong correlation that means the opposite**
+
+```{r}
+#| label: d2-reversal
+#| fig-alt: "Survivability against mobility coloured by archetype. Each archetype has a rising trend line, while the clusters together fall from the top left to the bottom right."
+cor(sessions$mobility, sessions$survivability)   # faster players are more fragile?
+
+# Map colour to archetype: one cloud and one trend line per group.
+ggplot(sessions, aes(x = mobility, y = survivability, colour = archetype)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Mobility rating", y = "Survivability rating", colour = "Archetype")
+
+sessions |>
+  group_by(archetype) |>
+  summarise(r = cor(mobility, survivability))     # the same, within each group
+```
+
+**Question.** The overall correlation is negative; every archetype's line
+goes up. Which one answers "should a Scout lose health as they get faster"?
+Archetype is the confounder. Back to Step 6: what would you need to do before
+buffing awareness? (A test, not a patch.) This is Lab 04, Exercise 06; then open
+your own data.

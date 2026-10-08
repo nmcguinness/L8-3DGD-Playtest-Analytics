@@ -1,0 +1,194 @@
+---
+title: "Testing in Depth"
+subtitle: "Errors and power, many tests at once, Q-Q plots, and a shuffle for any summary"
+---
+
+```{r}
+#| label: setup
+#| include: false
+source("notes/_setup.R")
+
+wt_a <- sessions$wrong_turns[sessions$build == "A"]
+wt_b <- sessions$wrong_turns[sessions$build == "B"]
+
+# Errors and power, by simulation
+pop_wt <- rep(sessions$wrong_turns, times = 1000)
+set.seed(5)
+type1 <- mean(replicate(2000, t.test(sample(pop_wt, 30), sample(pop_wt, 30))$p.value < 0.05))
+power_at <- function(n) {
+  set.seed(n)
+  mean(replicate(2000, t.test(sample(wt_a, n, TRUE), sample(wt_b, n, TRUE))$p.value < 0.05))
+}
+power_tab <- sapply(c(5, 10, 15, 30), power_at)
+pow_fmt   <- function(p) if (p >= 0.995) ">99%" else pct_fmt(p)
+
+# Multiple comparisons
+items  <- names(survey)[-1]
+sv     <- merge(survey, sessions[, c("session_id", "build")])
+item_p <- sapply(items, function(i) t.test(sv[[i]] ~ sv$build)$p.value)
+fwer8  <- 1 - 0.95^length(items)
+
+# A shuffle for the 99th percentile
+p99_gap <- function(ms, g) quantile(ms[g == "B"], 0.99) - quantile(ms[g == "A"], 0.99)
+corr    <- frames[frames$zone == "Corridor", ]
+obs_p99 <- p99_gap(corr$ms, corr$build)
+set.seed(9)
+shuf_p99 <- replicate(2000, p99_gap(corr$ms, sample(corr$build)))
+
+stopifnot(type1 > 0.03, type1 < 0.07,
+          all(diff(power_tab) > 0), power_tab[1] < 0.5,
+          sum(item_p < 0.05) == 1, names(which.min(item_p)) == "objective_clear",
+          item_p[["objective_clear"]] < 0.05 / length(items),
+          max(abs(shuf_p99)) < abs(obs_p99))
+```
+
+> **Going further.** This page extends
+> [Comparing Groups](../notes/08-comparing-groups.qmd). Nothing here is needed for
+> the labs or the assessment. Read it when you are planning how many players a
+> playtest needs, when you are tempted to test every survey item, or when the mean
+> is the wrong thing to compare.
+
+---
+
+## Two Ways to Be Wrong
+
+A test makes a decision from incomplete information, so it can be wrong in two
+directions.
+
+| | The build really makes no difference | The build really makes a difference |
+| :- | :- | :- |
+| **Test says "significant"** | **Type I error**: a false alarm | Correct |
+| **Test says "not significant"** | Correct | **Type II error**: a missed effect |
+
+**A Type I error** is acting on a difference that is not there: rebuilding a level
+because of a fluke. Its rate is α. To check, draw two groups of 30 from the *same*
+population of wrong turns, so there is no real difference, and test them two
+thousand times: `r pct_fmt(type1, 1)` come out significant, close to the 5% that
+α = 0.05 promises.
+
+**A Type II error** is missing a difference that is there: shipping a build with a
+problem because the playtest was too small to see it. The chance of *avoiding* it
+is the test's **power**. Power grows with sample size. Drawing playtests of
+different sizes from *Tidebreak*'s real Build A and Build B sessions, and counting
+how often the t-test detects the signposting effect:
+
+| Sessions per build | 5 | 10 | 15 | 30 |
+| :- | :-: | :-: | :-: | :-: |
+| Chance of detecting the effect | `r pow_fmt(power_tab[1])` | `r pow_fmt(power_tab[2])` | `r pow_fmt(power_tab[3])` | `r pow_fmt(power_tab[4])` |
+
+Even this large effect is missed more often than not with five sessions per build.
+A smaller effect needs far more players. **Plan the playtest size around the
+smallest difference that would change your decision**, which is the "how many
+players" question from [Planning a Playtest](../notes/01-planning-a-playtest.qmd#how-many-players),
+now with numbers.
+
+**The two errors trade off.** A stricter α, such as 0.01, means fewer false alarms
+and more missed effects. Which mistake is worse depends on the decision: a false
+alarm that costs a week of rework, or a missed problem that ships to every player.
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="The simulation code"}
+
+```{r}
+#| label: power-code
+#| eval: false
+# Type I: two samples from the same population, tested 2,000 times
+pop_wt <- rep(sessions$wrong_turns, times = 1000)
+mean(replicate(2000, t.test(sample(pop_wt, 30), sample(pop_wt, 30))$p.value < 0.05))
+
+# Power: samples of n from each real build, tested 2,000 times
+power_at <- function(n) {
+  mean(replicate(2000, t.test(sample(wt_a, n, TRUE), sample(wt_b, n, TRUE))$p.value < 0.05))
+}
+sapply(c(5, 10, 15, 30), power_at)
+```
+
+:::
+
+---
+
+## Testing Many Things at Once
+
+At α = 0.05, each test on a difference that is not real has a 5% chance of a false
+alarm. Run several and the chances add up. With eight independent tests, the chance
+that **at least one** comes up significant by luck alone is
+1 − 0.95^`r length(items)` = `r pct_fmt(fwer8)`.
+
+The *Tidebreak* survey has `r length(items)` items. Testing each one by build:
+
+```{r}
+#| label: many-tests
+sv <- merge(survey, sessions[, c("session_id", "build")])
+round(sort(sapply(names(survey)[-1],
+                  function(i) t.test(sv[[i]] ~ sv$build)$p.value)), 3)
+```
+
+One item, `objective_clear`, is significant. Is it real, or the one-in-three false
+alarm? Three things say real. It survives the simplest correction, **Bonferroni**:
+divide α by the number of tests, here 0.05 / `r length(items)` =
+`r round(0.05 / length(items), 4)`, and its p-value is still below that. It was the
+item the team expected to move, written down before the test. And it agrees with
+the telemetry: Build A had the frustration quits.
+
+**The defence is to decide in advance.** Name the comparisons that answer your
+question before you run any of them. A result you went looking for after scanning
+twenty tests needs a second playtest before anyone acts on it
+([rule 1](../notes/ten-rules.qmd)).
+
+---
+
+## Q-Q Plots and the t-Test
+
+A t-test assumes the means are roughly normal. With a few dozen players per group
+that is nearly always true, thanks to the central limit theorem
+([Sampling Theory](sampling-theory.qmd#the-central-limit-theorem)). A **Q-Q plot**
+is the standard visual check on the data itself. Close to the line means close to
+normal:
+
+```{r}
+#| label: fig-qq
+#| fig-cap: "Wrong turns (left) follow the line in steps, because they are whole numbers: fine for a t-test. Build B's frame times (right) bend sharply away at the top: a long tail the mean cannot describe."
+#| fig-alt: "Two Q-Q plots. Left: wrong turns, with points in horizontal steps lying along the diagonal reference line. Right: Build B frame times, with points along the line in the middle but curving steeply upward at the right end."
+#| fig-height: 3.4
+op <- par(mfrow = c(1, 2), mar = c(4, 4, 2, 1))
+qqnorm(sessions$wrong_turns, main = "Wrong turns", pch = 19, cex = 0.6,
+       col = pal$line)
+qqline(sessions$wrong_turns, col = pal$highlight, lwd = 2)
+b_ms <- frames$ms[frames$build == "B"]
+qqnorm(b_ms, main = "Build B frame times", pch = 19, cex = 0.4, col = pal$line)
+qqline(b_ms, col = pal$highlight, lwd = 2)
+par(op)
+```
+
+**Strong outliers and a mismatched design matter far more than normality**, and
+no amount of data fixes the wrong design.
+
+---
+
+## A Shuffle for Any Summary
+
+The permutation test on the notes page shuffled the build labels and recomputed a
+difference in **means**. Nothing about the shuffle needs a mean. Replace it with
+any summary that answers your question, and the logic is unchanged. That makes it
+the fallback when the mean is the wrong thing to compare.
+
+Frame times are the case. The question is not "is Build B's average frame slower?"
+but "is Build B's worst one per cent slower?". In the Corridor:
+
+```{r}
+#| label: shuffle-p99
+corr <- frames[frames$zone == "Corridor", ]
+
+p99_gap <- function(ms, g) quantile(ms[g == "B"], 0.99) - quantile(ms[g == "A"], 0.99)
+
+observed <- p99_gap(corr$ms, corr$build)
+set.seed(9)
+shuffled <- replicate(2000, p99_gap(corr$ms, sample(corr$build)))
+
+observed
+mean(abs(shuffled) >= abs(observed))
+```
+
+Build B's 99th percentile in the Corridor is `r round(obs_p99, 1)` ms slower than
+Build A's, and none of 2,000 shuffles produced a gap that large: the hitch is not
+chance. A t-test on the same frames would answer a different question, about the
+mean, which is the one that hides the hitch.

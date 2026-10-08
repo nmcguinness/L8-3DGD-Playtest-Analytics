@@ -9,7 +9,15 @@ project:
     - "labs/*.qmd"
     - "reference/*.qmd"
     - "demos/*.qmd"
+    - "going-further/*.qmd"
     - "!lecturer/"
+    - "!downloads/"
+  # Rebuild the downloadable demo files from the demo pages before every render.
+  pre-render: _scripts/make-demo-downloads.R
+  # Copied to the site as-is, so demo pages can link to them for download.
+  resources:
+    - "downloads/*.qmd"
+    - "data/*.csv"
   # All chunks execute with the PROJECT ROOT as the working directory, so every
   # file can write data/tidebreak_sessions.csv regardless of which folder it is in.
   execute-dir: project
@@ -30,54 +38,59 @@ website:
     contents:
       - text: "Home"
         href: index.qmd
-      # Notes are grouped into six parts. A new page marked `draft: true` must
-      # stay out of this list until it is finished: a listed draft still gets
-      # prev/next and breadcrumb links pointing at an empty page.
-      - section: "Notes"
+      # The sidebar follows the four delivery stages (lecturer/HOUSE_STYLE.md
+      # section 2). Within a stage: notes, then lab, then demo. A page marked
+      # `draft: true` must stay out of this list until it is finished: a listed
+      # draft still gets prev/next and breadcrumb links pointing at an empty page.
+      - section: "Start Here"
         contents:
-          - section: "0 · Start here"
-            contents:
-              - notes/00-start-here.qmd
-              - notes/ten-rules.qmd
-          - section: "1 · Foundations"
-            contents:
-              - notes/01-planning-a-playtest.qmd
-              - notes/02-r-first-principles.qmd
-              - notes/03-data-and-types.qmd
-          - section: "2 · Describing"
-            contents:
-              - notes/04-describing-variables.qmd
-              - notes/05-distributions-and-shape.qmd
-          - section: "3 · Preparing"
-            contents:
-              - notes/06-cleaning-and-transforming.qmd
-          - section: "4 · Comparing"
-            contents:
-              - notes/07-sample-to-population.qmd
-              - notes/08-comparing-groups.qmd
-          - section: "5 · Relationships"
-            contents:
-              - notes/09-visualising-with-ggplot2.qmd
-              - notes/10-relationships-and-regression.qmd
-          - section: "6 · Communicating"
-            contents:
-              - notes/11-reporting-evidence.qmd
-      - section: "Labs"
-        contents:
+          - notes/00-start-here.qmd
+          - notes/ten-rules.qmd
           - labs/setting-up.qmd
+          - demos/stage-0.qmd
+      - section: "Stage 1 · Foundations"
+        contents:
+          - notes/01-planning-a-playtest.qmd
+          - notes/02-r-first-principles.qmd
+          - notes/03-data-and-types.qmd
+          - notes/04-describing-variables.qmd
+          - notes/05-distributions-and-shape.qmd
           - labs/reading-data.qmd
+          - demos/stage-1.qmd
+      - section: "Stage 2 · Comparing Evidence"
+        contents:
+          - notes/06-cleaning-and-transforming.qmd
+          - notes/07-sample-to-population.qmd
+          - notes/08-comparing-groups.qmd
           - labs/comparing-builds.qmd
+          - demos/stage-2.qmd
+      - section: "Stage 3 · Relationships & Visual Evidence"
+        contents:
+          - notes/09-visualising-with-ggplot2.qmd
+          - notes/10-relationships-and-correlation.qmd
+          - labs/clinic-figures.qmd
+          - labs/clinic-relationships.qmd
+          - demos/stage-3.qmd
+      - section: "Stage 4 · Evidence to Decision"
+        contents:
+          - notes/11-reporting-evidence.qmd
+          - notes/12-combining-evidence.qmd
           - labs/complete-analysis.qmd
+          - demos/stage-4.qmd
       - section: "Reference"
         contents:
           - reference/reference-statistics.qmd
           - reference/r-quarto-reference.qmd
           - reference/reference-ggplot2.qmd
-      - section: "Demos"
+      # Going Further: optional depth moved out of the core notes
+      # (lecturer/refactor-plan.md). Add each new page here.
+      - section: "Going Further"
         contents:
-          - demos/week-1.qmd
-          - demos/week-2.qmd
-          - demos/week-3.qmd
+          - going-further/normality.qmd
+          - going-further/sampling-theory.qmd
+          - going-further/testing-in-depth.qmd
+          - going-further/regression.qmd
+          - going-further/reshaping-and-joining.qmd
   page-footer:
     center: "COMP I8015 · 3D Game Development · Dundalk Institute of Technology"
 
