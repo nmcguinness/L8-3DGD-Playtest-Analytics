@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Comparing Groups – Playtest Analytics</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../labs/comparing-builds.html" rel="next">
+<link href="../notes/07-sample-to-population.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-640402775883e0dc5b71a44650c95e06.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked wf-at-compare wf-at-interpret quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notes/06-cleaning-and-transforming.html">Stage 2 · Comparing Evidence</a></li><li class="breadcrumb-item"><a href="../notes/08-comparing-groups.html">Comparing Groups</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Playtest Analytics</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Start Here</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/00-start-here.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Start Here</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/ten-rules.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ten Rules for Reading Playtest Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/setting-up.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 00 — Setting Up</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-0.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 0 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 1 · Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/01-planning-a-playtest.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Planning a Playtest</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/02-r-first-principles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R from First Principles</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/03-data-and-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data, Variables and Types</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/04-describing-variables.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Describing Variables</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/05-distributions-and-shape.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Distributions and Shape</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/reading-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 01 — Reading Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 1 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 2 · Comparing Evidence</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/06-cleaning-and-transforming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cleaning and Transforming</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/07-sample-to-population.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">From Sample to Population</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/08-comparing-groups.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Comparing Groups</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/comparing-builds.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 02 — Comparing Builds</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 2 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 3 · Relationships &amp; Visual Evidence</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/09-visualising-with-ggplot2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Visualising with ggplot2</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/10-relationships-and-correlation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Relationships and Correlation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/clinic-figures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 03 — A Figure for Your Report</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/clinic-relationships.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 04 — Relationships in Your Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 3 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 4 · Evidence to Decision</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/11-reporting-evidence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Interpreting and Reporting Evidence</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/12-combining-evidence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Combining Evidence</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/complete-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 05 — From Evidence to Report</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 4 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Reference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/reference-statistics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Statistics Reference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/r-quarto-reference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R and Quarto Reference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/reference-ggplot2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ggplot2 Reference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Going Further</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/normality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Is It Normal Enough?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/sampling-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sampling Theory</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/testing-in-depth.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Testing in Depth</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/reshaping-and-joining.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reshaping and Joining</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#learning-outcomes" id="toc-learning-outcomes" class="nav-link active" data-scroll-target="#learning-outcomes">Learning Outcomes</a></li>
+  <li><a href="#why-this-matters-for-playtesting" id="toc-why-this-matters-for-playtesting" class="nav-link" data-scroll-target="#why-this-matters-for-playtesting">Why This Matters for Playtesting</a></li>
+  <li><a href="#six-questions-in-order" id="toc-six-questions-in-order" class="nav-link" data-scroll-target="#six-questions-in-order">Six Questions, in Order</a></li>
+  <li><a href="#what-happened-and-how-large" id="toc-what-happened-and-how-large" class="nav-link" data-scroll-target="#what-happened-and-how-large">What Happened, and How Large?</a></li>
+  <li><a href="#how-uncertain-is-it" id="toc-how-uncertain-is-it" class="nav-link" data-scroll-target="#how-uncertain-is-it">How Uncertain Is It?</a></li>
+  <li><a href="#could-it-be-chance-the-shuffle" id="toc-could-it-be-chance-the-shuffle" class="nav-link" data-scroll-target="#could-it-be-chance-the-shuffle">Could It Be Chance? The Shuffle</a></li>
+  <li><a href="#the-language-of-testing" id="toc-the-language-of-testing" class="nav-link" data-scroll-target="#the-language-of-testing">The Language of Testing</a></li>
+  <li><a href="#the-t-test" id="toc-the-t-test" class="nav-link" data-scroll-target="#the-t-test">The t-Test</a></li>
+  <li><a href="#does-it-matter-practical-significance" id="toc-does-it-matter-practical-significance" class="nav-link" data-scroll-target="#does-it-matter-practical-significance">Does It Matter? Practical Significance</a></li>
+  <li><a href="#two-designs-independent-and-paired" id="toc-two-designs-independent-and-paired" class="nav-link" data-scroll-target="#two-designs-independent-and-paired">Two Designs: Independent and Paired</a></li>
+  <li><a href="#comparing-proportions" id="toc-comparing-proportions" class="nav-link" data-scroll-target="#comparing-proportions">Comparing Proportions</a></li>
+  <li><a href="#checking-the-assumptions" id="toc-checking-the-assumptions" class="nav-link" data-scroll-target="#checking-the-assumptions">Checking the Assumptions</a></li>
+  <li><a href="#which-test" id="toc-which-test" class="nav-link" data-scroll-target="#which-test">Which Test?</a></li>
+  <li><a href="#worked-example" id="toc-worked-example" class="nav-link" data-scroll-target="#worked-example">Worked Example</a></li>
+  <li><a href="#interpretation-guidance" id="toc-interpretation-guidance" class="nav-link" data-scroll-target="#interpretation-guidance">Interpretation Guidance</a></li>
+  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a></li>
+  <li><a href="#practice" id="toc-practice" class="nav-link" data-scroll-target="#practice">Practice</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  <li><a href="#links" id="toc-links" class="nav-link" data-scroll-target="#links">Links</a></li>
+  <li><a href="#reflective-questions" id="toc-reflective-questions" class="nav-link" data-scroll-target="#reflective-questions">Reflective Questions</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notes/06-cleaning-and-transforming.html">Stage 2 · Comparing Evidence</a></li><li class="breadcrumb-item"><a href="../notes/08-comparing-groups.html">Comparing Groups</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Comparing Groups</h1>
+<p class="subtitle lead">Is the difference real, and does it matter?</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<nav class="wf-strip" aria-label="Where this page sits in the evidence workflow">
+  <span class="wf-label">Workflow</span>
+  <ol>
+    <li class="wf-step wf-question">Question</li>
+    <li class="wf-step wf-measure">Measure</li>
+    <li class="wf-step wf-collect">Collect</li>
+    <li class="wf-step wf-clean">Clean</li>
+    <li class="wf-step wf-describe">Describe</li>
+    <li class="wf-step wf-compare">Compare/Relate</li>
+    <li class="wf-step wf-interpret">Interpret</li>
+    <li class="wf-step wf-act">Act</li>
+  </ol>
+</nav>
+<blockquote class="blockquote">
+<p>Every build comparison ends with a difference, because two groups of people never produce identical numbers. This page is about the two questions that follow: <strong>could the difference be chance?</strong> and <strong>is it big enough to matter?</strong> It builds the idea of a p-value from a simple shuffle, then introduces the t-test, paired designs, and how to write the result as a recommendation. The playtest question running through it: <em>“Did the new signposting reduce wrong turns?”</em></p>
+</blockquote>
+<div class="at-a-glance">
+<p><strong>Stage:</strong> 2 · Core. <strong>Time:</strong> 30 minutes in class; 15 more for the sections marked Useful when needed. <strong>Before this:</strong> <a href="../notes/07-sample-to-population.html">From Sample to Population</a>. <strong>Key terms:</strong> observed difference, null hypothesis, p-value, significance level, t-test, paired design, effect size, practical significance. <strong>R you will write:</strong> <code>t.test(y ~ group)</code>, <code>t.test(x, y, paired = TRUE)</code>, and <code>$estimate</code>, <code>$conf.int</code>, <code>$p.value</code> to pull out the parts.</p>
+</div>
+<section id="learning-outcomes" class="level2">
+<h2 class="anchored" data-anchor-id="learning-outcomes">Learning Outcomes</h2>
+<p>By the end of these notes you can:</p>
+<ul>
+<li>report a comparison in six steps: what happened, how large, how uncertain, could it be chance, does it matter, and what the team should do;</li>
+<li>explain a p-value through a shuffle, and say what it is and is not;</li>
+<li>run and read an independent-samples t-test and a paired t-test, and choose between them from the design;</li>
+<li>tell statistical significance from practical significance;</li>
+<li>write an evidence-backed design recommendation from a comparison.</li>
+</ul>
+<hr>
+</section>
+<section id="why-this-matters-for-playtesting" class="level2">
+<h2 class="anchored" data-anchor-id="why-this-matters-for-playtesting">Why This Matters for Playtesting</h2>
+<p>Build B’s players took fewer wrong turns, or scored more, or quit less. The question is never “is there a difference?” but <strong>“is this difference telling me something about the build, or only about the players who happened to turn up?”</strong></p>
+<p><strong>A playtest is a sample.</strong> <a href="../notes/07-sample-to-population.html">From Sample to Population</a> showed that every mean wobbles from one playtest to the next. When you compare two groups, both means wobble, and so does the gap between them. Before you rebuild a level on the strength of a difference, you need to know whether that difference would survive a second playtest.</p>
+<p><strong>And a real difference can still be worthless.</strong> With enough data, a change too small for any player to notice becomes statistically detectable. A result can be certain and irrelevant at the same time. Deciding whether it matters is a design judgement, and no test makes it for you.</p>
+<hr>
+</section>
+<section id="six-questions-in-order" class="level2">
+<h2 class="anchored" data-anchor-id="six-questions-in-order">Six Questions, in Order</h2>
+<p>Every comparison in this course is reported by answering six questions, in this order. It is the <strong>What → Pattern → Meaning → Action</strong> frame, expanded for a comparison:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Question</th>
+<th style="text-align: left;">What you use</th>
+<th style="text-align: left;">Frame</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;"><strong>What happened?</strong></td>
+<td style="text-align: left;">Side-by-side plots, a summary per group</td>
+<td style="text-align: left;">Pattern</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;"><strong>How large was the difference?</strong></td>
+<td style="text-align: left;">The difference, in the measure’s own units</td>
+<td style="text-align: left;">Pattern</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3</td>
+<td style="text-align: left;"><strong>How uncertain is the estimate?</strong></td>
+<td style="text-align: left;">The 95% confidence interval for the difference</td>
+<td style="text-align: left;">Pattern</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">4</td>
+<td style="text-align: left;"><strong>Could random sampling plausibly explain it?</strong></td>
+<td style="text-align: left;">The p-value</td>
+<td style="text-align: left;">Pattern</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">5</td>
+<td style="text-align: left;"><strong>Does the difference matter to the player experience?</strong></td>
+<td style="text-align: left;">Design judgement</td>
+<td style="text-align: left;">Meaning</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">6</td>
+<td style="text-align: left;"><strong>What should the team do?</strong></td>
+<td style="text-align: left;">A recommendation</td>
+<td style="text-align: left;">Action</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Look at the plot before running the test.</strong> The test is question 4, not question 1. A p-value with no picture and no size attached cannot be interpreted. If the boxplots show a gap nobody would care about, no p-value changes that (<a href="../notes/ten-rules.html">rule 7</a>).</p>
+<p>The rest of this page works through the six questions on one result: did Build B’s signposting reduce wrong turns?</p>
+<hr>
+</section>
+<section id="what-happened-and-how-large" class="level2">
+<h2 class="anchored" data-anchor-id="what-happened-and-how-large">What Happened, and How Large?</h2>
+<p>The <em>Tidebreak</em> team added signposting to Build B. Did players get lost less?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(wrong_turns <span class="sc">~</span> build, <span class="at">data =</span> sessions, <span class="at">col =</span> pal<span class="sc">$</span>fill, <span class="at">outline =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Wrong turns per session"</span>, <span class="at">xlab =</span> <span class="st">"Build"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stripchart</span>(wrong_turns <span class="sc">~</span> build, <span class="at">data =</span> sessions, <span class="at">vertical =</span> <span class="cn">TRUE</span>, <span class="at">add =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">method =</span> <span class="st">"jitter"</span>, <span class="at">jitter =</span> <span class="fl">0.15</span>, <span class="at">pch =</span> <span class="dv">19</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="fu">c</span>(pal<span class="sc">$</span>build_a, pal<span class="sc">$</span>build_b), <span class="at">alpha.f =</span> <span class="fl">0.5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-wt-look" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Two boxplots of wrong turns per session, Build A higher than Build B, with every session drawn as a jittered point on top. Build A's points cluster around 8 to 10; Build B's around 4 to 7, with overlap between the two.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-wt-look-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="08-comparing-groups_files/figure-html/fig-wt-look-1.png" class="img-fluid figure-img" alt="Two boxplots of wrong turns per session, Build A higher than Build B, with every session drawn as a jittered point on top. Build A's points cluster around 8 to 10; Build B's around 4 to 7, with overlap between the two." width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-wt-look-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Build B’s players took fewer wrong turns. The boxes do not overlap, but the individual sessions do.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>sessions <span class="sc">|&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(build) <span class="sc">|&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">mean =</span> <span class="fu">mean</span>(wrong_turns), <span class="at">sd =</span> <span class="fu">sd</span>(wrong_turns))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 4
+  build     n  mean    sd
+  &lt;chr&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 A        60  8.92  2.37
+2 B        60  5.52  2.70</code></pre>
+</div>
+</div>
+<p>Build A’s players averaged 8.9 wrong turns per session and Build B’s 5.5. The <strong>observed difference</strong> is 3.4 wrong turns: your best single estimate of the true difference, and almost certainly not exactly right. The two boxes do not overlap, but the points do: plenty of individual Build A sessions had fewer wrong turns than plenty of Build B sessions.</p>
+<p><strong>Give the size in the measure’s own units.</strong> “3.4 fewer wrong turns per session” is something a designer can picture. That is the <strong>effect size</strong> in its simplest form.</p>
+<hr>
+</section>
+<section id="how-uncertain-is-it" class="level2">
+<h2 class="anchored" data-anchor-id="how-uncertain-is-it">How Uncertain Is It?</h2>
+<p>A <strong>confidence interval for the difference</strong> works the same way as the interval for one mean in <a href="../notes/07-sample-to-population.html#confidence-intervals">From Sample to Population</a>. Here it runs from 2.5 to 4.3 wrong turns. You will get it from <code>t.test()</code> in a moment.</p>
+<p><strong>Read it as a range of plausible sizes</strong>: the signposting saved somewhere between 2.5 and 4.3 wrong turns per session. <strong>If an interval includes zero, “no difference” is still plausible</strong>; this one is nowhere near zero.</p>
+<hr>
+</section>
+<section id="could-it-be-chance-the-shuffle" class="level2">
+<h2 class="anchored" data-anchor-id="could-it-be-chance-the-shuffle">Could It Be Chance? The Shuffle</h2>
+<p>Suppose the signposting did nothing. Then the build label on each session is arbitrary: each player would have taken the same number of wrong turns whichever build they had been given. So you could shuffle the labels, give every session a random build, and the gap between the “builds” would be just as large as the real one.</p>
+<p>That is a test you can run. <strong>Shuffle the build labels, recompute the gap, and repeat ten thousand times.</strong> The shuffled gaps show what differences chance alone produces. If the real gap looks like them, chance is a fine explanation. If it is far outside them, chance is not. This is called a <strong>permutation test</strong>.</p>
+<p><strong>You do not need to write this code.</strong> The idea is what matters: it is what every p-value means.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>gap <span class="ot">&lt;-</span> <span class="cf">function</span>(y, g) <span class="fu">mean</span>(y[g <span class="sc">==</span> <span class="st">"A"</span>]) <span class="sc">-</span> <span class="fu">mean</span>(y[g <span class="sc">==</span> <span class="st">"B"</span>])</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>observed <span class="ot">&lt;-</span> <span class="fu">gap</span>(sessions<span class="sc">$</span>wrong_turns, sessions<span class="sc">$</span>build)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>shuffled <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">10000</span>, <span class="fu">gap</span>(sessions<span class="sc">$</span>wrong_turns, <span class="fu">sample</span>(sessions<span class="sc">$</span>build)))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>observed</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.4</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(<span class="fu">abs</span>(shuffled))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.166667</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(<span class="fu">abs</span>(shuffled) <span class="sc">&gt;=</span> <span class="fu">abs</span>(observed))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(shuffled_wt, <span class="at">breaks =</span> <span class="dv">40</span>, <span class="at">col =</span> pal<span class="sc">$</span>fill, <span class="at">border =</span> <span class="st">"white"</span>, <span class="at">main =</span> <span class="st">""</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">3.6</span>, <span class="fl">3.6</span>), <span class="at">xlab =</span> <span class="st">"Difference in mean wrong turns (A − B)"</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Shuffles"</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> gap_wt, <span class="at">col =</span> pal<span class="sc">$</span>highlight, <span class="at">lwd =</span> <span class="dv">3</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(gap_wt, <span class="fu">par</span>(<span class="st">"usr"</span>)[<span class="dv">4</span>] <span class="sc">*</span> <span class="fl">0.9</span>, <span class="st">"observed"</span>, <span class="at">pos =</span> <span class="dv">2</span>, <span class="at">col =</span> pal<span class="sc">$</span>highlight, <span class="at">cex =</span> <span class="fl">0.85</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-permutation" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A bell-shaped histogram of shuffled differences centred on zero, running from about −2 to +2. A red vertical line marks the observed difference of 3.4, far to the right of every bar.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-permutation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="08-comparing-groups_files/figure-html/fig-permutation-1.png" class="img-fluid figure-img" alt="A bell-shaped histogram of shuffled differences centred on zero, running from about −2 to +2. A red vertical line marks the observed difference of 3.4, far to the right of every bar." width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-permutation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: If the build made no difference, shuffling the labels would produce gaps like the real one. In 10,000 shuffles, chance never came close to the real gap.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The real gap is 3.4. The largest gap in ten thousand shuffles is 2.17.</p>
+<p><strong>The proportion of shuffles at least as extreme as the real gap is the p-value.</strong> Here not one of ten thousand was, so p is below 1 in 10,000. If the signposting did nothing, a gap this large would essentially never happen.</p>
+<p><strong>Most results are less clear-cut.</strong> The same shuffle on the 1–7 difficulty rating gives a gap of 0.42 points (Build B rated harder), and 3.9% of shuffles produce a gap at least that large in either direction:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>lim <span class="ot">&lt;-</span> <span class="fu">ceiling</span>(<span class="fu">max</span>(<span class="fu">abs</span>(shuffled_df)) <span class="sc">*</span> <span class="dv">20</span>) <span class="sc">/</span> <span class="dv">20</span> <span class="sc">+</span> <span class="fl">0.05</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>br  <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span>lim, lim, <span class="at">by =</span> <span class="fl">0.05</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>h  <span class="ot">&lt;-</span> <span class="fu">hist</span>(shuffled_df, <span class="at">breaks =</span> br, <span class="at">plot =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(h, <span class="at">col =</span> <span class="fu">ifelse</span>(<span class="fu">abs</span>(h<span class="sc">$</span>mids) <span class="sc">&gt;=</span> <span class="fu">abs</span>(obs_df), pal<span class="sc">$</span>highlight, pal<span class="sc">$</span>fill),</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">border =</span> <span class="st">"white"</span>, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"Difference in mean difficulty (A − B)"</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Shuffles"</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="fu">c</span>(obs_df, <span class="sc">-</span>obs_df), <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> pal<span class="sc">$</span>line)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-pvalue-tail" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A bell-shaped histogram of shuffled differences in difficulty rating centred on zero. The bars beyond the observed gap on both sides are shaded red; they are a small fraction of the total.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pvalue-tail-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="08-comparing-groups_files/figure-html/fig-pvalue-tail-1.png" class="img-fluid figure-img" alt="A bell-shaped histogram of shuffled differences in difficulty rating centred on zero. The bars beyond the observed gap on both sides are shaded red; they are a small fraction of the total." width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pvalue-tail-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: The p-value is a tail area: the share of shuffles (shaded) at least as extreme as the observed difficulty gap, in either direction.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>That 3.9% is the difficulty p-value. Chance alone produces a gap that size in roughly one shuffle in 26: unusual, but not unheard of.</p>
+<hr>
+</section>
+<section id="the-language-of-testing" class="level2">
+<h2 class="anchored" data-anchor-id="the-language-of-testing">The Language of Testing</h2>
+<p>The shuffle has a formal vocabulary.</p>
+<p>The <strong>null hypothesis</strong> is the claim of no difference: here, that the build makes no difference to wrong turns. The shuffle is a simulation of the world where the null is true. The <strong>alternative hypothesis</strong> is that the build does make a difference.</p>
+<p>The <strong>p-value</strong> is the probability of seeing a difference at least as large as the one observed, <em>if the null hypothesis were true</em>. A small p-value means the data would be surprising in a world where the builds did not differ.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>A p-value is not the probability that the null hypothesis is true.</strong></p>
+<p>It is calculated by <em>assuming</em> the null is true, so it cannot also measure how likely the null is. p = 0.03 does not mean “a 3% chance the builds are the same”. It means “if the builds were the same, a gap this large would turn up about 3% of the time”.</p>
+</div>
+</div>
+<p><strong>The significance level</strong>, written α (alpha), is the threshold you choose <strong>before</strong> looking, conventionally 0.05. If p falls below it, the result is called <strong>statistically significant</strong>: “unlikely to be chance alone”, and nothing more. Choosing it in advance is the same discipline as deciding what would change your mind before you look at the data (<a href="../notes/ten-rules.html">rule 1</a>).</p>
+<p><strong>Not significant does not mean no difference.</strong> A large p-value means this sample could not rule out chance. That can be because there is no difference, or because there were too few players to see one. The confidence interval tells you which.</p>
+<p><strong>Going further:</strong> the two ways a test can be wrong, statistical power, and why testing many things at once produces false alarms are on <a href="../going-further/testing-in-depth.html">Testing in Depth</a>.</p>
+<hr>
+</section>
+<section id="the-t-test" class="level2">
+<h2 class="anchored" data-anchor-id="the-t-test">The t-Test</h2>
+<p>Shuffling ten thousand times works, but for comparing two means there is a formula that gives almost the same answer instantly: the <strong>t-test</strong>. It is what you will use.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">t.test</span>(wrong_turns <span class="sc">~</span> build, <span class="at">data =</span> sessions)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>result</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  wrong_turns by build
+t = 7.3208, df = 116.07, p-value = 3.492e-11
+alternative hypothesis: true difference in means between group A and group B is not equal to 0
+95 percent confidence interval:
+ 2.480141 4.319859
+sample estimates:
+mean in group A mean in group B 
+       8.916667        5.516667 </code></pre>
+</div>
+</div>
+<p><code>t.test(y ~ group)</code> is the <strong>independent-samples t-test</strong>, for when different players tested each build. Read <code>~</code> as “split by”, as in a boxplot. R runs the Welch version by default, which does not assume the two builds have the same spread; that is the right default. Read three parts of the output:</p>
+<ul>
+<li>the <strong>sample estimates</strong>: the two means (questions 1 and 2);</li>
+<li>the <strong>95 percent confidence interval</strong>: for Build A minus Build B (question 3);</li>
+<li>the <strong>p-value</strong> (question 4).</li>
+</ul>
+<p><code>$</code> pulls single parts out of the result, which is how you get numbers into a sentence with inline R instead of copying them by hand:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>result<span class="sc">$</span>estimate</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>mean in group A mean in group B 
+       8.916667        5.516667 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>result<span class="sc">$</span>conf.int</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.480141 4.319859
+attr(,"conf.level")
+[1] 0.95</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>result<span class="sc">$</span>p.value</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.491687e-11</code></pre>
+</div>
+</div>
+<p><strong>The t-test and the shuffle agree.</strong> For wrong turns, both say p is tiny. For difficulty, the shuffle gave p = 0.038 and the t-test gives p = 0.032. The shuffle shows what the p-value <em>means</em>; the t-test is how you will compute it.</p>
+<hr>
+</section>
+<section id="does-it-matter-practical-significance" class="level2">
+<h2 class="anchored" data-anchor-id="does-it-matter-practical-significance">Does It Matter? Practical Significance</h2>
+<p><strong>Practical significance</strong> is whether a difference is large enough to change the player’s experience, and so a design decision. Statistical significance cannot tell you this, because it depends on how much data you have as well as on how big the difference is.</p>
+<p><strong>Lead with the size.</strong> “Build B’s players took 3.4 fewer wrong turns per session (95% CI 2.5 to 4.3).” A designer can judge whether 3 wrong turns matters; nobody can judge a p-value. For your game, the important question is whether the <em>smallest</em> plausible difference, the low end of the interval, is still large enough to matter.</p>
+<p><strong>The Atrium shows why.</strong> The frame-time capture has 3000 frames from the Atrium zone. There, Build B’s frames are 0.42 ms faster than Build A’s, p &lt; 0.001. That is about as statistically significant as a result gets, and no player can perceive a difference of less than half a millisecond per frame. Nobody should schedule work around it.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Practically small</th>
+<th style="text-align: left;">Practically large</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Statistically significant</strong></td>
+<td style="text-align: left;">Real but not worth acting on</td>
+<td style="text-align: left;">Act on it</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Not significant</strong></td>
+<td style="text-align: left;">Nothing to see, if the interval is narrow</td>
+<td style="text-align: left;">Test more players: the sample was too small to tell</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Always report the size of the difference.</strong> “Significant” alone hides which cell of that table you are in.</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Going further: Cohen's d">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Going further: Cohen’s d
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>When measures are on different scales, a <strong>standardised</strong> effect size lets you compare them. <strong>Cohen’s d</strong> divides the difference in means by the typical SD of the two groups:</p>
+<p><span class="math display">\[d = \frac{\text{mean}_A - \text{mean}_B}{\text{pooled SD}}\]</span></p>
+<p>For wrong turns, d = 1.34: the groups are well over one SD apart. A common rough guide calls 0.2 small, 0.5 medium and 0.8 large, but those labels come from psychology; in a playtest, “large” means large enough to change a design decision, which only the units can tell you.</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="two-designs-independent-and-paired" class="level2">
+<h2 class="anchored" data-anchor-id="two-designs-independent-and-paired">Two Designs: Independent and Paired</h2>
+<p>How the playtest was run decides which test you use (<a href="../notes/01-planning-a-playtest.html#choose-a-design-who-plays-what">Planning a Playtest</a>).</p>
+<p><strong>Independent samples.</strong> Different players test each build. That is how the <em>Tidebreak</em> sessions file was collected: 30 players, each of whom played only one build. Use the independent-samples t-test, as above.</p>
+<p><strong>Paired.</strong> The same players test both builds. <code>tidebreak_paired.csv</code> records a second study in which 30 players each played both. Each player is compared with themselves, so their skill cancels out. Use the <strong>paired t-test</strong>:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">matplot</span>(<span class="fu">rbind</span>(paired<span class="sc">$</span>wrong_turns_a, paired<span class="sc">$</span>wrong_turns_b), <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lty =</span> <span class="dv">1</span>,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">adjustcolor</span>(pal<span class="sc">$</span>line, <span class="at">alpha.f =</span> <span class="fl">0.4</span>), <span class="at">xaxt =</span> <span class="st">"n"</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">2.2</span>),</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab =</span> <span class="st">""</span>, <span class="at">ylab =</span> <span class="st">"Wrong turns"</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">1</span>, <span class="at">at =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Build A"</span>, <span class="st">"Build B"</span>))</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="fu">colMeans</span>(paired[, <span class="fu">c</span>(<span class="st">"wrong_turns_a"</span>, <span class="st">"wrong_turns_b"</span>)]),</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">col =</span> pal<span class="sc">$</span>highlight, <span class="at">lwd =</span> <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-paired" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Thirty grey lines joining each player's wrong turns in Build A on the left to Build B on the right. Most slope downward; players who took many wrong turns in Build A tend to take many in Build B too. A thick red line joins the two means.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-paired-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="08-comparing-groups_files/figure-html/fig-paired-1.png" class="img-fluid figure-img" alt="Thirty grey lines joining each player's wrong turns in Build A on the left to Build B on the right. Most slope downward; players who took many wrong turns in Build A tend to take many in Build B too. A thick red line joins the two means." width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-paired-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Each line is one player in the paired study. Most lines slope down, and players who took many wrong turns in Build A tend to take many in Build B too.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(paired<span class="sc">$</span>wrong_turns_a, paired<span class="sc">$</span>wrong_turns_b, <span class="at">paired =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Paired t-test
+
+data:  paired$wrong_turns_a and paired$wrong_turns_b
+t = 6.0932, df = 29, p-value = 1.234e-06
+alternative hypothesis: true mean difference is not equal to 0
+95 percent confidence interval:
+ 1.838014 3.695319
+sample estimates:
+mean difference 
+       2.766667 </code></pre>
+</div>
+</div>
+<p><code>paired = TRUE</code> compares each player’s two values. The estimate is the <strong>mean difference</strong>: on average, a player took 2.8 fewer wrong turns in Build B. 26 of 30 players improved, 2 stayed the same and 2 got worse.</p>
+<p><strong>Ignoring the pairing throws away what the design bought you.</strong> The same numbers tested as if the players were different people give the same estimate, but the interval is 3.2 wrong turns wide against 1.9 for the paired test. The paired test removes the player-to-player variation; the unpaired test has to allow for it.</p>
+<p><strong>Paired designs bring their own problems:</strong> learning, order and fatigue effects. If everyone plays Build A first, some of Build B’s improvement is just practice. Counterbalancing fixes it, but <code>tidebreak_paired.csv</code> does not record which build each player played first, so this study cannot rule it out.</p>
+<p><strong>For your project:</strong> if your team tests a change on the same few players before and after, that is a paired design. Use <code>paired = TRUE</code>, and counterbalance the order if you possibly can.</p>
+<hr>
+</section>
+<section id="comparing-proportions" class="level2 when-needed">
+<h2 class="when-needed anchored" data-anchor-id="comparing-proportions">Comparing Proportions</h2>
+<p>Not every outcome is a number. “Did the session end in a frustration quit?” is yes or no, and the comparison is between two <strong>proportions</strong>: 20 of 60 Build A sessions (33%) against 5 of 60 in Build B (8%).</p>
+<p><code>prop.test()</code> takes the counts of “yes” and the group sizes:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>frus <span class="ot">&lt;-</span> sessions <span class="sc">|&gt;</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(build) <span class="sc">|&gt;</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">frustrated =</span> <span class="fu">sum</span>(quit_reason <span class="sc">==</span> <span class="st">"Frustrated"</span>), <span class="at">n =</span> <span class="fu">n</span>())</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>frus</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 3
+  build frustrated     n
+  &lt;chr&gt;      &lt;int&gt; &lt;int&gt;
+1 A             20    60
+2 B              5    60</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prop.test</span>(frus<span class="sc">$</span>frustrated, frus<span class="sc">$</span>n)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    2-sample test for equality of proportions with continuity correction
+
+data:  frus$frustrated out of frus$n
+X-squared = 9.9032, df = 1, p-value = 0.00165
+alternative hypothesis: two.sided
+95 percent confidence interval:
+ 0.09506413 0.40493587
+sample estimates:
+    prop 1     prop 2 
+0.33333333 0.08333333 </code></pre>
+</div>
+</div>
+<p>The difference is 25 percentage points, with a 95% interval from 10 to 40 points, p = 0.002. Build A’s frustration rate is higher, and even the low end of the interval is a difference a designer would care about. The same six questions, for a yes/no outcome.</p>
+<hr>
+</section>
+<section id="checking-the-assumptions" class="level2 when-needed">
+<h2 class="when-needed anchored" data-anchor-id="checking-the-assumptions">Checking the Assumptions</h2>
+<p>A t-test is reliable when these hold closely enough. None needs a formal test; each needs a look.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Assumption</th>
+<th style="text-align: left;">What it means</th>
+<th style="text-align: left;">How to check</th>
+<th style="text-align: left;"><em>Tidebreak</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Independence</strong></td>
+<td style="text-align: left;">One observation does not influence another</td>
+<td style="text-align: left;">Think about how the data was collected</td>
+<td style="text-align: left;">Each player contributed 4 sessions, so the 120 sessions are really 30 players</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>No strong outliers</strong></td>
+<td style="text-align: left;">No few values dominate the means</td>
+<td style="text-align: left;">Boxplots</td>
+<td style="text-align: left;">3 flagged wrong-turn counts across 120 sessions</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Roughly normal</strong></td>
+<td style="text-align: left;">One hump, no long tail; matters less with a few dozen per group</td>
+<td style="text-align: left;">A histogram</td>
+<td style="text-align: left;">Fine for wrong turns; not for frame times</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Appropriate design</strong></td>
+<td style="text-align: left;">Independent test for separate groups, paired test for the same people</td>
+<td style="text-align: left;">How the playtest was run</td>
+<td style="text-align: left;">Sessions: independent. Paired file: paired</td>
+</tr>
+</tbody>
+</table>
+<p><strong>A t-test compares means</strong>, so it is the wrong tool when the mean is the wrong summary. Frame times are the example: the problem is in the tail, as <a href="../notes/05-distributions-and-shape.html#worked-example">Distributions and Shape</a> showed.</p>
+<p><strong>The independence problem has a simple check.</strong> Average each player’s sessions into one value, then compare players rather than sessions:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>per_player <span class="ot">&lt;-</span> sessions <span class="sc">|&gt;</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(player_id, build) <span class="sc">|&gt;</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">wrong_turns =</span> <span class="fu">mean</span>(wrong_turns), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(per_player)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 30</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(wrong_turns <span class="sc">~</span> build, <span class="at">data =</span> per_player)<span class="sc">$</span>conf.int</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.361153 4.438847
+attr(,"conf.level")
+[1] 0.95</code></pre>
+</div>
+</div>
+<p>That leaves 30 players instead of 120 sessions. <code>.groups = "drop"</code> just tidies the result. The difference is the same and the interval is a little wider, 2.4 to 4.4, because there are fewer independent observations. The conclusion survives.</p>
+<hr>
+</section>
+<section id="which-test" class="level2">
+<h2 class="anchored" data-anchor-id="which-test">Which Test?</h2>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="fig-which-test" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-which-test-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-which-test">flowchart TD
+  S["Plot both groups"] --&gt; Q1{"Yes/no or&lt;br/&gt;a number?"}
+  Q1 --&gt;|Yes/no| P(["prop.test()"])
+  Q1 --&gt;|A number| Q2{"Same players&lt;br/&gt;in both?"}
+  Q2 --&gt;|Yes| PT(["Paired t-test"])
+  Q2 --&gt;|No| Q3{"Mean the right&lt;br/&gt;summary?"}
+  Q3 --&gt;|Yes| IT(["Independent t-test"])
+  Q3 --&gt;|"No: heavy tail"| PM(["Compare the tail&lt;br/&gt;by permutation"])
+  class S accent
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-which-test-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Choose the test from the outcome and the design, after you have looked at the data. A heavy tail means the mean is the wrong thing to compare.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The last branch is rare in playtests, and the <a href="../going-further/testing-in-depth.html#a-shuffle-for-any-summary">Testing in Depth</a> page shows how to do it.</p>
+<hr>
+</section>
+<section id="worked-example" class="level2">
+<h2 class="anchored" data-anchor-id="worked-example">Worked Example</h2>
+<p><strong>Did the signposting reduce wrong turns, without costing enjoyment?</strong> The six questions, in order.</p>
+<p><strong>1. What happened?</strong> <a href="#fig-wt-look" class="quarto-xref">Figure&nbsp;1</a>: Build B’s box sits lower. Build A’s median is 9 wrong turns and Build B’s is 5. The boxplot flags 3 outlying sessions in Build A and 0 in Build B, too few to dominate either mean.</p>
+<p><strong>2. How large?</strong> 8.9 against 5.5: a difference of 3.4 wrong turns per session.</p>
+<p><strong>3. How uncertain?</strong> The 95% confidence interval is 2.5 to 4.3 wrong turns. Nowhere near zero.</p>
+<p><strong>4. Could it be chance?</strong> p &lt; 0.001, and no shuffle in ten thousand came close. It also survives counting each player once, and the separate paired study points the same way.</p>
+<p><strong>5. Does it matter?</strong> The smallest plausible reduction, 2.5 wrong turns per session, is still large enough for a player to feel. And it did not cost enjoyment: the enjoyment difference is p = 1, with an interval from -0.35 to 0.35 points on a 7-point scale, so any change is under half a point either way.</p>
+<p><strong>6. What should the team do?</strong> Keep the signposting.</p>
+<p><strong>In the report you would write:</strong></p>
+<blockquote class="blockquote">
+<p>Players using Build B made fewer wrong turns than players using Build A: on average 3.4 fewer per session (95% CI 2.5 to 4.3, p &lt; 0.001). A difference this large is very unlikely to be sampling variation alone. More importantly, even the smallest plausible reduction is large enough to improve navigation, and enjoyment did not change (95% CI for the difference -0.35 to 0.35 points). The team should keep the revised signposting.</p>
+</blockquote>
+<p><strong>Was Build B harder?</strong> The same steps on the 1–7 difficulty rating give a second significant result. Build B was rated 0.42 points harder, p = 0.032, with a confidence interval from 0.04 to 0.8 points.</p>
+<p>Three things say not to act on it. The size is small: under half a point on a seven-point scale. The interval’s lower end, 0.04, is a difference no player would report. And the play data does not back it up: deaths did not differ between the builds (p = 0.679). Statistically significant, practically marginal, and unsupported by what players actually did. <strong>What should the team do?</strong> Note it, and check it in the next playtest.</p>
+<hr>
+</section>
+<section id="interpretation-guidance" class="level2">
+<h2 class="anchored" data-anchor-id="interpretation-guidance">Interpretation Guidance</h2>
+<p><strong>What the data shows.</strong> In this playtest, Build B’s players averaged 3.4 fewer wrong turns per session than Build A’s (95% CI 2.5 to 4.3, p &lt; 0.001). In a separate study where 30 players played both builds, they took 2.8 fewer in Build B (95% CI 1.8 to 3.7).</p>
+<p><strong>What the analysis suggests.</strong> The signposting helps players find their way, and by enough to matter. Two different designs, with different players, point the same way.</p>
+<p><strong>What can legitimately be concluded.</strong> The reduction is very unlikely to be chance, and even its smallest plausible size is a noticeable improvement. The paired study cannot separate the signposting from practice, because play order was not recorded; the independent study does not have that problem, which is why the two together are stronger than either alone.</p>
+<p>“The result was significant” is not a finding. It names no size and no action (<a href="../notes/ten-rules.html">rule 10</a>).</p>
+<hr>
+</section>
+<section id="common-mistakes" class="level2">
+<h2 class="anchored" data-anchor-id="common-mistakes">Common Mistakes</h2>
+<p><strong>Reading the p-value as the chance the null is true.</strong> It is the chance of data this extreme <em>if</em> the null is true.</p>
+<p><strong>Reading “not significant” as “no difference”.</strong> It means this sample could not tell. Check the confidence interval: narrow and around zero is evidence of no meaningful difference; wide is a sample too small to say.</p>
+<p><strong>Reading “significant” as “important”.</strong> The Atrium frame times are among the most significant results in the whole playtest and among the least important.</p>
+<p><strong>Testing before looking.</strong> A t-test on data you have not drawn can hide outliers, skew or two groups mixed together. Plot first, every time.</p>
+<p><strong>Using the independent test on paired data.</strong> It gives an interval far wider than the data supports. Match the test to the design.</p>
+<p><strong>Testing every measure and reporting what came up.</strong> Decide which comparisons answer your question before you run any of them. Test enough things and one will come up by luck.</p>
+<p><strong>Running too small a playtest and concluding “no effect”.</strong> A handful of players per build will often miss even a large effect.</p>
+<p><strong>Counting sessions as players.</strong> Check that the result survives when each player counts once.</p>
+<hr>
+</section>
+<section id="practice" class="level2">
+<h2 class="anchored" data-anchor-id="practice">Practice</h2>
+<p>Each takes two or three minutes.</p>
+<ol type="1">
+<li><strong>Predict.</strong> If you shuffled the build labels and recomputed the gap in mean <em>enjoyment</em>, would the real gap stand out from the shuffles? Then run the t-test and use the confidence interval to answer: did the signposting cost enjoyment?</li>
+<li><strong>Compute.</strong> Run the paired data through both the paired and the unpaired t-test. Why is the paired interval narrower?</li>
+<li><strong>Decide.</strong> Build B’s sessions were longer on average. Run the test on <code>session_minutes</code>. Is the difference statistically significant? Is it practically significant?</li>
+<li><strong>Critique.</strong> A team tested 12 players, 6 per build, found p = 0.4 for wrong turns, and concluded: “The new signposting has no effect.” What would you tell them?</li>
+</ol>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Show answers">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Show answers
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>1.</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(enjoyment <span class="sc">~</span> build, <span class="at">data =</span> sessions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  enjoyment by build
+t = 0, df = 113.42, p-value = 1
+alternative hypothesis: true difference in means between group A and group B is not equal to 0
+95 percent confidence interval:
+ -0.3483742  0.3483742
+sample estimates:
+mean in group A mean in group B 
+       3.933333        3.933333 </code></pre>
+</div>
+</div>
+<p>No: the p-value is 1, so the real gap looks exactly like the shuffles. The interval says more: it runs from -0.35 to 0.35 points on a seven-point scale, so any true difference is smaller than half a point either way. That is evidence the signposting did not cost enjoyment, a stronger statement than “not significant”.</p>
+<p><strong>2.</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(paired<span class="sc">$</span>wrong_turns_a, paired<span class="sc">$</span>wrong_turns_b, <span class="at">paired =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>conf.int</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.838014 3.695319
+attr(,"conf.level")
+[1] 0.95</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(paired<span class="sc">$</span>wrong_turns_a, paired<span class="sc">$</span>wrong_turns_b)<span class="sc">$</span>conf.int</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.180570 4.352763
+attr(,"conf.level")
+[1] 0.95</code></pre>
+</div>
+</div>
+<p>Players who take many wrong turns in one build take many in the other. The paired test compares each player with themselves, so that player-to-player variation drops out. The unpaired test leaves it in and has to allow for it.</p>
+<p><strong>3.</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(session_minutes <span class="sc">~</span> build, <span class="at">data =</span> sessions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  session_minutes by build
+t = -2.1091, df = 114.42, p-value = 0.03711
+alternative hypothesis: true difference in means between group A and group B is not equal to 0
+95 percent confidence interval:
+ -5.7142078 -0.1791255
+sample estimates:
+mean in group A mean in group B 
+       21.29500        24.24167 </code></pre>
+</div>
+</div>
+<p>Statistically, yes: p = 0.037. Practically, it is hard to say. The interval says Build B’s sessions were 0.2 to 5.7 minutes longer: anywhere from 11 seconds to 5.7 minutes. The direction is clear and the size is not, which is a case for a larger playtest rather than a decision. (Session length is also two-humped in Build A, so a difference in means hides <em>how</em> the builds differ; the retention curve in <a href="../notes/05-distributions-and-shape.html#the-retention-curve">Distributions and Shape</a> shows it.)</p>
+<p><strong>4.</strong> With 5 sessions per build, even an effect as large as <em>Tidebreak</em>’s is detected only about 44% of the time, and 6 is not much better. So p = 0.4 is what you would often see whether or not the signposting works. “No effect” is not supported. They should report the difference and its confidence interval, which will be wide, and run a larger or paired playtest. <a href="../going-further/testing-in-depth.html#two-ways-to-be-wrong">Testing in Depth</a> shows where that number comes from.</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ul>
+<li>Report a comparison in six steps: what happened, how large, how uncertain, could it be chance, does it matter, what should the team do. Plot before you test.</li>
+<li>A shuffle (permutation test) shows what differences chance produces. The p-value is the share of shuffles at least as extreme as the real result.</li>
+<li>A p-value is how surprising the data would be if there were no difference. It is not the probability that there is no difference.</li>
+<li>The t-test is how you compute it for two means: <code>t.test(y ~ group)</code> for different players, <code>paired = TRUE</code> for the same players.</li>
+<li>Lead with the size of the difference and its interval. Statistically significant means unlikely to be chance; practically significant means big enough to matter to the player.</li>
+<li>End with what the team should do.</li>
+</ul>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Key term</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Observed difference</strong></td>
+<td style="text-align: left;">The gap between the groups in your sample</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Permutation test</strong></td>
+<td style="text-align: left;">Shuffling group labels to see what differences chance produces</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Null hypothesis</strong></td>
+<td style="text-align: left;">The claim of no difference</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>p-value</strong></td>
+<td style="text-align: left;">The chance of a difference at least this large if the null were true</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Significance level (α)</strong></td>
+<td style="text-align: left;">The p-value threshold chosen in advance, usually 0.05</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Effect size</strong></td>
+<td style="text-align: left;">How big the difference is, in the measure’s units or standardised</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>t-test</strong></td>
+<td style="text-align: left;">The standard test for a difference in means</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Paired design</strong></td>
+<td style="text-align: left;">The same players measured under both conditions</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Practical significance</strong></td>
+<td style="text-align: left;">Whether a difference is big enough to change the player’s experience</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="links" class="level2">
+<h2 class="anchored" data-anchor-id="links">Links</h2>
+<ul>
+<li><a href="../notes/ten-rules.html">Ten Rules</a>: rule 1 (decide what would change your mind before you look), rule 7 (compare distributions, not averages), rule 8 (small samples lie confidently) and rule 10 (a finding that does not name an action is not finished)</li>
+<li><a href="../going-further/testing-in-depth.html">Testing in Depth</a>: errors and power, multiple comparisons, Q-Q plots, a shuffle for any summary</li>
+<li><a href="../reference/reference-statistics.html#testing-a-difference">Statistics Reference: testing a difference</a></li>
+<li><a href="../reference/r-quarto-reference.html#relationships-and-tests">R and Quarto Reference: relationships and tests</a></li>
+<li><a href="../labs/comparing-builds.html#part-b-is-the-difference-real-and-does-it-matter">Lab 02: Comparing Builds</a>, Part B</li>
+<li><a href="../demos/stage-2.html">Stage 2 demo</a></li>
+<li>Next, in Stage 3: <a href="../notes/09-visualising-with-ggplot2.html">Visualising with ggplot2</a></li>
+</ul>
+<hr>
+</section>
+<section id="reflective-questions" class="level2">
+<h2 class="anchored" data-anchor-id="reflective-questions">Reflective Questions</h2>
+<ul>
+<li>Build B’s difficulty rating was significantly higher, but deaths did not change. What would you need to see in the next playtest to take the difficulty result seriously?</li>
+<li>A colleague says the paired study proves the signposting works because its p-value is smaller. What is wrong with that argument, and what does the paired study add that the sessions data does not?</li>
+<li>You can afford 30 testers for the next build comparison. Would you run them as two independent groups of 15 or as one paired group of 30? What would you have to control in the paired design?</li>
+<li>Pick a change your team made to your own game this term. Write the six questions you would answer to decide whether it worked, and the measure you would use for each.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/nmcguinness\.github\.io\/L8-3DGD-Playtest-Analytics\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../notes/07-sample-to-population.html" class="pagination-link" aria-label="From Sample to Population">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">From Sample to Population</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../labs/comparing-builds.html" class="pagination-link" aria-label="Lab 02 — Comparing Builds">
+        <span class="nav-page-text">Lab 02 — Comparing Builds</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>COMP I8015 · 3D Game Development · Dundalk Institute of Technology</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

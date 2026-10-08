@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Interpreting and Reporting Evidence – Playtest Analytics</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../notes/12-combining-evidence.html" rel="next">
+<link href="../demos/stage-3.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-640402775883e0dc5b71a44650c95e06.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked wf-at-interpret wf-at-act quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notes/11-reporting-evidence.html">Stage 4 · Evidence to Decision</a></li><li class="breadcrumb-item"><a href="../notes/11-reporting-evidence.html">Interpreting and Reporting Evidence</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Playtest Analytics</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Start Here</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/00-start-here.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Start Here</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/ten-rules.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ten Rules for Reading Playtest Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/setting-up.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 00 — Setting Up</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-0.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 0 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 1 · Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/01-planning-a-playtest.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Planning a Playtest</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/02-r-first-principles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R from First Principles</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/03-data-and-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data, Variables and Types</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/04-describing-variables.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Describing Variables</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/05-distributions-and-shape.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Distributions and Shape</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/reading-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 01 — Reading Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 1 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 2 · Comparing Evidence</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/06-cleaning-and-transforming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cleaning and Transforming</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/07-sample-to-population.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">From Sample to Population</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/08-comparing-groups.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Comparing Groups</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/comparing-builds.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 02 — Comparing Builds</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 2 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 3 · Relationships &amp; Visual Evidence</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/09-visualising-with-ggplot2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Visualising with ggplot2</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/10-relationships-and-correlation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Relationships and Correlation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/clinic-figures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 03 — A Figure for Your Report</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/clinic-relationships.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 04 — Relationships in Your Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 3 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 4 · Evidence to Decision</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/11-reporting-evidence.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Interpreting and Reporting Evidence</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/12-combining-evidence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Combining Evidence</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/complete-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 05 — From Evidence to Report</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 4 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Reference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/reference-statistics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Statistics Reference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/r-quarto-reference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R and Quarto Reference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/reference-ggplot2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ggplot2 Reference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Going Further</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/normality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Is It Normal Enough?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/sampling-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sampling Theory</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/testing-in-depth.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Testing in Depth</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/reshaping-and-joining.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reshaping and Joining</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#learning-outcomes" id="toc-learning-outcomes" class="nav-link active" data-scroll-target="#learning-outcomes">Learning Outcomes</a></li>
+  <li><a href="#why-this-matters-for-playtesting" id="toc-why-this-matters-for-playtesting" class="nav-link" data-scroll-target="#why-this-matters-for-playtesting">Why This Matters for Playtesting</a></li>
+  <li><a href="#the-report-headings" id="toc-the-report-headings" class="nav-link" data-scroll-target="#the-report-headings">The Report Headings</a></li>
+  <li><a href="#what-pattern-meaning-action" id="toc-what-pattern-meaning-action" class="nav-link" data-scroll-target="#what-pattern-meaning-action">What → Pattern → Meaning → Action</a></li>
+  <li><a href="#ranking-findings" id="toc-ranking-findings" class="nav-link" data-scroll-target="#ranking-findings">Ranking Findings</a></li>
+  <li><a href="#worked-examples" id="toc-worked-examples" class="nav-link" data-scroll-target="#worked-examples">Worked Examples</a></li>
+  <li><a href="#an-annotated-report" id="toc-an-annotated-report" class="nav-link" data-scroll-target="#an-annotated-report">An Annotated Report</a></li>
+  <li><a href="#building-the-report-in-quarto" id="toc-building-the-report-in-quarto" class="nav-link" data-scroll-target="#building-the-report-in-quarto">Building the Report in Quarto</a></li>
+  <li><a href="#reporting-a-whole-survey" id="toc-reporting-a-whole-survey" class="nav-link" data-scroll-target="#reporting-a-whole-survey">Reporting a Whole Survey</a></li>
+  <li><a href="#interpretation-guidance" id="toc-interpretation-guidance" class="nav-link" data-scroll-target="#interpretation-guidance">Interpretation Guidance</a></li>
+  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a></li>
+  <li><a href="#practice" id="toc-practice" class="nav-link" data-scroll-target="#practice">Practice</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  <li><a href="#links" id="toc-links" class="nav-link" data-scroll-target="#links">Links</a></li>
+  <li><a href="#reflective-questions" id="toc-reflective-questions" class="nav-link" data-scroll-target="#reflective-questions">Reflective Questions</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notes/11-reporting-evidence.html">Stage 4 · Evidence to Decision</a></li><li class="breadcrumb-item"><a href="../notes/11-reporting-evidence.html">Interpreting and Reporting Evidence</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Interpreting and Reporting Evidence</h1>
+<p class="subtitle lead">From a set of results to a finding someone can act on</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<nav class="wf-strip" aria-label="Where this page sits in the evidence workflow">
+  <span class="wf-label">Workflow</span>
+  <ol>
+    <li class="wf-step wf-question">Question</li>
+    <li class="wf-step wf-measure">Measure</li>
+    <li class="wf-step wf-collect">Collect</li>
+    <li class="wf-step wf-clean">Clean</li>
+    <li class="wf-step wf-describe">Describe</li>
+    <li class="wf-step wf-compare">Compare/Relate</li>
+    <li class="wf-step wf-interpret">Interpret</li>
+    <li class="wf-step wf-act">Act</li>
+  </ol>
+</nav>
+<blockquote class="blockquote">
+<p>A playtest ends in a decision, and the report is the only part of your work the decision-maker will read. This page is about turning results into that report: what goes under each heading of the assessment report, writing each finding as <strong>What → Pattern → Meaning → Action</strong>, ranking findings so the most important one leads, and building the report in Quarto so its numbers cannot go stale. The playtest question running through it: <em>“Build B was meant to be better. What do we tell the team?”</em></p>
+</blockquote>
+<div class="at-a-glance">
+<p><strong>Stage:</strong> 4 · Core. Taught in the March workshop. <strong>Time:</strong> 30 minutes, then the workshop lab on your own data. <strong>Before this:</strong> everything from Stages 1–3, and <a href="../notes/12-combining-evidence.html">Combining Evidence</a> for the qualitative part. <strong>Key terms:</strong> assessment report headings, Nine-Part Evidence Workflow, What → Pattern → Meaning → Action, severity, limitation, inline R. <strong>R you will write:</strong> inline <code>`r `</code> code, chunk options <code>echo</code> and <code>fig-cap</code>; <code>pivot_longer()</code> if your survey is wide.</p>
+</div>
+<section id="learning-outcomes" class="level2">
+<h2 class="anchored" data-anchor-id="learning-outcomes">Learning Outcomes</h2>
+<p>By the end of these notes you can:</p>
+<ul>
+<li>say what goes under each heading of the assessment report, and map each part of your analysis onto one;</li>
+<li>write a finding as What → Pattern → Meaning → Action, and diagnose a finding that skips a step;</li>
+<li>rank findings by severity, frequency, evidence and actionability, so the report leads with the one that matters most;</li>
+<li>build the report in Quarto with every number computed, so it cannot quote a stale number;</li>
+<li>reshape a wide survey with <code>pivot_longer()</code> when you need to report every item.</li>
+</ul>
+<hr>
+</section>
+<section id="why-this-matters-for-playtesting" class="level2">
+<h2 class="anchored" data-anchor-id="why-this-matters-for-playtesting">Why This Matters for Playtesting</h2>
+<p>A playtest ends in a decision: keep the change, cut it, or test again. The person making that decision will not rerun your analysis. They will read the report, and the report is the only part of your work that reaches them.</p>
+<p><strong>A report is an argument, not a results dump.</strong> Every table and figure you include should move the reader towards the conclusion or warn them off it. A reader faced with forty numbers will pick the one they already believed.</p>
+<p><strong>The reader must be able to check you.</strong> A report that says what was measured, how the data was cleaned, what was tested and what was not, lets a sceptical producer find the weak point themselves. That is what makes the conclusion trustworthy, and it is why limitations are not optional.</p>
+<hr>
+</section>
+<section id="the-report-headings" class="level2">
+<h2 class="anchored" data-anchor-id="the-report-headings">The Report Headings</h2>
+<p>Your final assessment report has these headings, in this order. Every report skeleton on this site uses them.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Heading</th>
+<th style="text-align: left;">What goes in it</th>
+<th style="text-align: left;">In the <em>Tidebreak</em> report</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>1. Executive Summary</strong></td>
+<td style="text-align: left;">The question, the one or two findings that matter, and what the team should do. Written last, read first</td>
+<td style="text-align: left;">Build B’s guidance cut wrong turns without costing enjoyment; keep it, and fix the Corridor hitch</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>2. Introduction</strong></td>
+<td style="text-align: left;">The game, the design problem and the research question</td>
+<td style="text-align: left;">Players were getting lost and quitting; did Build B’s guidance help?</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>3. Methodology</strong></td>
+<td style="text-align: left;">Who played what, what was measured, how the data was cleaned</td>
+<td style="text-align: left;">120 sessions from 30 players, each on one build; telemetry, survey, comments; the cleaning log</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>4. Results</strong></td>
+<td style="text-align: left;">The evidence: descriptive, visual, statistical and qualitative, without interpretation</td>
+<td style="text-align: left;">Wrong turns by build, with its figure, interval and p-value; the survey items; the comment codes</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>5. Discussion</strong></td>
+<td style="text-align: left;">What the results mean for the player: practical significance, where the evidence agrees and disagrees, limitations</td>
+<td style="text-align: left;">Is the reduction big enough to matter? Why do comments disagree with telemetry? What could make this wrong?</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>6. Conclusion</strong></td>
+<td style="text-align: left;">The decisions and the next test, following from the Discussion</td>
+<td style="text-align: left;">Keep the guidance; add an on-screen objective and retest</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>7. References</strong></td>
+<td style="text-align: left;">Anything you cite: questionnaires, methods, sources</td>
+<td style="text-align: left;">The questionnaire your survey items came from</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>8. Appendices</strong></td>
+<td style="text-align: left;">The detail a checker needs but a reader does not: the cleaning log, the codebook, extra tables</td>
+<td style="text-align: left;">Cleaning log; comment codebook; every survey item</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Results reports; Discussion judges.</strong> Keep them apart. A reader should be able to disagree with your Discussion while agreeing with every number in your Results.</p>
+<p><strong>Write the Executive Summary last.</strong> It is the only section some readers will read, so it must stand on its own: question, finding, action, in a few sentences.</p>
+<section id="the-nine-part-evidence-workflow" class="level3">
+<h3 class="anchored" data-anchor-id="the-nine-part-evidence-workflow">The Nine-Part Evidence Workflow</h3>
+<p>Earlier versions of these notes organised a report as nine parts. They are still a useful <strong>checklist</strong> for whether your analysis is complete, but they are not the report structure. Each part belongs under one of the assessment headings:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Evidence workflow</th>
+<th style="text-align: left;">Report section</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1 Research question</td>
+<td style="text-align: left;">Introduction</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2 Experimental design</td>
+<td style="text-align: left;">Methodology</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3 Descriptive evidence</td>
+<td style="text-align: left;">Results</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">4 Visual evidence</td>
+<td style="text-align: left;">Results</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">5 Statistical evidence</td>
+<td style="text-align: left;">Results</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">6 Practical significance</td>
+<td style="text-align: left;">Discussion</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">7 Qualitative evidence</td>
+<td style="text-align: left;">Results / Discussion</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">8 Limitations</td>
+<td style="text-align: left;">Discussion</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">9 Design conclusion</td>
+<td style="text-align: left;">Conclusion</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Use it as a check</strong>, not as headings. Before you submit, tick off all nine: if one is missing, a section of the report is thin.</p>
+<p><strong>Qualitative evidence sits in two places.</strong> The codes and their counts are Results. What they mean, and how they agree or disagree with the telemetry, is Discussion. <a href="../notes/12-combining-evidence.html">Combining Evidence</a> shows how.</p>
+<hr>
+</section>
+</section>
+<section id="what-pattern-meaning-action" class="level2">
+<h2 class="anchored" data-anchor-id="what-pattern-meaning-action">What → Pattern → Meaning → Action</h2>
+<p>Every finding in the report is written in four moves:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Move</th>
+<th style="text-align: left;">Says</th>
+<th style="text-align: left;">Test</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>What</strong></td>
+<td style="text-align: left;">What was measured, on whom, how many</td>
+<td style="text-align: left;">Could a reader repeat the measurement?</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Pattern</strong></td>
+<td style="text-align: left;">What the data shows, with its size</td>
+<td style="text-align: left;">Is there a number, and is it the right one?</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Meaning</strong></td>
+<td style="text-align: left;">What that suggests about the game, and how sure you are</td>
+<td style="text-align: left;">Does it follow from the pattern, and no further?</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Action</strong></td>
+<td style="text-align: left;">The one change or test you recommend</td>
+<td style="text-align: left;">Could someone start work on it tomorrow?</td>
+</tr>
+</tbody>
+</table>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="fig-wpma" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-wpma-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-wpma">flowchart LR
+  W["What"] --&gt; P["Pattern"]
+  P --&gt; M["Meaning"]
+  M --&gt; A(["Action"])
+  A -.-&gt;|"next playtest"| W
+  class M accent
+  class A action
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-wpma-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: What and Pattern are facts; Meaning and Action are judgement. The action is usually the next test, which starts the cycle again.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Meaning is where findings go wrong.</strong> What and Pattern are facts. Action is a recommendation. Meaning is the step where you connect them, and it is the step most often skipped, overstated or quietly replaced by what you hoped to find. A finding that does not name an action is not finished (<a href="../notes/ten-rules.html">rule 10</a>); a finding whose action does not follow from its meaning is worse.</p>
+<p><strong>How it maps onto the report.</strong> What goes in Methodology, Pattern in Results, Meaning in Discussion, Action in Conclusion. For a comparison between builds, the Pattern is the six questions from <a href="../notes/08-comparing-groups.html">Comparing Groups</a>: what happened, how large, how uncertain, could it be chance.</p>
+<hr>
+</section>
+<section id="ranking-findings" class="level2">
+<h2 class="anchored" data-anchor-id="ranking-findings">Ranking Findings</h2>
+<p>A playtest rarely produces one finding. <em>Tidebreak</em> produced at least five, and a report that lists them in the order they were found buries the one that matters. <strong>Rank them, and lead with the top one.</strong></p>
+<p>Rate each finding on four things:</p>
+<ul>
+<li><strong>Severity</strong>: how badly it hurts the player experience when it happens.</li>
+<li><strong>Frequency</strong>: how many players it affects.</li>
+<li><strong>Evidence</strong>: how strong and how consistent the evidence is.</li>
+<li><strong>Actionability</strong>: whether the team can do something about it, and what.</li>
+</ul>
+<p>A common severity scale, adapted from usability testing, runs from 4 down to 0:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Severity</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">4 Critical</td>
+<td style="text-align: left;">Stops play or makes players quit</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">3 Major</td>
+<td style="text-align: left;">Hurts the experience for many players, but they carry on</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">2 Minor</td>
+<td style="text-align: left;">A noticeable irritation</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">1 Cosmetic</td>
+<td style="text-align: left;">Fix if there is time</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">0 None</td>
+<td style="text-align: left;">Not a problem</td>
+</tr>
+</tbody>
+</table>
+<p>Applied to <em>Tidebreak</em>:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 27%">
+<col style="width: 18%">
+<col style="width: 18%">
+<col style="width: 18%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Finding</th>
+<th style="text-align: center;">Severity</th>
+<th style="text-align: left;">Frequency</th>
+<th style="text-align: left;">Evidence</th>
+<th style="text-align: left;">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Build A frustration quits</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;">20 of 60 Build A sessions, against 5 in Build B</td>
+<td style="text-align: left;">Strong: p = 0.002, and Build B already fixes it</td>
+<td style="text-align: left;">Keep Build B’s guidance. Lead the report</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Build B Corridor hitch</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: left;">60 frames over the 30 FPS budget, every one in the Corridor</td>
+<td style="text-align: left;">Strong: a fixed interval, reproducible</td>
+<td style="text-align: left;">Engineering ticket now</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Objective unclear</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: left;">46% of responses disagreed; better in Build B</td>
+<td style="text-align: left;">Strong for the build difference; suggestive for the link to quits</td>
+<td style="text-align: left;">Design change and retest</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Build B rated harder</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;">0.42 points on a 1–7 scale</td>
+<td style="text-align: left;">Weak: deaths did not change</td>
+<td style="text-align: left;">Monitor in the next test</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Visual style</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: left;">93% agreed</td>
+<td style="text-align: left;">Strong, but nothing to fix</td>
+<td style="text-align: left;">Mention; do not lead with it</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Severity is a judgement; write down why.</strong> Two analysts may rate the Corridor hitch differently. What matters is that the reasons are visible, so the team can argue about the rating rather than about which finding the analyst happened to like.</p>
+<p><strong>For your project:</strong> list every finding your team has, rate each, and put the table in an appendix. The top one or two go in the Executive Summary.</p>
+<hr>
+</section>
+<section id="worked-examples" class="level2">
+<h2 class="anchored" data-anchor-id="worked-examples">Worked Examples</h2>
+<p><strong>The data.</strong> The 120 post-session surveys, joined to the session outcomes, feed both examples below. Every number in both is correct.</p>
+<section id="a-good-finding" class="level3">
+<h3 class="anchored" data-anchor-id="a-good-finding">A good finding</h3>
+<blockquote class="blockquote">
+<p><strong>What.</strong> 120 players each rated eight statements about their session from 1 (strongly disagree) to 5 (strongly agree).</p>
+<p><strong>Pattern.</strong> “I always knew what my objective was” was the lowest-rated of the eight, averaging 2.61, with 46% disagreeing. It split sharply by build: 2.13 in Build A against 3.08 in Build B. Players who quit in frustration rated it 1.24, against 2.97 for everyone else.</p>
+<p><strong>Meaning.</strong> Build B’s guidance made the objective clearer. The playtest was designed to compare the two builds, so this is the comparison it can best support. The link to frustration quits is an association: players who did not know what to do were the ones who left, which is consistent with unclear objectives causing the quits but does not prove it.</p>
+<p><strong>Action.</strong> Keep Build B’s guidance. For the next build, add an explicit on-screen objective in the first minute, and retest with objective clarity and the frustration-quit rate as the two target measures, with the success threshold agreed before the test.</p>
+</blockquote>
+<p><strong>Why it works.</strong> The What says who and how many. The Pattern gives the size and the comparison, not only the ranking. The Meaning separates the claim the design supports (the build changed clarity) from the one it only suggests (clarity drives quits). The Action is specific, testable, and follows from the Meaning.</p>
+</section>
+<section id="a-bad-finding" class="level3">
+<h3 class="anchored" data-anchor-id="a-bad-finding">A bad finding</h3>
+<blockquote class="blockquote">
+<p>Players loved <em>Tidebreak</em>: visual style scored 4.46 out of 5, with 93% agreeing. Build B scored higher than Build A on 5 of the 8 survey items. Overall the playtest was a success, and the team should continue as planned.</p>
+</blockquote>
+<p><strong>Why it fails.</strong> Every number is true, and the finding is still useless.</p>
+<ul>
+<li><strong>What is missing.</strong> Who answered, how many, and on what scale.</li>
+<li><strong>The Pattern is chosen, not found.</strong> It leads with the best-rated item, which differs between the builds by 0.02 of a point. “Higher on 5 of 8” counts that as a win, the same as the objective item’s gap of 0.95.</li>
+<li><strong>The Meaning is a verdict.</strong> “A success” measured against what? Nothing in the question was about visual style.</li>
+<li><strong>The Action names nothing.</strong> “Continue as planned” is not a decision anyone can start work on (<a href="../notes/ten-rules.html">rule 10</a>).</li>
+<li><strong>It misses the finding.</strong> The worst-rated item, the one tied to why players quit, is not mentioned. The bad version is not a weaker account of the good one. It is an account of a different, more comfortable playtest.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="an-annotated-report" class="level2">
+<h2 class="anchored" data-anchor-id="an-annotated-report">An Annotated Report</h2>
+<p>What a finished report looks like, in miniature, under the assessment headings. Each section is a sentence or two here; in your report each is a section. The notes in grey say why each part is written the way it is.</p>
+<div class="callout callout-style-simple callout-note no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>1. Executive Summary.</strong> Build B’s environmental guidance cut wrong turns by about 3.4 per session without reducing enjoyment, and frustration quits fell from 20 to 5. Keep the guidance; fix a frame-rate hitch Build B introduced in the Corridor; add an on-screen objective and retest.</p>
+<p><span style="color: #6c757d"><em>Question, findings and actions in three sentences. Written last.</em></span></p>
+<p><strong>2. Introduction.</strong> Build A players were getting lost and quitting early. Build B added lighting and signage. Did it improve navigation without reducing enjoyment?</p>
+<p><span style="color: #6c757d"><em>The design problem, then the question with a yes or no answer, using the measures that will answer it.</em></span></p>
+<p><strong>3. Methodology.</strong> 120 sessions from 30 players, 4 sessions each; each player was assigned to one build. Measures: wrong turns and quit reason (telemetry), an eight-item survey (self-report), and a one-sentence comment. The raw export was cleaned as recorded in Appendix A.</p>
+<p><span style="color: #6c757d"><em>Gives both counts, names the source of each measure, and points to the cleaning log so the reader can reproduce n.</em></span></p>
+<p><strong>4. Results.</strong> Build B players took 3.4 fewer wrong turns per session (Figure 1; 95% CI 2.5 to 4.3, p &lt; 0.001). Enjoyment did not differ (95% CI for the difference -0.35 to 0.35 points on a 1–7 scale). Comments coded “lost or unclear” were more common in Build B (Table 3).</p>
+<p><span style="color: #6c757d"><em>Size first, then interval, then p-value. Every figure is referred to in the text. No interpretation yet.</em></span></p>
+<p><strong>5. Discussion.</strong> A reduction of 3.4 wrong turns is 38% of Build A’s average: large enough for players to feel. The comments disagree with the telemetry because they track how the session felt, not where the player went. Limitations: each player contributed 4 sessions (the result holds when each counts once); genre experience was not recorded.</p>
+<p><span style="color: #6c757d"><em>Practical significance, the evidence that disagrees and why, and the weaknesses, before the reader finds them.</em></span></p>
+<p><strong>6. Conclusion.</strong> Keep Build B’s guidance. Fix the Corridor hitch before release. Add an on-screen objective in the first minute and retest objective clarity and the frustration-quit rate, with the success threshold agreed before the test.</p>
+<p><span style="color: #6c757d"><em>Decisions and the next test, each following from the Discussion.</em></span></p>
+<p><strong>7. References</strong> and <strong>8. Appendices.</strong> The questionnaire source; Appendix A, the cleaning log; Appendix B, the comment codebook.</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="building-the-report-in-quarto" class="level2">
+<h2 class="anchored" data-anchor-id="building-the-report-in-quarto">Building the Report in Quarto</h2>
+<p>Your report is a <code>.qmd</code> file: prose, code and output in one document, rendered to HTML with <code>quarto render report.qmd</code>. The skeleton is the assessment headings:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Tidebreak Build B: Playtest Report"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>sessions <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_sessions.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## Executive Summary</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">## Methodology</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>We analysed <span class="in">`r nrow(sessions)`</span> sessions from</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="in">`r length(unique(sessions$player_id))`</span> players.</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">## Results</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="fu">## Discussion</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conclusion</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">## References</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">## Appendices</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Inline code keeps the prose honest.</strong> <code>`r nrow(sessions)`</code> in the text is replaced by the number when the report renders. When next week’s data arrives, you render again and every figure, table and sentence updates together. A number typed by hand into the prose is the one that will be wrong. Every page of this site is built this way.</p>
+<p><strong><code>echo: false</code></strong> hides a chunk’s code but keeps its output: the reader sees the table or figure without the R that made it. Use it for the report; leave the code visible in your own working file.</p>
+<p><strong><code>fig-cap</code></strong> gives a figure a numbered caption. State the takeaway in it, as in <a href="../notes/09-visualising-with-ggplot2.html#a-figure-for-your-report">A Figure for Your Report</a>.</p>
+<section id="a-quarto-document-in-one-page" class="level3">
+<h3 class="anchored" data-anchor-id="a-quarto-document-in-one-page">A Quarto document in one page</h3>
+<p>A Quarto document is a text file with three kinds of content:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Build B playtest report"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Session length</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>Build B sessions were longer. The median was <span class="in">`r median(b$session_minutes)`</span> minutes.</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: session-hist</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(b<span class="sc">$</span>session_minutes)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>The header</strong> between the <code>---</code> lines sets the title and options. <strong>Prose</strong> is written in Markdown: <code>##</code> for a heading, <code>**bold**</code>, <code>*italic*</code>, <code>-</code> for a list. <strong>Code chunks</strong> start with <code>```{r}</code> and end with <code>```</code>; lines starting <code>#|</code> are chunk options, such as a label or whether to show the code.</p>
+<p><strong>Rendering</strong> runs every chunk from the top, in order, in a fresh session, and writes the web page: the Render button in either editor, or <code>quarto render</code> in a terminal. Because it starts fresh, a document that renders proves the analysis works from the data alone, not from something you happened to type in the console earlier.</p>
+<p><strong>For your project:</strong> start <code>report.qmd</code> now, with the eight headings and a setup chunk that loads your data, and render it while it is empty. Every finding you add from now on goes straight into it.</p>
+<hr>
+</section>
+</section>
+<section id="reporting-a-whole-survey" class="level2 when-needed">
+<h2 class="when-needed anchored" data-anchor-id="reporting-a-whole-survey">Reporting a Whole Survey</h2>
+<p>A survey tool exports one row per respondent and one column per question, because that is how a form is filled in. That shape is <strong>wide</strong>. The <em>Tidebreak</em> survey has 120 rows and 9 columns: a session ID and eight agreement items, each rated 1 to 5.</p>
+<p>To report every item at once you need it <strong>long</strong>: one row per answer, with columns <code>session_id</code>, <code>item</code> and <code>rating</code> (<a href="../notes/03-data-and-types.html#tidy-data">Tidy Data</a>). <code>pivot_longer()</code>, from <code>tidyr</code>, does the reshape:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>long <span class="ot">&lt;-</span> survey <span class="sc">|&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>session_id, <span class="at">names_to =</span> <span class="st">"item"</span>, <span class="at">values_to =</span> <span class="st">"rating"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(long)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 960   3</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(long, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  session_id item                rating
+  &lt;chr&gt;      &lt;chr&gt;                &lt;dbl&gt;
+1 S001       controls_responsive      3
+2 S001       objective_clear          1
+3 S001       difficulty_fair          3</code></pre>
+</div>
+</div>
+<p><code>-session_id</code> means “every column except <code>session_id</code>”. Those eight columns are stacked: their names go into <code>item</code> and their values into <code>rating</code>. 120 sessions × 8 items = 960 rows.</p>
+<p>Now <code>item</code> is a column, so one <code>group_by()</code> summarises every item:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>long <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(item) <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean     =</span> <span class="fu">mean</span>(rating),</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">agree    =</span> <span class="fu">mean</span>(rating <span class="sc">&gt;=</span> <span class="dv">4</span>),</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">disagree =</span> <span class="fu">mean</span>(rating <span class="sc">&lt;=</span> <span class="dv">2</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(mean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 4
+  item                 mean agree disagree
+  &lt;chr&gt;               &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
+1 objective_clear      2.61 0.233   0.458 
+2 death_understood     2.86 0.217   0.35  
+3 difficulty_fair      3    0.308   0.342 
+4 level_navigable      3.22 0.392   0.225 
+5 would_play_again     3.45 0.508   0.15  
+6 match_length         4.03 0.758   0.0667
+7 controls_responsive  4.14 0.758   0.0167
+8 visual_style         4.46 0.933   0     </code></pre>
+</div>
+</div>
+<p>For a rating scale, report the proportion agreeing and disagreeing alongside the mean; the mean of an ordinal scale is a convenience, not a measurement (<a href="../notes/ten-rules.html">rule 3</a>). And <code>item</code> can go on an axis:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>long <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">reorder</span>(item, rating), <span class="at">fill =</span> <span class="fu">factor</span>(rating))) <span class="sc">+</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"fill"</span>) <span class="sc">+</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"RdBu"</span>) <span class="sc">+</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Post-session survey, all items"</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Proportion of players"</span>, <span class="at">y =</span> <span class="cn">NULL</span>, <span class="at">fill =</span> <span class="st">"Rating"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="11-reporting-evidence_files/figure-html/demo-plot-1.png" class="img-fluid figure-img" alt="Horizontal stacked bars for the eight survey items, each split by rating from 1 in red to 5 in dark blue and ordered by mean rating. Visual style is almost entirely 4s and 5s; objective clear has the most red." width="768"></p>
+<figcaption>Every survey item at once. Objective clarity has the most disagreement; visual style is almost all agreement.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><code>reorder(item, rating)</code> sorts the items by their mean rating, and <code>position = "fill"</code> stretches every bar to the same length.</p>
+<p><strong>Going further:</strong> <code>pivot_wider()</code>, the other kinds of join, and how to check a join did what you meant are on <a href="../going-further/reshaping-and-joining.html">Reshaping and Joining</a>.</p>
+<hr>
+</section>
+<section id="interpretation-guidance" class="level2">
+<h2 class="anchored" data-anchor-id="interpretation-guidance">Interpretation Guidance</h2>
+<p><strong>What the data shows.</strong> The objective item is the worst-rated of eight and differs most between the builds. Wrong turns fell in Build B; enjoyment did not change.</p>
+<p><strong>What the analysis suggests.</strong> Build B’s guidance improved navigation and how clear the objective felt, at no cost to enjoyment.</p>
+<p><strong>What can legitimately be concluded.</strong> Build B made navigation better for the players who tested it. Whether the clearer objective is what reduced frustration quits is a hypothesis for the next test, not a finding.</p>
+<p><strong>Order the evidence by strength.</strong> In the Conclusion, lead with what the strongest evidence supports, and say in the Discussion where weaker evidence disagrees. A report that hides a contradiction invites the reader to find it.</p>
+<hr>
+</section>
+<section id="common-mistakes" class="level2">
+<h2 class="anchored" data-anchor-id="common-mistakes">Common Mistakes</h2>
+<p><strong>Reporting results in the order you computed them.</strong> The reader needs the order of the argument. Use the headings.</p>
+<p><strong>Interpreting in the Results.</strong> “Wrong turns fell, showing the guidance works” mixes a result with a judgement. Results says the first half; Discussion says the second.</p>
+<p><strong>Using the nine-part workflow as headings.</strong> It is a checklist. The report has the assessment headings.</p>
+<p><strong>Leading with the best-rated item.</strong> It is usually the art, it rarely differs between builds, and it is almost never what the playtest was run to find.</p>
+<p><strong>An Action that is a sentiment.</strong> “Improve onboarding” is a wish. “Add an on-screen objective in the first minute and retest clarity” is an action.</p>
+<p><strong>A generic limitation.</strong> “The sample was small” tells the reader nothing. “Each player contributed four sessions, so sessions are not independent; the result holds when each player counts once” tells them what you checked.</p>
+<p><strong>Copying numbers into the prose by hand.</strong> They go stale the next time the data changes, and nobody notices until a meeting.</p>
+<hr>
+</section>
+<section id="practice" class="level2">
+<h2 class="anchored" data-anchor-id="practice">Practice</h2>
+<p>Each takes two or three minutes.</p>
+<ol type="1">
+<li><strong>Place it.</strong> Which report section does each of these belong in? (a) “Each player contributed four sessions.” (b) “Players took 3.4 fewer wrong turns in Build B.” (c) “A reduction of this size is large enough for players to notice.”
+<ol start="4" type="a">
+<li>“Keep the guidance and retest with an on-screen objective.”</li>
+</ol></li>
+<li><strong>Diagnose.</strong> “Build B is better. Players liked it more and got lost less. We should ship it.” Which of What, Pattern, Meaning and Action is missing or weak?</li>
+<li><strong>Rank.</strong> A colleague’s draft report leads with “93% of players liked the visual style”. Using the ranking table above, rewrite the report’s first sentence.</li>
+<li><strong>Compute.</strong> Which survey item has the largest share of players answering 1 or 2 in Build A?</li>
+</ol>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Show answers">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Show answers
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>1.</strong> (a) Methodology, and again in Discussion if it is a limitation. (b) Results. (c) Discussion: it is a judgement about practical significance. (d) Conclusion.</p>
+<p><strong>2.</strong> What is missing entirely: no measure, no players, no n.&nbsp;The Pattern has no sizes and no interval. The Meaning (“better”) is a verdict. The Action (“ship it”) does not say what was shown to work. Rewrite it with the wrong-turn difference and its interval as the Pattern.</p>
+<p><strong>3.</strong> Lead with the highest-priority finding: “One in three Build A sessions (20 of 60) ended in a frustration quit, against 5 in Build B; Build B’s guidance should be kept.” Visual style can appear later, as a strength that needs no action.</p>
+<p><strong>4.</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>disagree_a <span class="ot">&lt;-</span> long <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">select</span>(sessions, session_id, build), <span class="at">by =</span> <span class="st">"session_id"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(build <span class="sc">==</span> <span class="st">"A"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(item) <span class="sc">|&gt;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">disagree =</span> <span class="fu">mean</span>(rating <span class="sc">&lt;=</span> <span class="dv">2</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(disagree))</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(disagree_a, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  item             disagree
+  &lt;chr&gt;               &lt;dbl&gt;
+1 objective_clear     0.617
+2 difficulty_fair     0.35 
+3 death_understood    0.283</code></pre>
+</div>
+</div>
+<p>The objective item: 62% of Build A players answered 1 or 2, against 35% for the next item.</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ul>
+<li>The report has eight headings: Executive Summary, Introduction, Methodology, Results, Discussion, Conclusion, References, Appendices. Results reports; Discussion judges.</li>
+<li>The Nine-Part Evidence Workflow is a checklist that maps onto those headings, not a replacement for them.</li>
+<li>Write every finding as What → Pattern → Meaning → Action. Meaning is where findings go wrong; Action is where they become useful.</li>
+<li>Rank findings by severity, frequency, evidence and actionability, and lead with the top one.</li>
+<li>A report built in Quarto computes its own numbers, so it cannot quote a stale one.</li>
+<li>When you need every survey item, <code>pivot_longer()</code> makes the survey long.</li>
+</ul>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Key term</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Executive Summary</strong></td>
+<td style="text-align: left;">The question, the findings that matter and the actions, written last and read first</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Nine-Part Evidence Workflow</strong></td>
+<td style="text-align: left;">A checklist of the nine kinds of evidence a complete analysis covers</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>What → Pattern → Meaning → Action</strong></td>
+<td style="text-align: left;">The four moves of a finding</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Severity</strong></td>
+<td style="text-align: left;">How badly a problem hurts the player experience, 0 to 4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Limitation</strong></td>
+<td style="text-align: left;">Something that could make the conclusion wrong, stated by the author</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Wide, long</strong></td>
+<td style="text-align: left;">One row per respondent, or one row per respondent per question</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="links" class="level2">
+<h2 class="anchored" data-anchor-id="links">Links</h2>
+<ul>
+<li><a href="../notes/ten-rules.html">Ten Rules</a>: rule 2 (a number without a question attached is decoration) and rule 10 (a finding that does not name an action is not finished)</li>
+<li><a href="../notes/12-combining-evidence.html">Combining Evidence</a>: telemetry, observation and self-report together, coding comments, limitations</li>
+<li><a href="../notes/06-cleaning-and-transforming.html">Cleaning and Transforming</a>: the cleaning log for Methodology and the Appendices</li>
+<li><a href="../notes/08-comparing-groups.html">Comparing Groups</a>: the six questions behind a Results paragraph</li>
+<li><a href="../reference/r-quarto-reference.html#quarto">R and Quarto Reference: Quarto</a></li>
+<li><a href="../labs/complete-analysis.html">Lab 05: From Evidence to Report</a></li>
+<li><a href="../demos/stage-4.html">Stage 4 demo</a></li>
+</ul>
+<hr>
+</section>
+<section id="reflective-questions" class="level2">
+<h2 class="anchored" data-anchor-id="reflective-questions">Reflective Questions</h2>
+<ul>
+<li>The bad finding uses only true numbers. What, if anything, should stop a true number going into a report?</li>
+<li>A producer asks you to cut the limitations because they “undermine the recommendation”. What do you say?</li>
+<li>Write your own project’s Executive Summary now, in three sentences, before you have finished the analysis. What does that tell you about which analysis is still missing?</li>
+<li>Your Conclusion recommends a retest. What would you have to decide before that retest starts, so that its result can change your mind (<a href="../notes/ten-rules.html">rule 1</a>)?</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/nmcguinness\.github\.io\/L8-3DGD-Playtest-Analytics\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../demos/stage-3.html" class="pagination-link" aria-label="Stage 3 Demo">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Stage 3 Demo</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../notes/12-combining-evidence.html" class="pagination-link" aria-label="Combining Evidence">
+        <span class="nav-page-text">Combining Evidence</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>COMP I8015 · 3D Game Development · Dundalk Institute of Technology</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

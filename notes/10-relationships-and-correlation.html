@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Relationships and Correlation – Playtest Analytics</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../labs/clinic-figures.html" rel="next">
+<link href="../notes/09-visualising-with-ggplot2.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-640402775883e0dc5b71a44650c95e06.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked wf-at-compare wf-at-interpret quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notes/09-visualising-with-ggplot2.html">Stage 3 · Relationships &amp; Visual Evidence</a></li><li class="breadcrumb-item"><a href="../notes/10-relationships-and-correlation.html">Relationships and Correlation</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Playtest Analytics</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Start Here</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/00-start-here.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Start Here</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/ten-rules.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ten Rules for Reading Playtest Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/setting-up.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 00 — Setting Up</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-0.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 0 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 1 · Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/01-planning-a-playtest.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Planning a Playtest</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/02-r-first-principles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R from First Principles</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/03-data-and-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data, Variables and Types</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/04-describing-variables.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Describing Variables</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/05-distributions-and-shape.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Distributions and Shape</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/reading-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 01 — Reading Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 1 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 2 · Comparing Evidence</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/06-cleaning-and-transforming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cleaning and Transforming</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/07-sample-to-population.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">From Sample to Population</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/08-comparing-groups.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Comparing Groups</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/comparing-builds.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 02 — Comparing Builds</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 2 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 3 · Relationships &amp; Visual Evidence</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/09-visualising-with-ggplot2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Visualising with ggplot2</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/10-relationships-and-correlation.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Relationships and Correlation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/clinic-figures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 03 — A Figure for Your Report</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/clinic-relationships.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 04 — Relationships in Your Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 3 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 4 · Evidence to Decision</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/11-reporting-evidence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Interpreting and Reporting Evidence</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/12-combining-evidence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Combining Evidence</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/complete-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 05 — From Evidence to Report</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 4 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Reference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/reference-statistics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Statistics Reference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/r-quarto-reference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R and Quarto Reference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/reference-ggplot2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ggplot2 Reference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Going Further</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/normality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Is It Normal Enough?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/sampling-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sampling Theory</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/testing-in-depth.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Testing in Depth</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/reshaping-and-joining.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reshaping and Joining</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#learning-outcomes" id="toc-learning-outcomes" class="nav-link active" data-scroll-target="#learning-outcomes">Learning Outcomes</a></li>
+  <li><a href="#why-this-matters-for-playtesting" id="toc-why-this-matters-for-playtesting" class="nav-link" data-scroll-target="#why-this-matters-for-playtesting">Why This Matters for Playtesting</a></li>
+  <li><a href="#seeing-a-relationship-the-scatterplot" id="toc-seeing-a-relationship-the-scatterplot" class="nav-link" data-scroll-target="#seeing-a-relationship-the-scatterplot">Seeing a Relationship: the Scatterplot</a></li>
+  <li><a href="#measuring-a-relationship-correlation" id="toc-measuring-a-relationship-correlation" class="nav-link" data-scroll-target="#measuring-a-relationship-correlation">Measuring a Relationship: Correlation</a></li>
+  <li><a href="#many-relationships-at-once-the-correlation-matrix" id="toc-many-relationships-at-once-the-correlation-matrix" class="nav-link" data-scroll-target="#many-relationships-at-once-the-correlation-matrix">Many Relationships at Once: the Correlation Matrix</a></li>
+  <li><a href="#telemetry-observation-and-self-report-together" id="toc-telemetry-observation-and-self-report-together" class="nav-link" data-scroll-target="#telemetry-observation-and-self-report-together">Telemetry, Observation and Self-Report Together</a></li>
+  <li><a href="#what-correlation-cannot-see" id="toc-what-correlation-cannot-see" class="nav-link" data-scroll-target="#what-correlation-cannot-see">What Correlation Cannot See</a></li>
+  <li><a href="#correlation-is-not-causation" id="toc-correlation-is-not-causation" class="nav-link" data-scroll-target="#correlation-is-not-causation">Correlation Is Not Causation</a></li>
+  <li><a href="#confounding-look-within-groups" id="toc-confounding-look-within-groups" class="nav-link" data-scroll-target="#confounding-look-within-groups">Confounding: Look Within Groups</a></li>
+  <li><a href="#two-categorical-variables" id="toc-two-categorical-variables" class="nav-link" data-scroll-target="#two-categorical-variables">Two Categorical Variables</a></li>
+  <li><a href="#critiquing-a-playtest" id="toc-critiquing-a-playtest" class="nav-link" data-scroll-target="#critiquing-a-playtest">Critiquing a Playtest</a></li>
+  <li><a href="#worked-example" id="toc-worked-example" class="nav-link" data-scroll-target="#worked-example">Worked Example</a></li>
+  <li><a href="#interpretation-guidance" id="toc-interpretation-guidance" class="nav-link" data-scroll-target="#interpretation-guidance">Interpretation Guidance</a></li>
+  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a></li>
+  <li><a href="#practice" id="toc-practice" class="nav-link" data-scroll-target="#practice">Practice</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  <li><a href="#links" id="toc-links" class="nav-link" data-scroll-target="#links">Links</a></li>
+  <li><a href="#reflective-questions" id="toc-reflective-questions" class="nav-link" data-scroll-target="#reflective-questions">Reflective Questions</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notes/09-visualising-with-ggplot2.html">Stage 3 · Relationships &amp; Visual Evidence</a></li><li class="breadcrumb-item"><a href="../notes/10-relationships-and-correlation.html">Relationships and Correlation</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Relationships and Correlation</h1>
+<p class="subtitle lead">When two things move together, and what that does and does not mean</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<nav class="wf-strip" aria-label="Where this page sits in the evidence workflow">
+  <span class="wf-label">Workflow</span>
+  <ol>
+    <li class="wf-step wf-question">Question</li>
+    <li class="wf-step wf-measure">Measure</li>
+    <li class="wf-step wf-collect">Collect</li>
+    <li class="wf-step wf-clean">Clean</li>
+    <li class="wf-step wf-describe">Describe</li>
+    <li class="wf-step wf-compare">Compare/Relate</li>
+    <li class="wf-step wf-interpret">Interpret</li>
+    <li class="wf-step wf-act">Act</li>
+  </ol>
+</nav>
+<blockquote class="blockquote">
+<p>Most playtest questions are about relationships: do players who die more find the game harder? Do players who get lost rate the level as confusing? This page covers how to see a relationship (the scatterplot), how to measure it (correlation), how to scan several at once (a correlation matrix), and the trap underneath all of them: <strong>two things moving together does not mean one causes the other.</strong> The playtest question running through it: <em>“Awareness is the strongest predictor of score. Should we buff awareness?”</em></p>
+</blockquote>
+<div class="at-a-glance">
+<p><strong>Stage:</strong> 3B · Core. Taught in a clinic, January or February. <strong>Time:</strong> 30 minutes, then the clinic lab on your own data. <strong>Before this:</strong> <a href="../notes/09-visualising-with-ggplot2.html">Visualising with ggplot2</a>. <strong>Key terms:</strong> scatterplot, direction, form, strength, correlation, Pearson, Spearman, correlation matrix, causation, confounding variable. <strong>R you will write:</strong> <code>cor()</code>, <code>cor(..., method = "spearman")</code>, <code>select()</code> with <code>cor()</code> for a matrix, <code>geom_point()</code>.</p>
+</div>
+<section id="learning-outcomes" class="level2">
+<h2 class="anchored" data-anchor-id="learning-outcomes">Learning Outcomes</h2>
+<p>By the end of these notes you can:</p>
+<ul>
+<li>read a scatterplot for direction, form and strength;</li>
+<li>compute and interpret a Pearson correlation, and say why context decides whether it is strong;</li>
+<li>say when to use Spearman’s correlation instead, and compute it;</li>
+<li>build and read a correlation matrix of 3–5 playtest measures;</li>
+<li>name what correlation cannot see, and give three explanations other than cause for two things moving together;</li>
+<li>check a suspected confounder by looking at the relationship within groups;</li>
+<li>relate telemetry to self-report, and say what it means when they disagree.</li>
+</ul>
+<hr>
+</section>
+<section id="why-this-matters-for-playtesting" class="level2">
+<h2 class="anchored" data-anchor-id="why-this-matters-for-playtesting">Why This Matters for Playtesting</h2>
+<p>Comparing two builds was a controlled question: the team chose who played which. Most of what a playtest records is not controlled. Awareness, deaths, experience, difficulty ratings: they all arrive together, and they all move together, because they all come from the same players.</p>
+<p><strong>A relationship is a lead, not a finding.</strong> “Players with high awareness scored more” is true in the <em>Tidebreak</em> data, and it is tempting to read it as “awareness causes score, so buff awareness”. The data cannot say that. Better players may simply be more aware <em>and</em> score more. The difference between those two readings decides whether a balance patch helps or does nothing, and only careful reasoning, not more computation, tells them apart (<a href="../notes/ten-rules.html">rule 7</a>).</p>
+<p><strong>For your project:</strong> by now your team has its own playtest data. This page is written so that every step works on it. The clinic lab ends with a correlation matrix of your own measures.</p>
+<hr>
+</section>
+<section id="seeing-a-relationship-the-scatterplot" class="level2">
+<h2 class="anchored" data-anchor-id="seeing-a-relationship-the-scatterplot">Seeing a Relationship: the Scatterplot</h2>
+<p>A <strong>scatterplot</strong> draws one point per observation, with one variable on each axis. Do players who die more rate the game as more difficult?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> deaths, <span class="at">y =</span> difficulty)) <span class="sc">+</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.15</span>, <span class="at">height =</span> <span class="fl">0.15</span>, <span class="at">colour =</span> pal<span class="sc">$</span>line, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Deaths in the session"</span>, <span class="at">y =</span> <span class="st">"Difficulty rating (1–7)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-deaths-difficulty" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Scatterplot of difficulty rating from 2 to 7 against deaths from 0 to 7. The cloud of points rises from lower left to upper right, with a lot of scatter.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-deaths-difficulty-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="10-relationships-and-correlation_files/figure-html/fig-deaths-difficulty-1.png" class="img-fluid figure-img" alt="Scatterplot of difficulty rating from 2 to 7 against deaths from 0 to 7. The cloud of points rises from lower left to upper right, with a lot of scatter." width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-deaths-difficulty-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Players who died more rated the game as harder, with a lot of variation. Points are jittered slightly because both variables are whole numbers.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><code>geom_jitter()</code> is <code>geom_point()</code> with a little random nudge, so that sessions with the same values do not sit on top of each other. Read a scatterplot for three things:</p>
+<ul>
+<li><strong>Direction.</strong> Do the points rise from left to right (<strong>positive</strong>: more of one, more of the other) or fall (<strong>negative</strong>)? Here they rise.</li>
+<li><strong>Form.</strong> Do they follow a straight line, a curve, or no pattern at all? Here, roughly a line.</li>
+<li><strong>Strength.</strong> How tightly do they cluster around that form? Here, loosely: plenty of players died often and still rated the game easy.</li>
+</ul>
+<p><strong>In a report you would write:</strong> “Players who died more rated the game as harder, though with wide variation between players.”</p>
+<hr>
+</section>
+<section id="measuring-a-relationship-correlation" class="level2">
+<h2 class="anchored" data-anchor-id="measuring-a-relationship-correlation">Measuring a Relationship: Correlation</h2>
+<p>The <strong>correlation</strong> coefficient, <em>r</em>, puts a number on direction and strength for a <strong>straight-line</strong> relationship. It runs from −1 to +1:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-r-grid" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Six scatterplots in a row, labelled r = −0.9, −0.5, −0.2, 0.2, 0.5 and 0.9. At −0.9 the points form a tight falling band; at ±0.2 they are an almost shapeless cloud; at 0.9 a tight rising band.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-r-grid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="10-relationships-and-correlation_files/figure-html/fig-r-grid-1.png" class="img-fluid figure-img" alt="Six scatterplots in a row, labelled r = −0.9, −0.5, −0.2, 0.2, 0.5 and 0.9. At −0.9 the points form a tight falling band; at ±0.2 they are an almost shapeless cloud; at 0.9 a tight rising band." width="864">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-r-grid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: What correlations look like. At ±0.2 there is barely a pattern; at ±0.9 the points form a tight band.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li><strong>+1</strong>: a perfect rising line. <strong>−1</strong>: a perfect falling line.</li>
+<li><strong>0</strong>: no straight-line relationship.</li>
+<li>The further from 0, the more tightly the points follow a line.</li>
+</ul>
+<p><code>cor()</code> computes it:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sessions<span class="sc">$</span>deaths, sessions<span class="sc">$</span>difficulty)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.5792729</code></pre>
+</div>
+</div>
+<p>r = 0.58: a clear positive relationship with a lot of scatter, which is what <a href="#fig-deaths-difficulty" class="quarto-xref">Figure&nbsp;1</a> showed.</p>
+<p><strong>Context decides what counts as strong.</strong> There is no universal cut-off. Between two measurements of the same thing, such as two raters scoring the same session, 0.6 would be worryingly low. Between a single rating and a match outcome shaped by teammates, opponents and luck, 0.5 is large. Say what the number means for the question, not just whether it is “strong”.</p>
+<section id="pearson-or-spearman" class="level3">
+<h3 class="anchored" data-anchor-id="pearson-or-spearman">Pearson or Spearman?</h3>
+<p>The correlation above is <strong>Pearson’s</strong>, the default. It measures how well the points follow a straight line, and a few extreme values can pull it around.</p>
+<p><strong>Spearman’s correlation</strong> ranks each variable first, then correlates the ranks. It asks a simpler question: <em>when one goes up, does the other tend to go up?</em> It does not need a straight line, and an outlier is just the highest rank, so it cannot drag the result.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sessions<span class="sc">$</span>deaths, sessions<span class="sc">$</span>difficulty, <span class="at">method =</span> <span class="st">"spearman"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.5731608</code></pre>
+</div>
+</div>
+<p>0.57, almost the same as Pearson’s here, because the relationship is roughly straight with no wild values.</p>
+<p><strong>For now,</strong> use this rule:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Use</th>
+<th style="text-align: left;">When</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Pearson</strong></td>
+<td style="text-align: left;">Both variables are measurements or counts, the scatterplot looks roughly straight, and nothing sits far from the rest</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Spearman</strong></td>
+<td style="text-align: left;">Either variable is a rating (ordinal), the relationship curves but keeps going one way, or a few extreme values sit apart</td>
+</tr>
+</tbody>
+</table>
+<p>Playtest data is full of ratings, so Spearman is often the safer choice. If the two disagree a lot, draw the scatterplot: something is bending or pulling the line.</p>
+<hr>
+</section>
+</section>
+<section id="many-relationships-at-once-the-correlation-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="many-relationships-at-once-the-correlation-matrix">Many Relationships at Once: the Correlation Matrix</h2>
+<p>A playtest records many measures, and the first useful question is often <em>which of them go together?</em> A <strong>correlation matrix</strong> answers it in one table: the correlation of every measure with every other.</p>
+<p>Pick <strong>3 to 5 measures that matter to your question</strong>, not every column you have. For <em>Tidebreak</em>’s navigation and difficulty questions:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sessions <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(deaths, wrong_turns, difficulty, enjoyment, session_minutes) <span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span>(<span class="at">method =</span> <span class="st">"spearman"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                deaths wrong_turns difficulty enjoyment session_minutes
+deaths            1.00       -0.03       0.57     -0.20           -0.02
+wrong_turns      -0.03        1.00      -0.09     -0.03            0.04
+difficulty        0.57       -0.09       1.00     -0.33            0.15
+enjoyment        -0.20       -0.03      -0.33      1.00            0.23
+session_minutes  -0.02        0.04       0.15      0.23            1.00</code></pre>
+</div>
+</div>
+<p><code>select()</code> keeps the five columns, <code>cor()</code> of a whole table correlates every pair, and <code>round(2)</code> makes it readable. Spearman, because <code>difficulty</code> and <code>enjoyment</code> are 1–7 ratings.</p>
+<p><strong>How to read it:</strong></p>
+<ul>
+<li><strong>The diagonal is all 1s.</strong> Every measure correlates perfectly with itself. Ignore it.</li>
+<li><strong>It is symmetric.</strong> The value in row <code>deaths</code>, column <code>difficulty</code> is the same as row <code>difficulty</code>, column <code>deaths</code>. Read one triangle.</li>
+<li><strong>Read one row at a time</strong> and look for the values furthest from 0.</li>
+</ul>
+<p><strong>What this one says:</strong></p>
+<ul>
+<li><code>deaths</code> and <code>difficulty</code> go together most strongly, 0.57: players who die more rate the game harder. Telemetry and self-report agree.</li>
+<li><code>difficulty</code> and <code>enjoyment</code> move in opposite directions, -0.33: players who found it harder enjoyed it less.</li>
+<li><code>wrong_turns</code> is close to 0 with everything, between -0.09 and 0.04. Getting lost does not go with dying, with rating the game hard, or with enjoying it less.</li>
+</ul>
+<p>That last line is the interesting one, and the next section explains why.</p>
+<p><strong>Draw before you trust the matrix.</strong> Each number stands in for a scatterplot you have not drawn. Base R’s <code>pairs()</code> draws them all at once:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(sessions[, <span class="fu">c</span>(<span class="st">"deaths"</span>, <span class="st">"wrong_turns"</span>, <span class="st">"difficulty"</span>, <span class="st">"enjoyment"</span>,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"session_minutes"</span>)],</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">cex =</span> <span class="fl">0.4</span>, <span class="at">col =</span> <span class="fu">adjustcolor</span>(pal<span class="sc">$</span>line, <span class="at">alpha.f =</span> <span class="fl">0.4</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-pairs" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A five by five grid of small scatterplots for deaths, wrong turns, difficulty, enjoyment and session minutes. Most panels are shapeless clouds of whole-number points; deaths against difficulty shows a rising band.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pairs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="10-relationships-and-correlation_files/figure-html/fig-pairs-1.png" class="img-fluid figure-img" alt="A five by five grid of small scatterplots for deaths, wrong turns, difficulty, enjoyment and session minutes. Most panels are shapeless clouds of whole-number points; deaths against difficulty shows a rising band." width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pairs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Every pair of the five measures as a scatterplot. Deaths against difficulty is the clearest pattern; wrong turns show none against anything.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>You do not need to memorise this:</strong> <code>pairs()</code> is a quick check, not a figure for the report.</p>
+<p><strong>For your project:</strong> choose the 3–5 measures your design question depends on, build their matrix, and read it row by row. The strongest relationship is a lead to look at, and the one you expected but did not find is often the finding.</p>
+<hr>
+</section>
+<section id="telemetry-observation-and-self-report-together" class="level2">
+<h2 class="anchored" data-anchor-id="telemetry-observation-and-self-report-together">Telemetry, Observation and Self-Report Together</h2>
+<p>The three sources of evidence from <a href="../notes/01-planning-a-playtest.html#choose-your-measures">Planning a Playtest</a> answer different questions, and relating them is where correlation earns its keep.</p>
+<p><strong>When they agree,</strong> the finding is stronger. Deaths (telemetry) and the difficulty rating (self-report) go together: what happened and what players felt point the same way.</p>
+<p><strong>When they disagree,</strong> there is something to find. Build B cut wrong turns from 8.9 to 5.5 per session on average. So do players who got lost more rate the level as harder to navigate? The survey item “the level was easy to navigate” (<code>level_navigable</code>) is in a separate file, so join it on first:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>joined <span class="ot">&lt;-</span> sessions <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(survey, <span class="at">by =</span> <span class="st">"session_id"</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(joined<span class="sc">$</span>wrong_turns, joined<span class="sc">$</span>level_navigable, <span class="at">method =</span> <span class="st">"spearman"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.05151128</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>joined <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(build) <span class="sc">|&gt;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_wrong_turns =</span> <span class="fu">mean</span>(wrong_turns),</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_navigable   =</span> <span class="fu">mean</span>(level_navigable))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 3
+  build mean_wrong_turns mean_navigable
+  &lt;chr&gt;            &lt;dbl&gt;          &lt;dbl&gt;
+1 A                 8.92           3.2 
+2 B                 5.52           3.23</code></pre>
+</div>
+</div>
+<p><code>left_join()</code> adds the survey columns to each session, matched on <code>session_id</code>.</p>
+<p>The correlation is 0.05: no relationship. And the builds rated navigation almost identically, 3.2 against 3.23, even though Build A’s players got lost far more. <strong>Players did not notice that they were lost.</strong> The telemetry saw a navigation problem the self-report did not.</p>
+<p>That is a finding, and it changes what you do with each source. A navigation survey on its own would have said the level was fine. Wrong turns on their own say what happened but not whether players minded. <strong>Observation</strong> is what would connect them: watching where players hesitate or backtrack, and whether they seem to know it.</p>
+<p><strong>In a report you would write:</strong> “Build A players made more wrong turns, but rated the level as no harder to navigate (Spearman r = 0.05 between wrong turns and the navigation rating). Players appear not to notice when they are lost, so self-reported navigation is not a reliable check on this level.”</p>
+<hr>
+</section>
+<section id="what-correlation-cannot-see" class="level2">
+<h2 class="anchored" data-anchor-id="what-correlation-cannot-see">What Correlation Cannot See</h2>
+<p>A single number cannot describe a picture. In 1973 the statistician Francis Anscombe published four small datasets that make the point. They have almost identical means, SDs and correlations, and they look nothing alike:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>quartet <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="cf">function</span>(i) {</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">set =</span> <span class="fu">paste</span>(<span class="st">"Set"</span>, i),</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">x =</span> anscombe[[<span class="fu">paste0</span>(<span class="st">"x"</span>, i)]], <span class="at">y =</span> anscombe[[<span class="fu">paste0</span>(<span class="st">"y"</span>, i)]])</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(quartet, <span class="fu">aes</span>(x, y)) <span class="sc">+</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">colour =</span> pal<span class="sc">$</span>line, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">colour =</span> pal<span class="sc">$</span>highlight, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> set, <span class="at">nrow =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-anscombe" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Four scatterplots, each with a straight fitted line of the same slope. Set 1 is a loose linear cloud. Set 2 is a smooth curve. Set 3 is a perfect line with one outlier pulling the fit. Set 4 is a vertical stack of points with one far-right point creating the whole relationship.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-anscombe-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="10-relationships-and-correlation_files/figure-html/fig-anscombe-1.png" class="img-fluid figure-img" alt="Four scatterplots, each with a straight fitted line of the same slope. Set 1 is a loose linear cloud. Set 2 is a smooth curve. Set 3 is a perfect line with one outlier pulling the fit. Set 4 is a vertical stack of points with one far-right point creating the whole relationship." width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-anscombe-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Anscombe’s quartet: four datasets with the same correlation, about 0.82, and four different stories.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Only Set 1 is what r = 0.82 suggests. Set 2 is a curve, which r describes badly. In Set 3, one outlier drags the line away from an otherwise perfect fit. In Set 4, a single point creates the entire relationship.</p>
+<p><strong>Always draw the scatterplot before quoting r</strong> (<a href="../notes/ten-rules.html">rule 4</a>). Correlation sees only straight lines, is moved by single extreme points, and, as the next two sections show, cannot see groups.</p>
+<hr>
+</section>
+<section id="correlation-is-not-causation" class="level2">
+<h2 class="anchored" data-anchor-id="correlation-is-not-causation">Correlation Is Not Causation</h2>
+<p>When two variables move together, there are always several explanations, and “one causes the other” is only one of them:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Explanation</th>
+<th style="text-align: left;">Awareness and score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>A causes B</strong></td>
+<td style="text-align: left;">Being aware of the map makes players score more</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>B causes A</strong></td>
+<td style="text-align: left;">Players who are scoring well have more time to look around</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Something else causes both</strong></td>
+<td style="text-align: left;">Experienced players are both more aware and better at everything</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Chance</strong></td>
+<td style="text-align: left;">In a small sample, unrelated measures can line up by luck</td>
+</tr>
+</tbody>
+</table>
+<p>A playtest observes; it does not intervene. Only a test in which you <em>change</em> one variable and watch the other, such as giving half the players a better minimap at random, can separate the first explanation from the rest. Until then, write “is associated with”, never “causes” or “drives”.</p>
+<hr>
+</section>
+<section id="confounding-look-within-groups" class="level2">
+<h2 class="anchored" data-anchor-id="confounding-look-within-groups">Confounding: Look Within Groups</h2>
+<p>A <strong>confounding variable</strong> is a third variable that drives both of the variables you are comparing, creating or hiding a relationship between them.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="fig-confounder" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-confounder-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-confounder">flowchart TD
+  E["Experience&lt;br/&gt;(cohort)"] --&gt; A["Awareness"]
+  E --&gt; S["Score"]
+  A -.-&gt;|"what you observe"| S
+  class E accent
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-confounder-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: A confounder drives both variables. The relationship you see between them may come partly or entirely from it.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Which abilities go with score?</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>sessions <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(accuracy, mobility, survivability, objective_control, support,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>         awareness, shots_fired) <span class="sc">|&gt;</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span>(sessions<span class="sc">$</span>score) <span class="sc">|&gt;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   [,1]
+accuracy           0.03
+mobility           0.29
+survivability     -0.07
+objective_control  0.09
+support            0.15
+awareness          0.59
+shots_fired        0.05</code></pre>
+</div>
+</div>
+<p>Awareness is the strongest, at 0.59. Shots fired, the statistic everyone assumes matters, is 0.05: no relationship at all.</p>
+<p><strong>Experience is a candidate confounder for awareness and score.</strong> Veterans average 75.6 awareness against 57.3 for Novices, and a median score of 1664 against 1281. Some of the awareness–score relationship is experience. Check within each cohort:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>sessions <span class="sc">|&gt;</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cohort) <span class="sc">|&gt;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">r =</span> <span class="fu">cor</span>(awareness, score))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  cohort      n     r
+  &lt;chr&gt;   &lt;int&gt; &lt;dbl&gt;
+1 Novice     33 0.539
+2 Regular    53 0.477
+3 Veteran    34 0.445</code></pre>
+</div>
+</div>
+<p>From 0.45 to 0.54 within each cohort: experience is part of the story, not all of it. That is how you check a suspected confounder: <strong>split by it, and see whether the relationship holds inside each group.</strong> It is <code>group_by()</code> and <code>summarise()</code> again, with <code>cor()</code> as the summary.</p>
+<section id="when-the-relationship-reverses" class="level3">
+<h3 class="anchored" data-anchor-id="when-the-relationship-reverses">When the relationship reverses</h3>
+<p>Sometimes splitting by the confounder does not just weaken a relationship; it reverses it. That is <strong>Simpson’s paradox</strong>, and <em>Tidebreak</em> has a clear case. You do not need to be able to produce this figure; it is here because it is the most memorable demonstration of confounding there is.</p>
+<p>Across all players, mobility and survivability have a correlation of -0.66: faster players are more fragile. Within each archetype:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>both <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(sessions[, <span class="fu">c</span>(<span class="st">"mobility"</span>, <span class="st">"survivability"</span>, <span class="st">"archetype"</span>)], <span class="at">panel =</span> <span class="st">"All players"</span>),</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(sessions[, <span class="fu">c</span>(<span class="st">"mobility"</span>, <span class="st">"survivability"</span>, <span class="st">"archetype"</span>)], <span class="at">panel =</span> <span class="st">"By archetype"</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(both, <span class="fu">aes</span>(mobility, survivability)) <span class="sc">+</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> <span class="fu">ifelse</span>(panel <span class="sc">==</span> <span class="st">"All players"</span>, <span class="st">"All"</span>, archetype)), <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">data =</span> <span class="fu">subset</span>(both, panel <span class="sc">==</span> <span class="st">"All players"</span>), <span class="at">method =</span> <span class="st">"lm"</span>,</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">colour =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">data =</span> <span class="fu">subset</span>(both, panel <span class="sc">==</span> <span class="st">"By archetype"</span>),</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">colour =</span> archetype), <span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="at">All =</span> <span class="st">"grey60"</span>, <span class="at">Duelist =</span> <span class="st">"#3a5f8a"</span>,</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">Engineer =</span> <span class="st">"#6c9a3c"</span>, <span class="at">Scout =</span> <span class="st">"#b22222"</span>,</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">Sentinel =</span> <span class="st">"#8a5a9c"</span>),</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>                      <span class="at">breaks =</span> <span class="fu">c</span>(<span class="st">"Duelist"</span>, <span class="st">"Engineer"</span>, <span class="st">"Scout"</span>, <span class="st">"Sentinel"</span>)) <span class="sc">+</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> panel) <span class="sc">+</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Mobility rating"</span>, <span class="at">y =</span> <span class="st">"Survivability rating"</span>, <span class="at">colour =</span> <span class="st">"Archetype"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-simpson" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Two scatterplots of survivability against mobility. Left: one black falling trend line through all the points. Right: the points form four separate clusters by archetype, Scout at high mobility and low survivability, Sentinel the reverse, and within each cluster the fitted line rises.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-simpson-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="10-relationships-and-correlation_files/figure-html/fig-simpson-1.png" class="img-fluid figure-img" alt="Two scatterplots of survivability against mobility. Left: one black falling trend line through all the points. Right: the points form four separate clusters by archetype, Scout at high mobility and low survivability, Sentinel the reverse, and within each cluster the fitted line rises." width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-simpson-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: Across all players (left) faster means more fragile. Within every archetype (right) the trend rises: the falling line is the gap between archetypes.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>sessions <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(archetype) <span class="sc">|&gt;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">r =</span> <span class="fu">cor</span>(mobility, survivability))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 2
+  archetype     r
+  &lt;chr&gt;     &lt;dbl&gt;
+1 Duelist   0.302
+2 Engineer  0.512
+3 Scout     0.465
+4 Sentinel  0.598</code></pre>
+</div>
+</div>
+<p>Within every archetype the correlation is <strong>positive</strong>, from 0.3 to 0.6. The overall falling trend is the gap <em>between</em> archetypes: Scouts are built fast and fragile, Sentinels slow and tough. Within any one archetype, better players are better at both. <strong>Archetype is the confounder</strong>, and ignoring it reverses the conclusion. A patch that “makes fast players more fragile” would punish exactly the players who are playing their role well.</p>
+<p><strong>For your project:</strong> before you report any relationship, split it by the one or two groupings most likely to matter in your game: build, level, character or experience.</p>
+<hr>
+</section>
+</section>
+<section id="two-categorical-variables" class="level2 when-needed">
+<h2 class="when-needed anchored" data-anchor-id="two-categorical-variables">Two Categorical Variables</h2>
+<p>When both variables are categories, correlation is the wrong tool. Count every combination, then turn each group’s counts into shares, so that groups of different sizes compare fairly. Do more experienced players quit in frustration less?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>sessions <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(cohort, quit_reason) <span class="sc">|&gt;</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cohort) <span class="sc">|&gt;</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">share =</span> <span class="fu">round</span>(n <span class="sc">/</span> <span class="fu">sum</span>(n), <span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 11 × 4
+# Groups:   cohort [3]
+   cohort  quit_reason         n share
+   &lt;chr&gt;   &lt;chr&gt;           &lt;int&gt; &lt;dbl&gt;
+ 1 Novice  Completed test     23  0.7 
+ 2 Novice  Frustrated          6  0.18
+ 3 Novice  Lost interest       3  0.09
+ 4 Novice  Technical fault     1  0.03
+ 5 Regular Completed test     27  0.51
+ 6 Regular Frustrated         14  0.26
+ 7 Regular Lost interest       8  0.15
+ 8 Regular Technical fault     4  0.08
+ 9 Veteran Completed test     19  0.56
+10 Veteran Frustrated          5  0.15
+11 Veteran Lost interest      10  0.29</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> cohort, <span class="at">fill =</span> quit_reason)) <span class="sc">+</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"fill"</span>) <span class="sc">+</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> <span class="cf">function</span>(x) <span class="fu">paste0</span>(x <span class="sc">*</span> <span class="dv">100</span>, <span class="st">"%"</span>)) <span class="sc">+</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey80"</span>, <span class="st">"#b22222"</span>, <span class="st">"#9bb0c9"</span>, <span class="st">"grey40"</span>)) <span class="sc">+</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Cohort"</span>, <span class="at">y =</span> <span class="st">"Share of sessions"</span>, <span class="at">fill =</span> <span class="st">"How the session ended"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-crosstab" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Three stacked bars, one per cohort, each split into completed test, frustrated, lost interest and technical fault. Regulars have the largest frustrated segment; Veterans the largest lost-interest segment.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-crosstab-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="10-relationships-and-correlation_files/figure-html/fig-crosstab-1.png" class="img-fluid figure-img" alt="Three stacked bars, one per cohort, each split into completed test, frustrated, lost interest and technical fault. Regulars have the largest frustrated segment; Veterans the largest lost-interest segment." width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-crosstab-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: Regulars quit in frustration most often; Veterans more often simply lost interest. Each bar is one cohort, scaled to 100%.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><code>position = "fill"</code> scales every bar to 100%. Not in a straight line: <strong>Regulars</strong> quit in frustration most often, 26% of their sessions, against 18% for Novices and 15% for Veterans.</p>
+<hr>
+</section>
+<section id="critiquing-a-playtest" class="level2">
+<h2 class="anchored" data-anchor-id="critiquing-a-playtest">Critiquing a Playtest</h2>
+<p>Every one of these ideas comes together when a conclusion is drawn from data that cannot support it. Two scenarios to take apart.</p>
+<ol type="1">
+<li><em>A team adds an optional minimap. Players who turned it on scored 22% higher than players who left it off. The team makes the minimap mandatory.</em></li>
+<li><em>The new build was tested on Friday evening with fans recruited from the studio Discord; the old build on Monday morning with first-year students. Enjoyment was 1.5 points higher for the new build, p &lt; 0.001. The team reports that the new build is more enjoyable.</em></li>
+</ol>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Show answers">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Show answers
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Players chose whether to use the minimap, so the two groups differ in more than the minimap. Experienced, engaged players are more likely to explore the options menu <em>and</em> more likely to score well: a confounder. The 22% may be entirely skill. To know what the minimap does, assign it at random, or have every player try both, counterbalanced (<a href="../notes/01-planning-a-playtest.html#random-assignment">Planning a Playtest</a>).</li>
+<li>Build is confounded with everything else that differed: the players (committed fans against strangers), the time of day, and probably the room and who ran the session. Any of them could produce the gap. The p-value says the gap is unlikely to be chance; it says nothing about <em>which</em> of the differences caused it. The fix is to recruit one group and assign builds at random within it, at the same times, in the same room.</li>
+</ol>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="worked-example" class="level2">
+<h2 class="anchored" data-anchor-id="worked-example">Worked Example</h2>
+<p><strong>Should we buff awareness?</strong> The balance designer has seen that awareness is the strongest predictor of score and proposes raising every archetype’s base awareness.</p>
+<p><strong>Step 1: look.</strong> A scatterplot of score against awareness shows a clear rising relationship, with a cluster of sessions far below the rest: the Sentinel collapses from <a href="../notes/04-describing-variables.html#worked-example">Describing Variables</a>.</p>
+<p><strong>Step 2: measure.</strong> r = 0.59, the strongest of the ability ratings. Shots fired, the obvious candidate, is 0.05.</p>
+<p><strong>Step 3: ask what else could explain it.</strong> Experience: Veterans have more of both. Within each cohort the relationship weakens but survives (0.45 to 0.54), so experience is part of the story. And a player’s awareness <em>rating</em> may measure skill as much as cause it: good players notice more because they are good.</p>
+<p><strong>Step 4: conclude.</strong> The data shows an association, and a fairly strong one. It does not show that raising awareness would raise score.</p>
+<p><strong>What should the team do?</strong> Run a test, not a patch: give half the players a feature that raises awareness, such as a clearer minimap or audio cues, at random, and compare score between the groups. That turns the relationship into a Stage 2 comparison, which can show cause.</p>
+<hr>
+</section>
+<section id="interpretation-guidance" class="level2">
+<h2 class="anchored" data-anchor-id="interpretation-guidance">Interpretation Guidance</h2>
+<p><strong>What the data shows.</strong> Score rises with awareness, r = 0.59, across 120 sessions, and the relationship survives within each cohort.</p>
+<p><strong>What the analysis suggests.</strong> Awareness, or whatever awareness ratings reflect, matters to how a match goes. Experience explains part of the relationship but not all of it.</p>
+<p><strong>What can legitimately be concluded.</strong> An association, not a cause. A design change aimed at awareness is worth testing; it is not yet supported as a fix.</p>
+<p><strong>Use the right verbs.</strong> “Is associated with”, “goes with”, “predicts” for relationships in observed data. “Causes”, “drives”, “improves” only after an experiment that changed one variable on purpose.</p>
+<p><strong>Going further:</strong> fitting the line itself, with slope, R² and residuals, and reading what the residuals tell you, is on <a href="../going-further/regression.html">Regression</a>.</p>
+<hr>
+</section>
+<section id="common-mistakes" class="level2">
+<h2 class="anchored" data-anchor-id="common-mistakes">Common Mistakes</h2>
+<p><strong>Quoting r without the scatterplot.</strong> Anscombe’s four datasets share a correlation and nothing else (<a href="../notes/ten-rules.html">rule 4</a>).</p>
+<p><strong>Reading correlation as cause.</strong> Two things moving together has at least four explanations. Name the alternatives before choosing one.</p>
+<p><strong>Ignoring groups.</strong> A relationship across groups can vanish or reverse within them. Split by the obvious confounders, such as archetype, cohort or build.</p>
+<p><strong>Calling r “strong” or “weak” without context.</strong> Say what it means for the question.</p>
+<p><strong>Putting every column in the matrix.</strong> A 20 × 20 matrix has 190 correlations and some will look strong by luck. Choose the 3–5 that answer your question.</p>
+<p><strong>Using Pearson on ratings without checking.</strong> For 1–7 ratings, use Spearman, or at least check that the two agree.</p>
+<p><strong>Using correlation on categories.</strong> Two categorical variables need counts and shares, not <code>cor()</code>.</p>
+<hr>
+</section>
+<section id="practice" class="level2">
+<h2 class="anchored" data-anchor-id="practice">Practice</h2>
+<p>Each takes two or three minutes.</p>
+<ol type="1">
+<li><strong>Predict.</strong> Before computing it: is the correlation between <code>kills</code> and <code>score</code> closer to 0, 0.5 or 0.9? Then check.</li>
+<li><strong>Compute.</strong> Build a Spearman correlation matrix of <code>kills</code>, <code>deaths</code>, <code>time_alive_s</code> and <code>score</code>. Which measure goes with score most strongly?</li>
+<li><strong>Critique.</strong> “Wrong turns correlate at -0.07 with enjoyment, so getting lost does not affect how much players enjoy the game.” What is wrong with that conclusion?</li>
+<li><strong>Decide.</strong> The correlation between deaths and difficulty is about the same in both builds. Check it with <code>group_by()</code>. Why is that worth knowing before you use deaths as a stand-in for “how hard players found it”?</li>
+</ol>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Show answers">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Show answers
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>1.</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sessions<span class="sc">$</span>kills, sessions<span class="sc">$</span>score)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.06510531</code></pre>
+</div>
+</div>
+<p>Close to 0, 0.07, which surprises most people. A number you were sure about is exactly the one to check.</p>
+<p><strong>2.</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>sessions <span class="sc">|&gt;</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(kills, deaths, time_alive_s, score) <span class="sc">|&gt;</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span>(<span class="at">method =</span> <span class="st">"spearman"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             kills deaths time_alive_s score
+kills         1.00   0.06        -0.19  0.10
+deaths        0.06   1.00        -0.56 -0.53
+time_alive_s -0.19  -0.56         1.00  0.32
+score         0.10  -0.53         0.32  1.00</code></pre>
+</div>
+</div>
+<p>Read the <code>score</code> row, and look at the size, not the sign. Deaths go with score most strongly, -0.53: negative, so fewer deaths, more score. Time alive is next, 0.32. Kills barely register, 0.1. In <em>Tidebreak</em>, staying alive is what scores, not killing.</p>
+<p><strong>3.</strong> A correlation near zero means no <em>straight-line</em> relationship across all sessions. It does not rule out a curve, a relationship within one build or cohort that is cancelled out by another, or an effect on a different outcome: players who got lost may have quit. Draw the scatterplot, split by build, and look at quit reason too before concluding anything.</p>
+<p><strong>4.</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>sessions <span class="sc">|&gt;</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(build) <span class="sc">|&gt;</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">r =</span> <span class="fu">cor</span>(deaths, difficulty, <span class="at">method =</span> <span class="st">"spearman"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  build     r
+  &lt;chr&gt; &lt;dbl&gt;
+1 A     0.585
+2 B     0.581</code></pre>
+</div>
+</div>
+<p>The relationship holds in each build, so it is not produced by mixing two different builds together. That makes deaths a more trustworthy stand-in for felt difficulty in either build, although it is still only a stand-in: plenty of players died often and rated the game easy.</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ul>
+<li>A scatterplot shows a relationship’s direction, form and strength. Draw it first.</li>
+<li>Correlation, from −1 to +1, measures how two things move together. Pearson for straight-line relationships between measurements; Spearman for ratings, curves that keep going one way, or outliers.</li>
+<li>A correlation matrix of 3–5 chosen measures shows which go together. Read one row at a time, and draw the pairs before trusting it.</li>
+<li>Telemetry and self-report can disagree: <em>Tidebreak</em>’s players got lost without rating the level as harder to navigate. The disagreement is a finding.</li>
+<li>Correlation is not causation: the reverse direction, a third variable or chance can produce the same pattern.</li>
+<li>A confounder drives both variables. Check by splitting into groups; Simpson’s paradox is when the relationship reverses inside them.</li>
+</ul>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Key term</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Scatterplot</strong></td>
+<td style="text-align: left;">One point per observation, for two numeric variables</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Correlation (r)</strong></td>
+<td style="text-align: left;">−1 to +1: how strongly two variables move together</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Pearson</strong></td>
+<td style="text-align: left;">The default correlation: how well the points follow a straight line</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Spearman</strong></td>
+<td style="text-align: left;">Correlation of ranks: does one go up when the other does?</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Correlation matrix</strong></td>
+<td style="text-align: left;">The correlation of every chosen measure with every other</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Causation</strong></td>
+<td style="text-align: left;">One variable changing another; needs an experiment to show</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Confounding variable</strong></td>
+<td style="text-align: left;">A third variable that drives both variables you are comparing</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Simpson’s paradox</strong></td>
+<td style="text-align: left;">A relationship that reverses when the data is split into groups</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="links" class="level2">
+<h2 class="anchored" data-anchor-id="links">Links</h2>
+<ul>
+<li><a href="../notes/ten-rules.html">Ten Rules</a>: rule 4 (look at the shape before you quote the average) and rule 7 (compare distributions, not averages)</li>
+<li><a href="../going-further/regression.html">Regression</a>: the line, its slope, R² and residuals</li>
+<li><a href="../reference/reference-statistics.html#relationships">Statistics Reference: relationships</a></li>
+<li><a href="../reference/reference-ggplot2.html">ggplot2 Reference</a></li>
+<li><a href="../labs/clinic-relationships.html">Lab 04: Relationships in Your Data</a>, the Stage 3B clinic</li>
+<li><a href="../demos/stage-3.html">Stage 3 demo</a>, Demo 2</li>
+<li>Next, in Stage 4: <a href="../notes/11-reporting-evidence.html">Interpreting and Reporting Evidence</a></li>
+</ul>
+<hr>
+</section>
+<section id="reflective-questions" class="level2">
+<h2 class="anchored" data-anchor-id="reflective-questions">Reflective Questions</h2>
+<ul>
+<li>Name a relationship in your own game’s telemetry that you suspect is confounded. What is the confounder, and how would you check?</li>
+<li><em>Tidebreak</em>’s players got lost without noticing. Which of your own game’s self-report questions might have the same problem, and what telemetry would you check it against?</li>
+<li>Simpson’s paradox reversed the mobility–survivability relationship. What other grouping in a game could hide or reverse a relationship in the same way?</li>
+<li>Your producer wants a single sentence for the balance meeting about awareness. Write it, using only what the data can support.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/nmcguinness\.github\.io\/L8-3DGD-Playtest-Analytics\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../notes/09-visualising-with-ggplot2.html" class="pagination-link" aria-label="Visualising with ggplot2">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Visualising with ggplot2</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../labs/clinic-figures.html" class="pagination-link" aria-label="Lab 03 — A Figure for Your Report">
+        <span class="nav-page-text">Lab 03 — A Figure for Your Report</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>COMP I8015 · 3D Game Development · Dundalk Institute of Technology</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

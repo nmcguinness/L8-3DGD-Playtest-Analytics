@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Distributions and Shape – Playtest Analytics</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../labs/reading-data.html" rel="next">
+<link href="../notes/04-describing-variables.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-640402775883e0dc5b71a44650c95e06.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked wf-at-describe quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notes/01-planning-a-playtest.html">Stage 1 · Foundations</a></li><li class="breadcrumb-item"><a href="../notes/05-distributions-and-shape.html">Distributions and Shape</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Playtest Analytics</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Start Here</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/00-start-here.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Start Here</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/ten-rules.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ten Rules for Reading Playtest Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/setting-up.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 00 — Setting Up</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-0.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 0 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 1 · Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/01-planning-a-playtest.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Planning a Playtest</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/02-r-first-principles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R from First Principles</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/03-data-and-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data, Variables and Types</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/04-describing-variables.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Describing Variables</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/05-distributions-and-shape.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Distributions and Shape</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/reading-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 01 — Reading Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 1 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 2 · Comparing Evidence</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/06-cleaning-and-transforming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cleaning and Transforming</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/07-sample-to-population.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">From Sample to Population</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/08-comparing-groups.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Comparing Groups</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/comparing-builds.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 02 — Comparing Builds</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 2 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 3 · Relationships &amp; Visual Evidence</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/09-visualising-with-ggplot2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Visualising with ggplot2</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/10-relationships-and-correlation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Relationships and Correlation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/clinic-figures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 03 — A Figure for Your Report</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/clinic-relationships.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 04 — Relationships in Your Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 3 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 4 · Evidence to Decision</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/11-reporting-evidence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Interpreting and Reporting Evidence</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/12-combining-evidence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Combining Evidence</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/complete-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 05 — From Evidence to Report</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 4 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Reference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/reference-statistics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Statistics Reference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/r-quarto-reference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R and Quarto Reference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/reference-ggplot2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ggplot2 Reference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Going Further</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/normality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Is It Normal Enough?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/sampling-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sampling Theory</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/testing-in-depth.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Testing in Depth</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/reshaping-and-joining.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reshaping and Joining</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#learning-outcomes" id="toc-learning-outcomes" class="nav-link active" data-scroll-target="#learning-outcomes">Learning Outcomes</a></li>
+  <li><a href="#why-this-matters-for-playtesting" id="toc-why-this-matters-for-playtesting" class="nav-link" data-scroll-target="#why-this-matters-for-playtesting">Why This Matters for Playtesting</a></li>
+  <li><a href="#what-a-distribution-is" id="toc-what-a-distribution-is" class="nav-link" data-scroll-target="#what-a-distribution-is">What a Distribution Is</a></li>
+  <li><a href="#the-shapes-you-will-meet" id="toc-the-shapes-you-will-meet" class="nav-link" data-scroll-target="#the-shapes-you-will-meet">The Shapes You Will Meet</a></li>
+  <li><a href="#the-normal-distribution" id="toc-the-normal-distribution" class="nav-link" data-scroll-target="#the-normal-distribution">The Normal Distribution</a></li>
+  <li><a href="#outliers" id="toc-outliers" class="nav-link" data-scroll-target="#outliers">Outliers</a></li>
+  <li><a href="#comparing-distributions" id="toc-comparing-distributions" class="nav-link" data-scroll-target="#comparing-distributions">Comparing Distributions</a></li>
+  <li><a href="#reading-several-summaries-together" id="toc-reading-several-summaries-together" class="nav-link" data-scroll-target="#reading-several-summaries-together">Reading Several Summaries Together</a></li>
+  <li><a href="#worked-example" id="toc-worked-example" class="nav-link" data-scroll-target="#worked-example">Worked Example</a></li>
+  <li><a href="#interpretation-guidance" id="toc-interpretation-guidance" class="nav-link" data-scroll-target="#interpretation-guidance">Interpretation Guidance</a></li>
+  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a></li>
+  <li><a href="#practice" id="toc-practice" class="nav-link" data-scroll-target="#practice">Practice</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  <li><a href="#links" id="toc-links" class="nav-link" data-scroll-target="#links">Links</a></li>
+  <li><a href="#reflective-questions" id="toc-reflective-questions" class="nav-link" data-scroll-target="#reflective-questions">Reflective Questions</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notes/01-planning-a-playtest.html">Stage 1 · Foundations</a></li><li class="breadcrumb-item"><a href="../notes/05-distributions-and-shape.html">Distributions and Shape</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Distributions and Shape</h1>
+<p class="subtitle lead">Why the average is never the whole story</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<nav class="wf-strip" aria-label="Where this page sits in the evidence workflow">
+  <span class="wf-label">Workflow</span>
+  <ol>
+    <li class="wf-step wf-question">Question</li>
+    <li class="wf-step wf-measure">Measure</li>
+    <li class="wf-step wf-collect">Collect</li>
+    <li class="wf-step wf-clean">Clean</li>
+    <li class="wf-step wf-describe">Describe</li>
+    <li class="wf-step wf-compare">Compare/Relate</li>
+    <li class="wf-step wf-interpret">Interpret</li>
+    <li class="wf-step wf-act">Act</li>
+  </ol>
+</nav>
+<blockquote class="blockquote">
+<p>A summary is a single number standing in for a whole column. This page is about what it stands in for: the <strong>distribution</strong>, the full pattern of values. It names the shapes you will meet, deals with outliers, shows how to compare two groups’ distributions, and shows why the most important number in a performance capture is one that hardly anyone quotes. The playtest question running through it: <em>“Both builds run at 59 FPS. Which one runs better?”</em></p>
+</blockquote>
+<div class="at-a-glance">
+<p><strong>Stage:</strong> 1 · Core. <strong>Time:</strong> 30 minutes in class; 20 more for the Going further page. <strong>Before this:</strong> <a href="../notes/04-describing-variables.html">Describing Variables</a>. <strong>Key terms:</strong> distribution, symmetric, skew, bimodal, floor, ceiling, normal distribution, tail, outlier, percentile, retention curve. <strong>R you will write:</strong> <code>hist()</code>, <code>boxplot()</code>, <code>quantile()</code>, <code>abline()</code>, and <code>group_by()</code> with <code>summarise()</code> from <a href="../notes/04-describing-variables.html">Describing Variables</a>.</p>
+</div>
+<section id="learning-outcomes" class="level2">
+<h2 class="anchored" data-anchor-id="learning-outcomes">Learning Outcomes</h2>
+<p>By the end of these notes you can:</p>
+<ul>
+<li>describe a distribution by its shape: symmetric, skewed left or right, bimodal, bounded by a floor or ceiling;</li>
+<li>say which way skew pulls the mean, and why game data is rarely symmetric;</li>
+<li>say what the normal distribution is, and why most game measures do not follow it;</li>
+<li>say whether an outlier is an error, an extreme player or the finding itself, and what to do in each case;</li>
+<li>compare two groups’ distributions, including with a retention curve;</li>
+<li>read the mean, median, SD and high percentiles together and say what each adds.</li>
+</ul>
+<hr>
+</section>
+<section id="why-this-matters-for-playtesting" class="level2">
+<h2 class="anchored" data-anchor-id="why-this-matters-for-playtesting">Why This Matters for Playtesting</h2>
+<p>Every design question is really a question about players, plural, and players differ. A level that takes eight minutes on average can be a level everyone finishes in eight minutes, or a level half the testers finish in four and the other half abandon. Those are different games with different fixes, and the average cannot tell them apart.</p>
+<p><strong>The players you design for are rarely the average player.</strong> The ones who quit, the ones who get stuck, the ones whose machine stutters: they live in the edges of the distribution, and the edges are exactly what a mean averages away.</p>
+<p><strong>Variation is information, not noise.</strong> When two builds differ in how spread out their players are, that difference is often the finding. A build that tightens the spread has made the experience more consistent, even if the average has not moved.</p>
+<hr>
+</section>
+<section id="what-a-distribution-is" class="level2">
+<h2 class="anchored" data-anchor-id="what-a-distribution-is">What a Distribution Is</h2>
+<p>A <strong>distribution</strong> is the full pattern of a variable’s values: which values occur, and how often. A histogram draws it. Every summary statistic is an attempt to describe a distribution in one number, and every one of them fails for some distribution.</p>
+<p>Describing a distribution means saying four things about its picture:</p>
+<ol type="1">
+<li><strong>Centre</strong>: where the bulk sits.</li>
+<li><strong>Spread</strong>: how wide the bulk is.</li>
+<li><strong>Shape</strong>: symmetric or lopsided, one hump or two, cut off at an edge or not.</li>
+<li><strong>Unusual values</strong>: anything sitting apart from the rest.</li>
+</ol>
+<p>The first two were <a href="../notes/04-describing-variables.html">Describing Variables</a>. This page is about the last two.</p>
+<hr>
+</section>
+<section id="the-shapes-you-will-meet" class="level2">
+<h2 class="anchored" data-anchor-id="the-shapes-you-will-meet">The Shapes You Will Meet</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-shapes" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Eight histograms in two rows. Top row, simulated: a symmetric bell, a right-skewed shape with a long right tail, a left-skewed shape with a long left tail, and a two-humped shape. Bottom row, Tidebreak: awareness, roughly symmetric with mean and median together; Build B frame times, a spike cut off at the top with a long thin right tail of slow frames; session length, piled up against 32 minutes with a tail to the left; Sentinel score, a small group of low scores and a larger group of high scores. In each skewed panel the mean sits further towards the tail than the median.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-shapes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="05-distributions-and-shape_files/figure-html/fig-shapes-1.png" class="img-fluid figure-img" alt="Eight histograms in two rows. Top row, simulated: a symmetric bell, a right-skewed shape with a long right tail, a left-skewed shape with a long left tail, and a two-humped shape. Bottom row, Tidebreak: awareness, roughly symmetric with mean and median together; Build B frame times, a spike cut off at the top with a long thin right tail of slow frames; session length, piled up against 32 minutes with a tail to the left; Sentinel score, a small group of low scores and a larger group of high scores. In each skewed panel the mean sits further towards the tail than the median." width="864">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-shapes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Four shapes. Top row: idealised illustrations. Bottom row: the same shape in Tidebreak data. The solid red line is the mean; the dashed line is the median. *The frame-time panel’s vertical axis is cut off so that the rare slow frames are visible; the spike near 17 ms runs far off the top.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Symmetric.</strong> The two sides mirror each other. The mean and median sit together, and either describes the centre. <em>Tidebreak</em>’s awareness rating is close to symmetric: mean 66.2, median 67.</p>
+<p><strong>Right skew.</strong> A long tail of large values. Most frames are quick and a few are very slow; most players finish in a few minutes and a few take far longer. The mean is pulled out towards the tail, above the median.</p>
+<p><strong>Left skew.</strong> A long tail of small values. Most <em>Tidebreak</em> sessions run close to the 32-minute limit and a minority end early: mean 22.8 minutes, median 26.1. The mean is pulled down, below the median. Look closely and session length also has a small second hump of early quits; where it comes from is the subject of <a href="#comparing-distributions">Comparing Distributions</a>.</p>
+<p><strong>Bimodal.</strong> Two humps. Almost always, two groups of players have been mixed together: those who found the key and those who did not, sessions that completed and sessions that crashed. The mean of a bimodal distribution falls in the valley between the humps, where the fewest players are. The Sentinel’s scores are the example from <a href="../notes/04-describing-variables.html#worked-example">Describing Variables</a>.</p>
+<p><strong>The mean is always pulled towards the tail; the median is not.</strong> That is why the gap between them tells you which way the data leans, and why a large gap is a reason to report the median.</p>
+<section id="floors-and-ceilings" class="level3">
+<h3 class="anchored" data-anchor-id="floors-and-ceilings">Floors and ceilings</h3>
+<p><strong>Game data is rarely symmetric, because it is usually bounded.</strong> Times have a <strong>floor</strong>: nobody finishes faster than the fastest possible route, so time data often has a long right tail. Many measures also have a <strong>ceiling</strong>: a match timer, a maximum score, the top of a rating scale. Values pile up against it and the tail runs the other way.</p>
+<p><em>Tidebreak</em> has both kinds of bounded time. Frame times have a floor and a long right tail. Session length is capped at 32 minutes and time alive at 180 seconds, so both pile up on the right with a tail to the left. <strong>Expect skew in any bounded measure, and check which way it runs</strong>, rather than assuming the bell shape from school statistics.</p>
+<p><strong>For your project:</strong> completion times, attempts and deaths all have a floor at zero or at the fastest route. Expect a right tail, and plan to report the median.</p>
+<p><strong>Quick check.</strong> Players rate a game’s difficulty from 1 to 7, and most choose 6 or 7. Which way is the distribution skewed, and is the mean above or below the median?</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Show answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Show answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Left skew: values pile up against the ceiling at 7, with a tail of lower ratings to the left. The tail pulls the mean down, below the median.</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="the-normal-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="the-normal-distribution">The Normal Distribution</h2>
+<p>One shape has a name of its own, because so much of statistics is built on it.</p>
+<p>The <strong>normal distribution</strong> is the symmetric bell curve. It is completely described by two numbers: its <strong>mean</strong>, which sets where the centre is, and its <strong>SD</strong>, which sets how wide it is.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-normal" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A bell curve with the x axis marked in standard deviations from −3 to +3. The region within 1 SD of the mean is shaded darkest and labelled 68%; the region within 2 SDs is labelled 95%; within 3 SDs, 99.7%.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-normal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="05-distributions-and-shape_files/figure-html/fig-normal-1.png" class="img-fluid figure-img" alt="A bell curve with the x axis marked in standard deviations from −3 to +3. The region within 1 SD of the mean is shaded darkest and labelled 68%; the region within 2 SDs is labelled 95%; within 3 SDs, 99.7%." width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-normal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: In a normal distribution, about 68% of values lie within 1 SD of the mean and 95% within 2. That is what gives the SD its practical meaning.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>The 68–95–99.7 rule.</strong> In a normal distribution, about 68% of values lie within 1 SD of the mean, about 95% within 2, and nearly all within 3. For normal-shaped data, “the mean plus or minus 2 SDs” covers almost everyone.</p>
+<p><strong>Most game measures are not normal.</strong> Awareness, in the shapes figure above, is close. Session length is not: it is capped and skewed, and “mean ± 1 SD” covers only 57% of sessions instead of 68%. Frame times are not either: a spike and a long tail.</p>
+<p><strong>For now,</strong> when a later page says data should be “approximately normal”, it means: one hump, roughly symmetric, no long tail. Check that with a histogram. You do not need to do more.</p>
+<p><strong>Going further:</strong> z-scores, how to check the bell shape properly, and Q-Q plots are on <a href="../going-further/normality.html">Is It Normal Enough?</a>.</p>
+<hr>
+</section>
+<section id="outliers" class="level2">
+<h2 class="anchored" data-anchor-id="outliers">Outliers</h2>
+<p>An <strong>outlier</strong> is a value far from the rest. A boxplot flags any value more than 1.5 IQRs beyond the box, and draws it as a separate point. <strong>That rule is a prompt to look, not a verdict.</strong> With large samples it flags plenty of perfectly ordinary values: of Build A’s 4500 frames, 40 are boxplot outliers, and Build A has no performance problem at all.</p>
+<p>An outlier is one of three things, and the response to each is different:</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="fig-outlier-tree" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-outlier-tree-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-outlier-tree">flowchart TD
+  O["Value sits apart"] --&gt; Q1{"Is it possible?"}
+  Q1 --&gt;|No| E(["Error:&lt;br/&gt;fix or remove, record it"])
+  Q1 --&gt;|Yes| Q2{"One player&lt;br/&gt;or a pattern?"}
+  Q2 --&gt;|One player| X(["Extreme player:&lt;br/&gt;keep it, use the median"])
+  Q2 --&gt;|A pattern| F(["The finding:&lt;br/&gt;keep it, investigate"])
+  class F accent
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-outlier-tree-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Work out what an outlier is before you do anything to it. Only an impossible value is removed.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>“Impossible” means the game could not produce it: a session of −3 minutes, a rating of 7 on a 1 to 5 scale.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">The outlier is</th>
+<th style="text-align: left;">Tidebreak example</th>
+<th style="text-align: left;">What you do</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">An error</td>
+<td style="text-align: left;">None in the cleaned file; <a href="../notes/06-cleaning-and-transforming.html">Cleaning and Transforming</a> finds some in the raw export</td>
+<td style="text-align: left;">Fix it or remove it, and record that you did</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">An extreme but ordinary player</td>
+<td style="text-align: left;">The 11 sessions where the player never died</td>
+<td style="text-align: left;">Keep it; report the median rather than the mean</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">The finding</td>
+<td style="text-align: left;">The 7 score outliers, every one a Sentinel game</td>
+<td style="text-align: left;">Keep it and investigate; it is why you ran the test</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Never delete an outlier because it is inconvenient.</strong> Every row you drop is a decision with a consequence (<a href="../notes/ten-rules.html">rule 6</a>), and the value most tempting to drop is often the one the playtest was run to find (<a href="../notes/ten-rules.html">rule 9</a>).</p>
+<hr>
+</section>
+<section id="comparing-distributions" class="level2">
+<h2 class="anchored" data-anchor-id="comparing-distributions">Comparing Distributions</h2>
+<p>Most design questions compare two distributions: Build A against Build B, Novices against Veterans. <strong>Compare the whole distributions, not just their centres</strong> (<a href="../notes/ten-rules.html">rule 7</a>).</p>
+<p>The boxplot is the standard tool, and usually a good one. But it has a blind spot:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">layout</span>(<span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="at">nrow =</span> <span class="dv">2</span>), <span class="at">widths =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">1.6</span>))</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">1</span>))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(session_minutes <span class="sc">~</span> build, <span class="at">data =</span> sessions, <span class="at">col =</span> pal<span class="sc">$</span>fill,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Session length (minutes)"</span>, <span class="at">xlab =</span> <span class="st">"Build"</span>, <span class="at">main =</span> <span class="st">"Boxplots"</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">cex.main =</span> <span class="fl">0.9</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">2.5</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(mins_a, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">6</span>, <span class="dv">32</span>, <span class="dv">2</span>), <span class="at">col =</span> pal<span class="sc">$</span>build_a, <span class="at">border =</span> <span class="st">"white"</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Build A"</span>, <span class="at">xlab =</span> <span class="st">""</span>, <span class="at">ylab =</span> <span class="st">""</span>, <span class="at">cex.main =</span> <span class="fl">0.9</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">14</span>))</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(mins_b, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">6</span>, <span class="dv">32</span>, <span class="dv">2</span>), <span class="at">col =</span> pal<span class="sc">$</span>build_b, <span class="at">border =</span> <span class="st">"white"</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Build B"</span>, <span class="at">xlab =</span> <span class="st">""</span>, <span class="at">ylab =</span> <span class="st">""</span>, <span class="at">cex.main =</span> <span class="fl">0.9</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">14</span>))</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">layout</span>(<span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-box-vs-hist" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Left: two boxplots of session length. Build A's box is wider and lower than Build B's. Right: two stacked histograms. Build A's has two clear humps, one around 10 to 14 minutes and one around 26 to 32. Build B's rises steadily to a single peak near 30 minutes.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-box-vs-hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="05-distributions-and-shape_files/figure-html/fig-box-vs-hist-1.png" class="img-fluid figure-img" alt="Left: two boxplots of session length. Build A's box is wider and lower than Build B's. Right: two stacked histograms. Build A's has two clear humps, one around 10 to 14 minutes and one around 26 to 32. Build B's rises steadily to a single peak near 30 minutes." width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-box-vs-hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Session length by build. The boxplots (left) show that Build A’s sessions are more spread out. Only the histograms (right) show why: Build A has two separate groups of sessions.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The boxplots say Build A’s sessions are shorter and more spread out: an IQR of 16.3 minutes against 10.9. True, but it misses the point. Build A’s histogram has <strong>two humps</strong>: a group of sessions that ended between about 10 and 14 minutes, and a group that ran to the end. A boxplot compresses every distribution into one box, so it cannot show two humps. Its wide box is the two groups averaged into one. 22 of 60 Build A sessions ended before minute 15, against 7 of 60 in Build B.</p>
+<section id="the-retention-curve" class="level3">
+<h3 class="anchored" data-anchor-id="the-retention-curve">The retention curve</h3>
+<p>When the variable is “how long did players keep playing”, there is a picture made for the question. A <strong>retention curve</strong> plots, for every minute, the proportion of sessions still going:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>minute <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">32</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>ret_a <span class="ot">&lt;-</span> <span class="fu">sapply</span>(minute, <span class="cf">function</span>(m) <span class="fu">mean</span>(mins_a <span class="sc">&gt;=</span> m))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>ret_b <span class="ot">&lt;-</span> <span class="fu">sapply</span>(minute, <span class="cf">function</span>(m) <span class="fu">mean</span>(mins_b <span class="sc">&gt;=</span> m))</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(minute, ret_a, <span class="at">type =</span> <span class="st">"s"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> pal<span class="sc">$</span>build_a, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Minute"</span>, <span class="at">ylab =</span> <span class="st">"Share of sessions still playing"</span>, <span class="at">yaxt =</span> <span class="st">"n"</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">2</span>, <span class="at">at =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.25</span>), <span class="at">labels =</span> <span class="fu">paste0</span>(<span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">25</span>), <span class="st">"%"</span>), <span class="at">las =</span> <span class="dv">1</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(minute, ret_b, <span class="at">type =</span> <span class="st">"s"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> pal<span class="sc">$</span>build_b)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="fu">c</span>(<span class="dv">11</span>, <span class="dv">13</span>), <span class="at">lty =</span> <span class="dv">3</span>, <span class="at">col =</span> pal<span class="sc">$</span>guide)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"bottomleft"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Build A"</span>, <span class="st">"Build B"</span>), <span class="at">lwd =</span> <span class="dv">2</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(pal<span class="sc">$</span>build_a, pal<span class="sc">$</span>build_b), <span class="at">bty =</span> <span class="st">"n"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-retention" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Two step lines starting at 100%. Build B's stays above 90% until about minute 14 and then declines. Build A's drops steeply between minutes 11 and 13, from 88% to 68%, then declines slowly. Both fall sharply near 32 minutes, the end of the session.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-retention-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="05-distributions-and-shape_files/figure-html/fig-retention-1.png" class="img-fluid figure-img" alt="Two step lines starting at 100%. Build B's stays above 90% until about minute 14 and then declines. Build A's drops steeply between minutes 11 and 13, from 88% to 68%, then declines slowly. Both fall sharply near 32 minutes, the end of the session." width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-retention-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Build A loses a fifth of its sessions between minutes 11 and 13. Build B does not.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Each point is a single <code>mean()</code> of a comparison, the “proportion that pass a test” idea from <a href="../notes/02-r-first-principles.html#vectors">R from First Principles</a>: the share of Build A sessions still going at minute 11 is <code>mean(mins_a &gt;= 11)</code>. The code repeats that for every minute. Build A drops from 88% still playing at minute 11 to 68% at minute 13. Build B, over the same two minutes, goes from 97% to 90%. Something about the first dozen minutes of Build A drives players away, and the retention curve says exactly when.</p>
+<hr>
+</section>
+</section>
+<section id="reading-several-summaries-together" class="level2">
+<h2 class="anchored" data-anchor-id="reading-several-summaries-together">Reading Several Summaries Together</h2>
+<p>No single statistic describes a distribution, but a small set of them, read together, usually does.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Summary</th>
+<th style="text-align: left;">What it tells you</th>
+<th style="text-align: left;">What it misses</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mean</td>
+<td style="text-align: left;">The total spread evenly across players</td>
+<td style="text-align: left;">Skew, clusters, tails</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Median</td>
+<td style="text-align: left;">The middle player</td>
+<td style="text-align: left;">How extreme the extremes are</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Standard deviation</td>
+<td style="text-align: left;">Typical distance from the mean</td>
+<td style="text-align: left;">Which direction the spread goes</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IQR</td>
+<td style="text-align: left;">Width of the middle half</td>
+<td style="text-align: left;">Everything outside the middle half</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">95th or 99th percentile</td>
+<td style="text-align: left;">How bad the worst few per cent get</td>
+<td style="text-align: left;">The typical case</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Where the summaries disagree, look at the picture.</strong> Mean and median apart means skew. A large SD with a small IQR means a few extreme values. A normal median with a bad 99th percentile means a rare problem that the average will never show. Each disagreement points at a specific shape, and the histogram confirms which one (<a href="../notes/ten-rules.html">rule 4</a>).</p>
+<hr>
+</section>
+<section id="worked-example" class="level2">
+<h2 class="anchored" data-anchor-id="worked-example">Worked Example</h2>
+<p><strong>Which build runs better?</strong> The <em>Tidebreak</em> team captured 4500 frames from each build, split across 3 level zones. The frame-rate counter reports Build A at 58.8 FPS and Build B at 59 FPS. By the number everyone quotes, Build B is marginally the faster build.</p>
+<p><strong>Step 1: more centres.</strong> The median agrees: 16.99 ms per frame for Build A, 16.63 ms for Build B. So does the 95th percentile: 18.8 ms against 18.4 ms. Three summaries, one verdict.</p>
+<p><strong>Step 2: the tail.</strong> The 99th percentile disagrees. Build A’s is 19.5 ms; Build B’s is 39.4 ms, 2.0 times as long. The SD says the same thing more quietly: 1.05 ms for Build A, 3.4 ms for Build B.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>frames <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(build) <span class="sc">|&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean   =</span> <span class="fu">mean</span>(ms),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">median =</span> <span class="fu">median</span>(ms),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd     =</span> <span class="fu">sd</span>(ms),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">p95    =</span> <span class="fu">quantile</span>(ms, <span class="fl">0.95</span>),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">p99    =</span> <span class="fu">quantile</span>(ms, <span class="fl">0.99</span>),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">fps    =</span> <span class="dv">1000</span> <span class="sc">/</span> <span class="fu">mean</span>(ms))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 7
+  build  mean median    sd   p95   p99   fps
+  &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 A      17.0   17.0  1.05  18.8  19.5  58.8
+2 B      16.9   16.6  3.40  18.4  39.4  59.0</code></pre>
+</div>
+</div>
+<p><code>quantile(ms, 0.99)</code> is the 99th percentile: the frame time that 99% of frames beat.</p>
+<p><strong>Step 3: look.</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(b, <span class="at">breaks =</span> <span class="dv">80</span>, <span class="at">col =</span> pal<span class="sc">$</span>fill, <span class="at">border =</span> pal<span class="sc">$</span>fill, <span class="at">main =</span> <span class="st">""</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Frame time (ms)"</span>, <span class="at">ylab =</span> <span class="st">"Frames"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">30</span>))</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">20.5</span>, <span class="dv">26</span>, <span class="st">"&lt;- main spike continues</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="st">    to over 800 frames"</span>, <span class="at">pos =</span> <span class="dv">4</span>, <span class="at">cex =</span> <span class="fl">0.75</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> pal<span class="sc">$</span>line)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="fu">quantile</span>(b, <span class="fl">0.95</span>), <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> pal<span class="sc">$</span>line)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="fu">quantile</span>(b, <span class="fl">0.99</span>), <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> pal<span class="sc">$</span>highlight)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">bty =</span> <span class="st">"n"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>),</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(pal<span class="sc">$</span>line, pal<span class="sc">$</span>highlight),</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"95th percentile"</span>, <span class="st">"99th percentile"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-frames-hist" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Histogram of Build B frame times. A narrow spike between about 13 and 20 milliseconds runs off the top of the chart. A scatter of short bars lies far to the right, between 30 and 55 milliseconds. A dashed line marks the 95th percentile inside the spike; a red line marks the 99th percentile out among the slow frames.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-frames-hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="05-distributions-and-shape_files/figure-html/fig-frames-hist-1.png" class="img-fluid figure-img" alt="Histogram of Build B frame times. A narrow spike between about 13 and 20 milliseconds runs off the top of the chart. A scatter of short bars lies far to the right, between 30 and 55 milliseconds. A dashed line marks the 95th percentile inside the spike; a red line marks the 99th percentile out among the slow frames." width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-frames-hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: Build B’s frame times, with the 95th and 99th percentiles marked. The vertical axis is cut off at 30 frames so the rare slow frames show. The 95th percentile sits at the edge of the main spike; only the 99th reaches the slow frames out on the right.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Step 4: find it.</strong> Count the frames slower than 30 FPS (33.3 ms). Build A has 0. Build B has 60, every one of them in the Corridor zone, and exactly 25 frames apart: at 60 FPS, a hitch 2.4 times a second for as long as the player is in the corridor.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(corridor_b[<span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">col =</span> pal<span class="sc">$</span>build_b, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">65</span>),</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Frame"</span>, <span class="at">ylab =</span> <span class="st">"Frame time (ms)"</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(corridor_a[<span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>], <span class="at">col =</span> pal<span class="sc">$</span>build_a)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">1000</span> <span class="sc">/</span> <span class="dv">60</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> pal<span class="sc">$</span>guide)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"top"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Build A"</span>, <span class="st">"Build B"</span>), <span class="at">horiz =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(pal<span class="sc">$</span>build_a, pal<span class="sc">$</span>build_b), <span class="at">lty =</span> <span class="dv">1</span>, <span class="at">bty =</span> <span class="st">"n"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-frame-trace" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Two line traces of frame time over 200 frames. Build A's grey line stays flat around 17 milliseconds. Build B's red line also sits around 17 milliseconds but spikes to over 40 at regular intervals.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-frame-trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="05-distributions-and-shape_files/figure-html/fig-frame-trace-1.png" class="img-fluid figure-img" alt="Two line traces of frame time over 200 frames. Build A's grey line stays flat around 17 milliseconds. Build B's red line also sits around 17 milliseconds but spikes to over 40 at regular intervals." width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-frame-trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: In the Corridor, Build B hitches at a fixed interval; Build A does not.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The trace is <code>plot()</code> with <code>type = "l"</code>, which joins the points with a line: the right choice when the order of the values matters, as it does for frames in time. The dashed line is the 16.7 ms budget for 60 FPS.</p>
+<p><strong>Why the mean cannot see it.</strong> The slow frames are 1.3% of Build B’s total. Spread across every frame of the capture, they barely move the mean, and Build B’s faster frames elsewhere more than make up for them. The 95th percentile sits below the problem because the problem is rarer than one frame in twenty. Only a summary aimed at the worst one per cent can see it, which is why the 99th percentile is the standard figure in performance capture. The mean is not approximately wrong here. It is structurally incapable of showing the thing players experience.</p>
+<hr>
+</section>
+<section id="interpretation-guidance" class="level2">
+<h2 class="anchored" data-anchor-id="interpretation-guidance">Interpretation Guidance</h2>
+<p><strong>What the data shows.</strong> Build A and Build B have near-identical mean frame times. Build B has 60 frames slower than 30 FPS, all in the Corridor, and Build A has 0.</p>
+<p><strong>What the analysis suggests.</strong> Something in Build B’s Corridor costs a frame at a fixed interval. The regular spacing points at a periodic job, such as streaming, garbage collection or a timed effect, rather than at scene complexity.</p>
+<p><strong>What can legitimately be concluded.</strong> Build B introduced a hitch confined to the Corridor, and a report that quotes average FPS alone would have shipped it. The cause is not established by frame times; that needs a profiler.</p>
+<p><strong>What should the team do?</strong> Profile the Corridor in Build B before release, and add the 99th percentile to the build’s performance report so the next hitch is caught by the number, not by a player.</p>
+<p><strong>Quote the tail with the centre.</strong> For anything where the worst case is what players remember, such as frame time, load time or matchmaking wait, report the median and a high percentile together. “Median 16.6 ms, 99th percentile 39 ms” is a performance report. “59 FPS” is a slogan.</p>
+<hr>
+</section>
+<section id="common-mistakes" class="level2">
+<h2 class="anchored" data-anchor-id="common-mistakes">Common Mistakes</h2>
+<p><strong>Reporting average FPS as the performance result.</strong> It is the number the engine shows and the number least able to show a hitch.</p>
+<p><strong>Comparing groups by their means alone.</strong> Two builds with the same mean can be different games (<a href="../notes/ten-rules.html">rule 7</a>). Draw the distributions side by side.</p>
+<p><strong>Trusting a boxplot to show shape.</strong> It cannot show two humps. Draw the histogram as well.</p>
+<p><strong>Assuming the bell shape.</strong> Bounded measures, which is most game measures, are usually skewed. Check which way.</p>
+<p><strong>Quoting mean ± SD for skewed data.</strong> It assumes a normal shape the data does not have. Use the median and IQR, or percentiles.</p>
+<p><strong>Deleting outliers to clean the chart.</strong> Find out which of the three kinds each one is first. The Sentinel’s low scores are the finding, not the noise.</p>
+<p><strong>Stopping at the 95th percentile.</strong> A problem affecting one frame in a hundred is invisible at the 95th. Match the percentile to how rare the problem could be.</p>
+<hr>
+</section>
+<section id="practice" class="level2">
+<h2 class="anchored" data-anchor-id="practice">Practice</h2>
+<p>Each takes two or three minutes.</p>
+<ol type="1">
+<li><strong>Predict.</strong> Before running anything: will <code>items_collected</code> be skewed? Which way? Then check with a histogram, the mean and the median.</li>
+<li><strong>Compute.</strong> Find the 99th percentile of frame time for each build and zone. Which zone is responsible for Build B’s tail?</li>
+<li><strong>Read the summaries.</strong> Build B’s frame-time SD is about three times Build A’s, but the two IQRs are almost identical. What shape does that point to?</li>
+<li><strong>Critique.</strong> “Build A’s sessions had a wider spread than Build B’s, so Build A is less consistent.” Is that the best description of what happened?</li>
+</ol>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Show answers">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Show answers
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>1.</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(sessions<span class="sc">$</span>items_collected, <span class="at">breaks =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">9</span> <span class="sc">-</span> <span class="fl">0.5</span>, <span class="at">col =</span> pal<span class="sc">$</span>fill,</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">border =</span> <span class="st">"white"</span>, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"Items collected"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05-distributions-and-shape_files/figure-html/practice-items-1.png" class="img-fluid figure-img" alt="Histogram of items collected per session, from 0 to 8, roughly symmetric with the tallest bars around 4." width="768"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sessions<span class="sc">$</span>items_collected)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4.183333</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(sessions<span class="sc">$</span>items_collected)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4</code></pre>
+</div>
+</div>
+<p>Close to symmetric: the mean, 4.18, sits almost on the median, 4. A count with a floor at zero <em>can</em> be right-skewed, but only when the typical value is near the floor; here it is well away from it.</p>
+<p><strong>2.</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>frames <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(build, zone) <span class="sc">|&gt;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">p99 =</span> <span class="fu">quantile</span>(ms, <span class="fl">0.99</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+  build zone       p99
+  &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;
+1 A     Atrium    19.6
+2 A     Corridor  19.4
+3 A     Gantry    19.5
+4 B     Atrium    18.9
+5 B     Corridor  48.5
+6 B     Gantry    19.2</code></pre>
+</div>
+</div>
+<p>The Corridor in Build B, at 48.5 ms. Every other build and zone is under 20 ms. Splitting a summary by where it happened turns “Build B stutters” into “Build B stutters in one place”, which is a ticket someone can fix.</p>
+<p><strong>3.</strong> A few extreme values. The IQR covers the middle half of frames and ignores the extremes: 1.41 ms for Build A and 1.43 ms for Build B. The SD is inflated by every extreme value: 1.05 against 3.4. Same middle, different tails, which is exactly the hitch in the worked example.</p>
+<p><strong>4.</strong> It is true but it misses the finding. Build A is not uniformly inconsistent; it has two distinct groups, one quitting around minutes 10 to 14 and one playing to the end. “A fifth of Build A sessions end between minutes 11 and 13, mostly in frustration” names a moment a designer can investigate. The wider spread is a symptom of that, and only the histogram or the retention curve shows it.</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ul>
+<li>A distribution is the full pattern of values. Describe it by centre, spread, shape and unusual values.</li>
+<li>Skew pulls the mean towards the tail. Bounded game measures are usually skewed: a floor gives a right tail, a ceiling a left one.</li>
+<li>Two humps usually mean two groups mixed together. A boxplot cannot show them.</li>
+<li>The normal distribution is the symmetric bell; 68% of values lie within 1 SD, 95% within 2. Most game measures are not normal, so check with a histogram.</li>
+<li>An outlier is an error, an extreme player or the finding. Work out which before doing anything to it.</li>
+<li>Compare whole distributions. For “how long did players stay”, use a retention curve.</li>
+<li>For performance data, quote a high percentile. Both builds run at about 59 FPS, and only one of them stutters.</li>
+</ul>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Key term</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Distribution</strong></td>
+<td style="text-align: left;">The full pattern of a variable’s values</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Skew</strong></td>
+<td style="text-align: left;">A long tail on one side; the mean is pulled towards it</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Bimodal</strong></td>
+<td style="text-align: left;">Two humps, usually two groups mixed together</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Floor, ceiling</strong></td>
+<td style="text-align: left;">A lower or upper limit values cannot pass</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Normal distribution</strong></td>
+<td style="text-align: left;">The symmetric bell curve, defined by its mean and SD</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>68–95–99.7 rule</strong></td>
+<td style="text-align: left;">The share of normal values within 1, 2 and 3 SDs of the mean</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Tail</strong></td>
+<td style="text-align: left;">The extreme values at either end of a distribution</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Outlier</strong></td>
+<td style="text-align: left;">A value far from the rest; an error, an extreme player or the finding</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Retention curve</strong></td>
+<td style="text-align: left;">The share of sessions still going at each point in time</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="links" class="level2">
+<h2 class="anchored" data-anchor-id="links">Links</h2>
+<ul>
+<li><a href="../notes/ten-rules.html">Ten Rules</a>: rule 4 (look at the shape before you quote the average), rule 7 (compare distributions, not averages) and rule 9 (sometimes the rare value is the whole story)</li>
+<li><a href="../reference/reference-statistics.html#shape">Statistics Reference: shape</a></li>
+<li><a href="../reference/r-quarto-reference.html#plots">R and Quarto Reference: plots</a></li>
+<li><a href="../going-further/normality.html">Is It Normal Enough?</a>: z-scores, the normal check and Q-Q plots</li>
+<li><a href="../labs/reading-data.html">Lab 01: Reading Data</a>, Part B</li>
+<li>Next: <a href="../notes/06-cleaning-and-transforming.html">Cleaning and Transforming</a></li>
+</ul>
+<hr>
+</section>
+<section id="reflective-questions" class="level2">
+<h2 class="anchored" data-anchor-id="reflective-questions">Reflective Questions</h2>
+<ul>
+<li>A producer asks for “one number” to show the build’s performance has improved. Which number do you give, and what do you say about the numbers you left out?</li>
+<li>Build A’s session lengths are more spread out than Build B’s. Is a narrower spread always better for a game? Give a case where it would not be.</li>
+<li>You find three sessions with a score of zero. What would you check before deciding they are errors, and what would change your mind?</li>
+<li>The Corridor hitch affects 1.3% of Build B’s frames. At what point does a rare problem stop being worth fixing, and who should decide?</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/nmcguinness\.github\.io\/L8-3DGD-Playtest-Analytics\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../notes/04-describing-variables.html" class="pagination-link" aria-label="Describing Variables">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Describing Variables</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../labs/reading-data.html" class="pagination-link" aria-label="Lab 01 — Reading Data">
+        <span class="nav-page-text">Lab 01 — Reading Data</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>COMP I8015 · 3D Game Development · Dundalk Institute of Technology</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

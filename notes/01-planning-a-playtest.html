@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Planning a Playtest – Playtest Analytics</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../notes/02-r-first-principles.html" rel="next">
+<link href="../demos/stage-0.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-640402775883e0dc5b71a44650c95e06.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked wf-at-question wf-at-measure wf-at-collect quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notes/01-planning-a-playtest.html">Stage 1 · Foundations</a></li><li class="breadcrumb-item"><a href="../notes/01-planning-a-playtest.html">Planning a Playtest</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Playtest Analytics</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Start Here</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/00-start-here.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Start Here</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/ten-rules.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ten Rules for Reading Playtest Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/setting-up.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 00 — Setting Up</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-0.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 0 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 1 · Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/01-planning-a-playtest.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Planning a Playtest</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/02-r-first-principles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R from First Principles</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/03-data-and-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data, Variables and Types</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/04-describing-variables.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Describing Variables</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/05-distributions-and-shape.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Distributions and Shape</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/reading-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 01 — Reading Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 1 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 2 · Comparing Evidence</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/06-cleaning-and-transforming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cleaning and Transforming</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/07-sample-to-population.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">From Sample to Population</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/08-comparing-groups.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Comparing Groups</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/comparing-builds.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 02 — Comparing Builds</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 2 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 3 · Relationships &amp; Visual Evidence</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/09-visualising-with-ggplot2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Visualising with ggplot2</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/10-relationships-and-correlation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Relationships and Correlation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/clinic-figures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 03 — A Figure for Your Report</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/clinic-relationships.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 04 — Relationships in Your Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 3 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 4 · Evidence to Decision</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/11-reporting-evidence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Interpreting and Reporting Evidence</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/12-combining-evidence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Combining Evidence</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/complete-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 05 — From Evidence to Report</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 4 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Reference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/reference-statistics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Statistics Reference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/r-quarto-reference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R and Quarto Reference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/reference-ggplot2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ggplot2 Reference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Going Further</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/normality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Is It Normal Enough?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/sampling-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sampling Theory</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/testing-in-depth.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Testing in Depth</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/reshaping-and-joining.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reshaping and Joining</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#learning-outcomes" id="toc-learning-outcomes" class="nav-link active" data-scroll-target="#learning-outcomes">Learning Outcomes</a></li>
+  <li><a href="#why-this-matters-for-playtesting" id="toc-why-this-matters-for-playtesting" class="nav-link" data-scroll-target="#why-this-matters-for-playtesting">Why This Matters for Playtesting</a></li>
+  <li><a href="#start-with-a-design-question" id="toc-start-with-a-design-question" class="nav-link" data-scroll-target="#start-with-a-design-question">1. Start with a Design Question</a></li>
+  <li><a href="#choose-your-measures" id="toc-choose-your-measures" class="nav-link" data-scroll-target="#choose-your-measures">2. Choose Your Measures</a></li>
+  <li><a href="#choose-a-design-who-plays-what" id="toc-choose-a-design-who-plays-what" class="nav-link" data-scroll-target="#choose-a-design-who-plays-what">3. Choose a Design: Who Plays What</a></li>
+  <li><a href="#how-many-players" id="toc-how-many-players" class="nav-link" data-scroll-target="#how-many-players">4. How Many Players?</a></li>
+  <li><a href="#who-to-recruit" id="toc-who-to-recruit" class="nav-link" data-scroll-target="#who-to-recruit">5. Who to Recruit</a></li>
+  <li><a href="#ethics-and-consent" id="toc-ethics-and-consent" class="nav-link" data-scroll-target="#ethics-and-consent">6. Ethics and Consent</a></li>
+  <li><a href="#decide-in-advance-then-pilot" id="toc-decide-in-advance-then-pilot" class="nav-link" data-scroll-target="#decide-in-advance-then-pilot">7. Decide in Advance, then Pilot</a></li>
+  <li><a href="#worked-example" id="toc-worked-example" class="nav-link" data-scroll-target="#worked-example">Worked Example</a></li>
+  <li><a href="#interpretation-guidance" id="toc-interpretation-guidance" class="nav-link" data-scroll-target="#interpretation-guidance">Interpretation Guidance</a></li>
+  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a></li>
+  <li><a href="#practice" id="toc-practice" class="nav-link" data-scroll-target="#practice">Practice</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  <li><a href="#links" id="toc-links" class="nav-link" data-scroll-target="#links">Links</a></li>
+  <li><a href="#reflective-questions" id="toc-reflective-questions" class="nav-link" data-scroll-target="#reflective-questions">Reflective Questions</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notes/01-planning-a-playtest.html">Stage 1 · Foundations</a></li><li class="breadcrumb-item"><a href="../notes/01-planning-a-playtest.html">Planning a Playtest</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Planning a Playtest</h1>
+<p class="subtitle lead">From a design question to data worth analysing</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<nav class="wf-strip" aria-label="Where this page sits in the evidence workflow">
+  <span class="wf-label">Workflow</span>
+  <ol>
+    <li class="wf-step wf-question">Question</li>
+    <li class="wf-step wf-measure">Measure</li>
+    <li class="wf-step wf-collect">Collect</li>
+    <li class="wf-step wf-clean">Clean</li>
+    <li class="wf-step wf-describe">Describe</li>
+    <li class="wf-step wf-compare">Compare/Relate</li>
+    <li class="wf-step wf-interpret">Interpret</li>
+    <li class="wf-step wf-act">Act</li>
+  </ol>
+</nav>
+<blockquote class="blockquote">
+<p>Most of what goes wrong in a playtest analysis went wrong before anyone opened the data: a vague question, the wrong measure, the wrong players, or a design that cannot separate the build from the people playing it. This page is the plan you make before the first tester sits down. The playtest question running through it: <em>“Is Build A worse than Build B?”</em></p>
+</blockquote>
+<div class="at-a-glance">
+<p><strong>Stage:</strong> 1 · Core. <strong>Time:</strong> 30 minutes in class; 15 more for the sections marked Useful when needed. <strong>Before this:</strong> nothing. This is the first page. <strong>Key terms:</strong> telemetry, observation, self-report, measure, between-subjects, within-subjects, counterbalancing, random assignment, pilot, threshold. <strong>R you will write:</strong> none. R starts in <a href="../notes/02-r-first-principles.html">R from First Principles</a>.</p>
+</div>
+<section id="learning-outcomes" class="level2">
+<h2 class="anchored" data-anchor-id="learning-outcomes">Learning Outcomes</h2>
+<p>By the end of these notes you can:</p>
+<ul>
+<li>name the three cases where a team’s judgement of its own game reliably fails;</li>
+<li>distinguish telemetry, observation and self-report, and say what each can and cannot tell you;</li>
+<li>rewrite a vague design question as a measure you could record for a single player;</li>
+<li>choose between a between-subjects and a within-subjects design, and say how counterbalancing protects a within-subjects test;</li>
+<li>explain why a few players are enough to find problems but not to measure them;</li>
+<li>name the ethical obligations of a playtest that records player data;</li>
+<li>write down, before collecting anything, the result that would change your mind.</li>
+</ul>
+<hr>
+</section>
+<section id="why-this-matters-for-playtesting" class="level2">
+<h2 class="anchored" data-anchor-id="why-this-matters-for-playtesting">Why This Matters for Playtesting</h2>
+<p>Every team makes decisions about their game constantly. Most of those decisions are made from memory, taste and the loudest voice in the room, and most of the time that is fine. Taste is why anyone plays your game rather than a spreadsheet.</p>
+<p>Measurement earns its place in the cases where taste reliably fails. There are three of them, and they recur in every project.</p>
+<p><strong>You cannot see your own game any more.</strong> You have played your level five hundred times. You know where the key is. You cannot un-know it, and no amount of care will let you experience your own tutorial as a stranger. This is the single most common cause of a game that the team finds obvious and the player finds impenetrable.</p>
+<p><strong>You cannot feel a rare event.</strong> A stutter that happens once every two seconds occupies less than one per cent of frames. Your average frame rate will not show it. Your players will talk about nothing else.</p>
+<p><strong>You cannot remember twenty playtests.</strong> After a session you remember the two people who struggled most and the last person you watched. You do not remember the distribution, and you will confidently reconstruct one that never existed.</p>
+<p>A playtest fixes all three, but only if it is planned. The rest of this page is the plan: seven decisions, made in this order, before anyone plays.</p>
+<ol type="1">
+<li>The design question.</li>
+<li>The measures.</li>
+<li>The design: who plays what.</li>
+<li>How many players.</li>
+<li>Who to recruit.</li>
+<li>Ethics and consent.</li>
+<li>The threshold that would change your mind, and a pilot.</li>
+</ol>
+<hr>
+</section>
+<section id="start-with-a-design-question" class="level2">
+<h2 class="anchored" data-anchor-id="start-with-a-design-question">1. Start with a Design Question</h2>
+<p>The question a designer asks is almost never answerable as asked.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">What you are asked</th>
+<th style="text-align: left;">What you can actually measure</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">“Is the level too hard?”</td>
+<td style="text-align: left;">Deaths per attempt; time to first completion; proportion who never finish; where attempts end</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">“Does the game feel good?”</td>
+<td style="text-align: left;">Time to first successful interaction; retry rate after failure; rated responsiveness</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">“Is the tutorial working?”</td>
+<td style="text-align: left;">Proportion who use the taught mechanic later, unprompted</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">“Do people like the art?”</td>
+<td style="text-align: left;">Rated appeal; which screenshots they choose; where they stop to look</td>
+</tr>
+</tbody>
+</table>
+<p>Each right-hand cell names a <strong>specific number you could write down after watching one person play</strong>. That is the test. If you cannot describe how you would record it for a single player, you have not finished turning the question into a measurement (<a href="../notes/ten-rules.html">rule 2</a>).</p>
+<p>The right-hand column is often several measures, not one, and they can disagree. That is not a failure of the method. A tutorial that everybody completes and nobody learns from is a real and common outcome, and only two measures together can find it.</p>
+<p><strong>For your project:</strong> write down the one question your next playtest has to answer, in the designer’s words. Then rewrite it until you could record the answer after watching a single player. If you cannot get there, the question is not ready and neither is the playtest.</p>
+<hr>
+</section>
+<section id="choose-your-measures" class="level2">
+<h2 class="anchored" data-anchor-id="choose-your-measures">2. Choose Your Measures</h2>
+<p>Almost everything you analyse in a game project comes from one of three sources of evidence. They answer different questions, so you need to know which one you are holding.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Source</th>
+<th style="text-align: left;">What it tells you</th>
+<th style="text-align: left;">Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Telemetry</strong></td>
+<td style="text-align: left;">What happened in the game</td>
+<td style="text-align: left;">deaths, completion time, wrong turns, attempts, objectives completed, frame times</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Observation</strong></td>
+<td style="text-align: left;">How the player’s behaviour unfolded</td>
+<td style="text-align: left;">missed a doorway, backtracked, hesitated at an interaction, ignored a prompt</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Self-report</strong></td>
+<td style="text-align: left;">What the player says they experienced</td>
+<td style="text-align: left;">difficulty and enjoyment ratings, confidence, comments, questionnaires</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Telemetry</strong> is what the game records about itself while it runs. It is objective, it arrives in large quantities, and it tells you <em>what</em> happened but never <em>why</em>. Performance data (frame times, memory) is telemetry too, and it is the one place where the usual summary, the average frame rate, actively misleads you. <a href="../notes/05-distributions-and-shape.html">Distributions and Shape</a> shows why.</p>
+<p><strong>Observation</strong> is what you see when you watch someone play: where they hesitate, what they miss, where they go back on themselves. You record it as notes against a time or a location, ideally against a short list of things to watch for, written in advance. It catches what telemetry flattens: a player who took the right route after thirty seconds of wandering looks fine in the log.</p>
+<p><strong>Self-report</strong> is surveys, interviews and think-aloud comments. It is the only source that tells you how the game <em>felt</em>, and the least reliable. People misremember, they are polite, and they answer the question they think you meant. A rating tells you what a player believes about their experience, which is real and useful, but it is not the same as what happened. How to ask well is covered in <a href="../notes/03-data-and-types.html#measuring-with-surveys">Data, Variables and Types</a>.</p>
+<p><strong>The sources disagree, and that is the point.</strong> The most useful finding in a playtest is often where they contradict each other: players say the level is fine and the log shows nobody finds the side route; players say the game runs smoothly and the frame log shows a hitch every two seconds. When they agree, the finding is stronger than any one of them:</p>
+<blockquote class="blockquote">
+<p>Players made more wrong turns <strong>(telemetry)</strong>, observers saw repeated backtracking at the junction <strong>(observation)</strong>, and players rated the level as hard to navigate <strong>(self-report)</strong>.</p>
+</blockquote>
+<p>Checking a finding against more than one source is called <strong>triangulation</strong>. A team with one source never finds the contradictions, and cannot back up the agreements.</p>
+<p><strong>A measure is only usable if it is defined before you collect it.</strong> For each one, write down:</p>
+<ul>
+<li><strong>what exactly is recorded</strong>, such as “a death event, with its cause”;</li>
+<li><strong>when</strong>, such as “on every death, timestamped from session start”;</li>
+<li><strong>in what unit</strong>, such as seconds, metres or a 1 to 5 rating;</li>
+<li><strong>with which identifiers</strong>, so that it can be joined to everything else.</li>
+</ul>
+<p>The last one is where telemetry most often fails. A death event with no session ID cannot be matched to the player’s survey; a survey with no session ID cannot be matched to the match it describes. <em>Tidebreak</em> puts <code>session_id</code> and <code>player_id</code> on every row of every file for exactly this reason.</p>
+<hr>
+</section>
+<section id="choose-a-design-who-plays-what" class="level2">
+<h2 class="anchored" data-anchor-id="choose-a-design-who-plays-what">3. Choose a Design: Who Plays What</h2>
+<p>The moment you compare two versions of anything, you have to decide who plays which. There are two basic designs.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="fig-designs" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-designs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-designs">flowchart LR
+  subgraph BETWEEN["Between-subjects"]
+    direction TB
+    G1["Group 1"] --&gt; BA["Build A"]
+    G2["Group 2"] --&gt; BB["Build B"]
+  end
+  subgraph WITHIN["Within-subjects"]
+    direction TB
+    G3["Every player"] --&gt; WA["Build A"]
+    G3 --&gt; WB["Build B"]
+  end
+  BETWEEN ~~~ WITHIN
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-designs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Between-subjects compares two groups of players; within-subjects compares each player with themselves.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Between-subjects:</strong> different players test each version. <em>Tidebreak</em>’s main file is between-subjects: 30 players each played 4 sessions, 15 of them only on Build A and 15 only on Build B. Nobody saw both.</p>
+<p><strong>Within-subjects:</strong> every player tests every version. <em>Tidebreak</em>’s paired file is within-subjects: 30 players each played both builds, and their wrong turns were recorded on each.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Between-subjects</th>
+<th style="text-align: left;">Within-subjects</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Each player sees</td>
+<td style="text-align: left;">one version</td>
+<td style="text-align: left;">every version</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Main strength</td>
+<td style="text-align: left;">no carry-over from one version to the next</td>
+<td style="text-align: left;">each player is compared with themselves, so differences in skill cancel out</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Main weakness</td>
+<td style="text-align: left;">differences between the groups can masquerade as differences between builds</td>
+<td style="text-align: left;">order, learning and fatigue effects</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Players needed</td>
+<td style="text-align: left;">more</td>
+<td style="text-align: left;">fewer</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Use when</td>
+<td style="text-align: left;">playing one version changes how you play the other, such as a puzzle you can only solve once</td>
+<td style="text-align: left;">the versions can be played fresh, such as two control schemes</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why within-subjects is so powerful.</strong> Players differ enormously before they touch your build: some are better, faster or more patient than others. In a between-subjects test, all of that variation sits on top of the difference you are trying to see. In a within-subjects test, each player’s own skill appears in both measurements and cancels out. You will see exactly how much this matters in the paired test of <a href="../notes/08-comparing-groups.html">Comparing Groups</a>.</p>
+<section id="random-assignment" class="level3">
+<h3 class="anchored" data-anchor-id="random-assignment">Random assignment</h3>
+<p>In a between-subjects test, <strong>you decide who plays which version, by chance</strong>. Never let players choose, and never put the first ten through the door on Build A. Players who choose, or who arrive early, differ from the rest in ways that will show up in the results and be credited to the build. Random assignment does not make the groups identical, but it makes any difference between them an accident rather than a pattern.</p>
+</section>
+<section id="order-learning-and-fatigue" class="level3">
+<h3 class="anchored" data-anchor-id="order-learning-and-fatigue">Order, learning and fatigue</h3>
+<p>A within-subjects test has the opposite problem. If every player plays A and then B, then B gets players who have <strong>learned</strong> the controls and the map, and who are more <strong>tired</strong> and more <strong>bored</strong>. Any of these can make B look better or worse than it is. These are <strong>order effects</strong>.</p>
+<p>The fix is <strong>counterbalancing</strong>: half the players play A first, half play B first, decided at random.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="fig-counterbalance" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-counterbalance-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-counterbalance">flowchart LR
+  S["Players,&lt;br/&gt;split at random"] --&gt; H1["Half 1"]
+  S --&gt; H2["Half 2"]
+  H1 --&gt; A1["Build A"] --&gt; B1["Build B"]
+  H2 --&gt; B2["Build B"] --&gt; A2["Build A"]
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-counterbalance-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Counterbalancing gives half the players each build first, so order effects fall equally on both builds instead of favouring one.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Learning and fatigue still happen, but now they happen equally to both builds, so they no longer favour either one.</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Going further: more than two versions">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Going further: more than two versions
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>With three versions there are six possible orders (ABC, ACB, BAC, BCA, CAB, CBA). Using all six equally is <strong>full counterbalancing</strong>. With four versions there are 24 orders, which quickly becomes impractical; a <strong>Latin square</strong> uses just four orders, chosen so that each version appears in each position exactly once. The idea is the same: no version is systematically first, or last.</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="how-many-players" class="level2 when-needed">
+<h2 class="when-needed anchored" data-anchor-id="how-many-players">4. How Many Players?</h2>
+<p>There is no single answer, because there are two different jobs a playtest can do.</p>
+<p><strong>Finding problems needs few players.</strong> If a door is hard to find, most players will struggle with it, and you will see it in the first handful of sessions. A well-known rule of thumb from usability research (Nielsen) is that around five testers find most of the <em>obvious</em> problems in an interface. Each extra tester mostly rediscovers what you already know.</p>
+<p><strong>Measuring how often needs many.</strong> “What proportion of players quit in frustration?” is a different question. With five players, one person changes the answer by 20 percentage points. The figure below takes <em>Tidebreak</em>’s 60 Build A sessions, in which 33% ended in frustration, and draws small samples from them over and over to see what a smaller playtest would have reported.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-sample-size" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Three horizontal strips of points, one per sample size. With 5 sessions the estimates are spread across most of the axis; with 15 they cluster more tightly; with 40 they sit close to the dashed line marking the true rate.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sample-size-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="01-planning-a-playtest_files/figure-html/fig-sample-size-1.png" class="img-fluid figure-img" alt="Three horizontal strips of points, one per sample size. With 5 sessions the estimates are spread across most of the axis; with 15 they cluster more tightly; with 40 they sit close to the dashed line marking the true rate." width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sample-size-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: The frustration rate a smaller playtest would have reported, from 1,000 random samples of Build A sessions at each size. The dashed line is the rate across all of them.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>With 5 sessions, the middle 90% of samples reported anything from 0% to 60%. With 40, from 28% to 40%. The true rate never changed; only the number of sessions did. <a href="../notes/07-sample-to-population.html">From Sample to Population</a> explains why the spread shrinks the way it does.</p>
+<p><strong>Count players, not sessions.</strong> <em>Tidebreak</em> recorded 120 sessions, but only 30 people. Four sessions from one unusually skilled player are not four independent pieces of evidence. When you plan a sample size, plan the number of people.</p>
+<hr>
+</section>
+<section id="who-to-recruit" class="level2">
+<h2 class="anchored" data-anchor-id="who-to-recruit">5. Who to Recruit</h2>
+<p><strong>The players you test should resemble the players you are making the game for.</strong> A playtest recruited from the studio’s Discord samples its most committed fans. A playtest of colleagues samples people who already know the controls. A playtest of classmates samples people of one age with one set of habits. Each answers the question “what do <em>these</em> people think?”, which may not be the question you asked.</p>
+<p>Decide in advance who your intended players are, and recruit to match. Record the things about each player that could affect the results, such as experience with the genre, so you can check them later. <em>Tidebreak</em> records each player’s <code>cohort</code>: Novice, Regular or Veteran.</p>
+<p>No analysis afterwards corrects for who walked through the door. What you can do is say who they were, in the report’s limitations section.</p>
+<hr>
+</section>
+<section id="ethics-and-consent" class="level2">
+<h2 class="anchored" data-anchor-id="ethics-and-consent">6. Ethics and Consent</h2>
+<p>A playtest collects data from real people, and that comes with obligations. Your institution or studio will have its own process; the principles behind it are the same everywhere.</p>
+<p><strong>Informed consent.</strong> Before they play, tell testers what you are recording (gameplay, screen, voice, survey answers), why, how long you will keep it, and who will see it. Get their agreement, in writing.</p>
+<p><strong>The right to stop.</strong> Testers can stop at any time, without giving a reason, and can ask for their data to be removed.</p>
+<p><strong>Collect only what you need.</strong> If the question is about navigation, you do not need a tester’s date of birth. Every extra field is a risk with no benefit.</p>
+<p><strong>Separate identity from data.</strong> Store names and contact details in one place and gameplay data in another, linked only by a code such as <code>P01</code>. <em>Tidebreak</em>’s files contain no names for this reason.</p>
+<p><strong>Telemetry is personal data.</strong> Under GDPR, data that can be linked back to an identifiable person is personal data, and that includes gameplay logs tied to an account or a player code you can decode. Coded data is still personal data while the key exists; only data that can never be traced back to a person is anonymous. Store it securely and delete it when you no longer need it.</p>
+<p><strong>Take extra care with under-18s.</strong> Testing with children needs a parent’s or guardian’s consent as well as the child’s own agreement.</p>
+<hr>
+</section>
+<section id="decide-in-advance-then-pilot" class="level2">
+<h2 class="anchored" data-anchor-id="decide-in-advance-then-pilot">7. Decide in Advance, then Pilot</h2>
+<p><strong>Write down the result that would change your mind</strong>, before you collect anything: “If more than a third of testers never find the second key, I will add a light cue.”</p>
+<p>This costs nothing and protects you from the most comfortable mistake in the discipline: running the test, getting an ambiguous result, and finding in it whatever you already believed. If the threshold is written down beforehand, the data gets to answer. If it is not, you will answer and attribute it to the data (<a href="../notes/ten-rules.html">rule 1</a>).</p>
+<p><strong>Then run a pilot</strong>: the whole playtest, start to finish, with one or two people who are not on the team. A pilot finds the problems that would otherwise ruin the real test: a logger that drops the session ID, a survey question everyone misreads, a session that runs twenty minutes over, a build that crashes on the lab machines. Fix them, then begin.</p>
+<p><strong>Quick check.</strong> A team wants to know whether a new minimap helps players navigate. They let testers choose whether to play with the minimap on or off. What is wrong, and what should they do?</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Show answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Show answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Players who choose the minimap probably differ from those who do not: perhaps they are less confident navigators. Any difference in wrong turns could be the players, not the minimap. Assign the minimap at random, or better, have every player try both, counterbalanced.</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="worked-example" class="level2">
+<h2 class="anchored" data-anchor-id="worked-example">Worked Example</h2>
+<p><strong>The question as asked.</strong> The <em>Tidebreak</em> team ran 120 sessions, 60 on Build A and 60 on Build B. The designer asks “is Build A worse?”, which cannot be answered as asked: worse at what, for whom, by how much?</p>
+<p><strong>The measures.</strong> Two, from two different sources:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Source</th>
+<th style="text-align: left;">Measure</th>
+<th style="text-align: left;">Recorded per session as</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Telemetry</td>
+<td style="text-align: left;">Did the session end in a frustration quit?</td>
+<td style="text-align: left;"><code>quit_reason</code> is <code>Frustrated</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Self-report</td>
+<td style="text-align: left;">“I always knew what my objective was”</td>
+<td style="text-align: left;">A rating from 1 to 5</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The design.</strong> Between-subjects: each player was assigned to one build and played it 4 times. Different players on each build means differences between the two groups of players are a possible explanation for any result, and the report will have to say so.</p>
+<p><strong>The threshold, written first.</strong> Before anyone opens the file, the team writes: <em>“If more than a quarter of the sessions on either build end in a frustration quit, that build does not ship.”</em></p>
+<p><strong>The result.</strong> 20 of 60 Build A sessions ended in a frustration quit (33%), against 5 of 60 on Build B (8%). Build A crosses the line; Build B does not. Nobody has to argue about it, because the argument happened before the data arrived.</p>
+<p><strong>The second source.</strong> Of the 8 survey items, the objective item has the lowest mean, 2.61 on the 1 to 5 scale. Telemetry says <em>what</em> happened: players on Build A left in frustration. The survey offers a candidate for <em>why</em>: players did not know what they were meant to be doing. Neither source alone would have pointed a designer at the objective marker.</p>
+<hr>
+</section>
+<section id="interpretation-guidance" class="level2">
+<h2 class="anchored" data-anchor-id="interpretation-guidance">Interpretation Guidance</h2>
+<p>Every finding is read at three levels, and the discipline is keeping them apart.</p>
+<p><strong>What the data shows.</strong> 20 of 60 Build A sessions ended in a frustration quit, against 5 of 60 on Build B. This is a count. It is not in dispute.</p>
+<p><strong>What the analysis suggests.</strong> Something in Build A frustrates players that Build B avoided, and the survey’s weakest item points at objective clarity as a candidate.</p>
+<p><strong>What can legitimately be concluded.</strong> Build A fails the threshold the team set in advance. That is all. The survey figure is averaged across both builds, so on its own it cannot say the unclear objective belongs to Build A. And because the design is between-subjects, a skeptic can ask whether Build A’s players were simply different. Linking the objective to the frustration is a hypothesis for the next test, not a finding.</p>
+<hr>
+</section>
+<section id="common-mistakes" class="level2">
+<h2 class="anchored" data-anchor-id="common-mistakes">Common Mistakes</h2>
+<p><strong>Collecting first, asking later.</strong> Logging everything and hoping a question emerges produces large files and no decisions. Write the question down first (<a href="../notes/ten-rules.html">rule 2</a>).</p>
+<p><strong>Trusting one source.</strong> A survey on its own tells you what players believe; a log on its own tells you what they did; your notes tell you what you happened to see. Treat any one alone as part of the evidence.</p>
+<p><strong>Letting players choose their condition.</strong> The people who pick an option differ from those who do not, and the difference gets credited to the option.</p>
+<p><strong>Running every player in the same order.</strong> Without counterbalancing, the second build always gets more practised, more tired players.</p>
+<p><strong>Counting sessions as players.</strong> Four sessions from one player are one person’s evidence, four times.</p>
+<p><strong>Testing only people you know.</strong> Friends and colleagues are polite, practised and unrepresentative.</p>
+<p><strong>Logging without identifiers.</strong> A death event with no session or player ID cannot be joined to anything.</p>
+<p><strong>Skipping the pilot.</strong> The first real session should not be the one where you discover the logger is broken.</p>
+<p><strong>Setting the threshold after seeing the result.</strong> A threshold chosen afterwards is always met by exactly the right margin. If it was not written down beforehand, it is not a threshold (<a href="../notes/ten-rules.html">rule 1</a>).</p>
+<hr>
+</section>
+<section id="practice" class="level2">
+<h2 class="anchored" data-anchor-id="practice">Practice</h2>
+<p>Each takes two or three minutes.</p>
+<ol type="1">
+<li><strong>Make it measurable.</strong> Rewrite “is the corridor too dangerous?” as one telemetry measure, one thing an observer would watch for, and one self-report measure, each recordable for a single player.</li>
+<li><strong>Choose a design.</strong> You want to compare two control schemes for a racing game, and you can recruit 12 players for an afternoon. Between or within? What must you do to make it fair?</li>
+<li><strong>Critique.</strong> A student team tests their puzzle game on 30 classmates in one afternoon. Everyone plays the old version, then the new one. The new version takes 40% less time to solve. List three reasons the new version might not actually be better.</li>
+<li><strong>Write the threshold.</strong> Count the sessions that ended in a technical fault, then write the threshold that would make you delay a release over it.</li>
+</ol>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Show answers">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Show answers
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Telemetry: deaths in the corridor per session. Observation: does the player stop, retreat or look around before going in? Self-report: agreement with “I understood why I died”. Players who die there often <em>and</em> do not understand why describe a different problem from players who die there often and accept it.</li>
+<li>Within-subjects. Control schemes can be played fresh, twelve players is too few to split into two groups, and comparing each player with themselves cancels out the large differences in driving skill. Counterbalance: six players, chosen at random, try scheme A first; the other six try B first.</li>
+<li>Any three of: players had already solved the puzzles once, so the second attempt was always going to be faster (learning, and no counterbalancing; and puzzles are a case for between-subjects); classmates are not the target audience; the team knew the testers, who may have tried harder on the version they knew was new; there was no threshold written in advance; and nobody piloted the test, so problems in the first version’s build or logging may have slowed it down.</li>
+<li>5 of 120 sessions ended in a technical fault. Any threshold is defensible if it was written first and names a number: “if more than one session in twenty ends in a technical fault, we do not release”. “If it seems like a lot” is not a threshold.</li>
+</ol>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ul>
+<li>Measurement earns its place where taste fails: you cannot see your own game, feel a rare event, or remember twenty playtests.</li>
+<li>A question is measurable when you can say how you would record it for one player.</li>
+<li>Telemetry says what happened, observation says how it unfolded, and self-report says what players experienced. Where they agree the finding is strong; where they disagree there is something to find.</li>
+<li>Between-subjects designs avoid carry-over; within-subjects designs cancel out differences between players. Assign at random, and counterbalance the order.</li>
+<li>A few players find problems. Measuring how often needs many more. Count people, not sessions.</li>
+<li>Recruit players like your audience, get informed consent, collect only what you need, and treat telemetry as personal data.</li>
+<li>Write the threshold that would change your mind before you look, then pilot.</li>
+</ul>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Key term</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Telemetry</strong></td>
+<td style="text-align: left;">What the game records about itself while it runs</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Observation</strong></td>
+<td style="text-align: left;">What you record by watching someone play</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Self-report</strong></td>
+<td style="text-align: left;">What players tell you about their experience</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Triangulation</strong></td>
+<td style="text-align: left;">Checking a finding against more than one source of evidence</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Measure</strong></td>
+<td style="text-align: left;">A specific value you could record for one player</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Between-subjects</strong></td>
+<td style="text-align: left;">Each player tests one version</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Within-subjects</strong></td>
+<td style="text-align: left;">Every player tests every version</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Random assignment</strong></td>
+<td style="text-align: left;">Deciding by chance who plays which version</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Order effect</strong></td>
+<td style="text-align: left;">A difference caused by what a player did first, not by the version</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Counterbalancing</strong></td>
+<td style="text-align: left;">Varying the order so order effects fall equally on every version</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Pilot</strong></td>
+<td style="text-align: left;">A full rehearsal of the playtest with one or two people</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Threshold</strong></td>
+<td style="text-align: left;">The result, written in advance, that would change your decision</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="links" class="level2">
+<h2 class="anchored" data-anchor-id="links">Links</h2>
+<ul>
+<li><a href="../notes/ten-rules.html">Ten Rules</a>: rule 1 (decide what would change your mind), rule 2 (a number without a question is decoration) and rule 8 (small samples lie confidently)</li>
+<li><a href="../reference/reference-statistics.html#describing-data">Statistics Reference: sample and population</a></li>
+<li><a href="../labs/setting-up.html">Lab 00: Setting Up</a> and <a href="../labs/reading-data.html">Lab 01: Reading Data</a></li>
+<li>Next: <a href="../notes/02-r-first-principles.html">R from First Principles</a></li>
+</ul>
+<hr>
+</section>
+<section id="reflective-questions" class="level2">
+<h2 class="anchored" data-anchor-id="reflective-questions">Reflective Questions</h2>
+<ul>
+<li>Pick a mechanic in your own project. Write the designer’s question, then three different measures that would bear on it, then say which one you would trust most and why.</li>
+<li>Name something about your own game that you can no longer judge, because you have played it too often.</li>
+<li>Your next playtest compares two versions of a boss fight. Would you run it between or within subjects? What would a skeptic say about your choice?</li>
+<li>Your team wants to log every input a player makes “in case it is useful”. What would you say, as the person responsible for the testers’ data?</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/nmcguinness\.github\.io\/L8-3DGD-Playtest-Analytics\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../demos/stage-0.html" class="pagination-link" aria-label="Stage 0 Demo">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Stage 0 Demo</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../notes/02-r-first-principles.html" class="pagination-link" aria-label="R from First Principles">
+        <span class="nav-page-text">R from First Principles</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>COMP I8015 · 3D Game Development · Dundalk Institute of Technology</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

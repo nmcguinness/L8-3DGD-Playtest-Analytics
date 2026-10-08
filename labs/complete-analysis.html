@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Lab 03 — Complete Playtest Analysis – Playtest Analytics</title>
+<title>Lab 05 — From Evidence to Report – Playtest Analytics</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -71,8 +71,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../reference/reference-statistics.html" rel="next">
-<link href="../labs/comparing-builds.html" rel="prev">
+<link href="../demos/stage-4.html" rel="next">
+<link href="../notes/12-combining-evidence.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -112,6 +112,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 
 
+<link rel="stylesheet" href="../styles.css">
 </head>
 
 <body class="nav-sidebar docked quarto-light">
@@ -123,7 +124,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/setting-up.html">Labs</a></li><li class="breadcrumb-item"><a href="../labs/complete-analysis.html">Lab 03 — Complete Playtest Analysis</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notes/11-reporting-evidence.html">Stage 4 · Evidence to Decision</a></li><li class="breadcrumb-item"><a href="../labs/complete-analysis.html">Lab 05 — From Evidence to Report</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -151,18 +152,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Start here</span></a>
+ <span class="menu-text">Home</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Notes</span></a>
+ <span class="menu-text">Start Here</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/00-start-here.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Start Here</span></a>
+  </div>
+</li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../notes/ten-rules.html" class="sidebar-item-text sidebar-link">
@@ -171,44 +178,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../notes/why-measure.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Why Developers Measure Anything</span></a>
+  <a href="../labs/setting-up.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 00 — Setting Up</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../notes/describing-what-you-have.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Describing What You Have</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../notes/distributions-and-variation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Distributions and Variation</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../notes/cleaning-and-transforming.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Cleaning and Transforming</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../notes/visualising-with-ggplot2.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Visualising with ggplot2</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../notes/comparing-conditions.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Comparing Playtest Conditions</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../notes/reporting-evidence.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Interpreting and Reporting Evidence</span></a>
+  <a href="../demos/stage-0.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 0 Demo</span></a>
   </div>
 </li>
       </ul>
@@ -216,7 +193,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Labs</span></a>
+ <span class="menu-text">Stage 1 · Foundations</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -224,8 +201,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../labs/setting-up.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Lab 00 — Setting Up</span></a>
+  <a href="../notes/01-planning-a-playtest.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Planning a Playtest</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/02-r-first-principles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R from First Principles</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/03-data-and-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data, Variables and Types</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/04-describing-variables.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Describing Variables</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/05-distributions-and-shape.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Distributions and Shape</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -236,14 +237,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../labs/comparing-builds.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Lab 02 — Comparing Builds</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../labs/complete-analysis.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Lab 03 — Complete Playtest Analysis</span></a>
+  <a href="../demos/stage-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 1 Demo</span></a>
   </div>
 </li>
       </ul>
@@ -251,12 +246,129 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Reference</span></a>
+ <span class="menu-text">Stage 2 · Comparing Evidence</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/06-cleaning-and-transforming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cleaning and Transforming</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/07-sample-to-population.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">From Sample to Population</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/08-comparing-groups.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Comparing Groups</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/comparing-builds.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 02 — Comparing Builds</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 2 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 3 · Relationships &amp; Visual Evidence</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/09-visualising-with-ggplot2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Visualising with ggplot2</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/10-relationships-and-correlation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Relationships and Correlation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/clinic-figures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 03 — A Figure for Your Report</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/clinic-relationships.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 04 — Relationships in Your Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 3 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 4 · Evidence to Decision</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/11-reporting-evidence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Interpreting and Reporting Evidence</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/12-combining-evidence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Combining Evidence</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/complete-analysis.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Lab 05 — From Evidence to Report</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 4 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Reference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../reference/reference-statistics.html" class="sidebar-item-text sidebar-link">
@@ -279,29 +391,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
- <span class="menu-text">Demos</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Going Further</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../demos/week-1.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Week 1 Demo</span></a>
+  <a href="../going-further/normality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Is It Normal Enough?</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../demos/week-2.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Week 2 Demo</span></a>
+  <a href="../going-further/sampling-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sampling Theory</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../demos/week-3.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Week 3 Demo</span></a>
+  <a href="../going-further/testing-in-depth.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Testing in Depth</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/reshaping-and-joining.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reshaping and Joining</span></a>
   </div>
 </li>
       </ul>
@@ -320,25 +444,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#learning-outcomes" id="toc-learning-outcomes" class="nav-link" data-scroll-target="#learning-outcomes">Learning outcomes</a></li>
   <li><a href="#ground-rules" id="toc-ground-rules" class="nav-link" data-scroll-target="#ground-rules">Ground rules</a></li>
   <li><a href="#setup-run-this-first" id="toc-setup-run-this-first" class="nav-link" data-scroll-target="#setup-run-this-first">Setup (run this first)</a></li>
-  <li><a href="#part-a-visualise-and-relate" id="toc-part-a-visualise-and-relate" class="nav-link" data-scroll-target="#part-a-visualise-and-relate">Part A — Visualise and relate</a>
+  <li><a href="#part-a-one-finding-on-tidebreak" id="toc-part-a-one-finding-on-tidebreak" class="nav-link" data-scroll-target="#part-a-one-finding-on-tidebreak">Part A — One finding, on Tidebreak</a>
   <ul class="collapse">
-  <li><a href="#exercise-01-a-histogram-rebuilt-do" id="toc-exercise-01-a-histogram-rebuilt-do" class="nav-link" data-scroll-target="#exercise-01-a-histogram-rebuilt-do">Exercise 01 — A histogram, rebuilt <code>[Do]</code></a></li>
-  <li><a href="#exercise-02-a-boxplot-rebuilt-do" id="toc-exercise-02-a-boxplot-rebuilt-do" class="nav-link" data-scroll-target="#exercise-02-a-boxplot-rebuilt-do">Exercise 02 — A boxplot, rebuilt <code>[Do]</code></a></li>
-  <li><a href="#exercise-03-the-navigation-figure-apply" id="toc-exercise-03-the-navigation-figure-apply" class="nav-link" data-scroll-target="#exercise-03-the-navigation-figure-apply">Exercise 03 — The navigation figure <code>[Apply]</code></a></li>
-  <li><a href="#exercise-04-what-goes-with-score-do" id="toc-exercise-04-what-goes-with-score-do" class="nav-link" data-scroll-target="#exercise-04-what-goes-with-score-do">Exercise 04 — What goes with score? <code>[Do]</code></a></li>
-  <li><a href="#exercise-05-the-trade-off-apply" id="toc-exercise-05-the-trade-off-apply" class="nav-link" data-scroll-target="#exercise-05-the-trade-off-apply">Exercise 05 — The trade-off <code>[Apply]</code></a></li>
-  <li><a href="#exercise-06-faster-players-are-more-fragile-decide" id="toc-exercise-06-faster-players-are-more-fragile-decide" class="nav-link" data-scroll-target="#exercise-06-faster-players-are-more-fragile-decide">Exercise 06 — Faster players are more fragile? <code>[Decide]</code></a></li>
+  <li><a href="#exercise-01-every-survey-item-both-builds-apply" id="toc-exercise-01-every-survey-item-both-builds-apply" class="nav-link" data-scroll-target="#exercise-01-every-survey-item-both-builds-apply">Exercise 01 — Every survey item, both builds <code>[Apply]</code></a></li>
+  <li><a href="#exercise-02-without-reducing-enjoyment-decide" id="toc-exercise-02-without-reducing-enjoyment-decide" class="nav-link" data-scroll-target="#exercise-02-without-reducing-enjoyment-decide">Exercise 02 — “Without reducing enjoyment” <code>[Decide]</code></a></li>
+  <li><a href="#exercise-03-code-the-comments-apply" id="toc-exercise-03-code-the-comments-apply" class="nav-link" data-scroll-target="#exercise-03-code-the-comments-apply">Exercise 03 — Code the comments <code>[Apply]</code></a></li>
+  <li><a href="#exercise-04-do-the-sources-agree-decide" id="toc-exercise-04-do-the-sources-agree-decide" class="nav-link" data-scroll-target="#exercise-04-do-the-sources-agree-decide">Exercise 04 — Do the sources agree? <code>[Decide]</code></a></li>
+  <li><a href="#exercise-05-start-the-report-and-render-it-apply" id="toc-exercise-05-start-the-report-and-render-it-apply" class="nav-link" data-scroll-target="#exercise-05-start-the-report-and-render-it-apply">Exercise 05 — Start the report, and render it <code>[Apply]</code></a></li>
+  <li><a href="#exercise-06-discussion-conclusion-and-executive-summary-decide" id="toc-exercise-06-discussion-conclusion-and-executive-summary-decide" class="nav-link" data-scroll-target="#exercise-06-discussion-conclusion-and-executive-summary-decide">Exercise 06 — Discussion, Conclusion and Executive Summary <code>[Decide]</code></a></li>
   </ul></li>
-  <li><a href="#part-b-reshape-and-report" id="toc-part-b-reshape-and-report" class="nav-link" data-scroll-target="#part-b-reshape-and-report">Part B — Reshape and report</a>
-  <ul class="collapse">
-  <li><a href="#exercise-07-wide-to-long-do" id="toc-exercise-07-wide-to-long-do" class="nav-link" data-scroll-target="#exercise-07-wide-to-long-do">Exercise 07 — Wide to long <code>[Do]</code></a></li>
-  <li><a href="#exercise-08-every-item-both-builds-apply" id="toc-exercise-08-every-item-both-builds-apply" class="nav-link" data-scroll-target="#exercise-08-every-item-both-builds-apply">Exercise 08 — Every item, both builds <code>[Apply]</code></a></li>
-  <li><a href="#exercise-09-without-reducing-enjoyment-decide" id="toc-exercise-09-without-reducing-enjoyment-decide" class="nav-link" data-scroll-target="#exercise-09-without-reducing-enjoyment-decide">Exercise 09 — “Without reducing enjoyment” <code>[Decide]</code></a></li>
-  <li><a href="#exercise-10-start-the-report-and-render-it-apply" id="toc-exercise-10-start-the-report-and-render-it-apply" class="nav-link" data-scroll-target="#exercise-10-start-the-report-and-render-it-apply">Exercise 10 — Start the report, and render it <code>[Apply]</code></a></li>
-  <li><a href="#exercise-11-limitations-and-the-conclusion-decide" id="toc-exercise-11-limitations-and-the-conclusion-decide" class="nav-link" data-scroll-target="#exercise-11-limitations-and-the-conclusion-decide">Exercise 11 — Limitations and the conclusion <code>[Decide]</code></a></li>
-  </ul></li>
-  <li><a href="#challenge-a-finding-that-contradicts-your-own-report-decide" id="toc-challenge-a-finding-that-contradicts-your-own-report-decide" class="nav-link" data-scroll-target="#challenge-a-finding-that-contradicts-your-own-report-decide">Challenge — A finding that contradicts your own report <code>[Decide]</code></a></li>
-  <li><a href="#output" id="toc-output" class="nav-link" data-scroll-target="#output">Output</a></li>
+  <li><a href="#part-b-one-complete-finding-from-your-own-game-decide" id="toc-part-b-one-complete-finding-from-your-own-game-decide" class="nav-link" data-scroll-target="#part-b-one-complete-finding-from-your-own-game-decide">Part B — One complete finding from your own game <code>[Decide]</code></a></li>
+  <li><a href="#what-to-leave-with" id="toc-what-to-leave-with" class="nav-link" data-scroll-target="#what-to-leave-with">What to leave with</a></li>
   <li><a href="#appendix-common-errors" id="toc-appendix-common-errors" class="nav-link" data-scroll-target="#appendix-common-errors">Appendix — Common errors</a></li>
   </ul>
 </nav>
@@ -346,10 +462,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/setting-up.html">Labs</a></li><li class="breadcrumb-item"><a href="../labs/complete-analysis.html">Lab 03 — Complete Playtest Analysis</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notes/11-reporting-evidence.html">Stage 4 · Evidence to Decision</a></li><li class="breadcrumb-item"><a href="../labs/complete-analysis.html">Lab 05 — From Evidence to Report</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Lab 03 — Complete Playtest Analysis</h1>
-<p class="subtitle lead">Figures, relationships, reshaping, and the report you will revise from</p>
+<h1 class="title">Lab 05 — From Evidence to Report</h1>
+<p class="subtitle lead">Stage 4 workshop: one complete finding, from Tidebreak and then from your own game</p>
 </div>
 
 
@@ -366,19 +482,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Get the files">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Get the files
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Data:</strong> <a href="../data/tidebreak_sessions.csv" download="tidebreak_sessions.csv">tidebreak_sessions.csv</a>, <a href="../data/tidebreak_survey.csv" download="tidebreak_survey.csv">tidebreak_survey.csv</a>. Save them in the <code>data/</code> folder of your project.</li>
+</ul>
+</div>
+</div>
 <section id="overview" class="level1">
 <h1>Overview</h1>
-<p>This lab ends the strand by answering one question from start to finish:</p>
+<p>This is the last lab, and it is a workshop. It brings the whole course together into the thing your assessment needs:</p>
 <blockquote class="blockquote">
-<p><strong>Does environmental guidance improve navigation without reducing enjoyment?</strong></p>
+<p><strong>One complete finding: research question → relevant data → descriptive, visual and statistical evidence → interpretation → evidence-backed recommendation, written under the report headings.</strong></p>
 </blockquote>
-<p>Part A builds the figures and relationships the answer needs, in <code>ggplot2</code>, and finds a correlation that means the opposite of what it seems to. Part B reshapes the survey, then assembles everything into a nine-part report in Quarto.</p>
-<p><strong>The report is the point.</strong> It is the artefact you revise from for the Week 8 practical. Every exercise in Part B adds a piece of it, and you should leave the lab with a <code>report.qmd</code> that renders.</p>
+<p>Part A works through one finding on <em>Tidebreak</em>, quickly: does environmental guidance improve navigation without reducing enjoyment? It adds the two things Stage 4 is about, coding comments and triangulating evidence, and ends with a <code>report.qmd</code> that renders. Part B is your project. Bring your team’s data and your draft report.</p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Function</th>
@@ -387,40 +513,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;"><code>ggplot()</code>, <code>aes()</code>, <code>geom_*()</code></td>
-<td style="text-align: left;">Build a figure from data, mapping and geometry</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><code>facet_wrap()</code>, <code>colour =</code></td>
-<td style="text-align: left;">Split a figure by group</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><code>geom_smooth(method = "lm")</code></td>
-<td style="text-align: left;">Add a straight-line trend to a scatterplot</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><code>labs()</code></td>
-<td style="text-align: left;">Title, axis and legend labels</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><code>cor()</code></td>
-<td style="text-align: left;">Strength and direction of a straight-line relationship, −1 to +1</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;"><code>pivot_longer()</code></td>
-<td style="text-align: left;">Reshape wide columns into long rows</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><code>table()</code>, <code>prop.table()</code></td>
-<td style="text-align: left;">Count, then turn counts into proportions</td>
+<td style="text-align: left;">Reshape wide survey columns into long rows</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code>left_join()</code></td>
 <td style="text-align: left;">Add columns from another table, matched on a key</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;"><code>case_when()</code>, <code>grepl()</code></td>
+<td style="text-align: left;">Give each comment a code</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>`r `</code> inline code</td>
+<td style="text-align: left;">Put a computed number into a sentence</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;"><code>quarto render</code></td>
-<td style="text-align: left;">Turn a <code>.qmd</code> report into HTML</td>
+<td style="text-align: left;">Turn <code>report.qmd</code> into HTML</td>
 </tr>
 </tbody>
 </table>
@@ -429,22 +539,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Learning outcomes</h1>
 <p>By the end of this lab you can:</p>
 <ul>
-<li>rebuild a base R plot in <code>ggplot2</code>, and build a figure base R cannot easily produce;</li>
-<li>measure a relationship with <code>cor()</code>, draw it with <code>geom_smooth()</code>, and check it within groups before trusting it;</li>
-<li>identify a confounding variable and say what it does to a conclusion;</li>
-<li>reshape a survey with <code>pivot_longer()</code> and summarise every item at once;</li>
-<li>assemble a nine-part playtest report in Quarto, with every number computed, and render it;</li>
-<li>write a finding as What → Pattern → Meaning → Action, including one that contradicts an earlier claim.</li>
+<li>summarise every survey item by build, and decide what a result lets you claim;</li>
+<li>code free-text comments with a short codebook, and count the codes;</li>
+<li>triangulate telemetry, ratings and comments, and report a disagreement honestly;</li>
+<li>build a report in Quarto under the assessment headings, with every number computed, and render it;</li>
+<li>write a complete finding from your own game, from question to recommendation.</li>
 </ul>
 </section>
 <section id="ground-rules" class="level1">
 <h1>Ground rules</h1>
 <ul>
-<li>Choose, then justify. Several exercises have more than one sensible method; the written answer is where you say why you chose yours.</li>
-<li>Type the code. Open the solution <strong>after</strong> your attempt, even when your attempt worked.</li>
-<li>Keep every figure and number you produce. Part B puts them into the report.</li>
+<li>Part B is the point. Keep Part A moving; the solutions are there to be read if time is short.</li>
 <li>No number goes into the report by hand. If it is a number, it is inline R.</li>
-<li>If <code>library(tidyr)</code> or <code>library(ggplot2)</code> fails, run <code>install.packages(c("dplyr", "tidyr", "ggplot2"))</code> once in the Console.</li>
+<li>Results reports; Discussion judges. Keep them apart.</li>
+<li>Every finding ends with an Action someone could start on tomorrow (<a href="../notes/ten-rules.html">rule 10</a>).</li>
+<li>If <code>library(tidyr)</code> fails, run <code>install.packages("tidyr")</code> once in the Console.</li>
 </ul>
 </section>
 <section id="setup-run-this-first" class="level1">
@@ -467,341 +576,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>[1] 120   9</code></pre>
 </div>
 </div>
-<p><code>sessions</code> is the cleaned session data from Lab 02: one row per player per session, each player on one build. <code>survey</code> is the post-session questionnaire: one row per session, eight agreement items rated 1 to 5.</p>
+<p><code>sessions</code> is the cleaned session data: one row per player per session, each player on one build. <code>survey</code> is the post-session questionnaire: one row per session, eight agreement items rated 1 to 5.</p>
 <hr>
 </section>
-<section id="part-a-visualise-and-relate" class="level1">
-<h1>Part A — Visualise and relate</h1>
-<p>Notes for this part: <a href="../notes/visualising-with-ggplot2.html">Visualising with ggplot2</a>.</p>
-<section id="exercise-01-a-histogram-rebuilt-do" class="level2">
-<h2 class="anchored" data-anchor-id="exercise-01-a-histogram-rebuilt-do">Exercise 01 — A histogram, rebuilt <code>[Do]</code></h2>
-<p>Redraw Lab 01’s histogram of <code>score</code> in <code>ggplot2</code>, with bins 100 points wide and a title and axis labels a reader could follow.</p>
-<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Solution
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> score)) <span class="sc">+</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">100</span>, <span class="at">fill =</span> <span class="st">"grey60"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Score per session"</span>, <span class="at">x =</span> <span class="st">"Score"</span>, <span class="at">y =</span> <span class="st">"Sessions"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="complete-analysis_files/figure-html/ex01-1.png" class="img-fluid figure-img" width="768"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<p><strong>Write 1 sentence:</strong> point to the data, the mapping and the geometry in your code.</p>
-</section>
-<section id="exercise-02-a-boxplot-rebuilt-do" class="level2">
-<h2 class="anchored" data-anchor-id="exercise-02-a-boxplot-rebuilt-do">Exercise 02 — A boxplot, rebuilt <code>[Do]</code></h2>
-<p>Redraw Lab 01’s boxplot of <code>score</code> by <code>archetype</code> in <code>ggplot2</code>, with labels.</p>
-<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<section id="part-a-one-finding-on-tidebreak" class="level1">
+<h1>Part A — One finding, on Tidebreak</h1>
+<p>Notes for this part: <a href="../notes/11-reporting-evidence.html">Interpreting and Reporting Evidence</a> and <a href="../notes/12-combining-evidence.html">Combining Evidence</a>.</p>
+<section id="exercise-01-every-survey-item-both-builds-apply" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-01-every-survey-item-both-builds-apply">Exercise 01 — Every survey item, both builds <code>[Apply]</code></h2>
+<p>Reshape <code>survey</code> long, join each session’s <code>build</code> onto it, and find the proportion of players agreeing (4 or 5) with each item in each build. Which item moved most between the builds?</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Show solution">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
-<i class="callout-icon"></i>
+<i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Solution
+<span class="screen-reader-only">Note</span>Show solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> archetype, <span class="at">y =</span> score)) <span class="sc">+</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Score by archetype"</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Score"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="complete-analysis_files/figure-html/ex02-1.png" class="img-fluid figure-img" width="768"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<p><strong>Write 2 sentences:</strong> the Sentinel box is the widest. Draw the Sentinel scores as a histogram and say what the box was hiding.</p>
-<div class="callout callout-style-default callout-note callout-titled" title="Check your answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Check your answer
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(sessions, archetype <span class="sc">==</span> <span class="st">"Sentinel"</span>), <span class="fu">aes</span>(<span class="at">x =</span> score)) <span class="sc">+</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">100</span>, <span class="at">fill =</span> <span class="st">"grey60"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Sentinel score"</span>, <span class="at">x =</span> <span class="st">"Score"</span>, <span class="at">y =</span> <span class="st">"Sessions"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="complete-analysis_files/figure-html/ex02-check-1.png" class="img-fluid figure-img" width="768"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>Two humps, not one wide spread: Sentinels either anchor the round or collapse early. A boxplot summarises one distribution and cannot show two.</p>
-</div>
-</div>
-</div>
-</section>
-<section id="exercise-03-the-navigation-figure-apply" class="level2">
-<h2 class="anchored" data-anchor-id="exercise-03-the-navigation-figure-apply">Exercise 03 — The navigation figure <code>[Apply]</code></h2>
-<p>Build the figure for part 4 of your report: the distribution of <code>wrong_turns</code> in each build, stacked so the x axes line up, labelled for a level designer. This is the figure base R cannot produce in one short call.</p>
-<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Solution
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> wrong_turns)) <span class="sc">+</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">"grey60"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> build, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Wrong turns per session, by build"</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Wrong turns"</span>, <span class="at">y =</span> <span class="st">"Sessions"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="complete-analysis_files/figure-html/ex03-1.png" class="img-fluid figure-img" width="768"></p>
-</figure>
-</div>
-</div>
-</div>
-<p><code>facet_wrap(~ build, ncol = 1)</code> gives one panel per build on a shared x axis, so the shift between builds is the first thing the reader sees. The fill is set, not mapped, because the panel labels already name the builds.</p>
-</div>
-</div>
-</div>
-<p><strong>Write 2 sentences:</strong> what does this figure show that the two means from Lab 02 did not?</p>
-</section>
-<section id="exercise-04-what-goes-with-score-do" class="level2">
-<h2 class="anchored" data-anchor-id="exercise-04-what-goes-with-score-do">Exercise 04 — What goes with score? <code>[Do]</code></h2>
-<p>Use <code>cor()</code> to measure how strongly <code>score</code> is related to <code>awareness</code>, and to <code>shots_fired</code>.</p>
-<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Solution
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sessions<span class="sc">$</span>awareness, sessions<span class="sc">$</span>score)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.5907852</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sessions<span class="sc">$</span>shots_fired, sessions<span class="sc">$</span>score)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.05307857</code></pre>
-</div>
-</div>
-<p><code>cor()</code> gives a number from −1 to +1. Near 0 means no straight-line relationship; the sign gives the direction.</p>
-</div>
-</div>
-</div>
-<p><strong>Write 2 sentences:</strong> a designer wants to reward players who fire more shots, “because they are the ones scoring”. What do you tell them?</p>
-</section>
-<section id="exercise-05-the-trade-off-apply" class="level2">
-<h2 class="anchored" data-anchor-id="exercise-05-the-trade-off-apply">Exercise 05 — The trade-off <code>[Apply]</code></h2>
-<p>Draw <code>survivability</code> against <code>mobility</code> as a scatterplot with a straight-line trend, and measure the relationship with <code>cor()</code>.</p>
-<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Solution
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> mobility, <span class="at">y =</span> survivability)) <span class="sc">+</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">colour =</span> <span class="st">"grey40"</span>) <span class="sc">+</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">colour =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Mobility against survivability"</span>,</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Mobility rating"</span>, <span class="at">y =</span> <span class="st">"Survivability rating"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="complete-analysis_files/figure-html/ex05-1.png" class="img-fluid figure-img" width="768"></p>
-</figure>
-</div>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sessions<span class="sc">$</span>mobility, sessions<span class="sc">$</span>survivability)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] -0.6562375</code></pre>
-</div>
-</div>
-<p><code>geom_smooth(method = "lm")</code> draws the straight line that best fits the points; <code>se = FALSE</code> leaves out the shaded band. The line and <code>cor()</code> describe the same relationship, one as a picture and one as a number.</p>
-</div>
-</div>
-</div>
-<p><strong>Write 1 sentence:</strong> describe the relationship in words a balance designer would use.</p>
-</section>
-<section id="exercise-06-faster-players-are-more-fragile-decide" class="level2">
-<h2 class="anchored" data-anchor-id="exercise-06-faster-players-are-more-fragile-decide">Exercise 06 — Faster players are more fragile? <code>[Decide]</code></h2>
-<p>The balance designer reads Exercise 05 and proposes a patch: <em>“Faster players are more fragile, so when a Scout player gets faster, cut their health to match.”</em> Redraw the scatterplot with each archetype in its own colour and its own trend line, then decide whether the patch follows from the data.</p>
-<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Solution
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> mobility, <span class="at">y =</span> survivability, <span class="at">colour =</span> archetype)) <span class="sc">+</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Mobility against survivability, by archetype"</span>,</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Mobility rating"</span>, <span class="at">y =</span> <span class="st">"Survivability rating"</span>, <span class="at">colour =</span> <span class="st">"Archetype"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="complete-analysis_files/figure-html/ex06-1.png" class="img-fluid figure-img" width="768"></p>
-</figure>
-</div>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>sessions <span class="sc">|&gt;</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(archetype) <span class="sc">|&gt;</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">r =</span> <span class="fu">cor</span>(mobility, survivability))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 4 × 2
-  archetype     r
-  &lt;chr&gt;     &lt;dbl&gt;
-1 Duelist   0.302
-2 Engineer  0.512
-3 Scout     0.465
-4 Sentinel  0.598</code></pre>
-</div>
-</div>
-<p><strong>One defensible answer: no, the patch reads the data backwards.</strong> Across all players the correlation is -0.66. Within every archetype it is positive, from 0.3 to 0.6. The downward trend is the gap <em>between</em> archetypes: Scouts are built fast and fragile, Sentinels slow and tough. Within any one archetype, better players are better at both. <strong>Archetype is the confounding variable</strong>: it drives both measures, and ignoring it reverses the direction of the relationship.</p>
-<p><strong>What makes it defensible.</strong> It checks the relationship inside the groups the design is made of before drawing a conclusion about individuals, and it says what the overall correlation <em>does</em> show: the archetypes are balanced against each other as intended.</p>
-<p><strong>What would make it indefensible.</strong> Applying the patch because the correlation is strong. A strong correlation across groups says nothing about what happens to one player within a group.</p>
-</div>
-</div>
-</div>
-<p><strong>Write 3 sentences:</strong> name the confound, say what it does to the conclusion, and say which part of the report this belongs in.</p>
-<hr>
-</section>
-</section>
-<section id="part-b-reshape-and-report" class="level1">
-<h1>Part B — Reshape and report</h1>
-<p>Notes for this part: <a href="../notes/reporting-evidence.html">Interpreting and Reporting Evidence</a>.</p>
-<p>Every exercise in this part produces a piece of <code>report.qmd</code>. Create the file now, in the project folder next to <code>data/</code>, and add to it as you go.</p>
-<section id="exercise-07-wide-to-long-do" class="level2">
-<h2 class="anchored" data-anchor-id="exercise-07-wide-to-long-do">Exercise 07 — Wide to long <code>[Do]</code></h2>
-<p>Reshape <code>survey</code> so that it has one row per session per item, with columns <code>session_id</code>, <code>item</code> and <code>rating</code>. Call it <code>long</code>, and check its size.</p>
-<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Solution
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>long <span class="ot">&lt;-</span> survey <span class="sc">|&gt;</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>session_id, <span class="at">names_to =</span> <span class="st">"item"</span>, <span class="at">values_to =</span> <span class="st">"rating"</span>)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(long)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 960   3</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(long, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 3
-  session_id item                rating
-  &lt;chr&gt;      &lt;chr&gt;                &lt;dbl&gt;
-1 S001       controls_responsive      3
-2 S001       objective_clear          1
-3 S001       difficulty_fair          3</code></pre>
-</div>
-</div>
-<p><code>-session_id</code> stacks every column except the key. 120 sessions × 8 items = 960 rows.</p>
-</div>
-</div>
-</div>
-<p><strong>Write 1 sentence:</strong> why can you not <code>group_by()</code> the items in the wide <code>survey</code>?</p>
-</section>
-<section id="exercise-08-every-item-both-builds-apply" class="level2">
-<h2 class="anchored" data-anchor-id="exercise-08-every-item-both-builds-apply">Exercise 08 — Every item, both builds <code>[Apply]</code></h2>
-<p>Use <code>table()</code> and <code>prop.table()</code> to show the distribution of ratings for every item. Then join each session’s <code>build</code> onto <code>long</code> and find the proportion of players agreeing (4 or 5) with each item in each build. Which item moved most between the builds?</p>
-<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Solution
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-9" class="callout-9-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">prop.table</span>(<span class="fu">table</span>(long<span class="sc">$</span>item, long<span class="sc">$</span>rating), <span class="at">margin =</span> <span class="dv">1</span>), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>                     
-                         1    2    3    4    5
-  controls_responsive 0.00 0.02 0.22 0.36 0.40
-  death_understood    0.04 0.31 0.43 0.18 0.03
-  difficulty_fair     0.05 0.29 0.35 0.22 0.08
-  level_navigable     0.04 0.18 0.38 0.30 0.09
-  match_length        0.01 0.06 0.17 0.42 0.34
-  objective_clear     0.20 0.26 0.31 0.20 0.03
-  visual_style        0.00 0.00 0.07 0.41 0.52
-  would_play_again    0.03 0.12 0.34 0.39 0.12</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>agree_by_build <span class="ot">&lt;-</span> long <span class="sc">|&gt;</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">select</span>(sessions, session_id, build), <span class="at">by =</span> <span class="st">"session_id"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(item, build) <span class="sc">|&gt;</span></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">agree =</span> <span class="fu">mean</span>(rating <span class="sc">&gt;=</span> <span class="dv">4</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> build, <span class="at">values_from =</span> agree) <span class="sc">|&gt;</span></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">change =</span> B <span class="sc">-</span> A) <span class="sc">|&gt;</span></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(<span class="fu">abs</span>(change)))</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>agree_by_build</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>long <span class="ot">&lt;-</span> survey <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>session_id, <span class="at">names_to =</span> <span class="st">"item"</span>, <span class="at">values_to =</span> <span class="st">"rating"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>agree_by_build <span class="ot">&lt;-</span> long <span class="sc">|&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">select</span>(sessions, session_id, build), <span class="at">by =</span> <span class="st">"session_id"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(item, build) <span class="sc">|&gt;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">agree =</span> <span class="fu">mean</span>(rating <span class="sc">&gt;=</span> <span class="dv">4</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> build, <span class="at">values_from =</span> agree) <span class="sc">|&gt;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">change =</span> B <span class="sc">-</span> A) <span class="sc">|&gt;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(<span class="fu">abs</span>(change)))</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>agree_by_build</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 8 × 4
   item                     A     B  change
@@ -816,57 +624,57 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 8 visual_style        0.933  0.933  0     </code></pre>
 </div>
 </div>
-<p><code>margin = 1</code> makes each row of the table sum to 1. <code>mean(rating &gt;= 4)</code> is the proportion agreeing, and <code>pivot_wider()</code>, the reverse of <code>pivot_longer()</code>, puts the two builds side by side so the change is one subtraction.</p>
+<p><code>pivot_longer()</code> makes <code>item</code> a column so one <code>group_by()</code> covers every item. <code>pivot_wider()</code> puts the two builds side by side so the change is one subtraction (<a href="../going-further/reshaping-and-joining.html">Reshaping and Joining</a>).</p>
 </div>
 </div>
 </div>
 <p><strong>Write 2 sentences:</strong> <code>objective_clear</code> moved most. Which item would you have <em>expected</em> to move most, given what Build B changed, and did it?</p>
-<div class="callout callout-style-default callout-note callout-titled" title="Check your answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Show answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
-<i class="callout-icon"></i>
+<i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Check your answer
+<span class="screen-reader-only">Note</span>Show answer
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><code>level_navigable</code>, since Build B added guidance to help players navigate. It moved from 35% agreeing to 43%, against <code>objective_clear</code>’s 8% to 38%. Build B cut wrong turns, but what players noticed was knowing where they were meant to go. That is worth a sentence in the report.</p>
+<p><code>level_navigable</code>, since Build B added guidance to help players navigate. It moved from 35% agreeing to 43%, against <code>objective_clear</code>’s 8% to 38%. Build B cut wrong turns, but what players noticed was knowing where they were meant to go.</p>
 </div>
 </div>
 </div>
 </section>
-<section id="exercise-09-without-reducing-enjoyment-decide" class="level2">
-<h2 class="anchored" data-anchor-id="exercise-09-without-reducing-enjoyment-decide">Exercise 09 — “Without reducing enjoyment” <code>[Decide]</code></h2>
-<p>The research question has two halves. Test the second: did Build B reduce enjoyment? Use <code>enjoyment</code> from <code>sessions</code> (1–7) and <code>would_play_again</code> from the survey, and decide what the report may claim.</p>
-<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<section id="exercise-02-without-reducing-enjoyment-decide" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-02-without-reducing-enjoyment-decide">Exercise 02 — “Without reducing enjoyment” <code>[Decide]</code></h2>
+<p>The research question has two halves. Test the second: did Build B reduce enjoyment? Use <code>enjoyment</code> from <code>sessions</code> (1–7) and <code>would_play_again</code> from Exercise 01, and decide what the report may claim.</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Show solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
-<i class="callout-icon"></i>
+<i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Solution
+<span class="screen-reader-only">Note</span>Show solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>enjoy <span class="ot">&lt;-</span> <span class="fu">t.test</span>(enjoyment <span class="sc">~</span> build, <span class="at">data =</span> sessions)</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>enjoy<span class="sc">$</span>estimate</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>enjoy <span class="ot">&lt;-</span> <span class="fu">t.test</span>(enjoyment <span class="sc">~</span> build, <span class="at">data =</span> sessions)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>enjoy<span class="sc">$</span>estimate</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>mean in group A mean in group B 
        3.933333        3.933333 </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>enjoy<span class="sc">$</span>conf.int</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>enjoy<span class="sc">$</span>conf.int</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] -0.3483742  0.3483742
 attr(,"conf.level")
 [1] 0.95</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>agree_by_build[agree_by_build<span class="sc">$</span>item <span class="sc">==</span> <span class="st">"would_play_again"</span>, ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>agree_by_build <span class="sc">|&gt;</span> <span class="fu">filter</span>(item <span class="sc">==</span> <span class="st">"would_play_again"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 4
   item                 A     B change
@@ -882,84 +690,220 @@ attr(,"conf.level")
 </div>
 <p><strong>Write 2 sentences:</strong> both measures were taken straight after one session. What would you need to know before claiming Build B is as enjoyable over a week of play?</p>
 </section>
-<section id="exercise-10-start-the-report-and-render-it-apply" class="level2">
-<h2 class="anchored" data-anchor-id="exercise-10-start-the-report-and-render-it-apply">Exercise 10 — Start the report, and render it <code>[Apply]</code></h2>
-<p>In <code>report.qmd</code>, write:</p>
-<ul>
-<li>a YAML header with a title;</li>
-<li>the nine part headings from <a href="../notes/reporting-evidence.html">Interpreting and Reporting Evidence</a>;</li>
-<li>a setup chunk, hidden with <code>echo: false</code>, that loads the libraries and both CSVs;</li>
-<li>under part 1, the research question;</li>
-<li>under part 2, one sentence giving the number of sessions and players, with both numbers as inline R;</li>
-<li>under part 4, the figure from Exercise 03.</li>
-</ul>
-<p>Then render it from the Terminal with <code>quarto render report.qmd</code> and open <code>report.html</code>.</p>
-<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<section id="exercise-03-code-the-comments-apply" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-03-code-the-comments-apply">Exercise 03 — Code the comments <code>[Apply]</code></h2>
+<p>Read every distinct comment with <code>count(comment)</code>. Then give each session one of four codes, <em>Lost or unclear</em>, <em>Found the way</em>, <em>Difficulty</em> or <em>General</em>, using <code>case_when()</code> and <code>grepl()</code>. Check every distinct comment against its code, then count the codes by build.</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Show solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
-<i class="callout-icon"></i>
+<i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Solution
+<span class="screen-reader-only">Note</span>Show solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Tidebreak Build B: Playtest Report"</span></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>sessions <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_sessions.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>survey   <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_survey.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1. Research question</span></span>
-<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>Does environmental guidance improve navigation without reducing enjoyment?</span>
-<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2. Experimental design</span></span>
-<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>We analysed <span class="in">`r nrow(sessions)`</span> sessions from</span>
-<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a><span class="in">`r length(unique(sessions$player_id))`</span> players, each of whom</span>
-<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>played one build only.</span>
-<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3. Descriptive evidence</span></span>
-<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4. Visual evidence</span></span>
-<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> wrong_turns)) <span class="sc">+</span></span>
-<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">"grey60"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
-<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> build, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Wrong turns per session, by build"</span>,</span>
-<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Wrong turns"</span>, <span class="at">y =</span> <span class="st">"Sessions"</span>)</span>
-<span id="cb33-37"><a href="#cb33-37" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-38"><a href="#cb33-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-39"><a href="#cb33-39" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5. Statistical evidence</span></span>
-<span id="cb33-40"><a href="#cb33-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-41"><a href="#cb33-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6. Practical significance</span></span>
-<span id="cb33-42"><a href="#cb33-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-43"><a href="#cb33-43" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7. Qualitative evidence</span></span>
-<span id="cb33-44"><a href="#cb33-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-45"><a href="#cb33-45" aria-hidden="true" tabindex="-1"></a><span class="fu">## 8. Limitations</span></span>
-<span id="cb33-46"><a href="#cb33-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-47"><a href="#cb33-47" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9. Design conclusion</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sessions <span class="sc">|&gt;</span> <span class="fu">count</span>(comment, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 2
+   comment                                     n
+   &lt;chr&gt;                                   &lt;int&gt;
+ 1 Died a lot but it felt fair.               22
+ 2 Ran in circles for a while.                16
+ 3 Got lost after the first room.             15
+ 4 No idea what the objective was.            13
+ 5 Too hard for a first attempt.              13
+ 6 Could not tell where I was meant to go.    10
+ 7 Enjoyed it, would play again.              10
+ 8 Lighting made the exit easy to spot.       10
+ 9 The route was obvious this time.            6
+10 The signposting helped.                     5</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>coded <span class="ot">&lt;-</span> sessions <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">code =</span> <span class="fu">case_when</span>(</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">grepl</span>(<span class="st">"lost|circles|meant to go|objective"</span>, comment) <span class="sc">~</span> <span class="st">"Lost or unclear"</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">grepl</span>(<span class="st">"route|exit|signposting"</span>, comment)             <span class="sc">~</span> <span class="st">"Found the way"</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">grepl</span>(<span class="st">"Died|hard"</span>, comment)                          <span class="sc">~</span> <span class="st">"Difficulty"</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span>                                                 <span class="sc">~</span> <span class="st">"General"</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>coded <span class="sc">|&gt;</span> <span class="fu">distinct</span>(comment, code)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 2
+   comment                                 code           
+   &lt;chr&gt;                                   &lt;chr&gt;          
+ 1 Could not tell where I was meant to go. Lost or unclear
+ 2 The signposting helped.                 Found the way  
+ 3 Lighting made the exit easy to spot.    Found the way  
+ 4 Got lost after the first room.          Lost or unclear
+ 5 Too hard for a first attempt.           Difficulty     
+ 6 Died a lot but it felt fair.            Difficulty     
+ 7 Ran in circles for a while.             Lost or unclear
+ 8 The route was obvious this time.        Found the way  
+ 9 No idea what the objective was.         Lost or unclear
+10 Enjoyed it, would play again.           General        </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>coded <span class="sc">|&gt;</span> <span class="fu">count</span>(code, build)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 3
+  code            build     n
+  &lt;chr&gt;           &lt;chr&gt; &lt;int&gt;
+1 Difficulty      A        19
+2 Difficulty      B        16
+3 Found the way   A        12
+4 Found the way   B         9
+5 General         A         6
+6 General         B         4
+7 Lost or unclear A        23
+8 Lost or unclear B        31</code></pre>
+</div>
+</div>
+<p><code>case_when()</code> gives each comment the first code whose keywords it contains; <code>TRUE ~ "General"</code> catches the rest. <code>distinct(comment, code)</code> is the check by hand: every sentence next to the code it got.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 1 sentence:</strong> write the codebook entry for <em>Lost or unclear</em>: what counts, and one example.</p>
+</section>
+<section id="exercise-04-do-the-sources-agree-decide" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-04-do-the-sources-agree-decide">Exercise 04 — Do the sources agree? <code>[Decide]</code></h2>
+<p>The telemetry says Build B players took far fewer wrong turns. Compare that with the comment codes from Exercise 03, by build and then by whether the player enjoyed the session (<code>enjoyment &gt;= 5</code>). Decide what the report should say about navigation, and which evidence it should trust for what.</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Show solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Show solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>sessions <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(build) <span class="sc">|&gt;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_wrong_turns =</span> <span class="fu">mean</span>(wrong_turns))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  build mean_wrong_turns
+  &lt;chr&gt;            &lt;dbl&gt;
+1 A                 8.92
+2 B                 5.52</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>coded <span class="sc">|&gt;</span> <span class="fu">count</span>(code, build)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 3
+  code            build     n
+  &lt;chr&gt;           &lt;chr&gt; &lt;int&gt;
+1 Difficulty      A        19
+2 Difficulty      B        16
+3 Found the way   A        12
+4 Found the way   B         9
+5 General         A         6
+6 General         B         4
+7 Lost or unclear A        23
+8 Lost or unclear B        31</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>coded <span class="sc">|&gt;</span> <span class="fu">count</span>(code, <span class="at">enjoyed =</span> enjoyment <span class="sc">&gt;=</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 3
+  code            enjoyed     n
+  &lt;chr&gt;           &lt;lgl&gt;   &lt;int&gt;
+1 Difficulty      FALSE      35
+2 Found the way   TRUE       21
+3 General         TRUE       10
+4 Lost or unclear FALSE      54</code></pre>
+</div>
+</div>
+<p><strong>The sources disagree.</strong> Build B players took fewer wrong turns, yet 31 Build B comments were coded <em>lost or unclear</em>, against 23 in Build A. Split by enjoyment instead of build, the codes separate cleanly: every <em>lost or unclear</em> comment came from a player who rated enjoyment below 5, and every <em>found the way</em> comment from one who rated it 5 or above.</p>
+<p><strong>One defensible answer.</strong> Trust the telemetry for <em>what happened</em>: Build B reduced wrong turns. Treat the comments as evidence about <em>how the session felt</em>: they track enjoyment, not build. Report both, in Results, and explain the gap in the Discussion. Recommend structured observation at the junctions in the next playtest, because nothing in this data shows whether players notice when they are lost.</p>
+<p><strong>What would make it indefensible.</strong> Leaving the comments out because they spoil the story, or reporting them as evidence that Build B made navigation worse.</p>
+</div>
+</div>
+</div>
+<p><strong>Write 4 sentences</strong>, using <strong>What → Pattern → Meaning → Action</strong>, for the disagreement.</p>
+</section>
+<section id="exercise-05-start-the-report-and-render-it-apply" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-05-start-the-report-and-render-it-apply">Exercise 05 — Start the report, and render it <code>[Apply]</code></h2>
+<p>Create <code>report.qmd</code> in the project folder, next to <code>data/</code>. Give it:</p>
+<ul>
+<li>a YAML header with a title;</li>
+<li>the eight assessment headings: Executive Summary, Introduction, Methodology, Results, Discussion, Conclusion, References, Appendices;</li>
+<li>a setup chunk, hidden with <code>echo: false</code>, that loads the libraries and both CSVs;</li>
+<li>under Introduction, the research question;</li>
+<li>under Methodology, one sentence giving the number of sessions and players, both as inline R;</li>
+<li>under Results, the navigation figure from <a href="../labs/clinic-figures.html">Lab 03</a>, Exercise 03, with a caption that states the takeaway.</li>
+</ul>
+<p>Then render it from the Terminal with <code>quarto render report.qmd</code> and open <code>report.html</code>.</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Show solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Show solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Tidebreak Build B: Playtest Report"</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>sessions <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_sessions.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>survey   <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/tidebreak_survey.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="fu">## Executive Summary</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>Does environmental guidance improve navigation without reducing enjoyment?</span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a><span class="fu">## Methodology</span></span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>We analysed <span class="in">`r nrow(sessions)`</span> sessions from</span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a><span class="in">`r length(unique(sessions$player_id))`</span> players, each of whom</span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>played one build only.</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a><span class="fu">## Results</span></span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-wrong-turns</span></span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Players made fewer wrong turns in Build B."</span></span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sessions, <span class="fu">aes</span>(<span class="at">x =</span> wrong_turns)) <span class="sc">+</span></span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">"grey60"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> build, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Wrong turns per session, by build"</span>,</span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Wrong turns"</span>, <span class="at">y =</span> <span class="st">"Sessions"</span>)</span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## Discussion</span></span>
+<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conclusion</span></span>
+<span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-45"><a href="#cb25-45" aria-hidden="true" tabindex="-1"></a><span class="fu">## References</span></span>
+<span id="cb25-46"><a href="#cb25-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-47"><a href="#cb25-47" aria-hidden="true" tabindex="-1"></a><span class="fu">## Appendices</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The two inline expressions produce these values when the report renders:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(sessions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(sessions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 120</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(sessions<span class="sc">$</span>player_id))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(sessions<span class="sc">$</span>player_id))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 30</code></pre>
 </div>
@@ -969,172 +913,157 @@ attr(,"conf.level")
 </div>
 </div>
 <p><strong>Write 2 sentences:</strong> change one value in your copy of the CSV, render again, and describe what changed in the report and what you did not have to do.</p>
-<div class="callout callout-style-default callout-note callout-titled" title="What you should see">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="What you should see">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
-<i class="callout-icon"></i>
+<i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 <span class="screen-reader-only">Note</span>What you should see
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>The terminal ends with <code>Output created: report.html</code>. The page shows nine headings, the sentence under part 2 reads “120 sessions from 30 players”, and the two-panel histogram sits under part 4 with no code above it.</p>
+<p>The terminal ends with <code>Output created: report.html</code>. The page shows eight headings, the sentence under Methodology reads “120 sessions from 30 players”, and the two-panel histogram sits under Results with its caption and no code above it.</p>
 <p>If the render stops with an error, the message names the line. The most common causes are a data path written as <code>../data/...</code>, a chunk that uses a package it did not load, and a missing closing <code>```</code>.</p>
 </div>
 </div>
 </div>
 </section>
-<section id="exercise-11-limitations-and-the-conclusion-decide" class="level2">
-<h2 class="anchored" data-anchor-id="exercise-11-limitations-and-the-conclusion-decide">Exercise 11 — Limitations and the conclusion <code>[Decide]</code></h2>
-<p>Write parts 8 and 9 of the report. Part 8 lists what could make your conclusion wrong. Part 9 is one finding in <strong>What → Pattern → Meaning → Action</strong> form that answers the research question; a finding that does not name an action is not finished (<a href="../notes/ten-rules.html">rule 10</a>). Every number is inline R.</p>
-<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<section id="exercise-06-discussion-conclusion-and-executive-summary-decide" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-06-discussion-conclusion-and-executive-summary-decide">Exercise 06 — Discussion, Conclusion and Executive Summary <code>[Decide]</code></h2>
+<p>Write the last three pieces of the <em>Tidebreak</em> report. Every number is inline R.</p>
+<ul>
+<li><strong>Discussion:</strong> whether the reduction in wrong turns matters to the player; the disagreement from Exercise 04; and at least three limitations specific to this playtest.</li>
+<li><strong>Conclusion:</strong> one finding in <strong>What → Pattern → Meaning → Action</strong> form that answers the research question.</li>
+<li><strong>Executive Summary:</strong> the question, the finding and the action, in three sentences. Write it last.</li>
+</ul>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Show solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
-<i class="callout-icon"></i>
+<i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Solution
+<span class="screen-reader-only">Note</span>Show solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>wt <span class="ot">&lt;-</span> <span class="fu">t.test</span>(wrong_turns <span class="sc">~</span> build, <span class="at">data =</span> sessions)</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>wt<span class="sc">$</span>estimate</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>wt <span class="ot">&lt;-</span> <span class="fu">t.test</span>(wrong_turns <span class="sc">~</span> build, <span class="at">data =</span> sessions)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>wt<span class="sc">$</span>estimate</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>mean in group A mean in group B 
        8.916667        5.516667 </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>wt<span class="sc">$</span>conf.int</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>wt<span class="sc">$</span>conf.int</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 2.480141 4.319859
 attr(,"conf.level")
 [1] 0.95</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sessions<span class="sc">$</span>player_id)[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>sessions <span class="sc">|&gt;</span> <span class="fu">count</span>(cohort, build)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>
-P01 P02 P03 P04 
-  4   4   4   4 </code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sessions<span class="sc">$</span>cohort, sessions<span class="sc">$</span>build)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>         
-           A  B
-  Novice  18 15
-  Regular 26 27
-  Veteran 16 18</code></pre>
+<pre><code># A tibble: 6 × 3
+  cohort  build     n
+  &lt;chr&gt;   &lt;chr&gt; &lt;int&gt;
+1 Novice  A        18
+2 Novice  B        15
+3 Regular A        26
+4 Regular B        27
+5 Veteran A        16
+6 Veteran B        18</code></pre>
 </div>
 </div>
-<p><strong>One defensible part 8.</strong></p>
+<p><strong>One defensible Discussion.</strong></p>
+<blockquote class="blockquote">
+<p>A reduction of 3.4 wrong turns per session is large enough for players to notice, and enjoyment did not fall. The comments disagree with the telemetry, but they track enjoyment rather than build, so we treat them as evidence about how sessions felt, not about navigation.</p>
+<p>Limitations:</p>
 <ul>
-<li>Each of the 30 players contributed 4 sessions, so the 120 sessions are not independent, and the session-level test is more confident than the data justifies.</li>
+<li>Each of the 30 players contributed 4 sessions, so the 120 sessions are not independent; the result holds when each player counts once.</li>
 <li>Every measure was taken after one session. Nothing here shows whether the difference lasts.</li>
-<li>Cohorts were not perfectly balanced between the builds; the cohort table is in the report so the reader can judge.</li>
-<li>Comments record how a session felt, and do not agree with the wrong-turn counts (see the Challenge).</li>
-<li>Strong correlations in this data can reverse within archetypes (Exercise 06), so no relationship here is reported as a cause without checking within groups.</li>
+<li>Cohorts were not perfectly balanced between the builds; the cohort table is in the appendices so the reader can judge.</li>
+<li>No observation was recorded, so we cannot say whether players noticed when they were lost.</li>
 </ul>
-<p><strong>One defensible part 9.</strong></p>
+</blockquote>
+<p><strong>One defensible Conclusion.</strong></p>
 <blockquote class="blockquote">
 <p><strong>What.</strong> Wrong turns per session in 120 sessions, and enjoyment on a seven-point scale, compared between Build A and Build B.</p>
 <p><strong>Pattern.</strong> Build B players averaged 5.5 wrong turns against Build A’s 8.9, a reduction of between 2.5 and 4.3 per session at 95% confidence. Enjoyment was unchanged, with a mean of 3.93 in both builds.</p>
 <p><strong>Meaning.</strong> The guidance works, and costs nothing players noticed.</p>
-<p><strong>Action.</strong> Keep Build B’s guidance and carry it into the next build. Retest with an on-screen objective added, since objective clarity was the item that moved most.</p>
+<p><strong>Action.</strong> Keep Build B’s guidance and carry it into the next build. Retest with an on-screen objective added, since objective clarity was the survey item that moved most, and add an observation sheet at the first two junctions.</p>
 </blockquote>
-<p><strong>What makes it defensible.</strong> Part 8 names limitations specific to this data, not a generic “the sample was small”. Part 9’s Action follows from its Meaning, and its Pattern gives a size and an interval.</p>
-<p><strong>What would make it indefensible.</strong> A part 8 that lists nothing the reader could check, or a part 9 whose Action (“improve the level”) no one could start on.</p>
+<p><strong>One defensible Executive Summary.</strong></p>
+<blockquote class="blockquote">
+<p>Build B’s environmental guidance cut wrong turns by about 3.4 per session without reducing enjoyment. Players’ comments did not reflect the improvement, because they track how a session felt rather than where the player went. Keep the guidance, add an on-screen objective, and observe the junctions in the next playtest.</p>
+</blockquote>
+<p><strong>What makes it defensible.</strong> The limitations are specific to this data, and say what was checked. The Conclusion’s Action follows from its Meaning, and its Pattern gives a size and an interval. The Executive Summary stands on its own.</p>
+<p><strong>What would make it indefensible.</strong> “The sample was small” as the only limitation; a Conclusion whose Action (“improve the level”) no one could start on; or an Executive Summary that describes the method instead of the finding.</p>
 </div>
 </div>
 </div>
-<p><strong>Write 3 sentences:</strong> which limitation in your part 8 would most change your Action if it turned out to matter, and how would you test it?</p>
+<p><strong>Write 3 sentences:</strong> which limitation would most change your Action if it turned out to matter, and how would you test it?</p>
 <hr>
 </section>
 </section>
-<section id="challenge-a-finding-that-contradicts-your-own-report-decide" class="level1">
-<h1>Challenge — A finding that contradicts your own report <code>[Decide]</code></h1>
-<p>A report that agrees with itself everywhere has usually stopped looking. Add a finding to part 7 or part 8 of your report that contradicts a claim made earlier in the same report, and write it so the reader is better informed, not confused.</p>
-<div class="callout callout-style-default callout-important callout-titled" title="One defensible answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<section id="part-b-one-complete-finding-from-your-own-game-decide" class="level1">
+<h1>Part B — One complete finding from your own game <code>[Decide]</code></h1>
+<p>This is the part that matters. Allow at least half the workshop for it.</p>
+<p>Work in your team’s <code>report.qmd</code>. Pick <strong>one</strong> design question your playtest can answer, and take it all the way through:</p>
+<ol type="1">
+<li><strong>Research question</strong> (Introduction). One sentence a designer would recognise.</li>
+<li><strong>Relevant data</strong> (Methodology). Which measures, from which sources, on how many players and sessions. Point to your cleaning log.</li>
+<li><strong>Evidence</strong> (Results). Descriptive: a summary per group, with n.&nbsp;Visual: one figure with a caption that states the takeaway (Lab 03). Statistical: an interval, and a test if the question is a comparison (Lab 02) or a correlation checked within groups if it is a relationship (Lab 04). Qualitative: coded comments or observation, if you collected them.</li>
+<li><strong>Interpretation</strong> (Discussion). Does it matter to the player? Do the sources agree? What could make it wrong?</li>
+<li><strong>Recommendation</strong> (Conclusion). What → Pattern → Meaning → Action. An Action someone on your team could start on tomorrow.</li>
+</ol>
+<p>Render the report after each step, not just at the end.</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Show answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
-<i class="callout-icon"></i>
+<i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>One defensible answer
+<span class="screen-reader-only">Note</span>Show answer
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>themed <span class="ot">&lt;-</span> sessions <span class="sc">|&gt;</span></span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">theme =</span> <span class="fu">case_when</span>(</span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">grepl</span>(<span class="st">"lost|circles|meant to go|objective"</span>, comment) <span class="sc">~</span> <span class="st">"Lost or unclear"</span>,</span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">grepl</span>(<span class="st">"route|exit|signposting"</span>, comment)             <span class="sc">~</span> <span class="st">"Found the way"</span>,</span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">grepl</span>(<span class="st">"Died|hard"</span>, comment)                          <span class="sc">~</span> <span class="st">"Difficulty"</span>,</span>
-<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span>                                                 <span class="sc">~</span> <span class="st">"General"</span></span>
-<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>  ))</span>
-<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(themed<span class="sc">$</span>theme, themed<span class="sc">$</span>build)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>                 
-                   A  B
-  Difficulty      19 16
-  Found the way   12  9
-  General          6  4
-  Lost or unclear 23 31</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(themed<span class="sc">$</span>theme, <span class="at">enjoyed =</span> themed<span class="sc">$</span>enjoyment <span class="sc">&gt;=</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>                 enjoyed
-                  FALSE TRUE
-  Difficulty         35    0
-  Found the way       0   21
-  General             0   10
-  Lost or unclear    54    0</code></pre>
-</div>
-</div>
-<p><strong>The contradiction.</strong> Part 5 says Build B players took fewer wrong turns. Yet 31 Build B players left a comment about being lost or unclear, against 23 in Build A.</p>
-<blockquote class="blockquote">
-<p><strong>What.</strong> One free-text comment per session, 120 in all, categorised into four themes.</p>
-<p><strong>Pattern.</strong> “Lost or unclear” comments were more common in Build B (31) than in Build A (23), the opposite of the wrong-turn counts. Split by enjoyment instead of build, every one of those comments came from a player who rated enjoyment below 5.</p>
-<p><strong>Meaning.</strong> The comments track how the session felt, not where the player went. They do not undermine the wrong-turn result, but they show that players who had a poor session describe it as getting lost whichever build they played.</p>
-<p><strong>Action.</strong> Report the wrong-turn counts as the navigation evidence and the comments as evidence about mood. In the next playtest, ask a specific navigation question in the survey rather than relying on free text.</p>
-</blockquote>
-<p>Other contradictions in this data that would serve: <code>level_navigable</code> barely moved while wrong turns fell (Exercise 08); the mobility–survivability trade-off reverses within archetypes (Exercise 06).</p>
-<p><strong>What would make it indefensible.</strong> Leaving the contradiction out because it spoils the story, or including it without saying which evidence the reader should trust and why.</p>
-</div>
-</div>
-</div>
-<p><strong>Write 4 sentences</strong>, using <strong>What → Pattern → Meaning → Action</strong>:</p>
-<ul>
-<li><strong>What</strong> did you measure?</li>
-<li><strong>Pattern</strong> — what does the evidence show, and what does it contradict?</li>
-<li><strong>Meaning</strong> — which piece of evidence should the reader trust, and why?</li>
-<li><strong>Action</strong> — what changes in the next playtest because of it?</li>
+<p>There is no single right finding: it depends on your game. Check your finding against the <strong>Nine-Part Evidence Workflow</strong> before you call it done.</p>
+<ul class="task-list">
+<li><label><input type="checkbox"><strong>Research question</strong> is stated, in the Introduction.</label></li>
+<li><label><input type="checkbox"><strong>Experimental design</strong> is described, with n and the cleaning log, in the Methodology.</label></li>
+<li><label><input type="checkbox"><strong>Descriptive evidence</strong>: a summary per group, with n, in the Results.</label></li>
+<li><label><input type="checkbox"><strong>Visual evidence</strong>: one figure with a takeaway caption, in the Results.</label></li>
+<li><label><input type="checkbox"><strong>Statistical evidence</strong>: an interval, and a test or a within-group check, in the Results.</label></li>
+<li><label><input type="checkbox"><strong>Practical significance</strong>: whether it matters to the player, in the Discussion.</label></li>
+<li><label><input type="checkbox"><strong>Qualitative evidence</strong>: coded comments or observation, in the Results and Discussion, or a limitation saying you have none.</label></li>
+<li><label><input type="checkbox"><strong>Limitations</strong>: specific to your playtest, in the Discussion.</label></li>
+<li><label><input type="checkbox"><strong>Design conclusion</strong>: What → Pattern → Meaning → Action, in the Conclusion.</label></li>
+<li><label><input type="checkbox">No number typed by hand. The report renders.</label></li>
 </ul>
+<p>Exercises 01 to 06 are a worked version of the whole process on <em>Tidebreak</em>.</p>
+</div>
+</div>
+</div>
 <hr>
 </section>
-<section id="output" class="level1">
-<h1>Output</h1>
-<p>Hand in two files: <code>report.qmd</code> and the <code>report.html</code> it renders to.</p>
+<section id="what-to-leave-with" class="level1">
+<h1>What to leave with</h1>
 <ul>
-<li>All nine parts present, each with at least one sentence.</li>
-<li>Parts 3 to 7 each contain at least one computed number, table or figure from this lab or Lab 02.</li>
-<li>No number in the prose typed by hand.</li>
-<li>Part 9 written as What → Pattern → Meaning → Action, and the Challenge finding in part 7 or 8.</li>
-<li>The report renders with <code>quarto render report.qmd</code> and no errors.</li>
+<li>A <code>report.qmd</code> with the eight assessment headings that renders without errors.</li>
+<li>One complete finding from your own game, from question to recommendation.</li>
+<li>A list of what is still missing for the final report, from the checklist above.</li>
 </ul>
-<p>This is the report you revise from for the Week 8 practical. Anything you could not finish in the lab, finish before then: an unfinished part is easier to complete now than to reconstruct later.</p>
 <hr>
 </section>
 <section id="appendix-common-errors" class="level1">
 <h1>Appendix — Common errors</h1>
 <div class="callout callout-style-default callout-warning callout-titled" title="Show the error guide">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1143,7 +1072,7 @@ P01 P02 P03 P04
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <table class="caption-top table">
 <colgroup>
@@ -1171,7 +1100,7 @@ P01 P02 P03 P04
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code>object 'build' not found</code></td>
-<td style="text-align: left;">A column name used outside <code>aes()</code></td>
+<td style="text-align: left;">A column name used outside <code>aes()</code> or outside a dplyr verb</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code>'data/tidebreak_sessions.csv' does not exist</code></td>
@@ -1180,6 +1109,10 @@ P01 P02 P03 P04
 <tr class="even">
 <td style="text-align: left;"><code>object 'agree_by_build' not found</code> when rendering</td>
 <td style="text-align: left;">The report uses an object you made in the Console. Put the code in a chunk in the report</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Every comment coded “General”</td>
+<td style="text-align: left;">The keywords do not match: check capitals, since <code>grepl()</code> is case-sensitive</td>
 </tr>
 </tbody>
 </table>
@@ -1593,13 +1526,13 @@ P01 P02 P03 P04
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../labs/comparing-builds.html" class="pagination-link" aria-label="Lab 02 — Comparing Builds">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Lab 02 — Comparing Builds</span>
+      <a href="../notes/12-combining-evidence.html" class="pagination-link" aria-label="Combining Evidence">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Combining Evidence</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../reference/reference-statistics.html" class="pagination-link" aria-label="Statistics Reference">
-        <span class="nav-page-text">Statistics Reference</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../demos/stage-4.html" class="pagination-link" aria-label="Stage 4 Demo">
+        <span class="nav-page-text">Stage 4 Demo</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -1,0 +1,229 @@
+/* ==========================================================================
+   Site styles, added on top of the cosmo theme
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Workflow strip (notes/_workflow.qmd)
+   A page highlights its stages by listing them in front matter:
+     body-classes: "wf-at-describe wf-at-compare"
+   -------------------------------------------------------------------------- */
+
+.wf-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.75rem;
+  margin: 0 0 1.5rem 0;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  background: #f8f9fa;
+  font-size: 0.8rem;
+}
+
+.wf-label {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6c757d;
+}
+
+.wf-strip ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.1rem;          /* column gap leaves room for the arrow */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wf-step {
+  position: relative;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid #ced4da;
+  background: #ffffff;
+  color: #6c757d;
+  white-space: nowrap;
+}
+
+.wf-step:not(:last-child)::after {
+  content: "\2192";           /* right arrow, in the gap after the pill */
+  position: absolute;
+  right: -0.95rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #adb5bd;
+  font-weight: 400;
+}
+
+/* The highlight: one rule per step */
+.wf-at-question .wf-question,
+.wf-at-measure .wf-measure,
+.wf-at-collect .wf-collect,
+.wf-at-clean .wf-clean,
+.wf-at-describe .wf-describe,
+.wf-at-compare .wf-compare,
+.wf-at-interpret .wf-interpret,
+.wf-at-act .wf-act {
+  background: #b22222;          /* firebrick, matches pal$highlight */
+  border-color: #b22222;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Mermaid subgraphs
+   Quarto's mermaid theme fills subgraph boxes with --mermaid-fg-color--lightest,
+   a dark slate grey on this theme, and draws their labels in link blue on top,
+   which is hard to read. Mermaid scopes its own rules to the SVG's id, so these
+   overrides need !important to win.
+   -------------------------------------------------------------------------- */
+
+.cell-output-display svg .cluster rect,
+svg[id^="mermaid"] .cluster rect {
+  fill: #f8f9fa !important;
+  stroke: #ced4da !important;
+}
+
+.cell-output-display svg .cluster span,
+.cell-output-display svg .cluster .nodeLabel,
+.cell-output-display svg .cluster text,
+svg[id^="mermaid"] .cluster span,
+svg[id^="mermaid"] .cluster .nodeLabel,
+svg[id^="mermaid"] .cluster text {
+  color: #212529 !important;
+  fill: #212529 !important;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   At a glance box (a plain div with class .at-a-glance)
+   -------------------------------------------------------------------------- */
+
+.at-a-glance {
+  margin: 0 0 1.5rem 0;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid #6c757d;
+  background: #f8f9fa;
+}
+
+.at-a-glance p:last-child,
+.at-a-glance ul:last-child {
+  margin-bottom: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Mermaid flowchart palette (HOUSE_STYLE.md section 9)
+   Diagrams carry no classDef lines. Every node is grey; a node marked
+   A:::accent is pale red ("pay attention"), A:::action is solid red with white
+   text (the final action or output). Scoped to flowcharts so mindmaps keep
+   their own colours. !important is needed to beat Mermaid's id-scoped rules.
+   -------------------------------------------------------------------------- */
+
+svg[aria-roledescription^="flowchart"] .node rect,
+svg[aria-roledescription^="flowchart"] .node polygon,
+svg[aria-roledescription^="flowchart"] .node circle,
+svg[aria-roledescription^="flowchart"] .node ellipse,
+svg[aria-roledescription^="flowchart"] .node path {
+  fill: #f8f9fa !important;
+  stroke: #6c757d !important;
+  stroke-width: 1px !important;
+}
+
+svg[aria-roledescription^="flowchart"] .node .nodeLabel,
+svg[aria-roledescription^="flowchart"] .node span,
+svg[aria-roledescription^="flowchart"] .node text {
+  color: #212529 !important;
+  fill: #212529 !important;
+}
+
+svg[aria-roledescription^="flowchart"] .node.accent rect,
+svg[aria-roledescription^="flowchart"] .node.accent polygon,
+svg[aria-roledescription^="flowchart"] .node.accent circle,
+svg[aria-roledescription^="flowchart"] .node.accent ellipse,
+svg[aria-roledescription^="flowchart"] .node.accent path {
+  fill: #fbeaea !important;
+  stroke: #b22222 !important;
+  stroke-width: 1.5px !important;
+}
+
+svg[aria-roledescription^="flowchart"] .node.action rect,
+svg[aria-roledescription^="flowchart"] .node.action polygon,
+svg[aria-roledescription^="flowchart"] .node.action circle,
+svg[aria-roledescription^="flowchart"] .node.action ellipse,
+svg[aria-roledescription^="flowchart"] .node.action path {
+  fill: #b22222 !important;
+  stroke: #b22222 !important;
+}
+
+svg[aria-roledescription^="flowchart"] .node.action .nodeLabel,
+svg[aria-roledescription^="flowchart"] .node.action span,
+svg[aria-roledescription^="flowchart"] .node.action text {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Scope labels (HOUSE_STYLE.md section 6)
+   Core sections are unmarked. A heading written as
+     ## Comparing Proportions {.when-needed}
+     ## Two Ways to Be Wrong {.going-further}
+   gets a small label after it.
+   -------------------------------------------------------------------------- */
+
+section.when-needed > :is(h2, h3)::after,
+section.going-further > :is(h2, h3)::after,
+:is(h2, h3).when-needed::after,
+:is(h2, h3).going-further::after {
+  display: inline-block;
+  margin-left: 0.6rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+section.when-needed > :is(h2, h3)::after,
+:is(h2, h3).when-needed::after {
+  content: "Useful when needed";
+  border: 1px solid #6c757d;
+  color: #495057;
+  background: #ffffff;
+}
+
+section.going-further > :is(h2, h3)::after,
+:is(h2, h3).going-further::after {
+  content: "Going further";
+  border: 1px dashed #adb5bd;
+  color: #6c757d;
+  background: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   Quiet collapsibles: callout-note with appearance="simple" icon="false".
+   Grey rule instead of the blue note colour, smaller header.
+   -------------------------------------------------------------------------- */
+
+.callout.callout-style-simple.callout-note.no-icon {
+  border-left-color: #ced4da;
+}
+
+.callout.callout-style-simple.callout-note.no-icon .callout-title-container {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+/* Edge labels: grey text on white, not link blue on a tinted box */
+svg[aria-roledescription^="flowchart"] .edgeLabel,
+svg[aria-roledescription^="flowchart"] .edgeLabel span,
+svg[aria-roledescription^="flowchart"] .edgeLabel p {
+  color: #495057 !important;
+  background-color: #ffffff !important;
+}

@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Data, Variables and Types – Playtest Analytics</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../notes/04-describing-variables.html" rel="next">
+<link href="../notes/02-r-first-principles.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-640402775883e0dc5b71a44650c95e06.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar docked wf-at-measure quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notes/01-planning-a-playtest.html">Stage 1 · Foundations</a></li><li class="breadcrumb-item"><a href="../notes/03-data-and-types.html">Data, Variables and Types</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Playtest Analytics</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Start Here</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/00-start-here.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Start Here</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/ten-rules.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ten Rules for Reading Playtest Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/setting-up.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 00 — Setting Up</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-0.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 0 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 1 · Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/01-planning-a-playtest.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Planning a Playtest</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/02-r-first-principles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R from First Principles</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/03-data-and-types.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Data, Variables and Types</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/04-describing-variables.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Describing Variables</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/05-distributions-and-shape.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Distributions and Shape</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/reading-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 01 — Reading Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 1 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 2 · Comparing Evidence</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/06-cleaning-and-transforming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cleaning and Transforming</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/07-sample-to-population.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">From Sample to Population</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/08-comparing-groups.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Comparing Groups</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/comparing-builds.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 02 — Comparing Builds</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 2 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 3 · Relationships &amp; Visual Evidence</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/09-visualising-with-ggplot2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Visualising with ggplot2</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/10-relationships-and-correlation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Relationships and Correlation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/clinic-figures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 03 — A Figure for Your Report</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/clinic-relationships.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 04 — Relationships in Your Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 3 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stage 4 · Evidence to Decision</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/11-reporting-evidence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Interpreting and Reporting Evidence</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notes/12-combining-evidence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Combining Evidence</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/complete-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab 05 — From Evidence to Report</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../demos/stage-4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Stage 4 Demo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Reference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/reference-statistics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Statistics Reference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/r-quarto-reference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R and Quarto Reference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/reference-ggplot2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ggplot2 Reference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Going Further</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/normality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Is It Normal Enough?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/sampling-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sampling Theory</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/testing-in-depth.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Testing in Depth</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../going-further/reshaping-and-joining.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reshaping and Joining</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#learning-outcomes" id="toc-learning-outcomes" class="nav-link active" data-scroll-target="#learning-outcomes">Learning Outcomes</a></li>
+  <li><a href="#why-this-matters-for-playtesting" id="toc-why-this-matters-for-playtesting" class="nav-link" data-scroll-target="#why-this-matters-for-playtesting">Why This Matters for Playtesting</a></li>
+  <li><a href="#observations-and-variables" id="toc-observations-and-variables" class="nav-link" data-scroll-target="#observations-and-variables">Observations and Variables</a></li>
+  <li><a href="#tidy-data" id="toc-tidy-data" class="nav-link" data-scroll-target="#tidy-data">Tidy Data</a></li>
+  <li><a href="#types-of-data" id="toc-types-of-data" class="nav-link" data-scroll-target="#types-of-data">Types of Data</a></li>
+  <li><a href="#the-rating-scale-question" id="toc-the-rating-scale-question" class="nav-link" data-scroll-target="#the-rating-scale-question">The Rating-Scale Question</a></li>
+  <li><a href="#what-r-thinks-the-type-is" id="toc-what-r-thinks-the-type-is" class="nav-link" data-scroll-target="#what-r-thinks-the-type-is">What R Thinks the Type Is</a></li>
+  <li><a href="#measuring-with-surveys" id="toc-measuring-with-surveys" class="nav-link" data-scroll-target="#measuring-with-surveys">Measuring with Surveys</a></li>
+  <li><a href="#sample-and-population" id="toc-sample-and-population" class="nav-link" data-scroll-target="#sample-and-population">Sample and Population</a></li>
+  <li><a href="#worked-example" id="toc-worked-example" class="nav-link" data-scroll-target="#worked-example">Worked Example</a></li>
+  <li><a href="#interpretation-guidance" id="toc-interpretation-guidance" class="nav-link" data-scroll-target="#interpretation-guidance">Interpretation Guidance</a></li>
+  <li><a href="#common-mistakes" id="toc-common-mistakes" class="nav-link" data-scroll-target="#common-mistakes">Common Mistakes</a></li>
+  <li><a href="#practice" id="toc-practice" class="nav-link" data-scroll-target="#practice">Practice</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  <li><a href="#links" id="toc-links" class="nav-link" data-scroll-target="#links">Links</a></li>
+  <li><a href="#reflective-questions" id="toc-reflective-questions" class="nav-link" data-scroll-target="#reflective-questions">Reflective Questions</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notes/01-planning-a-playtest.html">Stage 1 · Foundations</a></li><li class="breadcrumb-item"><a href="../notes/03-data-and-types.html">Data, Variables and Types</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Data, Variables and Types</h1>
+<p class="subtitle lead">What kind of number are you holding?</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<nav class="wf-strip" aria-label="Where this page sits in the evidence workflow">
+  <span class="wf-label">Workflow</span>
+  <ol>
+    <li class="wf-step wf-question">Question</li>
+    <li class="wf-step wf-measure">Measure</li>
+    <li class="wf-step wf-collect">Collect</li>
+    <li class="wf-step wf-clean">Clean</li>
+    <li class="wf-step wf-describe">Describe</li>
+    <li class="wf-step wf-compare">Compare/Relate</li>
+    <li class="wf-step wf-interpret">Interpret</li>
+    <li class="wf-step wf-act">Act</li>
+  </ol>
+</nav>
+<blockquote class="blockquote">
+<p>Before you can summarise a column you have to know what kind of thing is in it. This page sorts every variable you will meet into one of four types, shows what each type lets you do, and explains why R cannot make that decision for you. The playtest question running through it: <em>“The objective item averages 2.6 out of 5. Is that a finding?”</em></p>
+</blockquote>
+<div class="at-a-glance">
+<p><strong>Stage:</strong> 1 · Core. <strong>Time:</strong> 30 minutes in class; 15 more for the Going further sections. <strong>Before this:</strong> <a href="../notes/02-r-first-principles.html">R from First Principles</a>. <strong>Key terms:</strong> observation, variable, tidy data, nominal, ordinal, discrete, continuous, binary, Likert item, self-report, sample, population. <strong>R you will write:</strong> <code>class()</code>, <code>count()</code>, <code>mean()</code> on a logical column.</p>
+</div>
+<section id="learning-outcomes" class="level2">
+<h2 class="anchored" data-anchor-id="learning-outcomes">Learning Outcomes</h2>
+<p>By the end of these notes you can:</p>
+<ul>
+<li>say what one row and one column of a playtest table represent, and name the unit of observation;</li>
+<li>recognise a tidy table, and explain why a survey export usually is not one;</li>
+<li>classify any variable as <strong>nominal</strong>, <strong>ordinal</strong>, <strong>discrete</strong> or <strong>continuous</strong>, and say which summaries each type allows;</li>
+<li>explain the difference between the type a variable <em>is</em> and the type R <em>stores</em> it as, and name the common traps;</li>
+<li>choose a defensible summary for a rating-scale item, and say what assumption a mean of ratings makes;</li>
+<li>distinguish a sample from a population, and say why recruitment matters.</li>
+</ul>
+<hr>
+</section>
+<section id="why-this-matters-for-playtesting" class="level2">
+<h2 class="anchored" data-anchor-id="why-this-matters-for-playtesting">Why This Matters for Playtesting</h2>
+<p>R will compute the mean of anything that is stored as a number. Player IDs, difficulty settings, survey ratings, the build number: if it is a number in the file, <code>mean()</code> returns an answer, and the answer looks exactly as authoritative whether it means something or not.</p>
+<p><strong>The type of a variable decides which questions you can ask of it.</strong> You can count quit reasons but not average them. You can put difficulty settings in order but not say that Hard is twice Normal. You can say one session had twice as many deaths as another. None of these rules is enforced by R. They are enforced by you, and getting them wrong produces numbers that survive all the way into a design meeting (<a href="../notes/ten-rules.html">rule 3</a>).</p>
+<hr>
+</section>
+<section id="observations-and-variables" class="level2">
+<h2 class="anchored" data-anchor-id="observations-and-variables">Observations and Variables</h2>
+<p>A data table has two directions, and each has a name.</p>
+<p>An <strong>observation</strong> is one unit you measured: one row. A <strong>variable</strong> is one thing you recorded about every observation: one column. A <strong>value</strong> is a single cell.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>The first four rows of tidebreak_sessions.csv, seven of its columns.</caption>
+<colgroup>
+<col style="width: 15%">
+<col style="width: 13%">
+<col style="width: 11%">
+<col style="width: 8%">
+<col style="width: 9%">
+<col style="width: 22%">
+<col style="width: 19%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">session_id</th>
+<th style="text-align: left;">player_id</th>
+<th style="text-align: left;">cohort</th>
+<th style="text-align: left;">build</th>
+<th style="text-align: right;">deaths</th>
+<th style="text-align: right;">session_minutes</th>
+<th style="text-align: left;">quit_reason</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">S001</td>
+<td style="text-align: left;">P01</td>
+<td style="text-align: left;">Regular</td>
+<td style="text-align: left;">A</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">12.9</td>
+<td style="text-align: left;">Frustrated</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">S002</td>
+<td style="text-align: left;">P02</td>
+<td style="text-align: left;">Veteran</td>
+<td style="text-align: left;">B</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">24.6</td>
+<td style="text-align: left;">Lost interest</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">S003</td>
+<td style="text-align: left;">P03</td>
+<td style="text-align: left;">Regular</td>
+<td style="text-align: left;">A</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">12.5</td>
+<td style="text-align: left;">Frustrated</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">S004</td>
+<td style="text-align: left;">P04</td>
+<td style="text-align: left;">Novice</td>
+<td style="text-align: left;">B</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">18.8</td>
+<td style="text-align: left;">Lost interest</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In <code>tidebreak_sessions.csv</code> there are 120 observations and 26 variables. Each observation is <strong>one player in one session</strong>. That is the file’s <strong>unit of observation</strong>, and it is worth stating out loud, because it is not the same as “one player”: the 120 sessions come from 30 players, 4 sessions each.</p>
+<p><strong>Every file has its own unit.</strong> The other <em>Tidebreak</em> files record different things, and mixing them up is how analyses end up counting the wrong thing:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">File</th>
+<th style="text-align: left;">One row is</th>
+<th style="text-align: left;">Rows</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>tidebreak_sessions.csv</code></td>
+<td style="text-align: left;">one player in one session</td>
+<td style="text-align: left;">120</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>tidebreak_survey.csv</code></td>
+<td style="text-align: left;">one player’s survey after one session</td>
+<td style="text-align: left;">120</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>tidebreak_paired.csv</code></td>
+<td style="text-align: left;">one player who played both builds</td>
+<td style="text-align: left;">30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>tidebreak_frame_times.csv</code></td>
+<td style="text-align: left;">one rendered frame</td>
+<td style="text-align: left;">9,000</td>
+</tr>
+</tbody>
+</table>
+<p><strong>In a report you would write:</strong> “120 sessions from 30 players”, never just “120 players”.</p>
+<hr>
+</section>
+<section id="tidy-data" class="level2">
+<h2 class="anchored" data-anchor-id="tidy-data">Tidy Data</h2>
+<p>Data arrives in whatever shape the tool that produced it happened to use. Almost every analysis tool, R included, assumes one particular shape, and it has a name.</p>
+<p>A table is <strong>tidy</strong> when:</p>
+<ol type="1">
+<li>each row is one observation;</li>
+<li>each column is one variable;</li>
+<li>each cell holds one value.</li>
+</ol>
+<p>The sessions file is tidy. The survey file is not, quite, and the way it fails is the most common failure there is. Here are its first three rows:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Wide: one row per session, one column per question.</caption>
+<colgroup>
+<col style="width: 7%">
+<col style="width: 14%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 12%">
+<col style="width: 9%">
+<col style="width: 12%">
+<col style="width: 9%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">session_id</th>
+<th style="text-align: right;">controls_responsive</th>
+<th style="text-align: right;">objective_clear</th>
+<th style="text-align: right;">difficulty_fair</th>
+<th style="text-align: right;">level_navigable</th>
+<th style="text-align: right;">death_understood</th>
+<th style="text-align: right;">visual_style</th>
+<th style="text-align: right;">would_play_again</th>
+<th style="text-align: right;">match_length</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">S001</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">S002</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">S003</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The eight question columns look like eight variables, but they are really values of <strong>one</strong> variable, “which question”, spread across the column headings. That is convenient for reading and awkward for analysis: to ask “which question was rated lowest?” you have to handle eight columns separately.</p>
+<p>The tidy version has one row per session <strong>per question</strong>:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Long: the same three sessions as 24 rows. The first ten are shown.</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">session_id</th>
+<th style="text-align: left;">item</th>
+<th style="text-align: right;">rating</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">S001</td>
+<td style="text-align: left;">controls_responsive</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">S001</td>
+<td style="text-align: left;">objective_clear</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">S001</td>
+<td style="text-align: left;">difficulty_fair</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">S001</td>
+<td style="text-align: left;">level_navigable</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">S001</td>
+<td style="text-align: left;">death_understood</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">S001</td>
+<td style="text-align: left;">visual_style</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">S001</td>
+<td style="text-align: left;">would_play_again</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">S001</td>
+<td style="text-align: left;">match_length</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">S002</td>
+<td style="text-align: left;">controls_responsive</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">S002</td>
+<td style="text-align: left;">objective_clear</td>
+<td style="text-align: right;">4</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Now “item” is a column you can group by, filter on and plot by, and the whole survey can be summarised in one operation. Turning wide into long is called <strong>reshaping</strong>. <strong>For now,</strong> you only need to recognise when a table is wide. You will reshape one with <code>pivot_longer()</code> in Stage 4, when you put a whole survey into your report.</p>
+<p><strong>Quick check.</strong> A telemetry export has columns <code>player_id</code>, <code>deaths_level1</code>, <code>deaths_level2</code>, <code>deaths_level3</code>. Is it tidy? What would the tidy version’s columns be?</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Show answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Show answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>No.&nbsp;“Level” is a variable whose values are hiding in the column names. The tidy version has <code>player_id</code>, <code>level</code> and <code>deaths</code>, with three rows per player.</p>
+</div>
+</div>
+</div>
+<p><strong>For your project:</strong> before your first playtest, decide what one row of each file your game writes will be. One row per death? Per session? Per player? Write it at the top of the logging code. Every analysis you do later depends on it.</p>
+<hr>
+</section>
+<section id="types-of-data" class="level2">
+<h2 class="anchored" data-anchor-id="types-of-data">Types of Data</h2>
+<p>Every variable is one of two kinds, and each kind splits in two.</p>
+<p><strong>Categorical</strong> variables have values that are <strong>labels</strong>. <strong>Numerical</strong> variables have values that are <strong>quantities</strong>, so arithmetic on them means something.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="fig-types-mindmap" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-types-mindmap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-types-mindmap">mindmap
+  root((Variable))
+    Categorical: values are labels
+      Nominal: no order
+        quit_reason
+        archetype
+        build
+        completed, TRUE or FALSE
+      Ordinal: ordered, unknown gaps
+        cohort
+        survey ratings 1 to 5
+        difficulty rating 1 to 7
+    Numerical: values are quantities
+      Discrete: counts
+        deaths
+        kills
+        wrong_turns
+      Continuous: measurements
+        session_minutes
+        distance_m
+        frame time in ms
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-types-mindmap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: The four types of variable, with Tidebreak examples of each.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Nominal</strong> variables are labels with no order. <code>quit_reason</code>, <code>archetype</code> and <code>build</code> are nominal: Scout is not more or less than Sentinel, just different. You can count each category and say which is most common. You cannot average them.</p>
+<p><strong>Ordinal</strong> variables are labels with an order but unknown gaps. <code>cohort</code> runs Novice, Regular, Veteran, and that order means something, but nobody can say that Regular is “halfway” between the other two. You can sort them and find the middle one. Adding or averaging them assumes the gaps are equal, which nothing guarantees.</p>
+<p><strong>Discrete</strong> variables are counts of whole things. <code>deaths</code>, <code>kills</code> and <code>wrong_turns</code> can be 0, 1, 2 and so on, never 2.4 in a single session. Arithmetic works: one session can have twice the deaths of another, and the <em>average</em> number of deaths across sessions can perfectly well be 2.4.</p>
+<p><strong>Continuous</strong> variables are measurements that can fall anywhere in a range: <code>session_minutes</code>, <code>distance_m</code>, frame time. The only limit on how finely you can record them is the precision of the instrument.</p>
+<p><strong>Binary</strong> variables are a special nominal case with exactly two values. <code>completed</code> is <code>TRUE</code> or <code>FALSE</code>. They are worth singling out because of a useful trick: R counts <code>TRUE</code> as 1 and <code>FALSE</code> as 0, so <code>mean(sessions$completed)</code> is the <strong>proportion</strong> of sessions completed, 71%.</p>
+<p>When you are unsure, ask two questions in order:</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="fig-types-decision" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-types-decision-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-types-decision">flowchart TD
+  A{"Are the values labels&lt;br/&gt;or quantities?"} --&gt;|Labels| B{"Do the labels have&lt;br/&gt;a natural order?"}
+  B --&gt;|No| N["Nominal&lt;br/&gt;quit_reason, build"]
+  B --&gt;|Yes| O["Ordinal&lt;br/&gt;cohort, ratings"]
+  A --&gt;|Quantities| C{"Are they counts&lt;br/&gt;of whole things?"}
+  C --&gt;|Yes| D["Discrete&lt;br/&gt;deaths, wrong_turns"]
+  C --&gt;|"No, measured"| E["Continuous&lt;br/&gt;session_minutes"]
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-types-decision-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Two questions classify any variable: labels or quantities, then order or counting.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="what-each-type-lets-you-do" class="level3">
+<h3 class="anchored" data-anchor-id="what-each-type-lets-you-do">What each type lets you do</h3>
+<p>Broadly, the types form a ladder: each allows what the one before it allows, plus something new. The one wrinkle is counting: a continuous variable has almost no repeated values, so you count it in ranges, or <strong>bins</strong>, instead.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 21%">
+<col style="width: 21%">
+<col style="width: 21%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">You want to…</th>
+<th style="text-align: center;">Nominal</th>
+<th style="text-align: center;">Ordinal</th>
+<th style="text-align: center;">Discrete</th>
+<th style="text-align: center;">Continuous</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">count each value, find the most common (the <strong>mode</strong>)</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: center;">in bins</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">put values in order, find the middle (the <strong>median</strong>)</td>
+<td style="text-align: center;">no</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: center;">yes</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">add, subtract, find the <strong>mean</strong></td>
+<td style="text-align: center;">no</td>
+<td style="text-align: center;">assumed</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: center;">yes</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">say “twice as much”</td>
+<td style="text-align: center;">no</td>
+<td style="text-align: center;">no</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: center;">yes</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">draw a…</td>
+<td style="text-align: center;">bar chart</td>
+<td style="text-align: center;">bar chart</td>
+<td style="text-align: center;">bar chart or histogram</td>
+<td style="text-align: center;">histogram</td>
+</tr>
+</tbody>
+</table>
+<p>The “assumed” for ordinal is the subject of a long argument, and it gets its own section below.</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Going further: interval and ratio">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Going further: interval and ratio
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Statistics textbooks often use a second scheme, from the psychologist Stanley Stevens: <strong>nominal, ordinal, interval, ratio</strong>. The first two are the same as here. The difference between the last two is whether <strong>zero means “none”</strong>.</p>
+<p>Deaths and session length are <strong>ratio</strong> variables: zero deaths means no deaths, so “twice as many deaths” makes sense. Temperature in Celsius is <strong>interval</strong>: zero is an arbitrary point, so 20°C is not “twice as hot” as 10°C. A rating scale, even treated as numeric, is at best interval: nobody thinks a 6 out of 7 for enjoyment means twice the enjoyment of a 3.</p>
+<p>Discrete against continuous is a different question: whether values come in whole steps. A variable can be discrete and ratio (deaths) or continuous and ratio (session length).</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="the-rating-scale-question" class="level2">
+<h2 class="anchored" data-anchor-id="the-rating-scale-question">The Rating-Scale Question</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(<span class="fu">table</span>(<span class="fu">factor</span>(obj, <span class="at">levels =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)),</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">names.arg =</span> <span class="fu">c</span>(<span class="st">"1 Strongly disagree"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>, <span class="st">"4"</span>, <span class="st">"5 Strongly agree"</span>),</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> pal<span class="sc">$</span>fill, <span class="at">border =</span> <span class="st">"white"</span>, <span class="at">ylab =</span> <span class="st">"Responses"</span>, <span class="at">cex.names =</span> <span class="fl">0.8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-obj-bar" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Bar chart of the five response options for the objective item. The bars for 1, 2 and 3 are the tallest; very few players chose 5.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-obj-bar-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="03-data-and-types_files/figure-html/fig-obj-bar-1.png" class="img-fluid figure-img" alt="Bar chart of the five response options for the objective item. The bars for 1, 2 and 3 are the tallest; very few players chose 5." width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-obj-bar-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Responses to “I always knew what my objective was”, one bar per point on the scale.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The survey asks players to rate statements from 1 (strongly disagree) to 5 (strongly agree). Is a rating a number?</p>
+<p><strong>Strictly, it is ordinal.</strong> You know 4 is above 3. You do not know that the step from 2 to 3 is the same size as the step from 4 to 5, and a player choosing 3 may mean “neutral”, “don’t know” or “didn’t think about it”.</p>
+<p><strong>In practice, people often average ratings anyway</strong>, especially when a scale has five or more points and the responses are spread out. That convention is widespread and defensible. It is still an assumption, and you should know when you are making it.</p>
+<p><strong>When a finding rests on the mean, show the distribution instead.</strong> The objective item averages 2.61. That number is hard to act on: is 2.6 bad? The distribution in <a href="#fig-obj-bar" class="quarto-xref">Figure&nbsp;3</a> is not: 46% of responses disagreed that the player always knew their objective, and only 23% agreed. A designer can act on “almost half the time, players did not know what they were meant to be doing”.</p>
+<p><strong>In a report you would write:</strong> “46% of 120 responses disagreed (1 or 2 on a 5-point scale) that they always knew their objective; 23% agreed (4 or 5).”</p>
+<hr>
+</section>
+<section id="what-r-thinks-the-type-is" class="level2">
+<h2 class="anchored" data-anchor-id="what-r-thinks-the-type-is">What R Thinks the Type Is</h2>
+<p>Statistical type and R type are different things. R’s type, introduced in <a href="../notes/02-r-first-principles.html#types">R from First Principles</a>, describes <strong>how the value is stored</strong>. The statistical type describes <strong>what the value means</strong>. R cannot work out the second from the first.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(sessions<span class="sc">$</span>quit_reason)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "character"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(sessions<span class="sc">$</span>deaths)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "numeric"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(sessions<span class="sc">$</span>session_minutes)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "numeric"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(sessions<span class="sc">$</span>completed)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "logical"</code></pre>
+</div>
+</div>
+<p><code>read_csv()</code> gives you three storage types for this file: <strong>character</strong> for text, <strong>numeric</strong> (printed as <code>&lt;dbl&gt;</code>) for every number, and <strong>logical</strong> for <code>TRUE</code>/<code>FALSE</code>. Here is how those line up with the four statistical types:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Statistical type</th>
+<th style="text-align: left;">How R stores it after <code>read_csv()</code></th>
+<th style="text-align: left;">What R does not know</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Nominal</td>
+<td style="text-align: left;">character, e.g.&nbsp;<code>quit_reason</code></td>
+<td style="text-align: left;">nothing missing: <code>mean()</code> of text returns <code>NA</code> with a warning</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Binary</td>
+<td style="text-align: left;">logical, e.g.&nbsp;<code>completed</code></td>
+<td style="text-align: left;">nothing missing: <code>mean()</code> gives a proportion</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ordinal</td>
+<td style="text-align: left;">character (<code>cohort</code>) <strong>or</strong> numeric (survey ratings)</td>
+<td style="text-align: left;">the order of text labels; that numeric ratings are not measurements</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Discrete</td>
+<td style="text-align: left;">numeric, e.g.&nbsp;<code>deaths</code></td>
+<td style="text-align: left;">that the values are whole counts</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Continuous</td>
+<td style="text-align: left;">numeric, e.g.&nbsp;<code>session_minutes</code></td>
+<td style="text-align: left;">nothing: this is what numeric storage is for</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Four traps follow from that table.</strong></p>
+<p><strong>Ordered labels sort alphabetically.</strong> Count the cohorts:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>sessions <span class="sc">|&gt;</span> <span class="fu">count</span>(cohort)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  cohort      n
+  &lt;chr&gt;   &lt;int&gt;
+1 Novice     33
+2 Regular    53
+3 Veteran    34</code></pre>
+</div>
+</div>
+<p>Novice, Regular, Veteran: the right order, but only because the alphabet happens to agree. For an order the alphabet does not know, such as Easy, Normal, Hard, R would list Easy, Hard, Normal. You fix that by telling R the order with a <strong>factor</strong>, which you will do in <a href="../notes/06-cleaning-and-transforming.html">Cleaning and Transforming</a>.</p>
+<p><strong>Ratings arrive as plain numbers.</strong> Every survey item is numeric, so <code>mean()</code> and <code>sd()</code> work on them without complaint. Whether they <em>should</em> is the decision in the previous section, and R cannot make it for you.</p>
+<p><strong>Identifiers can look like numbers.</strong> <em>Tidebreak</em> uses text IDs (<code>P01</code>, <code>S001</code>), which is good practice for exactly this reason. A file that numbers its players 1 to 30 lets R compute an “average player”, which is meaningless. If you ever see a mean ID, a summary has run over the wrong columns.</p>
+<p><strong>Whole numbers do not tell you discrete from continuous.</strong> <code>time_alive_s</code> is recorded in whole seconds, so every value looks like a count. It is a measurement of time, rounded by the logger: continuous. The type is decided by what the number measures, not by whether it has a decimal point. (Base R’s <code>read.csv()</code> makes this trap visible: it stores <code>time_alive_s</code> as <strong>integer</strong>, a storage type for whole numbers, which says nothing about whether the variable is a count.)</p>
+<hr>
+</section>
+<section id="measuring-with-surveys" class="level2">
+<h2 class="anchored" data-anchor-id="measuring-with-surveys">Measuring with Surveys</h2>
+<p>A survey is <strong>self-report</strong>: the only source that tells you what players thought and felt, so it deserves the same care as the telemetry.</p>
+<p><strong>A Likert item</strong> is a statement with an ordered set of responses, usually five or seven points from strongly disagree to strongly agree. <em>Tidebreak</em>’s survey uses five points; its <code>difficulty</code> and <code>enjoyment</code> ratings use seven. More points give finer distinctions; fewer are quicker to answer and easier to label clearly.</p>
+<p><strong>Good items share a few habits:</strong></p>
+<ul>
+<li><strong>One idea per item.</strong> “The controls were responsive and intuitive” asks two things; a player who found them responsive but confusing cannot answer it.</li>
+<li><strong>Neutral wording.</strong> “How much did you enjoy the improved lighting?” tells the player what you want to hear.</li>
+<li><strong>Labelled anchors.</strong> Say what 1 and 5 mean, and keep the direction the same across items.</li>
+<li><strong>Asked straight after play</strong>, before memory rewrites the session.</li>
+</ul>
+<p><strong>Prefer an established questionnaire to an invented one.</strong> Questionnaires such as the <strong>System Usability Scale</strong> (SUS, usability), the <strong>Player Experience Inventory</strong> (PXI) and the <strong>Game Experience Questionnaire</strong> (GEQ) have been tested on many players. That means their items are known to measure something consistently, and your results can be compared with other studies. An item you wrote last night has none of that. Check the published evidence for any questionnaire before adopting it; some widely used ones have been criticised.</p>
+<p><strong>Summarise ordinal items as distributions.</strong> For each item, report the count or percentage at each point, or the percentage who agree (4 or 5). Show the whole survey at once with a stacked bar per item:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>props <span class="ot">&lt;-</span> <span class="fu">sapply</span>(items[<span class="fu">names</span>(item_agree)],</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                <span class="cf">function</span>(x) <span class="fu">prop.table</span>(<span class="fu">table</span>(<span class="fu">factor</span>(x, <span class="at">levels =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>))))</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>likert_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"#b22222"</span>, <span class="st">"#e8a3a3"</span>, <span class="st">"grey85"</span>, <span class="st">"#9bb0c9"</span>, <span class="st">"#3a5f8a"</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>op <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">11</span>, <span class="dv">3</span>, <span class="dv">1</span>))</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(props, <span class="at">horiz =</span> <span class="cn">TRUE</span>, <span class="at">las =</span> <span class="dv">1</span>, <span class="at">border =</span> <span class="st">"white"</span>, <span class="at">col =</span> likert_cols,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab =</span> <span class="st">"Share of responses"</span>, <span class="at">cex.names =</span> <span class="fl">0.8</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"top"</span>, <span class="at">inset =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="sc">-</span><span class="fl">0.13</span>), <span class="at">xpd =</span> <span class="cn">TRUE</span>, <span class="at">horiz =</span> <span class="cn">TRUE</span>, <span class="at">bty =</span> <span class="st">"n"</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">fill =</span> likert_cols, <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-survey-stacked" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Horizontal stacked bars for the eight survey items, ordered by share agreeing. Visual style is almost entirely agreement; objective clear, death understood and difficulty fair have more red disagreement than blue agreement.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-survey-stacked-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="03-data-and-types_files/figure-html/fig-survey-stacked-1.png" class="img-fluid figure-img" alt="Horizontal stacked bars for the eight survey items, ordered by share agreeing. Visual style is almost entirely agreement; objective clear, death understood and difficulty fair have more red disagreement than blue agreement." width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-survey-stacked-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Every survey item as a stacked bar, from 1 (strongly disagree, red) to 5 (strongly agree, blue), ordered by the share who agreed. The objective item has the most disagreement.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>You do not need to write the code for this figure; it is here so you can see what a whole survey looks like. <a href="#fig-survey-stacked" class="quarto-xref">Figure&nbsp;4</a> tells you at a glance what eight means would not. 3 items have more players disagreeing than agreeing (<code>objective_clear</code>, <code>difficulty_fair</code>, <code>death_understood</code>), and the objective item has the largest share disagreeing, 46%. At the other end, <code>visual_style</code> is close to unanimous: 93% agreed. The large neutral share on most items, the grey in the middle, is also information: a mean would fold it away.</p>
+<hr>
+</section>
+<section id="sample-and-population" class="level2">
+<h2 class="anchored" data-anchor-id="sample-and-population">Sample and Population</h2>
+<p>The 30 <em>Tidebreak</em> players are a <strong>sample</strong>: the people who happened to come to this playtest. The <strong>population</strong> is everyone the game is being made for, and you never get to measure it.</p>
+<p><strong>Every number you compute describes the sample.</strong> The question you care about is always about the population: not “did these players struggle?” but “will players struggle?”. Run the test again with different players and every figure on this page moves. How far it can move is the subject of Stage 2, <a href="../notes/07-sample-to-population.html">From Sample to Population</a>. <strong>For now,</strong> report how many players a number came from every time you quote it (<a href="../notes/ten-rules.html">rule 8</a>).</p>
+<p><strong>Who is in the sample matters as much as how many.</strong> A playtest recruited from the studio’s Discord samples the game’s most committed fans, not its audience. A playtest of colleagues samples people who already know the controls. No analysis afterwards corrects for who walked through the door, which is why recruitment is part of <a href="../notes/01-planning-a-playtest.html">planning the playtest</a>.</p>
+<hr>
+</section>
+<section id="worked-example" class="level2">
+<h2 class="anchored" data-anchor-id="worked-example">Worked Example</h2>
+<p><strong>Is a mean of 2.6 a finding?</strong> The <em>Tidebreak</em> team summarises its survey with <code>colMeans()</code> and gets eight numbers. The objective item is lowest at 2.61. The draft report says: “Objective clarity scored 2.6 out of 5.”</p>
+<p><strong>Step 1: what type is it?</strong> A 1 to 5 agreement rating: ordinal. The mean treats the gap from 1 to 2 as equal to the gap from 4 to 5. Possibly defensible, but an assumption.</p>
+<p><strong>Step 2: what does the distribution say?</strong> 55 of 120 responses were 1 or 2; 28 were 4 or 5; 37 sat at 3.</p>
+<p><strong>Step 3: rewrite the finding.</strong> “46% of players disagreed that they always knew their objective; 23% agreed.” The mean said the item was low. The distribution says <em>how many players</em> had the problem, which is what a designer needs to decide whether to fix it.</p>
+<p><strong>Step 4: check the unit.</strong> The survey has one row per session, and each player completed 4 sessions. “46% of players” is really “46% of responses”. The honest version says so.</p>
+<hr>
+</section>
+<section id="interpretation-guidance" class="level2">
+<h2 class="anchored" data-anchor-id="interpretation-guidance">Interpretation Guidance</h2>
+<p><strong>What the data shows.</strong> The type of each variable, read from what it measures. <code>quit_reason</code> is nominal; <code>objective_clear</code> is ordinal; <code>deaths</code> is discrete.</p>
+<p><strong>What the analysis suggests.</strong> A summary chosen to fit the type: counts and proportions for categories, distributions for ratings, means and medians for quantities.</p>
+<p><strong>What can legitimately be concluded.</strong> Only what the type allows. “Quit reasons averaged 2.3” is not a conclusion; it is an error. “Players rated the objective 2.6” is a conclusion with a hidden assumption; state it, or report the distribution.</p>
+<hr>
+</section>
+<section id="common-mistakes" class="level2">
+<h2 class="anchored" data-anchor-id="common-mistakes">Common Mistakes</h2>
+<p><strong>Averaging a label.</strong> Code the cohorts as 1, 2 and 3 and R will average them happily. The answer means nothing (<a href="../notes/ten-rules.html">rule 3</a>).</p>
+<p><strong>Trusting R’s type.</strong> <code>&lt;dbl&gt;</code> says how a value is stored, not what it means. A rating, a count and a measurement can all print as <code>&lt;dbl&gt;</code>.</p>
+<p><strong>Reporting a mean of ratings without the distribution.</strong> The mean hides whether everyone was lukewarm or half loved it and half hated it.</p>
+<p><strong>Counting sessions as players.</strong> 120 rows is 30 people. Say both.</p>
+<p><strong>Spreading one variable across columns.</strong> <code>deaths_level1</code>, <code>deaths_level2</code> and <code>deaths_level3</code> is one variable, <code>deaths</code>, and one more, <code>level</code>, wearing a disguise.</p>
+<p><strong>Inventing survey items.</strong> A home-made item has no evidence that it measures what you think it does. Use an established questionnaire where one exists.</p>
+<hr>
+</section>
+<section id="practice" class="level2">
+<h2 class="anchored" data-anchor-id="practice">Practice</h2>
+<p>Each takes two or three minutes.</p>
+<ol type="1">
+<li><strong>Classify.</strong> Nominal, ordinal, discrete or continuous: <code>kills</code>, <code>quit_reason</code>, <code>cohort</code>, <code>distance_m</code>, <code>visual_style</code>, <code>completed</code>, <code>difficulty</code>, <code>time_alive_s</code>, <code>session_id</code>.</li>
+<li><strong>Predict.</strong> What does R print for <code>class(sessions$cohort)</code> and <code>class(survey$visual_style)</code>? Which of the two is R closer to being right about?</li>
+<li><strong>Critique.</strong> A teammate’s report says: “Average cohort was 1.9, so our testers were mostly Regulars.” What is wrong, and what should it say instead?</li>
+<li><strong>Compute.</strong> What proportion of sessions were completed? Do it with one function.</li>
+</ol>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Show answers">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Show answers
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>1.</strong> <code>kills</code> discrete; <code>quit_reason</code> nominal; <code>cohort</code> ordinal; <code>distance_m</code> continuous; <code>visual_style</code> ordinal (a 1 to 5 rating); <code>completed</code> nominal, and binary; <code>difficulty</code> ordinal (a 1 to 7 rating); <code>time_alive_s</code> continuous, although it is recorded in whole seconds; <code>session_id</code> is not a variable you analyse at all. It is an <strong>identifier</strong>: a label for the row.</p>
+<p><strong>2.</strong> Character and numeric:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(sessions<span class="sc">$</span>cohort)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "character"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(survey<span class="sc">$</span>visual_style)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "numeric"</code></pre>
+</div>
+</div>
+<p>R is closer with <code>cohort</code>: <code>mean()</code> of text returns <code>NA</code> with a warning instead of a number. It will average <code>visual_style</code> without a murmur, and whether it should is your decision.</p>
+<p><strong>3.</strong> Cohort is ordinal; the 1.9 comes from coding Novice, Regular, Veteran as 1, 2, 3 and assuming equal gaps. Report the counts instead:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>sessions <span class="sc">|&gt;</span> <span class="fu">count</span>(cohort)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  cohort      n
+  &lt;chr&gt;   &lt;int&gt;
+1 Novice     33
+2 Regular    53
+3 Veteran    34</code></pre>
+</div>
+</div>
+<p>“53 of 120 sessions were played by Regulars” says the same thing without the invented arithmetic.</p>
+<p><strong>4.</strong> <code>completed</code> is logical, so <code>mean()</code> treats <code>TRUE</code> as 1 and <code>FALSE</code> as 0 and returns the proportion:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sessions<span class="sc">$</span>completed)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.7083333</code></pre>
+</div>
+</div>
+<p>71% of sessions were completed.</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ul>
+<li>One row is one observation; one column is one variable. Name the unit: here, one player in one session.</li>
+<li>Tidy data has one observation per row, one variable per column, one value per cell. Survey exports usually are not tidy.</li>
+<li>Variables are nominal, ordinal, discrete or continuous. The type decides which summaries are legal.</li>
+<li>A rating is ordinal. Averaging it is an assumption; when the finding depends on it, report the distribution.</li>
+<li>R’s storage type is not the statistical type. Check every column yourself.</li>
+<li>Use established questionnaires, and summarise ordinal items as distributions.</li>
+<li>Every number describes the sample. Report how many players it came from.</li>
+</ul>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Key term</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Observation</strong></td>
+<td style="text-align: left;">One unit measured: one row</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Variable</strong></td>
+<td style="text-align: left;">One thing recorded about every observation: one column</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Unit of observation</strong></td>
+<td style="text-align: left;">What one row represents, e.g.&nbsp;one player in one session</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Tidy data</strong></td>
+<td style="text-align: left;">One observation per row, one variable per column, one value per cell</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Nominal</strong></td>
+<td style="text-align: left;">Labels with no order</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Ordinal</strong></td>
+<td style="text-align: left;">Labels with an order but unknown gaps</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Discrete</strong></td>
+<td style="text-align: left;">Counts of whole things</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Continuous</strong></td>
+<td style="text-align: left;">Measurements anywhere in a range</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Binary</strong></td>
+<td style="text-align: left;">A nominal variable with two values, such as TRUE/FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Likert item</strong></td>
+<td style="text-align: left;">A statement rated on an ordered agree–disagree scale</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Self-report</strong></td>
+<td style="text-align: left;">Evidence from what players tell you: ratings, comments, interviews</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Sample</strong></td>
+<td style="text-align: left;">The players you actually measured</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Population</strong></td>
+<td style="text-align: left;">Everyone the conclusion is meant to apply to</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="links" class="level2">
+<h2 class="anchored" data-anchor-id="links">Links</h2>
+<ul>
+<li><a href="../notes/ten-rules.html">Ten Rules</a>: rule 3 (know what kind of number you are holding) and rule 8 (small samples lie confidently)</li>
+<li><a href="../reference/reference-statistics.html#describing-data">Statistics Reference: describing data</a></li>
+<li><a href="../labs/reading-data.html">Lab 01: Reading Data</a>, Part B</li>
+<li>Next: <a href="../notes/04-describing-variables.html">Describing Variables</a></li>
+</ul>
+<hr>
+</section>
+<section id="reflective-questions" class="level2">
+<h2 class="anchored" data-anchor-id="reflective-questions">Reflective Questions</h2>
+<ul>
+<li>Take a variable from your own project’s telemetry. Which of the four types is it, and what would break if you treated it as the type next door?</li>
+<li>Your survey has a 1 to 7 enjoyment rating. A teammate wants to report the mean; you want to report the distribution. Make the best case for each.</li>
+<li>Your game logs one row per death, with a timestamp and a player ID. What is the unit of observation, and what would you have to do to answer “how many deaths per session?”</li>
+<li>Which established questionnaire would you use to evaluate your own project’s controls, and what would you lose by writing your own items instead?</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/nmcguinness\.github\.io\/L8-3DGD-Playtest-Analytics\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../notes/02-r-first-principles.html" class="pagination-link" aria-label="R from First Principles">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">R from First Principles</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../notes/04-describing-variables.html" class="pagination-link" aria-label="Describing Variables">
+        <span class="nav-page-text">Describing Variables</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>COMP I8015 · 3D Game Development · Dundalk Institute of Technology</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

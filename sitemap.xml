@@ -2,78 +2,138 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/reference/reference-statistics.html</loc>
-    <lastmod>2026-09-24T09:10:50.905Z</lastmod>
+    <lastmod>2026-10-07T13:08:41.635Z</lastmod>
   </url>
   <url>
     <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/reference/r-quarto-reference.html</loc>
-    <lastmod>2026-09-25T06:18:08.394Z</lastmod>
+    <lastmod>2026-10-07T13:06:57.356Z</lastmod>
   </url>
   <url>
-    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/visualising-with-ggplot2.html</loc>
-    <lastmod>2026-09-25T07:34:24.311Z</lastmod>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/12-combining-evidence.html</loc>
+    <lastmod>2026-10-07T13:24:47.941Z</lastmod>
   </url>
   <url>
-    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/reporting-evidence.html</loc>
-    <lastmod>2026-09-25T07:31:39.185Z</lastmod>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/10-relationships-and-correlation.html</loc>
+    <lastmod>2026-10-07T10:31:08.844Z</lastmod>
   </url>
   <url>
-    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/describing-what-you-have.html</loc>
-    <lastmod>2026-09-25T07:34:24.311Z</lastmod>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/08-comparing-groups.html</loc>
+    <lastmod>2026-10-07T09:38:54.272Z</lastmod>
   </url>
   <url>
-    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/cleaning-and-transforming.html</loc>
-    <lastmod>2026-09-25T07:30:48.962Z</lastmod>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/06-cleaning-and-transforming.html</loc>
+    <lastmod>2026-10-07T09:42:36.821Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/04-describing-variables.html</loc>
+    <lastmod>2026-10-07T10:28:33.258Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/02-r-first-principles.html</loc>
+    <lastmod>2026-10-07T09:12:59.221Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/00-start-here.html</loc>
+    <lastmod>2026-10-07T13:27:44.257Z</lastmod>
   </url>
   <url>
     <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/labs/reading-data.html</loc>
-    <lastmod>2026-10-02T07:36:05.337Z</lastmod>
+    <lastmod>2026-10-08T09:26:03.914Z</lastmod>
   </url>
   <url>
     <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/labs/comparing-builds.html</loc>
-    <lastmod>2026-09-25T06:49:05.558Z</lastmod>
+    <lastmod>2026-10-08T09:26:03.914Z</lastmod>
   </url>
   <url>
-    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/demos/week-3.html</loc>
-    <lastmod>2026-10-02T07:59:55.533Z</lastmod>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/labs/clinic-figures.html</loc>
+    <lastmod>2026-10-08T09:26:03.914Z</lastmod>
   </url>
   <url>
-    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/demos/week-1.html</loc>
-    <lastmod>2026-10-02T07:59:55.532Z</lastmod>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/going-further/testing-in-depth.html</loc>
+    <lastmod>2026-10-07T09:39:28.000Z</lastmod>
   </url>
   <url>
-    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/demos/week-2.html</loc>
-    <lastmod>2026-10-02T07:59:55.532Z</lastmod>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/going-further/reshaping-and-joining.html</loc>
+    <lastmod>2026-10-07T13:25:03.456Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/going-further/normality.html</loc>
+    <lastmod>2026-10-07T09:17:21.560Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/demos/stage-3.html</loc>
+    <lastmod>2026-10-08T08:40:20.996Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/demos/stage-1.html</loc>
+    <lastmod>2026-10-08T08:40:20.995Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/demos/stage-0.html</loc>
+    <lastmod>2026-10-08T08:42:49.087Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/demos/stage-2.html</loc>
+    <lastmod>2026-10-08T08:40:20.995Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/demos/stage-4.html</loc>
+    <lastmod>2026-10-08T08:40:20.996Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/going-further/regression.html</loc>
+    <lastmod>2026-10-07T10:30:37.687Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/going-further/sampling-theory.html</loc>
+    <lastmod>2026-10-07T09:36:49.075Z</lastmod>
   </url>
   <url>
     <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/index.html</loc>
-    <lastmod>2026-09-25T07:28:53.451Z</lastmod>
+    <lastmod>2026-10-07T13:27:28.760Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/labs/clinic-relationships.html</loc>
+    <lastmod>2026-10-08T09:26:03.916Z</lastmod>
   </url>
   <url>
     <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/labs/complete-analysis.html</loc>
-    <lastmod>2026-09-25T06:49:07.275Z</lastmod>
+    <lastmod>2026-10-08T09:26:03.916Z</lastmod>
   </url>
   <url>
     <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/labs/setting-up.html</loc>
-    <lastmod>2026-10-02T07:36:05.337Z</lastmod>
+    <lastmod>2026-10-08T09:26:03.913Z</lastmod>
   </url>
   <url>
-    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/comparing-conditions.html</loc>
-    <lastmod>2026-09-25T07:34:24.311Z</lastmod>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/01-planning-a-playtest.html</loc>
+    <lastmod>2026-10-07T09:10:12.895Z</lastmod>
   </url>
   <url>
-    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/distributions-and-variation.html</loc>
-    <lastmod>2026-09-25T07:31:29.047Z</lastmod>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/03-data-and-types.html</loc>
+    <lastmod>2026-10-07T09:13:56.792Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/05-distributions-and-shape.html</loc>
+    <lastmod>2026-10-07T09:17:10.162Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/07-sample-to-population.html</loc>
+    <lastmod>2026-10-07T09:36:27.532Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/09-visualising-with-ggplot2.html</loc>
+    <lastmod>2026-10-07T10:28:33.452Z</lastmod>
+  </url>
+  <url>
+    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/11-reporting-evidence.html</loc>
+    <lastmod>2026-10-07T13:23:08.251Z</lastmod>
   </url>
   <url>
     <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/ten-rules.html</loc>
-    <lastmod>2026-09-25T07:29:24.616Z</lastmod>
-  </url>
-  <url>
-    <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/notes/why-measure.html</loc>
-    <lastmod>2026-09-25T07:34:24.312Z</lastmod>
+    <lastmod>2026-10-07T09:02:21.768Z</lastmod>
   </url>
   <url>
     <loc>https://nmcguinness.github.io/L8-3DGD-Playtest-Analytics/reference/reference-ggplot2.html</loc>
-    <lastmod>2026-09-24T09:28:29.855Z</lastmod>
+    <lastmod>2026-10-07T13:06:57.581Z</lastmod>
   </url>
 </urlset>
